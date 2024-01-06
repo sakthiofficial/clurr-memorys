@@ -1,10 +1,25 @@
 import nc from "next-connect";
 import Joi from "joi";
 import { Response, RESPONSE_MESSAGE, RESPONSE_STATUS } from "../appConstants";
-import initDb from "./db";
 // import logger from "../logger";
 
-export default ({ withoutDb } = { withoutDb: false }) => {
+const sanitize = (v) => {
+  if (v instanceof Object) {
+    for (let i = 0; i < Object.keys(v).length; i += 1) {
+      const key = Object.keys(v)[i];
+      if (/^\$/.test(key)) {
+        delete v[key];
+      } else {
+        sanitize(v[key]);
+      }
+    }
+  }
+  return v;
+};
+
+export default (
+  { withoutDb, dontSanitize } = { withoutDb: false, dontSanitize: false }
+) => {
   const handler = nc({
     attachParams: true,
     onError: (err, req, res) => {
@@ -14,7 +29,7 @@ export default ({ withoutDb } = { withoutDb: false }) => {
     onNoMatch: (req, res) => {
       res.status(RESPONSE_STATUS.NOTFOUND);
       return res.json(
-        new Response(RESPONSE_STATUS.NOTFOUND, "Page not found", {}),
+        new Response(RESPONSE_STATUS.NOTFOUND, "Page not found", {})
       );
     },
   })
@@ -25,7 +40,7 @@ export default ({ withoutDb } = { withoutDb: false }) => {
             res.send(
               new Response(RESPONSE_STATUS.OK, RESPONSE_MESSAGE.OK, {
                 status: "OK",
-              }),
+              })
             );
           })
           .catch((err) => {
@@ -41,7 +56,7 @@ export default ({ withoutDb } = { withoutDb: false }) => {
       req.validate = (
         data = {},
         schema = Joi.any(),
-        validationOpts = { convert: true },
+        validationOpts = { convert: true }
       ) => {
         if (!Joi.isSchema(schema)) {
           throw new Error("Invalid schema");
@@ -56,9 +71,16 @@ export default ({ withoutDb } = { withoutDb: false }) => {
       await next();
     });
 
+  if (!dontSanitize) {
+    handler.use(async (req, res, next) => {
+      sanitize(req.body);
+      sanitize(req.query);
+      next();
+    });
+  }
+
   if (!withoutDb) {
     handler.use(async (req, res, next) => {
-      await initDb();
       next();
     });
   }

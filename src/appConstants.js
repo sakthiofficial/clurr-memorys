@@ -9,6 +9,10 @@ export const RESPONSE_MESSAGE = {
   OK: "OK",
   ERROR: "ERROR",
   UNAUTHORIZED: "UNAUTHORIZED",
+  LOGGED_IN: "LOGGED_IN",
+  INVALID: "INVALID",
+  USEREXIST: "USEREXIST",
+  NOTFOUND: "NOTFOUND",
 };
 
 export const API_ERRORCODE = {
@@ -16,9 +20,27 @@ export const API_ERRORCODE = {
   BLOCKCHAIN_ERROR: 201,
   EXTERNAL_RESOURCE_ERROR: 301,
 };
-
-export const Response = function Response(statusCode, message, result) {
+export const RESPONSE_MESSAGE_DETAILS = {
+  AUTHENTICATION_FAILED: "INVALID USER DETAILS",
+  USEREXIST: "USER ALREADY EXIST",
+  AUTHENTICATION_SUCSESS: "USER SUCCESSFULLY LOGED IN",
+  INVALID_PERMISSION: "INVALID PERMESSIONS TO THE USER",
+  USERADDED: "USER CREATED SUCCESSFULLY",
+  PROJECTADDED: "PROJECT CREATED SUCCESSFULLY",
+  ERROR: "ERROR OCCURS",
+};
+export const TOKEN_VARIABLES = {
+  TOKEN_NAME: "SESSIONID",
+};
+export const ApiResponse = function Response(statusCode, message, result) {
   this.status = statusCode;
   this.message = message;
   this.result = result;
+};
+export const SERVICE_RESPONSE = (success, message, result) => {
+  return {
+    success,
+    message,
+    result,
+  };
 };
