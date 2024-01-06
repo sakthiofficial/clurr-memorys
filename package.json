@@ -9,10 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@coreui/react": "^4.11.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.2",
-    "@mui/material": "^5.15.2",
+    "@mui/lab": "^5.0.0-alpha.159",
+    "@mui/material": "^5.15.3",
+    "@mui/x-charts": "^6.18.4",
+    "@nivo/bump": "^0.84.0",
     "@reduxjs/toolkit": "^2.0.1",
     "joi": "^17.11.0",
     "mongoose": "^8.0.3",
@@ -22,7 +26,8 @@
     "prop-types": "^15.8.1",
     "react": "^18",
     "react-dom": "^18",
-    "react-redux": "^9.0.4"
+    "react-redux": "^9.0.4",
+    "react-select": "^5.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",

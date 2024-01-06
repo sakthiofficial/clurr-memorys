@@ -1,95 +1,127 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import React from "react";
+import { Grid, Typography } from "@mui/material";
+import Image from "next/image";
+// card icons
+import TotalLeads from "../../public/LeadsCard/totalLeads.svg";
+import RegisterLeads from "../../public/LeadsCard/registerLeads.svg";
+import WarmLeads from "../../public/LeadsCard/warmLeads.svg";
+import SiteVisit from "../../public/LeadsCard/siteVisit.svg";
+import SiteVisitDone from "../../public/LeadsCard/siteVisitDone.svg";
+// card details
+const users = [
+  { name: "TotalLeads", icon: TotalLeads, total: "123" },
+  { name: "RegisterLeads", icon: RegisterLeads, total: "123" },
+  { name: "WarmLeads", icon: WarmLeads, total: "123" },
+  { name: "Site Visit Scheduled", icon: SiteVisit, total: "123" },
+  { name: "Site Visit Done Leads", icon: SiteVisitDone, total: "123" },
+  { name: "Booked leads", icon: TotalLeads, total: "123" },
+];
 
 export default function Home() {
+  // background color card
+  const getBackgroundColor = (name) => {
+    switch (name) {
+      case "WarmLeads":
+        return "rgba(255, 92, 0, 0.08)";
+      case "Site Visit Scheduled":
+        return "rgba(205, 172, 0, 0.08)";
+      case "Site Visit Done Leads":
+        return "rgba(219, 0, 255, 0.08)";
+      default:
+        return "rgba(0, 133, 255, 0.08)";
+    }
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Grid sx={{ width: "100%", height: "100vh" }}>
+      <Grid
+        sx={{
+          height: "8vh",
+          // border: "1px solid black",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: "18px",
+            fontWeight: "500",
+            color: "rgba(0, 0, 0, 1)",
+          }}
+        >
+          Dashbaord
+        </Typography>
+      </Grid>
+      <Grid
+        sx={{
+          minHeight: "30vh",
+          display: "flex",
+          justifyContent: "start",
+          alignItems: "center",
+          flexWrap: "wrap",
+          // border: "1px solid black",
+          marginTop: "5px",
+          gap: "15px",
+        }}
+      >
+        {users.map((item) => (
+          <Grid
+            sx={{
+              width: "165px",
+              height: "150px",
+              boxShadow: "0px 0px 8px 0px rgba(0, 0, 0, 0.10)",
+              marginBottom: "10px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "white",
+              border: "0.5px solid #BDBDBD",
+              borderRadius: "13px",
+            }}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+            <Grid
+              sx={{
+                // border: "1px solid black",
+                height: "80%",
+                width: "90%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Grid
+                sx={{
+                  width: "51px",
+                  height: "51px",
+                  borderRadius: "9px",
+                  backgroundColor: getBackgroundColor(item.name),
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Image src={item.icon} width={26} height={26} />
+              </Grid>
+              <Typography
+                sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}
+              >
+                {item.name}
+              </Typography>
+              <Typography
+                sx={{
+                  color: "rgba(0, 0, 0, 1)",
+                  fontSize: "24px",
+                  fontWeight: "600",
+                }}
+              >
+                {item.total}
+              </Typography>
+            </Grid>
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+  );
 }
