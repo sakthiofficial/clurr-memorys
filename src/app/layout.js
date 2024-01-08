@@ -147,261 +147,269 @@ export default function RootLayout({ children }) {
     </Grid>
   );
 
+  const localstorage = null;
+
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Box sx={{ display: "flex" }}>
-          <AppBar
-            position="fixed"
-            sx={{
-              width: { sm: `calc(100% - ${drawerWidth}px)` },
-              ml: { sm: `${drawerWidth}px` },
-              backgroundColor: "white",
-              boxShadow: "none",
-              borderBottom: "1px solid lightgrey",
-              height: isLargeScreen ? "89px" : "89px",
-            }}
-          >
-            <Toolbar
+        {localstorage === null ? (
+          <>{children}</>
+        ) : (
+          <Box sx={{ display: "flex" }}>
+            <AppBar
+              position="fixed"
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
+                width: { sm: `calc(100% - ${drawerWidth}px)` },
+                ml: { sm: `${drawerWidth}px` },
+                backgroundColor: "white",
+                boxShadow: "none",
+                borderBottom: "1px solid lightgrey",
                 height: isLargeScreen ? "89px" : "89px",
               }}
             >
-              <IconButton
-                color="black"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { sm: "none" } }}
-              >
-                <MenuIcon />
-              </IconButton>
-              {/* <Grid
+              <Toolbar
                 sx={{
-                  width: "60%",
-                  color: "black",
-                  // borderRight: "1px solid black",
-                  height: "100%",
-                  padding: 0,
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around",
+                  justifyContent: "space-between",
+                  height: isLargeScreen ? "89px" : "89px",
                 }}
               >
-                <FormControl
-                  sx={{
-                    minWidth: 323,
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "10px",
-                      },
-                  }}
-                  size="small"
+                <IconButton
+                  color="black"
+                  aria-label="open drawer"
+                  edge="start"
+                  onClick={handleDrawerToggle}
+                  sx={{ mr: 2, display: { sm: "none" } }}
                 >
-                  <InputLabel
-                    id="demo-select-small-label"
-                    sx={{ color: "#757575", fontSize: "14px" }}
-                  >
-                    choose one project
-                  </InputLabel>
-                  <Select
-                    labelId="demo-select-small-label"
-                    id="demo-select-small"
-                    displayEmpty
-                    value={selectedProject}
-                    label="choose one project"
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={1}>One</MenuItem>
-                    <MenuItem value={2}>Two</MenuItem>
-                    <MenuItem value={3}>Three</MenuItem>
-                  </Select>
-                </FormControl>
-                <TextField
-                  variant="outlined"
-                  id="filled-hidden-label-small"
-                  size="small"
-                  placeholder="contact number"
-                  type="tel"
-                  onChange={handleInputChange}
-                  sx={{
-                    color: "#757575",
-                    fontSize: "14px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "10px",
-                      },
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search
-                          sx={{
-                            padding: "3px",
-                            borderRadius: "10px",
-                            backgroundColor: "#FAB900",
-                            marginRight: "-10px",
-                            cursor: "pointer",
-                            width: "30px",
-                            height: "30px",
-                          }}
-                        />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid> */}
-              <Grid
+                  <MenuIcon />
+                </IconButton>
+                {/* <Grid
+              sx={{
+                width: "60%",
+                color: "black",
+                // borderRight: "1px solid black",
+                height: "100%",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-around",
+              }}
+            >
+              <FormControl
                 sx={{
-                  width: "15%",
-                  color: "black",
-                  // borderRight: "1px solid lightgrey",
-                  // borderLeft: "1px solid lightgrey",
-                  height: "100%",
-                  padding: 0,
-                  display: "flex",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  minWidth: 323,
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                    {
+                      borderRadius: "10px",
+                    },
                 }}
+                size="small"
               >
+                <InputLabel
+                  id="demo-select-small-label"
+                  sx={{ color: "#757575", fontSize: "14px" }}
+                >
+                  choose one project
+                </InputLabel>
+                <Select
+                  labelId="demo-select-small-label"
+                  id="demo-select-small"
+                  displayEmpty
+                  value={selectedProject}
+                  label="choose one project"
+                  onChange={handleChange}
+                >
+                  <MenuItem value={1}>One</MenuItem>
+                  <MenuItem value={2}>Two</MenuItem>
+                  <MenuItem value={3}>Three</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                variant="outlined"
+                id="filled-hidden-label-small"
+                size="small"
+                placeholder="contact number"
+                type="tel"
+                onChange={handleInputChange}
+                sx={{
+                  color: "#757575",
+                  fontSize: "14px",
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                    {
+                      borderRadius: "10px",
+                    },
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Search
+                        sx={{
+                          padding: "3px",
+                          borderRadius: "10px",
+                          backgroundColor: "#FAB900",
+                          marginRight: "-10px",
+                          cursor: "pointer",
+                          width: "30px",
+                          height: "30px",
+                        }}
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid> */}
                 <Grid
                   sx={{
-                    // border: "1px solid black",
+                    width: "15%",
+                    color: "black",
+                    // borderRight: "1px solid lightgrey",
+                    // borderLeft: "1px solid lightgrey",
+                    height: "100%",
+                    padding: 0,
                     display: "flex",
-                    // flexDirection: "column",
+                    justifyContent: "center",
+                    flexDirection: "column",
                     alignItems: "center",
                   }}
                 >
-                  <Typography variant="h6">Hello,</Typography>
-                  <Typography variant="h6">user</Typography>
+                  <Grid
+                    sx={{
+                      // border: "1px solid black",
+                      display: "flex",
+                      // flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="h6">Hello,</Typography>
+                    <Typography variant="h6">user</Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid
-                sx={{
-                  width: "25%",
-                  color: "black",
-                  height: "100%",
-                  padding: 0,
-                  display: "flex",
-                  justifyContent: "end",
-                  alignItems: "center",
-                }}
-              >
                 <Grid
                   sx={{
-                    width: "194px",
-                    heigth: "43px",
-                    border: "1px solid #FAB900",
-                    backgroundColor: "rgba(250, 185, 0, 0.2)",
-                    borderRadius: "50px",
-                    cursor: "pointer",
+                    width: "25%",
+                    color: "black",
+                    height: "100%",
+                    padding: 0,
                     display: "flex",
+                    justifyContent: "end",
                     alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "1px",
                   }}
                 >
-                  <Box sx={{ flexGrow: 0 }}>
-                    <Tooltip title="Open settings">
-                      <IconButton
-                        onClick={handleOpenUserMenu}
-                        sx={{ p: "1px" }}
+                  <Grid
+                    sx={{
+                      width: "194px",
+                      heigth: "43px",
+                      border: "1px solid #FAB900",
+                      backgroundColor: "rgba(250, 185, 0, 0.2)",
+                      borderRadius: "50px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "1px",
+                    }}
+                  >
+                    <Box sx={{ flexGrow: 0 }}>
+                      <Tooltip title="Open settings">
+                        <IconButton
+                          onClick={handleOpenUserMenu}
+                          sx={{ p: "1px" }}
+                        >
+                          <Avatar alt="M" src="/static/images/avatar/2.jpg" />
+                        </IconButton>
+                      </Tooltip>
+                      <Menu
+                        sx={{ marginTop: "30px" }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                          vertical: "top",
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                        disableScrollLock
                       >
-                        <Avatar alt="M" src="/static/images/avatar/2.jpg" />
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                      sx={{ marginTop: "30px" }}
-                      id="menu-appbar"
-                      anchorEl={anchorElUser}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      keepMounted
-                      transformOrigin={{
-                        vertical: "top",
-                      }}
-                      open={Boolean(anchorElUser)}
-                      onClose={handleCloseUserMenu}
-                      disableScrollLock
-                    >
-                      {settings.map((setting) => (
-                        <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                          <Typography textAlign="center">{setting}</Typography>
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                  </Box>
-                  <Typography>Marco jackson</Typography>
-                  <KeyboardArrowDownIcon />
+                        {settings.map((setting) => (
+                          <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                            <Typography textAlign="center">
+                              {setting}
+                            </Typography>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </Box>
+                    <Typography>Marco jackson</Typography>
+                    <KeyboardArrowDownIcon />
+                  </Grid>
                 </Grid>
+              </Toolbar>
+            </AppBar>
+            <Box
+              component="nav"
+              sx={{
+                width: { sm: drawerWidth },
+                flexShrink: { sm: 0 },
+                backgroundColor: "white",
+              }}
+              aria-label="mailbox folders"
+            >
+              <Drawer
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                  keepMounted: true,
+                }}
+                sx={{
+                  display: { xs: "block", sm: "none" },
+                  "& .MuiDrawer-paper": {
+                    boxSizing: "border-box",
+                    width: drawerWidth,
+                  },
+                }}
+              >
+                {drawer}
+              </Drawer>
+              <Drawer
+                variant="permanent"
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  "& .MuiDrawer-paper": {
+                    boxSizing: "border-box",
+                    width: drawerWidth,
+                  },
+                }}
+                open
+              >
+                {drawer}
+              </Drawer>
+            </Box>
+            <Box
+              component="div"
+              sx={{
+                flexGrow: 1,
+                width: { sm: `calc(100% - ${drawerWidth}px)` },
+                backgroundColor: "white",
+              }}
+            >
+              <Toolbar />
+              <Grid
+                sx={{
+                  marginTop: "25px",
+                  padding: "10px",
+                  background: "#FFFCF3",
+                }}
+              >
+                {children}
               </Grid>
-            </Toolbar>
-          </AppBar>
-          <Box
-            component="nav"
-            sx={{
-              width: { sm: drawerWidth },
-              flexShrink: { sm: 0 },
-              backgroundColor: "white",
-            }}
-            aria-label="mailbox folders"
-          >
-            <Drawer
-              variant="temporary"
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-              ModalProps={{
-                keepMounted: true,
-              }}
-              sx={{
-                display: { xs: "block", sm: "none" },
-                "& .MuiDrawer-paper": {
-                  boxSizing: "border-box",
-                  width: drawerWidth,
-                },
-              }}
-            >
-              {drawer}
-            </Drawer>
-            <Drawer
-              variant="permanent"
-              sx={{
-                display: { xs: "none", sm: "block" },
-                "& .MuiDrawer-paper": {
-                  boxSizing: "border-box",
-                  width: drawerWidth,
-                },
-              }}
-              open
-            >
-              {drawer}
-            </Drawer>
+            </Box>
           </Box>
-          <Box
-            component="div"
-            sx={{
-              flexGrow: 1,
-              width: { sm: `calc(100% - ${drawerWidth}px)` },
-              backgroundColor: "white",
-            }}
-          >
-            <Toolbar />
-            <Grid
-              sx={{
-                marginTop: "25px",
-                padding: "10px",
-                background: "#FFFCF3",
-              }}
-            >
-              {children}
-            </Grid>
-          </Box>
-        </Box>
+        )}
       </body>
     </html>
   );
