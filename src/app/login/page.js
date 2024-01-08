@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useAddFormDataMutation } from "../../reduxSlice/apiSlice";
 
 function Page() {
   const theme = useTheme();
@@ -40,6 +41,7 @@ function Page() {
       alert("Form submission failed. Please try again.");
     }
   };
+  useAddFormDataMutation();
 
   return (
     <Box

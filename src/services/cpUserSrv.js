@@ -101,8 +101,9 @@ class CPUserSrv {
   authenticateUser = async ({ name, password }, authenticteToken) => {
     try {
       await this.db();
-      const user = await CpUser.findOne({ name }).lean();
-
+      const user = await CpUser.findOne({
+        $or: [{ name }, { email: name }, { phone: name }],
+      }).lean();
       if (authenticteToken) {
         await Session.deleteOne({
           token: authenticteToken,

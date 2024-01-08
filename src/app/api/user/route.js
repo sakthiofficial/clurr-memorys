@@ -28,6 +28,8 @@ export async function POST(req) {
     const validateQuery = Joi.object({
       name: Joi.string().required(),
       password: Joi.string().required(),
+      phone: Joi.string().required().min(10),
+
       email: Joi.string().required(),
       role: Joi.string().required(),
       projects: checkProjectValidation(bodyData?.role)

@@ -1,6 +1,10 @@
 "use client";
 
 import { Inter } from "next/font/google";
+import PropTypes from "prop-types";
+import { Provider } from "react-redux";
+import { SnackbarProvider } from "notistack";
+import { ThemeProvider } from "@mui/material/styles";
 import "./globals.css";
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
@@ -37,6 +41,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import theme from "../theme";
+import store from "../store";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -150,40 +156,43 @@ export default function RootLayout({ children }) {
   const localstorage = null;
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {localstorage === null ? (
-          <>{children}</>
-        ) : (
-          <Box sx={{ display: "flex" }}>
-            <AppBar
-              position="fixed"
-              sx={{
-                width: { sm: `calc(100% - ${drawerWidth}px)` },
-                ml: { sm: `${drawerWidth}px` },
-                backgroundColor: "white",
-                boxShadow: "none",
-                borderBottom: "1px solid lightgrey",
-                height: isLargeScreen ? "89px" : "89px",
-              }}
-            >
-              <Toolbar
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  height: isLargeScreen ? "89px" : "89px",
-                }}
-              >
-                <IconButton
-                  color="black"
-                  aria-label="open drawer"
-                  edge="start"
-                  onClick={handleDrawerToggle}
-                  sx={{ mr: 2, display: { sm: "none" } }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                {/* <Grid
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider maxSnack={3}>
+          <html lang="en">
+            <body className={inter.className}>
+              {localstorage === null ? (
+                <>{children}</>
+              ) : (
+                <Box sx={{ display: "flex" }}>
+                  <AppBar
+                    position="fixed"
+                    sx={{
+                      width: { sm: `calc(100% - ${drawerWidth}px)` },
+                      ml: { sm: `${drawerWidth}px` },
+                      backgroundColor: "white",
+                      boxShadow: "none",
+                      borderBottom: "1px solid lightgrey",
+                      height: isLargeScreen ? "89px" : "89px",
+                    }}
+                  >
+                    <Toolbar
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        height: isLargeScreen ? "89px" : "89px",
+                      }}
+                    >
+                      <IconButton
+                        color="black"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        sx={{ mr: 2, display: { sm: "none" } }}
+                      >
+                        <MenuIcon />
+                      </IconButton>
+                      {/* <Grid
               sx={{
                 width: "60%",
                 color: "black",
@@ -258,159 +267,168 @@ export default function RootLayout({ children }) {
                 }}
               />
             </Grid> */}
-                <Grid
-                  sx={{
-                    width: "15%",
-                    color: "black",
-                    // borderRight: "1px solid lightgrey",
-                    // borderLeft: "1px solid lightgrey",
-                    height: "100%",
-                    padding: 0,
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      // border: "1px solid black",
-                      display: "flex",
-                      // flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="h6">Hello,</Typography>
-                    <Typography variant="h6">user</Typography>
-                  </Grid>
-                </Grid>
-                <Grid
-                  sx={{
-                    width: "25%",
-                    color: "black",
-                    height: "100%",
-                    padding: 0,
-                    display: "flex",
-                    justifyContent: "end",
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      width: "194px",
-                      heigth: "43px",
-                      border: "1px solid #FAB900",
-                      backgroundColor: "rgba(250, 185, 0, 0.2)",
-                      borderRadius: "50px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1px",
-                    }}
-                  >
-                    <Box sx={{ flexGrow: 0 }}>
-                      <Tooltip title="Open settings">
-                        <IconButton
-                          onClick={handleOpenUserMenu}
-                          sx={{ p: "1px" }}
-                        >
-                          <Avatar alt="M" src="/static/images/avatar/2.jpg" />
-                        </IconButton>
-                      </Tooltip>
-                      <Menu
-                        sx={{ marginTop: "30px" }}
-                        id="menu-appbar"
-                        anchorEl={anchorElUser}
-                        anchorOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
+                      <Grid
+                        sx={{
+                          width: "15%",
+                          color: "black",
+                          // borderRight: "1px solid lightgrey",
+                          // borderLeft: "1px solid lightgrey",
+                          height: "100%",
+                          padding: 0,
+                          display: "flex",
+                          justifyContent: "center",
+                          flexDirection: "column",
+                          alignItems: "center",
                         }}
-                        keepMounted
-                        transformOrigin={{
-                          vertical: "top",
-                        }}
-                        open={Boolean(anchorElUser)}
-                        onClose={handleCloseUserMenu}
-                        disableScrollLock
                       >
-                        {settings.map((setting) => (
-                          <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                            <Typography textAlign="center">
-                              {setting}
-                            </Typography>
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </Box>
-                    <Typography>Marco jackson</Typography>
-                    <KeyboardArrowDownIcon />
-                  </Grid>
-                </Grid>
-              </Toolbar>
-            </AppBar>
-            <Box
-              component="nav"
-              sx={{
-                width: { sm: drawerWidth },
-                flexShrink: { sm: 0 },
-                backgroundColor: "white",
-              }}
-              aria-label="mailbox folders"
-            >
-              <Drawer
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                  keepMounted: true,
-                }}
-                sx={{
-                  display: { xs: "block", sm: "none" },
-                  "& .MuiDrawer-paper": {
-                    boxSizing: "border-box",
-                    width: drawerWidth,
-                  },
-                }}
-              >
-                {drawer}
-              </Drawer>
-              <Drawer
-                variant="permanent"
-                sx={{
-                  display: { xs: "none", sm: "block" },
-                  "& .MuiDrawer-paper": {
-                    boxSizing: "border-box",
-                    width: drawerWidth,
-                  },
-                }}
-                open
-              >
-                {drawer}
-              </Drawer>
-            </Box>
-            <Box
-              component="div"
-              sx={{
-                flexGrow: 1,
-                width: { sm: `calc(100% - ${drawerWidth}px)` },
-                backgroundColor: "white",
-              }}
-            >
-              <Toolbar />
-              <Grid
-                sx={{
-                  marginTop: "25px",
-                  padding: "10px",
-                  background: "#FFFCF3",
-                }}
-              >
-                {children}
-              </Grid>
-            </Box>
-          </Box>
-        )}
-      </body>
-    </html>
+                        <Grid
+                          sx={{
+                            // border: "1px solid black",
+                            display: "flex",
+                            // flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography variant="h6">Hello,</Typography>
+                          <Typography variant="h6">user</Typography>
+                        </Grid>
+                      </Grid>
+                      <Grid
+                        sx={{
+                          width: "25%",
+                          color: "black",
+                          height: "100%",
+                          padding: 0,
+                          display: "flex",
+                          justifyContent: "end",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Grid
+                          sx={{
+                            width: "194px",
+                            heigth: "43px",
+                            border: "1px solid #FAB900",
+                            backgroundColor: "rgba(250, 185, 0, 0.2)",
+                            borderRadius: "50px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "1px",
+                          }}
+                        >
+                          <Box sx={{ flexGrow: 0 }}>
+                            <Tooltip title="Open settings">
+                              <IconButton
+                                onClick={handleOpenUserMenu}
+                                sx={{ p: "1px" }}
+                              >
+                                <Avatar
+                                  alt="M"
+                                  src="/static/images/avatar/2.jpg"
+                                />
+                              </IconButton>
+                            </Tooltip>
+                            <Menu
+                              sx={{ marginTop: "30px" }}
+                              id="menu-appbar"
+                              anchorEl={anchorElUser}
+                              anchorOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                              }}
+                              keepMounted
+                              transformOrigin={{
+                                vertical: "top",
+                              }}
+                              open={Boolean(anchorElUser)}
+                              onClose={handleCloseUserMenu}
+                              disableScrollLock
+                            >
+                              {settings.map((setting) => (
+                                <MenuItem
+                                  key={setting}
+                                  onClick={handleCloseUserMenu}
+                                >
+                                  <Typography textAlign="center">
+                                    {setting}
+                                  </Typography>
+                                </MenuItem>
+                              ))}
+                            </Menu>
+                          </Box>
+                          <Typography>Marco jackson</Typography>
+                          <KeyboardArrowDownIcon />
+                        </Grid>
+                      </Grid>
+                    </Toolbar>
+                  </AppBar>
+                  <Box
+                    component="nav"
+                    sx={{
+                      width: { sm: drawerWidth },
+                      flexShrink: { sm: 0 },
+                      backgroundColor: "white",
+                    }}
+                    aria-label="mailbox folders"
+                  >
+                    <Drawer
+                      variant="temporary"
+                      open={mobileOpen}
+                      onClose={handleDrawerToggle}
+                      ModalProps={{
+                        keepMounted: true,
+                      }}
+                      sx={{
+                        display: { xs: "block", sm: "none" },
+                        "& .MuiDrawer-paper": {
+                          boxSizing: "border-box",
+                          width: drawerWidth,
+                        },
+                      }}
+                    >
+                      {drawer}
+                    </Drawer>
+                    <Drawer
+                      variant="permanent"
+                      sx={{
+                        display: { xs: "none", sm: "block" },
+                        "& .MuiDrawer-paper": {
+                          boxSizing: "border-box",
+                          width: drawerWidth,
+                        },
+                      }}
+                      open
+                    >
+                      {drawer}
+                    </Drawer>
+                  </Box>
+                  <Box
+                    component="div"
+                    sx={{
+                      flexGrow: 1,
+                      width: { sm: `calc(100% - ${drawerWidth}px)` },
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <Toolbar />
+                    <Grid
+                      sx={{
+                        marginTop: "25px",
+                        padding: "10px",
+                        background: "#FFFCF3",
+                      }}
+                    >
+                      {children}
+                    </Grid>
+                  </Box>
+                </Box>
+              )}
+            </body>
+          </html>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }
