@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { ServerResponse } from "http";
 import { Session } from "../../models/session";
 import {
   basicRolePermission,
@@ -10,9 +9,9 @@ import {
   userDataObj,
 } from "../../shared/roleManagement";
 import {
+  ApiResponse,
   RESPONSE_MESSAGE,
-  RESPONSE_MESSAGE_DETAILS,
-  SERVICE_RESPONSE,
+  RESPONSE_STATUS,
 } from "../appConstants";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { CpProject } from "../../models/cpProject";
@@ -39,6 +38,7 @@ class CPUserSrv {
           permissionKeyNames?.userManagement,
         );
       if (!subordinateValidation) {
+        console.log("Providing  user donesnot have role permission");
         return false;
       }
       // Project Validation
@@ -52,6 +52,8 @@ class CPUserSrv {
         if (checkParentValidation) {
           for (let i = 0; i < newUser?.projects.length; i = 1 + i) {
             if (!parentData?.projects.includes(newUser?.projects[i])) {
+              console.log("Given Parent user donesnot have Project permission");
+
               return false;
             }
           }
@@ -65,6 +67,7 @@ class CPUserSrv {
           }).lean();
 
           if (!project) {
+            console.log("Given Project Not Founds");
             return false;
           }
         }
@@ -107,20 +110,20 @@ class CPUserSrv {
       }
 
       if (!user) {
-        return SERVICE_RESPONSE(
+        return new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.UNAUTHORIZED,
-          RESPONSE_MESSAGE_DETAILS?.AUTHENTICATION_FAILED,
           null,
         );
       }
-      const { projects, permissions, subordinateRoles, _id } = user;
+      const { projects, permissions, subordinateRoles, _id, role } = user;
 
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (!passwordMatch) {
-        return SERVICE_RESPONSE(
+        return new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.UNAUTHORIZED,
-          RESPONSE_MESSAGE_DETAILS?.AUTHENTICATION_FAILED,
           null,
         );
       }
@@ -130,18 +133,31 @@ class CPUserSrv {
         userId: user._id,
       });
       sessionData.save();
-      return SERVICE_RESPONSE(
-        RESPONSE_MESSAGE?.OK,
-        RESPONSE_MESSAGE_DETAILS?.AUTHENTICATION_SUCSESS,
-        {
-          token: sessionToken,
-
-          userData: { projects, permissions, subordinateRoles, _id },
-        },
+      const isSuperAdmin = role === roleNames?.superAdmin;
+      const projectDatas = await CpProject.find(
+        isSuperAdmin ? {} : { name: projects },
+        { _id: 0, accessKey: 0, secretKey: 0 },
       );
+
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+        token: sessionToken,
+
+        userData: {
+          projects: projectDatas,
+          permissions,
+          subordinateRoles,
+          _id,
+          name,
+          role,
+        },
+      });
     } catch (error) {
       console.log("While Performing Authentiction Error", error);
-      return error;
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.ERROR,
+        error,
+      );
     }
   };
 
@@ -162,9 +178,9 @@ class CPUserSrv {
             parentUserData,
           ))
         ) {
-          return SERVICE_RESPONSE(
+          return new ApiResponse(
+            RESPONSE_STATUS?.NOTFOUND,
             RESPONSE_MESSAGE?.INVALID,
-            RESPONSE_MESSAGE_DETAILS?.INVALID_PERMISSION,
             null,
           );
         }
@@ -190,41 +206,50 @@ class CPUserSrv {
       }
       const userSch = new CpUser(newUser);
       await userSch.save();
-      return SERVICE_RESPONSE(
-        RESPONSE_MESSAGE?.OK,
-        RESPONSE_MESSAGE_DETAILS?.USERADDED,
-        null,
-      );
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (err) {
       console.log("Error While Adding User", err);
-      return { success: false, message: err };
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.ERROR,
+        err,
+      );
     }
   };
 
   retriveUser = async (providedUser) => {
-    await this.db();
+    try {
+      await this.db();
 
-    let users = await CpUser.find(
-      { role: { $in: providedUser[userDataObj?.subordinateRoles] } },
-      { password: 0 },
-    );
-    if (
-      providedUser[userDataObj?.role] !== roleNames?.superAdmin &&
-      providedUser[userDataObj?.role] !== roleNames?.cpBusinessHead
-    ) {
-      users = users.map((user) => {
-        for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
-          if (
-            providedUser[userDataObj?.projects].includes(
-              user[userDataObj?.projects][i],
-            )
-          ) {
-            return user;
+      let users = await CpUser.find(
+        { role: { $in: providedUser[userDataObj?.subordinateRoles] } },
+        { password: 0 },
+      );
+      if (
+        providedUser[userDataObj?.role] !== roleNames?.superAdmin &&
+        providedUser[userDataObj?.role] !== roleNames?.cpBusinessHead
+      ) {
+        users = users.map((user) => {
+          for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
+            if (
+              providedUser[userDataObj?.projects].includes(
+                user[userDataObj?.projects][i],
+              )
+            ) {
+              return user;
+            }
           }
-        }
-      });
+        });
+      }
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users);
+    } catch (error) {
+      console.log("Error While Adding User", error);
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.ERROR,
+        error,
+      );
     }
-    return SERVICE_RESPONSE(RESPONSE_MESSAGE?.OK, null, users);
   };
 
   removeUser = async (providedUser, removeUserId) => {
@@ -232,7 +257,11 @@ class CPUserSrv {
 
     const removeUserData = await CpUser.findOne({ _id: removeUserId }).lean();
     if (!removeUserData) {
-      return SERVICE_RESPONSE(RESPONSE_MESSAGE?.INVALID, null, null);
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
     }
     if (
       (providedUser[userDataObj?.subordinateRoles] || []).includes(
@@ -243,10 +272,14 @@ class CPUserSrv {
         _id: removeUserData._id,
       }).lean();
       if (deletedCount > 0) {
-        return SERVICE_RESPONSE(RESPONSE_MESSAGE?.OK);
+        return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
       }
     }
-    return SERVICE_RESPONSE(RESPONSE_MESSAGE?.NOTFOUND, null, null);
+    return new ApiResponse(
+      RESPONSE_STATUS?.NOTFOUND,
+      RESPONSE_MESSAGE?.NOTFOUND,
+      null,
+    );
   };
 
   updateUser = async (providedUser, updateUser) => {
@@ -255,7 +288,11 @@ class CPUserSrv {
         _id: updateUser.id,
       }).lean();
       if (!updateUserDbData) {
-        return SERVICE_RESPONSE(RESPONSE_MESSAGE?.INVALID);
+        return new ApiResponse(
+          RESPONSE_STATUS?.NOTFOUND,
+          RESPONSE_MESSAGE?.INVALID,
+          null,
+        );
       }
       let parentUser = providedUser;
       if (
@@ -270,7 +307,11 @@ class CPUserSrv {
         }).lean();
 
         if (!updateUserParentData) {
-          return SERVICE_RESPONSE(RESPONSE_MESSAGE?.INVALID);
+          return new ApiResponse(
+            RESPONSE_STATUS?.NOTFOUND,
+            RESPONSE_MESSAGE?.INVALID,
+            null,
+          );
         }
         parentUser = updateUserParentData;
       }
@@ -284,12 +325,20 @@ class CPUserSrv {
         const update = { $set: updateUser };
         const options = { new: true, useFindAndModify: false };
         await CpUser.findOneAndUpdate(filter, update, options);
-        return SERVICE_RESPONSE(RESPONSE_MESSAGE?.OK);
+        return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
       }
-      return SERVICE_RESPONSE(RESPONSE_MESSAGE?.INVALID);
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
     } catch (error) {
       console.log("Error while updating user", error);
-      return SERVICE_RESPONSE(RESPONSE_MESSAGE?.ERROR, null, error);
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.ERROR,
+        error,
+      );
     }
   };
 }

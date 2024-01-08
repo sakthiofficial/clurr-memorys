@@ -42,29 +42,11 @@ export async function POST(req) {
     }
     const user = new CPUserSrv();
     const srvResponse = await user.authenticateUser(value, userToken);
-    if (srvResponse?.success === RESPONSE_MESSAGE?.OK) {
+    if (srvResponse?.status === RESPONSE_STATUS?.OK) {
       const responseToken = srvResponse?.result?.token;
       cookies().set(TOKEN_VARIABLES?.TOKEN_NAME, responseToken);
-    } else if (srvResponse?.success === RESPONSE_MESSAGE?.EXIST) {
-      return new Response(
-        JSON.stringify(
-          new ApiResponse(
-            RESPONSE_STATUS?.OK,
-            RESPONSE_MESSAGE_DETAILS?.USEREXIST,
-            null,
-          ),
-        ),
-      );
     }
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.OK,
-          RESPONSE_MESSAGE_DETAILS?.AUTHENTICATION_SUCSESS,
-          srvResponse?.result?.userData,
-        ),
-      ),
-    );
+    return new Response(JSON.stringify(srvResponse));
   } catch (err) {
     console.log("error while requesting authentication", err);
     return new Response(
