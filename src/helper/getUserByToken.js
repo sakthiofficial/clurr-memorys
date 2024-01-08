@@ -9,24 +9,15 @@ import {
 } from "../appConstants";
 
 export default async function getUserByToken(request) {
-  try {
-    await initDb();
-    const { value: token } = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
-    const providedUserSessionData = await Session.findOne({
-      token,
-    })
-      .populate("userId")
-      .lean();
-    if (!providedUserSessionData) {
-      return NextResponse.json(
-        new ApiResponse(RESPONSE_STATUS?.NOTFOUND, RESPONSE_MESSAGE?.INVALID),
-      );
-    }
-    return providedUserSessionData.userId;
-  } catch (error) {
-    console.log("Error while fetching data by token", error);
-    return NextResponse.json(
-      new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
-    );
+  await initDb();
+  const { value: token } = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
+  const providedUserSessionData = await Session.findOne({
+    token,
+  })
+    .populate("userId")
+    .lean();
+  if (!providedUserSessionData) {
+    return null;
   }
+  return providedUserSessionData.userId;
 }

@@ -13,7 +13,17 @@ import { roleNames } from "../../../../shared/cpNamings";
 export async function POST(req) {
   try {
     const providedUser = await getUserByToken(req);
-
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
     const bodyData = await req.json();
     const validateQuery = Joi.object({
       name: Joi.string().required(),
@@ -44,15 +54,7 @@ export async function POST(req) {
 
     const user = new CPUserSrv();
     const srvResponse = await user.createUser(providedUser, value);
-    if (srvResponse?.success === RESPONSE_MESSAGE?.INVALID) {
-      console.log(srvResponse);
 
-      return new Response(
-        JSON.stringify(
-          new ApiResponse(RESPONSE_STATUS.ERROR, RESPONSE_MESSAGE?.INVALID),
-        ),
-      );
-    }
     return new Response(JSON.stringify(srvResponse));
   } catch (error) {
     return new Response(
@@ -64,96 +66,108 @@ export async function POST(req) {
 }
 export async function GET(req) {
   const providedUser = await getUserByToken(req);
-
-  const userSrv = new CPUserSrv();
-  const users = await userSrv.retriveUser(providedUser);
-  return new Response(
-    JSON.stringify(
-      new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users?.result),
-    ),
-  );
-}
-export async function DELETE(request) {
-  const providedUser = await getUserByToken(request);
-  const userId = request.nextUrl.searchParams.get("id");
-  if (!userId) {
-    return new Response.Json(
-      new ApiResponse(RESPONSE_STATUS?.NOTFOUND, RESPONSE_MESSAGE?.INVALID),
-    );
-  }
-  const userSrv = new CPUserSrv();
-  const srvResponse = await userSrv.removeUser(providedUser, userId);
-  if (srvResponse?.success === RESPONSE_MESSAGE?.INVALID) {
+  if (!providedUser) {
     return new Response(
       JSON.stringify(
         new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
-          RESPONSE_MESSAGE?.INVALID,
+          RESPONSE_MESSAGE?.UNAUTHORIZED,
+          null,
         ),
       ),
     );
   }
-  if (srvResponse?.success === RESPONSE_MESSAGE?.NOTFOUND) {
+  const userSrv = new CPUserSrv();
+  const srvResponse = await userSrv.retriveUser(providedUser);
+  return new Response(JSON.stringify(srvResponse));
+}
+export async function DELETE(request) {
+  try {
+    const providedUser = await getUserByToken(request);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
+    const userId = request.nextUrl.searchParams.get("id");
+    if (!userId) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.NOTFOUND,
+            RESPONSE_MESSAGE?.INVALID,
+            null,
+          ),
+        ),
+      );
+    }
+    const userSrv = new CPUserSrv();
+    const srvResponse = await userSrv.removeUser(providedUser, userId);
+
+    return new Response(JSON.stringify(srvResponse));
+  } catch (error) {
     return new Response(
       JSON.stringify(
-        new ApiResponse(RESPONSE_STATUS?.NOTFOUND, RESPONSE_MESSAGE?.NOTFOUND),
+        new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
       ),
     );
   }
-
-  return new Response(
-    JSON.stringify(new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK)),
-  );
 }
 export async function PUT(request) {
-  const providedUser = await getUserByToken(request);
-  const bodyData = await request.json();
-  const validateQuery = Joi.object({
-    id: Joi.string().required(),
-    name: Joi.string().required(),
-    email: Joi.string().required(),
-    role: Joi.string().required(),
-    projects: checkProjectValidation(bodyData?.role)
-      ? Joi.array().length(1)
-      : Joi.array(),
-    parentId:
-      roleNames?.superAdmin === bodyData?.role
-        ? Joi.string().allow("")
-        : Joi.string().required(),
-  });
-  const { error, value } = validateQuery.validate(bodyData);
-
-  if (error) {
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.ERROR,
-          RESPONSE_MESSAGE?.INVALID,
-          error,
+  try {
+    const providedUser = await getUserByToken(request);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
+    const bodyData = await request.json();
+    const validateQuery = Joi.object({
+      id: Joi.string().required(),
+      name: Joi.string().required(),
+      email: Joi.string().required(),
+      role: Joi.string().required(),
+      projects: checkProjectValidation(bodyData?.role)
+        ? Joi.array().length(1)
+        : Joi.array(),
+      parentId:
+        roleNames?.superAdmin === bodyData?.role
+          ? Joi.string().allow("")
+          : Joi.string().required(),
+    });
+    const { error, value } = validateQuery.validate(bodyData);
 
-  const user = new CPUserSrv();
-  const srvResponse = await user.updateUser(providedUser, value);
-  if (srvResponse?.success === RESPONSE_MESSAGE?.INVALID) {
-    return new Response(
-      JSON.stringify(new ApiResponse(RESPONSE_STATUS?.UNAUTHORIZED)),
-    );
-  }
-  if (srvResponse?.success === RESPONSE_MESSAGE?.ERROR) {
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.ERROR,
-          RESPONSE_MESSAGE?.ERROR,
-          srvResponse?.result,
+    if (error) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.ERROR,
+            RESPONSE_MESSAGE?.INVALID,
+            error,
+          ),
         ),
-      ),
+      );
+    }
+
+    const user = new CPUserSrv();
+    const srvResponse = await user.updateUser(providedUser, value);
+
+    return new Response(JSON.stringify(srvResponse));
+  } catch (error) {
+    return new Response(
+      JSON.stringify(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
     );
   }
-  return new Response(
-    JSON.stringify(new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK)),
-  );
 }

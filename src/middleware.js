@@ -15,6 +15,7 @@ export function middleware(request) {
         new ApiResponse(RESPONSE_STATUS?.NOTFOUND, RESPONSE_MESSAGE?.INVALID),
       );
     }
+    return NextResponse.next();
   }
 
   // return NextResponse.redirect(new URL("/home", request.url));
