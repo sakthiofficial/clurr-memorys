@@ -10,5 +10,5 @@ export default {
   urlDb: process.env.URL_DB,
   appEnv: process.env.NEXT_PUBLIC_APPENV,
   buildNo: process.env.NEXT_PUBLIC_BUILDID,
-  apiUrl: getDomainFromBrowser()
+  apiUrl: getDomainFromBrowser(),
 };
