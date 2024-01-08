@@ -31,8 +31,6 @@ function Page() {
 
   const router = useRouter();
 
-  useAddFormDataMutation();
-
   const handleSubmit = async () => {
     try {
       // console.log(data);
