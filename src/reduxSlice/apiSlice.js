@@ -9,13 +9,20 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     addFormData: builder.mutation({
       query: (formData) => ({
-        url: "/formData",
+        url: "/user/authenticate",
         method: "POST",
         body: formData,
       }),
       transformResponse: (res) => res.result,
     }),
+    // loginUserData: builder.mutation({
+    //   query: (formData) => ({
+    //     url: "/user/authenticate",
+    //     method: "POST",
+    //     body: formData,
+    //   }),
+    // }),
   }),
 });
 
-export const { useAddFormDataMutation } = apiSlice;
+export const { useAddFormDataMutation, useLoginUserDataMutation } = apiSlice;

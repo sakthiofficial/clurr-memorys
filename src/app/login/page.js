@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useAddFormDataMutation } from "../../reduxSlice/apiSlice";
 
 function Page() {
   const theme = useTheme();
@@ -32,13 +31,15 @@ function Page() {
 
   const router = useRouter();
 
-  const handleSubmit = () => {
-    const isSubmissionSuccessful = true;
+  useAddFormDataMutation();
 
-    if (isSubmissionSuccessful) {
-      router.push("/");
-    } else {
-      alert("Form submission failed. Please try again.");
+  const handleSubmit = async () => {
+    try {
+      // console.log(data);
+      // router.push("/");
+    } catch (error) {
+      console.error("Form submission failed. Please try again.", error);
+      // You can handle errors or display an alert here
     }
   };
   useAddFormDataMutation();
