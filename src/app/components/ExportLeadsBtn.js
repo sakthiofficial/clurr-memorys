@@ -20,7 +20,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedDialogs() {
+export default function ExportsLeadsBtn() {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -90,9 +90,7 @@ export default function CustomizedDialogs() {
             }}
           >
             <DialogTitle id="customized-dialog-title">
-              <Typography variant="h6" sx={{ color: "black" }}>
-                Export leads
-              </Typography>
+              <Typography sx={{ color: "black" }}>Export leads</Typography>
             </DialogTitle>
             <IconButton
               aria-label="close"

@@ -7,22 +7,49 @@ export const apiSlice = createApi({
     baseUrl: `${config.apiUrl}/api`,
   }),
   endpoints: (builder) => ({
-    addFormData: builder.mutation({
-      query: (formData) => ({
-        url: "/user/authenticate",
-        method: "POST",
-        body: formData,
-      }),
-      transformResponse: (res) => res.result,
-    }),
-    // loginUserData: builder.mutation({
+    // addFormData: builder.mutation({
     //   query: (formData) => ({
     //     url: "/user/authenticate",
     //     method: "POST",
     //     body: formData,
     //   }),
+    //   transformResponse: (res) => res.result,
     // }),
+    loginUserData: builder.mutation({
+      query: (formData) => ({
+        url: "/user/authenticate",
+        method: "POST",
+        body: formData,
+      }),
+    }),
+    getUsers: builder.query({
+      query: (formData) => ({
+        url: "/user",
+        method: "GET",
+        body: formData,
+      }),
+    }),
+    deleteUsers: builder.mutation({
+      query: (id) => ({
+        url: `/user/${id}`,
+        method: "DELETE",
+        body: id,
+      }),
+    }),
+    getParents: builder.query({
+      query: (id) => ({
+        url: `/user/parentuser`,
+        method: "POST",
+        body: id,
+      }),
+    }),
   }),
 });
 
-export const { useAddFormDataMutation, useLoginUserDataMutation } = apiSlice;
+export const {
+  useAddFormDataMutation,
+  useLoginUserDataMutation,
+  useGetUsersQuery,
+  useDeleteUsersMutation,
+  useGetParentsQuery,
+} = apiSlice;

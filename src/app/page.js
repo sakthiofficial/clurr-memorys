@@ -68,6 +68,7 @@ export default function Home() {
       >
         {users.map((item) => (
           <Grid
+            key={item.name}
             sx={{
               width: "165px",
               height: "150px",
@@ -102,7 +103,7 @@ export default function Home() {
                   alignItems: "center",
                 }}
               >
-                <Image src={item.icon} width={26} height={26} />
+                <Image alt={item.name} src={item.icon} width={26} height={26} />
               </Grid>
               <Typography
                 sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}

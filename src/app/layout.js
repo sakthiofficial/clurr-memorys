@@ -1,8 +1,11 @@
 "use client";
 
+import { Provider } from "react-redux";
+import { SnackbarProvider } from "notistack";
+import { ThemeProvider } from "@mui/material/styles";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -13,19 +16,15 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import {
   Avatar,
+  Button,
   Grid,
   Menu,
   MenuItem,
+  TextField,
   Tooltip,
   useMediaQuery,
   useTheme,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Search } from "@mui/icons-material";
 import Link from "next/link";
 import Image from "next/image";
 // icons
@@ -37,6 +36,9 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useRouter } from "next/navigation";
+import store from "../store";
+import { useLoginUserDataMutation } from "@/reduxSlice/apiSlice";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,14 +57,154 @@ const sidebarlist = [
   { title: "User Management", url: "usermanagement", icon: PeopleAltIcon },
 ];
 
-export default function RootLayout({ children }) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  // const [activeItem, setActiveItem] = React.useState("");
-
+function Login() {
   const theme = useTheme();
+
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+
+  const [formData, setFormData] = useState({
+    name: "",
+    password: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const router = useRouter();
+
+  const [loginUserData] = useLoginUserDataMutation();
+
+  const handleSubmit = async () => {
+    try {
+      const result = await loginUserData(formData);
+      if (result.data.status === 200) {
+        console.log(result);
+        localStorage.setItem(
+          "user",
+          JSON.stringify(result.data.result.userData),
+        );
+        window.location.href = "/";
+      }
+    } catch (error) {
+      alert("Form submission failed. Please try again.", error);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight:"100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        border: "1px solid black",
+        flexDirection: isLargeScreen ? "row" : "column",
+      }}
+    >
+      {/* <Box
+        sx={{
+          width: isLargeScreen ? "55%" : "100%",
+          height: "100%",
+        }}
+      >
+        hi
+      </Box> */}
+      <Box
+        sx={{
+          width: "50%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: "30px",
+        }}
+      >
+        <Box
+          sx={{
+            height: "15%",
+            width: "250px",
+            border: "1px solid black",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          Image
+        </Box>
+        <Box
+          sx={{
+            height: "40%",
+            width: "90%",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              flexDirection: "column",
+            }}
+          >
+            <Typography>SIGN IN TO CONTINUE</Typography>
+            <Box
+              width={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <TextField
+                sx={{ width: "80%" }}
+                name="name"
+                label="Username / Email / Phone"
+                variant="outlined"
+                onChange={handleInputChange}
+              />
+            </Box>
+            <Box
+              width={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <TextField
+                sx={{ width: "80%" }}
+                name="password"
+                label="Password"
+                type="password"
+                variant="outlined"
+                onChange={handleInputChange}
+              />
+            </Box>
+            <Button
+              sx={{ border: "1px solid black", width: "80%" }}
+              onClick={handleSubmit}
+            >
+              Login
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+export default function RootLayout({ children }) {
+  const theme = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -74,23 +216,6 @@ export default function RootLayout({ children }) {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-  };
-
-  // const handleItemClick = (text) => {
-  //   setActiveItem(text);
-  // };
-
-  const [selectedProject, setSelectedProject] = React.useState("");
-
-  const handleChange = (event) => {
-    setSelectedProject(event.target.value);
-  };
-
-  const handleInputChange = (event) => {
-    let inputValue = event.target.value;
-    inputValue = inputValue.replace(/\D/g, "");
-    inputValue = inputValue.slice(0, 10);
-    event.target.value = inputValue;
   };
 
   const drawer = (
@@ -116,9 +241,9 @@ export default function RootLayout({ children }) {
         >
           <Link href="/">
             <Image
+              priority
               src="/Logo.svg"
               alt="Logo"
-              objectFit="contain"
               width={120}
               height={60}
             />
@@ -129,14 +254,9 @@ export default function RootLayout({ children }) {
         {sidebarlist.map((item) => (
           <Link key={item.title} href={`/${item.url}`}>
             <ListItem disablePadding>
-              <ListItemButton
-              // selected={activeItem === item.title}
-              // onClick={() => handleItemClick(item.title)}
-              // sx={{ backgroundColor: "grey" }}
-              >
-                <ListItemIcon>
+              <ListItemButton>
+                <ListItemIcon alt={item.title}>
                   {React.createElement(item.icon)}
-                  {/* <Image src={item.icon} width={30} height={30} /> */}
                 </ListItemIcon>
                 <ListItemText primary={item.title} />
               </ListItemButton>
@@ -146,271 +266,233 @@ export default function RootLayout({ children }) {
       </List>
     </Grid>
   );
+  const [user, setUser] = useState(null);
 
-  const localstorage = null;
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+
+    if (storedData) {
+      const jsonData = JSON.parse(storedData);
+      setUser(jsonData);
+    } else {
+      setUser(null); // Ensure user is set to null if no data is found
+      console.error('No data found in local storage for key "user".');
+    }
+  }, []);
+  // console.log(user.name)
+
+  const handleMenuClick = (setting) => {
+    if (setting === "Logout") {
+      // Clear user data from local storage
+      localStorage.removeItem("user");
+
+      // Redirect to the login page or perform any other logout-related tasks
+      // For example, you can use router.push("/login") if you are using Next.js
+      // router.push("/login");
+      window.location.href = "/login"; // Alternatively, force a full page reload
+    }
+
+    // Close the user menu
+    handleCloseUserMenu();
+  };
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {localstorage === null ? (
-          <>{children}</>
-        ) : (
-          <Box sx={{ display: "flex" }}>
-            <AppBar
-              position="fixed"
-              sx={{
-                width: { sm: `calc(100% - ${drawerWidth}px)` },
-                ml: { sm: `${drawerWidth}px` },
-                backgroundColor: "white",
-                boxShadow: "none",
-                borderBottom: "1px solid lightgrey",
-                height: isLargeScreen ? "89px" : "89px",
-              }}
-            >
-              <Toolbar
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  height: isLargeScreen ? "89px" : "89px",
-                }}
-              >
-                <IconButton
-                  color="black"
-                  aria-label="open drawer"
-                  edge="start"
-                  onClick={handleDrawerToggle}
-                  sx={{ mr: 2, display: { sm: "none" } }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                {/* <Grid
-              sx={{
-                width: "60%",
-                color: "black",
-                // borderRight: "1px solid black",
-                height: "100%",
-                padding: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-around",
-              }}
-            >
-              <FormControl
-                sx={{
-                  minWidth: 323,
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                    {
-                      borderRadius: "10px",
-                    },
-                }}
-                size="small"
-              >
-                <InputLabel
-                  id="demo-select-small-label"
-                  sx={{ color: "#757575", fontSize: "14px" }}
-                >
-                  choose one project
-                </InputLabel>
-                <Select
-                  labelId="demo-select-small-label"
-                  id="demo-select-small"
-                  displayEmpty
-                  value={selectedProject}
-                  label="choose one project"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                variant="outlined"
-                id="filled-hidden-label-small"
-                size="small"
-                placeholder="contact number"
-                type="tel"
-                onChange={handleInputChange}
-                sx={{
-                  color: "#757575",
-                  fontSize: "14px",
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                    {
-                      borderRadius: "10px",
-                    },
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Search
-                        sx={{
-                          padding: "3px",
-                          borderRadius: "10px",
-                          backgroundColor: "#FAB900",
-                          marginRight: "-10px",
-                          cursor: "pointer",
-                          width: "30px",
-                          height: "30px",
-                        }}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid> */}
-                <Grid
-                  sx={{
-                    width: "15%",
-                    color: "black",
-                    // borderRight: "1px solid lightgrey",
-                    // borderLeft: "1px solid lightgrey",
-                    height: "100%",
-                    padding: 0,
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider maxSnack={3}>
+          <html lang="en">
+            <body className={inter.className}>
+              {user === null ? (
+                <Login />
+              ) : (
+                <Box sx={{ display: "flex" }}>
+                  <AppBar
+                    position="fixed"
                     sx={{
-                      // border: "1px solid black",
-                      display: "flex",
-                      // flexDirection: "column",
-                      alignItems: "center",
+                      width: { sm: `calc(100% - ${drawerWidth}px)` },
+                      ml: { sm: `${drawerWidth}px` },
+                      backgroundColor: "white",
+                      boxShadow: "none",
+                      borderBottom: "1px solid lightgrey",
+                      height: isLargeScreen ? "89px" : "89px",
                     }}
                   >
-                    <Typography variant="h6">Hello,</Typography>
-                    <Typography variant="h6">user</Typography>
-                  </Grid>
-                </Grid>
-                <Grid
-                  sx={{
-                    width: "25%",
-                    color: "black",
-                    height: "100%",
-                    padding: 0,
-                    display: "flex",
-                    justifyContent: "end",
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      width: "194px",
-                      heigth: "43px",
-                      border: "1px solid #FAB900",
-                      backgroundColor: "rgba(250, 185, 0, 0.2)",
-                      borderRadius: "50px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1px",
-                    }}
-                  >
-                    <Box sx={{ flexGrow: 0 }}>
-                      <Tooltip title="Open settings">
-                        <IconButton
-                          onClick={handleOpenUserMenu}
-                          sx={{ p: "1px" }}
-                        >
-                          <Avatar alt="M" src="/static/images/avatar/2.jpg" />
-                        </IconButton>
-                      </Tooltip>
-                      <Menu
-                        sx={{ marginTop: "30px" }}
-                        id="menu-appbar"
-                        anchorEl={anchorElUser}
-                        anchorOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                          vertical: "top",
-                        }}
-                        open={Boolean(anchorElUser)}
-                        onClose={handleCloseUserMenu}
-                        disableScrollLock
+                    <Toolbar
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        height: isLargeScreen ? "89px" : "89px",
+                      }}
+                    >
+                      <IconButton
+                        color="black"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        sx={{ mr: 2, display: { sm: "none" } }}
                       >
-                        {settings.map((setting) => (
-                          <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                            <Typography textAlign="center">
-                              {setting}
-                            </Typography>
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </Box>
-                    <Typography>Marco jackson</Typography>
-                    <KeyboardArrowDownIcon />
-                  </Grid>
-                </Grid>
-              </Toolbar>
-            </AppBar>
-            <Box
-              component="nav"
-              sx={{
-                width: { sm: drawerWidth },
-                flexShrink: { sm: 0 },
-                backgroundColor: "white",
-              }}
-              aria-label="mailbox folders"
-            >
-              <Drawer
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                  keepMounted: true,
-                }}
-                sx={{
-                  display: { xs: "block", sm: "none" },
-                  "& .MuiDrawer-paper": {
-                    boxSizing: "border-box",
-                    width: drawerWidth,
-                  },
-                }}
-              >
-                {drawer}
-              </Drawer>
-              <Drawer
-                variant="permanent"
-                sx={{
-                  display: { xs: "none", sm: "block" },
-                  "& .MuiDrawer-paper": {
-                    boxSizing: "border-box",
-                    width: drawerWidth,
-                  },
-                }}
-                open
-              >
-                {drawer}
-              </Drawer>
-            </Box>
-            <Box
-              component="div"
-              sx={{
-                flexGrow: 1,
-                width: { sm: `calc(100% - ${drawerWidth}px)` },
-                backgroundColor: "white",
-              }}
-            >
-              <Toolbar />
-              <Grid
-                sx={{
-                  marginTop: "25px",
-                  padding: "10px",
-                  background: "#FFFCF3",
-                }}
-              >
-                {children}
-              </Grid>
-            </Box>
-          </Box>
-        )}
-      </body>
-    </html>
+                        <MenuIcon />
+                      </IconButton>
+
+                      <Grid
+                        sx={{
+                          width: "15%",
+                          color: "black",
+                          // borderRight: "1px solid lightgrey",
+                          // borderLeft: "1px solid lightgrey",
+                          height: "100%",
+                          padding: 0,
+                          display: "flex",
+                          justifyContent: "center",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Grid
+                          sx={{
+                            // border: "1px solid black",
+                            display: "flex",
+                            // flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography variant="h6">Hello,</Typography>
+                          <Typography variant="h6">{user.name}</Typography>
+                        </Grid>
+                      </Grid>
+                      <Grid
+                        sx={{
+                          width: "25%",
+                          color: "black",
+                          height: "100%",
+                          padding: 0,
+                          display: "flex",
+                          justifyContent: "end",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Grid
+                          sx={{
+                            width: "194px",
+                            heigth: "43px",
+                            border: "1px solid #FAB900",
+                            backgroundColor: "rgba(250, 185, 0, 0.2)",
+                            borderRadius: "50px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "1px",
+                          }}
+                        >
+                          <Box sx={{ flexGrow: 0 }}>
+                            <Tooltip title="Open settings">
+                              <IconButton
+                                onClick={handleOpenUserMenu}
+                                sx={{ p: "1px" }}
+                              >
+                                <Avatar alt="M" src="" />
+                              </IconButton>
+                            </Tooltip>
+                            <Menu
+                              sx={{ marginTop: "30px" }}
+                              id="menu-appbar"
+                              anchorEl={anchorElUser}
+                              anchorOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                              }}
+                              keepMounted
+                              transformOrigin={{
+                                vertical: "top",
+                              }}
+                              open={Boolean(anchorElUser)}
+                              onClose={handleCloseUserMenu}
+                              disableScrollLock
+                            >
+                              {settings.map((setting) => (
+                                <MenuItem
+                                  key={setting}
+                                  onClick={() => handleMenuClick(setting)}
+                                >
+                                  <Typography textAlign="center">
+                                    {setting}
+                                  </Typography>
+                                </MenuItem>
+                              ))}
+                            </Menu>
+                          </Box>
+                          <Typography>{user.name}</Typography>
+                          <KeyboardArrowDownIcon />
+                        </Grid>
+                      </Grid>
+                    </Toolbar>
+                  </AppBar>
+                  <Box
+                    component="nav"
+                    sx={{
+                      width: { sm: drawerWidth },
+                      flexShrink: { sm: 0 },
+                      backgroundColor: "white",
+                    }}
+                    aria-label="mailbox folders"
+                  >
+                    <Drawer
+                      variant="temporary"
+                      open={mobileOpen}
+                      onClose={handleDrawerToggle}
+                      ModalProps={{
+                        keepMounted: true,
+                      }}
+                      sx={{
+                        display: { xs: "block", sm: "none" },
+                        "& .MuiDrawer-paper": {
+                          boxSizing: "border-box",
+                          width: drawerWidth,
+                        },
+                      }}
+                    >
+                      {drawer}
+                    </Drawer>
+                    <Drawer
+                      variant="permanent"
+                      sx={{
+                        display: { xs: "none", sm: "block" },
+                        "& .MuiDrawer-paper": {
+                          boxSizing: "border-box",
+                          width: drawerWidth,
+                        },
+                      }}
+                      open
+                    >
+                      {drawer}
+                    </Drawer>
+                  </Box>
+                  <Box
+                    component="div"
+                    sx={{
+                      flexGrow: 1,
+                      width: { sm: `calc(100% - ${drawerWidth}px)` },
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <Toolbar />
+                    <Grid
+                      sx={{
+                        marginTop: "25px",
+                        padding: "10px",
+                        background: "#FFFCF3",
+                      }}
+                    >
+                      {children}
+                    </Grid>
+                  </Box>
+                </Box>
+              )}
+            </body>
+          </html>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }

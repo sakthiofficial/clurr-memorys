@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -20,158 +20,76 @@ import { Search } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
 // icons
-import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
-import RegisterLeads from "../../../public/LeadsCard/registerLeads.svg";
-import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
-import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
-import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
-import Booked from "../../../public/LeadsCard/bookLeads.svg";
+import SuperAdmin from "../../../public/UserCard/SuperAdmin.svg";
+import Admin from "../../../public/UserCard/Admin.svg";
+import CPHead from "../../../public/UserCard/CPHead.svg";
+import CPLead from "../../../public/UserCard/CPLead.svg";
+import CPManager from "../../../public/UserCard/CPManager.svg";
+import ChanelPartner from "../../../public/UserCard/ChanelPartner.svg";
+import {
+  useDeleteUsersMutation,
+  useGetUsersQuery,
+} from "@/reduxSlice/apiSlice";
 
 // card details
 const users = [
-  { name: "Super Admin", icon: TotalLeads, total: "123" },
-  { name: "Admin", icon: RegisterLeads, total: "123" },
-  { name: "Warm Leads", icon: WarmLeads, total: "123" },
-  { name: "Site Visit Scheduled", icon: SiteVisit, total: "123" },
-  { name: "Site Visit Done Leads", icon: SiteVisitDone, total: "123" },
-  { name: "Booked Leads", icon: Booked, total: "123" },
+  { name: "Super Admin", icon: SuperAdmin, total: "123" },
+  { name: "Admin", icon: Admin, total: "123" },
+  { name: "CP Head", icon: CPHead, total: "123" },
+  { name: "CP Lead", icon: CPLead, total: "123" },
+  { name: "CP Manager", icon: CPManager, total: "123" },
+  { name: "Channel Partner", icon: ChanelPartner, total: "123" },
 ];
 
 export default function Page() {
   // card background change
   const getBackgroundColor = (name) => {
     switch (name) {
-      case "Warm Leads":
+      case "CP Head":
         return "rgba(255, 92, 0, 0.08)";
-      case "Site Visit Scheduled":
+      case "CP Lead":
         return "rgba(205, 172, 0, 0.08)";
-      case "Site Visit Done Leads":
+      case "CP Manager":
         return "rgba(219, 0, 255, 0.08)";
+      case "Channel Partner":
+        return "rgba(0, 173, 17, 0.08)";
       default:
         return "rgba(0, 133, 255, 0.08)";
     }
   };
 
   // table details
-  const rows = [
-    {
-      id: "1",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan",
-    },
-    {
-      id: "2",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "3",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "4",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "5",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "6",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "7",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "8",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "9",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "10",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-  ];
+  const { data, isLoading, isError, error } = useGetUsersQuery();
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const slicedRows =
+  //   data && data.result
+  //     ? data.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  //     : [];
 
-  const slicedRows = rows.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage,
-  );
+  useEffect(() => {
+    if (isLoading) {
+      console.log("Loading...");
+    } else if (isError) {
+      console.error("Error:", error);
+    } else if (data) {
+      console.log("Query completed:", data.result);
+    }
+  }, [data, isLoading, isError, error]);
+
+  // const [deleteUserId, setDeleteUserId] = useState("");
+
+  //  useDeleteUsersMutation(deleteUserId);
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -240,6 +158,7 @@ export default function Page() {
       >
         {users.map((item) => (
           <Grid
+            key={item.name}
             sx={{
               width: "165px",
               height: "150px",
@@ -274,7 +193,7 @@ export default function Page() {
                   alignItems: "center",
                 }}
               >
-                <Image src={item.icon} width={26} height={26} />
+                <Image alt={item.name} src={item.icon} width={26} height={26} />
               </Grid>
               <Typography
                 sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}
@@ -360,65 +279,85 @@ export default function Page() {
                 <TableCell>Name</TableCell>
                 <TableCell>Contact</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Project</TableCell>
                 <TableCell>Role</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {slicedRows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.contact}</TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.project}</TableCell>
-                  <TableCell>
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Link href="/usermanagement/edit">
-                        <Button
-                          sx={{
-                            borderRadius: "10px",
-                            color: "black",
-                            width: "58px",
-                            height: "28px",
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            "&:hover": {
-                              backgroundColor: "rgba(249, 184, 0, 1)",
-                              boxShadow: "none",
+              {data &&
+                data.result &&
+                data.result.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      {row.projects && row.projects.length > 0
+                        ? row.projects.join(", ")
+                        : "No projects"}
+                    </TableCell>
+                    <TableCell>{row.role}</TableCell>
+                    <TableCell>
+                      <Grid
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Link
+                          href={{
+                            pathname: "/usermanagement/edit",
+                            query: {
+                              name: row.name,
+                              phone: row.phone,
+                              email: row.email,
+                              projects: row.projects,
+                              role: row.role,
                             },
                           }}
                         >
-                          edit
+                          <Button
+                            sx={{
+                              borderRadius: "10px",
+                              color: "black",
+                              width: "58px",
+                              height: "28px",
+                              backgroundColor: "rgba(249, 184, 0, 1)",
+                              "&:hover": {
+                                backgroundColor: "rgba(249, 184, 0, 1)",
+                                boxShadow: "none",
+                              },
+                            }}
+                          >
+                            edit
+                          </Button>
+                        </Link>
+                        <Button
+                          sx={{
+                            border: "1px solid red",
+                            borderRadius: "10px",
+                            color: "red",
+                            marginLeft: "5px",
+                            width: "58px",
+                            height: "28px",
+                            "&:hover": {
+                              backgroundColor: "transparent",
+                              boxShadow: "none",
+                            },
+                          }}
+                          // onClick={() => setDeleteUserId(row.id)}
+                        >
+                          Delete
                         </Button>
-                      </Link>
-                      <Button
-                        sx={{
-                          border: "1px solid red",
-                          borderRadius: "10px",
-                          color: "red",
-                          marginLeft: "5px",
-                          width: "58px",
-                          height: "28px",
-                          "&:hover": {
-                            backgroundColor: "transparent",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      </Grid>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
-          <TablePagination
+          {/* <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={rows.length}
@@ -427,7 +366,7 @@ export default function Page() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             sx={{ backgroundColor: "white" }}
-          />
+          /> */}
         </TableContainer>
       </Grid>
     </Grid>

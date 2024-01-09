@@ -54,15 +54,18 @@ function NivoBump() {
   function MyResponsiveBump({ data, colorScheme }) {
     // Calculate the maximum value in the dataset to determine the upper limit for tick values
     const maxDataValue = Math.max(
-      ...data.flatMap((serie) => serie.data.map((point) => point.y))
+      ...data.flatMap((serie) => serie.data.map((point) => point.y)),
     );
-  
+
     // Determine the upper limit for tick values (rounded up to the nearest multiple of 500)
     const upperLimit = Math.ceil(maxDataValue / 500) * 500;
-  
+
     // Generate an array of tick values starting from 0 up to the upper limit at intervals of 500
-    const tickValues = Array.from({ length: (upperLimit / 500) + 1 }, (_, index) => index * 500);
-  
+    const tickValues = Array.from(
+      { length: upperLimit / 500 + 1 },
+      (_, index) => index * 500,
+    );
+
     return (
       <ResponsiveBump
         data={data}
@@ -104,8 +107,6 @@ function NivoBump() {
       />
     );
   }
-  
-  
 
   const formatSelectOptions = ({ value, label, colors }) => (
     <div style={{ display: "flex" }}>

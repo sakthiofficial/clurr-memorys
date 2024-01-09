@@ -10,15 +10,15 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useAddFormDataMutation } from "@/reduxSlice/apiSlice";
+import { useLoginUserDataMutation } from "@/reduxSlice/apiSlice";
 
-function Page() {
+export default function Page() {
   const theme = useTheme();
 
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const [formData, setFormData] = useState({
-    usernameOrEmailOrPhone: "",
+    name: "",
     password: "",
   });
 
@@ -32,15 +32,21 @@ function Page() {
 
   const router = useRouter();
 
-  useAddFormDataMutation();
+  const [loginUserData] = useLoginUserDataMutation();
 
   const handleSubmit = async () => {
     try {
-      // console.log(data);
-      // router.push("/");
+      const result = await loginUserData(formData);
+      if (result.data.status === 200) {
+        console.log(result);
+        localStorage.setItem(
+          "user",
+          JSON.stringify(result.data.result.userData),
+        );
+        // router.push("/");
+      }
     } catch (error) {
-      console.error("Form submission failed. Please try again.", error);
-      // You can handle errors or display an alert here
+      alert("Form submission failed. Please try again.", error);
     }
   };
 
@@ -112,7 +118,7 @@ function Page() {
             >
               <TextField
                 sx={{ width: "80%" }}
-                name="usernameOrEmailOrPhone"
+                name="name"
                 label="Username / Email / Phone"
                 variant="outlined"
                 onChange={handleInputChange}
@@ -146,5 +152,3 @@ function Page() {
     </Box>
   );
 }
-
-export default Page;

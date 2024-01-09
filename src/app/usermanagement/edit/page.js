@@ -1,23 +1,48 @@
 "use client";
 
-import { Button, Grid, Typography, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Grid,
+  Typography,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+  OutlinedInput,
+} from "@mui/material";
 import Link from "next/link";
-import * as React from "react";
 
-export default function page() {
-  const [formData, setFormData] = React.useState({
-    username: "",
-    email: "",
-    phone: "",
+export default function Page({ searchParams }) {
+  const [formData, setFormData] = useState({
+    username: searchParams.name || "",
+    email: searchParams.email || "",
+    phone: searchParams.phone || "",
     password: "",
-    role: "",
-    status: "",
   });
+
+  const [selectedValues, setSelectedValues] = useState({
+    project: searchParams.projects || [],
+    role: searchParams.role || "",
+    parent: "",
+  });
+
+  const [personName, setPersonName] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleChange = (name, value) => {
+    setSelectedValues((prevValues) => ({
+      ...prevValues,
       [name]: value,
     }));
   };
@@ -29,30 +54,62 @@ export default function page() {
       (value) => value.trim() === "",
     );
 
-    if (isAnyFieldEmpty) {
+    if (
+      isAnyFieldEmpty ||
+      Object.values(selectedValues).some((value) => value === "")
+    ) {
       alert("Please fill in all fields before submitting.");
     } else {
-      console.log("Form submitted with data:", formData);
+      const formDataArray = Object.values(formData);
+      const selectedValuesArray = Object.values(selectedValues);
+      const allDataArray = [...formDataArray, ...selectedValuesArray];
 
-      setFormData({
-        username: "",
-        email: "",
-        phone: "",
-        password: "",
-        role: "",
-        status: "",
-        parent: "",
-        // ...
-      });
+      console.log("Form submitted with data:", allDataArray);
     }
+  };
+
+  const parentOptions = ["ParentOne", "ParentTwo", "ParentThree"];
+
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+
+    if (storedData) {
+      const jsonData = JSON.parse(storedData);
+
+      setUserData(jsonData);
+    } else {
+      console.error('No data found in local storage for key "user".');
+    }
+  }, []);
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
+  const LoginUserName = userData.name;
+  const LoginUserRoles = userData.role;
+  const SubordinateRoles = userData.subordinateRoles;
+  const SubordinateProjects = userData.projects;
+
+  const handleChangeProject = (event) => {
+    const {
+      target: { value },
+    } = event;
+
+    // Ensure value is an array
+    const updatedProjects = Array.isArray(value) ? value : [value];
+
+    setPersonName(updatedProjects);
+    handleChange("project", updatedProjects);
   };
 
   return (
     <Grid sx={{ minHeight: "100vh" }}>
       <Grid
         sx={{
-          height: "10vh",
-          // border: "1px solid black",
+          height: "5vh",
           display: "flex",
           alignItems: "center",
           marginBottom: "20px",
@@ -85,6 +142,7 @@ export default function page() {
           borderRadius: "29px",
           boxShadow: " 0px 6px 32px 0px rgba(0, 0, 0, 0.15)",
           border: "1px solid #9E9E9E",
+          width: "100%",
         }}
       >
         <Grid
@@ -95,20 +153,24 @@ export default function page() {
             borderRadius: "29px 29px 0px 0px",
             display: "flex",
             alignItems: "center",
-            // justifyContent: "center",
           }}
         >
           <Typography
             sx={{ fontSize: "18px", fontWeight: "600", padding: "20px" }}
           >
-            Edit user
+            Edit User - {LoginUserName} - {LoginUserRoles}
           </Typography>
         </Grid>
-        <Grid sx={{ display: "flex", justifyContent: "center" }}>
+        <Grid
+          sx={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <Grid
             sx={{
-              // border: "1px solid red",
-              width: "1000px",
+              width: "100%",
+              minHeight: "500px",
             }}
           >
             <form
@@ -123,7 +185,6 @@ export default function page() {
             >
               <Grid
                 sx={{
-                  // border: "1px solid black",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-around",
@@ -135,14 +196,16 @@ export default function page() {
                 <TextField
                   label="Username"
                   name="username"
-                  tyoe="text"
+                  type="text"
                   value={formData.username}
                   onChange={handleInputChange}
                   sx={{
-                    width: "389px",
+                    width: "397px",
                     color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
                   }}
                 />
                 <TextField
@@ -152,24 +215,24 @@ export default function page() {
                   value={formData.email}
                   onChange={handleInputChange}
                   sx={{
-                    width: "389px",
+                    width: "397px",
                     color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
                   }}
                 />
               </Grid>
 
               <Grid
                 sx={{
-                  // border: "1px solid black",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-around",
                   flexWrap: "wrap",
                   marginBottom: "40px",
                   width: "80%",
-                  // height:"150px"
                 }}
               >
                 <TextField
@@ -179,10 +242,12 @@ export default function page() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   sx={{
-                    width: "389px",
+                    width: "397px",
                     color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
                   }}
                 />
                 <TextField
@@ -192,10 +257,12 @@ export default function page() {
                   value={formData.password}
                   onChange={handleInputChange}
                   sx={{
-                    width: "389px",
+                    width: "397px",
                     color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
                   }}
                 />
               </Grid>
@@ -208,35 +275,80 @@ export default function page() {
                   flexWrap: "wrap",
                   width: "80%",
                   marginBottom: "40px",
-                  // height:"150px"
                 }}
               >
-                <TextField
-                  label="role"
-                  name="role"
-                  type="text"
-                  value={formData.role}
-                  onChange={handleInputChange}
+                <FormControl
                   sx={{
-                    width: "389px",
-                    color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
+                    minWidth: "397px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
                   }}
-                />
-                <TextField
-                  label="status"
-                  name="status"
-                  type="text"
-                  value={formData.status}
-                  onChange={handleInputChange}
+                >
+                  <InputLabel id="demo-multiple-checkbox-label">
+                    select project
+                  </InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={
+                      Array.isArray(selectedValues.project)
+                        ? selectedValues.project
+                        : [selectedValues.project]
+                    }
+                    onChange={handleChangeProject}
+                    input={<OutlinedInput label="select project" />}
+                    renderValue={(selected) => selected.join(", ")}
+                    MenuProps={{ disableScrollLock: true }}
+                  >
+                    {SubordinateProjects.map((p) => (
+                      <MenuItem key={p.name} value={p.name}>
+                        <Checkbox
+                          checked={selectedValues.project.indexOf(p.name) > -1}
+                        />
+                        <ListItemText primary={p.name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl
                   sx={{
-                    width: "389px",
-                    color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
+                    minWidth: "397px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
                   }}
-                />
+                >
+                  <InputLabel
+                    id="role-label"
+                    sx={{ color: "#757575", fontSize: "14px" }}
+                  >
+                    Choose one role
+                  </InputLabel>
+                  <Select
+                    labelId="role-label"
+                    id="role"
+                    displayEmpty
+                    value={selectedValues.role}
+                    label="Choose one role"
+                    onChange={(e) => handleChange("role", e.target.value)}
+                    MenuProps={{ disableScrollLock: true }}
+                  >
+                    {selectedValues.project.length === 0 && (
+                      <MenuItem value="" disabled>
+                        No Project
+                      </MenuItem>
+                    )}
+                    {SubordinateRoles.map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid
                 sx={{
@@ -245,22 +357,39 @@ export default function page() {
                   justifyContent: "space-around",
                   flexWrap: "wrap",
                   width: "80%",
-                  // height:"150px"
                 }}
               >
-                <TextField
-                  label="parent"
-                  name="parent"
-                  type="text"
-                  value={formData.parent}
-                  onChange={handleInputChange}
+                <FormControl
                   sx={{
-                    width: "389px",
-                    color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
+                    minWidth: "397px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
                   }}
-                />
+                >
+                  <InputLabel
+                    id="parent-label"
+                    sx={{ color: "#757575", fontSize: "14px" }}
+                  >
+                    Choose one parent
+                  </InputLabel>
+                  <Select
+                    labelId="parent-label"
+                    id="parent"
+                    displayEmpty
+                    value={selectedValues.parent}
+                    label="Choose one parent"
+                    onChange={(e) => handleChange("parent", e.target.value)}
+                    MenuProps={{ disableScrollLock: true }}
+                  >
+                    {parentOptions.map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid sx={{ marginTop: "40px" }}>
@@ -269,6 +398,7 @@ export default function page() {
                   variant="contained"
                   color="primary"
                   sx={{
+                    marginLeft: "20px",
                     width: "145px",
                     backgroundColor: "#F9B800",
                     color: "black",
@@ -282,7 +412,7 @@ export default function page() {
                     },
                   }}
                 >
-                  Update
+                  Submit
                 </Button>
               </Grid>
             </form>
