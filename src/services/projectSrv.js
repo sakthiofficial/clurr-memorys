@@ -1,53 +1,44 @@
 import {
+  ApiResponse,
   RESPONSE_MESSAGE,
-  RESPONSE_MESSAGE_DETAILS,
-  SERVICE_RESPONSE,
+  RESPONSE_STATUS,
 } from "../appConstants";
-import { Session } from "../../models/session";
-import { permissionKeyNames } from "../../shared/cpNamings";
+import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
+import { userDataObj } from "../../shared/roleManagement";
 
 const { CpProject } = require("../../models/cpProject");
 
 class ProjectSrv {
-  createProject = async (token, project) => {
+  createProject = async (providedUser, project) => {
     try {
-      const providedUserSessionData = await Session.findOne({
-        token,
-      }).populate("userId");
-      if (!providedUserSessionData) {
-        return SERVICE_RESPONSE(
-          RESPONSE_MESSAGE?.INVALID,
-          RESPONSE_MESSAGE_DETAILS?.INVALID_PERMISSION,
-          null,
-        );
-      }
-      const { userId: providedUser } = providedUserSessionData;
+      const isPriorityProvider =
+        providedUser[userDataObj?.role] === roleNames?.superAdmin ||
+        providedUser[userDataObj?.role] === roleNames?.cpBusinessHead;
       if (
+        !isPriorityProvider &&
         !(providedUser?.permissions || []).includes(
           permissionKeyNames?.projectManagement,
         )
       ) {
-        return SERVICE_RESPONSE(
+        return new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.INVALID,
-          RESPONSE_MESSAGE_DETAILS?.INVALID_PERMISSION,
           null,
         );
       }
       const projectObj = new CpProject(project);
-      projectObj.save();
-      return SERVICE_RESPONSE(
-        RESPONSE_MESSAGE?.OK,
-        RESPONSE_MESSAGE_DETAILS?.PROJECTADDED,
-        null,
-      );
+      await projectObj.save();
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (error) {
       console.log("While Saving Project Data Error", error);
-      return SERVICE_RESPONSE(
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        RESPONSE_MESSAGE_DETAILS?.ERROR,
         error,
       );
     }
   };
+
+  retriveProject = async (providedUser) => {};
 }
 export default ProjectSrv;

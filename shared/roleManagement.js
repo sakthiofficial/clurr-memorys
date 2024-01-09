@@ -9,6 +9,7 @@ function basicRolePermission(role) {
         permissionKeyNames?.leadViewWithNumber,
         permissionKeyNames?.projectManagement,
         permissionKeyNames?.userManagement,
+        permissionKeyNames?.leadManagement,
       ];
     case roleNames?.cpBusinessHead:
       return [
@@ -16,60 +17,32 @@ function basicRolePermission(role) {
         permissionKeyNames?.leadViewWithNumber,
         permissionKeyNames?.projectManagement,
         permissionKeyNames?.userManagement,
+        permissionKeyNames?.leadManagement,
+        permissionKeyNames?.activityHistory,
       ];
     case roleNames?.admin:
       return [
-        permissionKeyNames?.activityHistory,
         permissionKeyNames?.cpManagement,
         permissionKeyNames?.leadViewWithNumber,
-        permissionKeyNames?.projectManagement,
-        permissionKeyNames?.userManagement,
       ];
     case roleNames?.mis:
       return [
-        permissionKeyNames?.cpManagement,
+        permissionKeyNames?.userManagement,
+
         permissionKeyNames?.leadOnlyView,
-        permissionKeyNames?.projectManagement,
-        permissionKeyNames?.userManagement,
-      ];
-    case roleNames?.cpHead:
-      return [
         permissionKeyNames?.cpManagement,
-        permissionKeyNames?.leadViewWithNumber,
-        permissionKeyNames?.projectManagement,
-        permissionKeyNames?.userManagement,
       ];
 
     case roleNames?.cpTl:
-      return [
-        permissionKeyNames?.cpManagement,
-        permissionKeyNames?.leadViewWithNumber,
-        permissionKeyNames?.projectManagement,
-        permissionKeyNames?.userManagement,
-      ];
+      return [permissionKeyNames?.leadViewWithNumber];
 
     case roleNames?.cpRm:
-      return [
-        permissionKeyNames?.cpManagement,
-        permissionKeyNames?.leadViewWithNumber,
-        permissionKeyNames?.projectManagement,
-        permissionKeyNames?.userManagement,
-      ];
-
-    case roleNames?.cpComBusinessHead:
-      return [
-        permissionKeyNames?.cpManagement,
-        permissionKeyNames?.leadViewWithNumber,
-        permissionKeyNames?.projectManagement,
-        permissionKeyNames?.userManagement,
-      ];
+      return [permissionKeyNames?.leadViewWithNumber];
 
     case roleNames?.cpExecute:
       return [
-        permissionKeyNames?.cpManagement,
         permissionKeyNames?.leadViewWithNumber,
-        permissionKeyNames?.projectManagement,
-        permissionKeyNames?.userManagement,
+        permissionKeyNames?.leadManagement,
       ];
 
     default:
@@ -85,12 +58,9 @@ function roleSubordinates(userRole) {
         roleNames?.admin,
         roleNames?.mis,
         roleNames?.cpBusinessHead,
-        roleNames?.cpHead,
 
         roleNames?.cpTl,
         roleNames?.cpRm,
-        roleNames?.cpComBusinessHead,
-        roleNames?.cpExecute,
       ],
     },
     {
@@ -98,41 +68,20 @@ function roleSubordinates(userRole) {
       subordinates: [
         roleNames?.admin,
         roleNames?.mis,
-        roleNames?.cpHead,
         roleNames?.cpTl,
         roleNames?.cpRm,
-        roleNames?.cpComBusinessHead,
-        roleNames?.cpExecute,
       ],
     },
     {
       role: roleNames?.admin,
-      subordinates: [
-        roleNames?.cpHead,
-        roleNames?.cpTl,
-        roleNames?.cpRm,
-        roleNames?.cpComBusinessHead,
-        roleNames?.cpExecute,
-      ],
+      subordinates: [roleNames?.cpTl, roleNames?.cpRm],
     },
     {
       role: roleNames?.mis,
-      subordinates: [
-        roleNames?.cpHead,
-        roleNames?.cpTl,
-        roleNames?.cpRm,
-        roleNames?.cpComBusinessHead,
-        roleNames?.cpExecute,
-      ],
+      subordinates: [roleNames?.cpTl, roleNames?.cpRm],
     },
   ];
-  const cpRoleHierarchy = [
-    roleNames?.cpHead,
-    roleNames?.cpTl,
-    roleNames?.cpRm,
-    roleNames?.cpComBusinessHead,
-    roleNames?.cpExecute,
-  ];
+  const cpRoleHierarchy = [roleNames?.cpRm];
   let roleHierarchyArr = [];
 
   if (
@@ -168,7 +117,7 @@ function parentRole(userRole) {
   }
   const roleHierarchyArr = [
     roleNames?.superAdmin,
-    roleNames?.cpHead,
+    roleNames?.cpBusinessHead,
     roleNames?.cpHead,
     roleNames?.cpTl,
     roleNames?.cpRm,
@@ -186,7 +135,8 @@ function checkProjectValidation(role) {
   if (
     role === roleNames?.superAdmin ||
     role === roleNames?.cpBusinessHead ||
-    role === roleNames?.cpHead
+    role === roleNames?.mis ||
+    role === roleNames?.admin
   ) {
     return false;
   }
@@ -208,6 +158,7 @@ const userDataObj = {
   subordinateRoles: "subordinateRoles",
   role: "role",
   projects: "projects",
+  permissions: "permissions",
 };
 export {
   basicRolePermission,

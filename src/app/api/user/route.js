@@ -10,6 +10,76 @@ import { checkProjectValidation } from "../../../../shared/roleManagement";
 import getUserByToken from "../../../helper/getUserByToken";
 import { roleNames } from "../../../../shared/cpNamings";
 
+export async function GET(req) {
+  const providedUser = await getUserByToken(req);
+  if (!providedUser) {
+    return new Response(
+      JSON.stringify(
+        new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
+          RESPONSE_MESSAGE?.UNAUTHORIZED,
+          null,
+        ),
+      ),
+    );
+  }
+  const userSrv = new CPUserSrv();
+  const srvResponse = await userSrv.retriveUser(providedUser);
+  return new Response(JSON.stringify(srvResponse));
+}
+export async function PUT(request) {
+  try {
+    const providedUser = await getUserByToken(request);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
+    const bodyData = await request.json();
+    const validateQuery = Joi.object({
+      id: Joi.string().required(),
+      name: Joi.string().required(),
+      email: Joi.string().required(),
+      role: Joi.string().required(),
+      projects: checkProjectValidation(bodyData?.role)
+        ? Joi.array().length(1)
+        : Joi.array(),
+      phone: Joi.string().required(),
+      parentId:
+        roleNames?.superAdmin === bodyData?.role
+          ? Joi.string().allow("")
+          : Joi.string().required(),
+    });
+    const { error, value } = validateQuery.validate(bodyData);
+
+    if (error) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.ERROR,
+            RESPONSE_MESSAGE?.INVALID,
+            error,
+          ),
+        ),
+      );
+    }
+
+    const user = new CPUserSrv();
+    const srvResponse = await user.updateUser(providedUser, value);
+
+    return new Response(JSON.stringify(srvResponse));
+  } catch (error) {
+    return new Response(
+      JSON.stringify(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
+    );
+  }
+}
 export async function POST(req) {
   try {
     const providedUser = await getUserByToken(req);
@@ -33,6 +103,7 @@ export async function POST(req) {
       projects: checkProjectValidation(bodyData?.role)
         ? Joi.array().length(1)
         : Joi.array(),
+      phone: Joi.string().min(10),
       parentId:
         roleNames?.superAdmin === bodyData?.role
           ? Joi.string().allow("")
@@ -63,23 +134,6 @@ export async function POST(req) {
       ),
     );
   }
-}
-export async function GET(req) {
-  const providedUser = await getUserByToken(req);
-  if (!providedUser) {
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.UNAUTHORIZED,
-          RESPONSE_MESSAGE?.UNAUTHORIZED,
-          null,
-        ),
-      ),
-    );
-  }
-  const userSrv = new CPUserSrv();
-  const srvResponse = await userSrv.retriveUser(providedUser);
-  return new Response(JSON.stringify(srvResponse));
 }
 export async function DELETE(request) {
   try {
@@ -116,58 +170,6 @@ export async function DELETE(request) {
       JSON.stringify(
         new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
       ),
-    );
-  }
-}
-export async function PUT(request) {
-  try {
-    const providedUser = await getUserByToken(request);
-    if (!providedUser) {
-      return new Response(
-        JSON.stringify(
-          new ApiResponse(
-            RESPONSE_STATUS?.UNAUTHORIZED,
-            RESPONSE_MESSAGE?.UNAUTHORIZED,
-            null,
-          ),
-        ),
-      );
-    }
-    const bodyData = await request.json();
-    const validateQuery = Joi.object({
-      id: Joi.string().required(),
-      name: Joi.string().required(),
-      email: Joi.string().required(),
-      role: Joi.string().required(),
-      projects: checkProjectValidation(bodyData?.role)
-        ? Joi.array().length(1)
-        : Joi.array(),
-      parentId:
-        roleNames?.superAdmin === bodyData?.role
-          ? Joi.string().allow("")
-          : Joi.string().required(),
-    });
-    const { error, value } = validateQuery.validate(bodyData);
-
-    if (error) {
-      return new Response(
-        JSON.stringify(
-          new ApiResponse(
-            RESPONSE_STATUS?.ERROR,
-            RESPONSE_MESSAGE?.INVALID,
-            error,
-          ),
-        ),
-      );
-    }
-
-    const user = new CPUserSrv();
-    const srvResponse = await user.updateUser(providedUser, value);
-
-    return new Response(JSON.stringify(srvResponse));
-  } catch (error) {
-    return new Response(
-      JSON.stringify(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
     );
   }
 }

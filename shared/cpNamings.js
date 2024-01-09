@@ -16,5 +16,6 @@ const permissionKeyNames = {
   leadOnlyView: "LVO",
   cpManagement: "CM",
   activityHistory: "AH",
+  leadManagement: "LM",
 };
 export { roleNames, permissionKeyNames };

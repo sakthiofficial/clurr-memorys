@@ -22,6 +22,11 @@ const CpUserSchema = new Schema({
     required: true,
     minlength: 6,
   },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   role: {
     type: String,
     trim: true,
@@ -42,6 +47,11 @@ const CpUserSchema = new Schema({
   subordinateRoles: {
     type: Array,
     required: true,
+  },
+  cpCode: {
+    type: String,
+    unique: true,
+    default: null,
   },
   createdBy: { type: Date, default: () => Math.floor(Date.now() / 1000) },
 });
