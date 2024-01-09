@@ -46,7 +46,7 @@ export default function Page() {
 
   const ParentDetails = {
     role: selectedRolesListP[0],
-    project: [...selectedProjectsListP],
+    projects: [...selectedProjectsListP],
   };
 
   console.log("Arrays before submit - Roles and Projects:", ParentDetails);

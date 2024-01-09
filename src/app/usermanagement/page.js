@@ -296,7 +296,7 @@ export default function Page() {
                     <TableCell>
                       {row.projects && row.projects.length > 0
                         ? row.projects.join(", ")
-                        : "No projects"}
+                        : ""}
                     </TableCell>
                     <TableCell>{row.role}</TableCell>
                     <TableCell>

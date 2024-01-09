@@ -9,6 +9,8 @@ import RegisterLeads from "../../public/LeadsCard/registerLeads.svg";
 import WarmLeads from "../../public/LeadsCard/warmLeads.svg";
 import SiteVisit from "../../public/LeadsCard/siteVisit.svg";
 import SiteVisitDone from "../../public/LeadsCard/siteVisitDone.svg";
+import BookedLeads from "../../public/LeadsCard/bookLeads.svg";
+
 // card details
 const users = [
   { name: "TotalLeads", icon: TotalLeads, total: "123" },
@@ -16,7 +18,7 @@ const users = [
   { name: "WarmLeads", icon: WarmLeads, total: "123" },
   { name: "Site Visit Scheduled", icon: SiteVisit, total: "123" },
   { name: "Site Visit Done Leads", icon: SiteVisitDone, total: "123" },
-  { name: "Booked leads", icon: TotalLeads, total: "123" },
+  { name: "Booked leads", icon: BookedLeads, total: "123" },
 ];
 
 export default function Home() {

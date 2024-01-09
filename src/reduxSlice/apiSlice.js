@@ -38,7 +38,7 @@ export const apiSlice = createApi({
     }),
     getParents: builder.query({
       query: (id) => ({
-        url: `/user/parentuser`,
+        url: `/user/parentUsers`,
         method: "POST",
         body: id,
       }),
