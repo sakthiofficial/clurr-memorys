@@ -110,7 +110,7 @@ function roleSubordinates(userRole) {
 }
 function parentRole(userRole) {
   if (userRole === roleNames?.admin || userRole === roleNames?.mis) {
-    return null;
+    return roleNames?.superAdmin;
   }
   if (userRole === roleNames?.superAdmin) {
     return roleNames?.superAdmin;
@@ -118,7 +118,6 @@ function parentRole(userRole) {
   const roleHierarchyArr = [
     roleNames?.superAdmin,
     roleNames?.cpBusinessHead,
-    roleNames?.cpHead,
     roleNames?.cpTl,
     roleNames?.cpRm,
     roleNames?.cpComBusinessHead,
@@ -130,6 +129,18 @@ function parentRole(userRole) {
     }
   }
   return null;
+}
+function isPriorityUser(userRole) {
+  const isPriorityRoles =
+    userRole === roleNames?.admin ||
+    userRole === roleNames?.mis ||
+    userRole === roleNames?.cpBusinessHead ||
+    userRole === roleNames?.superAdmin;
+
+  if (isPriorityRoles) {
+    return true;
+  }
+  return false;
 }
 function checkProjectValidation(role) {
   if (
@@ -166,5 +177,6 @@ export {
   parentRole,
   checkProjectValidation,
   checkValidParent,
+  isPriorityUser,
   userDataObj,
 };
