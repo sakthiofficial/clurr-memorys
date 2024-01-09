@@ -49,6 +49,7 @@ export default function Page() {
       alert("Form submission failed. Please try again.", error);
     }
   };
+  useAddFormDataMutation();
 
   return (
     <Box

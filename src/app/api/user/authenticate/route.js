@@ -5,7 +5,6 @@ import CPUserSrv from "../../../../services/cpUserSrv";
 import {
   ApiResponse,
   RESPONSE_MESSAGE,
-  RESPONSE_MESSAGE_DETAILS,
   RESPONSE_STATUS,
   TOKEN_VARIABLES,
 } from "../../../../appConstants";
