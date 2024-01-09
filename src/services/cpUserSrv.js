@@ -5,6 +5,7 @@ import {
   basicRolePermission,
   checkProjectValidation,
   checkValidParent,
+  isPriorityUser,
   parentRole,
   roleSubordinates,
   userDataObj,
@@ -56,8 +57,8 @@ class CPUserSrv {
       const checkParentValidation =
         newUser?.role !== roleNames?.mis &&
         newUser?.role !== roleNames?.admin &&
-        newUser?.role !== roleNames?.cpHead;
-      const checkProjectNameValidation = newUser?.role === roleNames?.cpHead;
+        newUser?.role !== roleNames?.cpTl;
+      const checkProjectNameValidation = newUser?.role === roleNames?.cpTl;
       if (checkProjectValidationNeed) {
         if (checkParentValidation) {
           for (let i = 0; i < newUser?.projects.length; i = 1 + i) {
@@ -218,7 +219,6 @@ class CPUserSrv {
         newUser.subordinateRoles = subordinateRoles;
       }
       const userSch = new CpUser(newUser);
-      console.log(userSch);
 
       await userSch.save();
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
@@ -269,45 +269,35 @@ class CPUserSrv {
 
   retriveParentUsers = async (providedUser, { role, projects }) => {
     try {
-      await this.db();
-
-      let users = await CpUser.find(
-        { role: parentRole(role) },
-        {
-          password: 0,
-          email: 0,
-          phone: 0,
-          parentId: 0,
-          permissions: 0,
-          subordinateRoles: 0,
-          cpCode: 0,
-          createdBy: 0,
-        },
-      );
-      const isPriorityUser =
-        providedUser[userDataObj?.role] === roleNames?.superAdmin ||
-        providedUser[userDataObj?.role] === roleNames?.cpBusinessHead;
-      if (providedUser[userDataObj?.subordinateRoles].includes(role)) {
-        users = users.filter((user) => {
-          for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
-            if (projects.includes(user[userDataObj?.projects][i])) {
-              return (
-                isPriorityUser ||
-                providedUser[userDataObj?.projects].includes(
-                  user[userDataObj?.projects][i],
-                )
-              );
-            }
-          }
-        });
-      } else {
+      const isPriorityRole = isPriorityUser(role);
+      if (!providedUser[userDataObj?.subordinateRoles].includes(role)) {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.INVALID,
           null,
         );
       }
+      await this.db();
 
+      const query = {
+        role: parentRole(role),
+        projects: projects.length > 1 ? { $all: projects } : { $in: projects },
+      };
+      const projection = {
+        password: 0,
+        email: 0,
+        phone: 0,
+        parentId: 0,
+        permissions: 0,
+        subordinateRoles: 0,
+        cpCode: 0,
+        createdBy: 0,
+      };
+      const isProjectValidationNeed = isPriorityRole || roleNames?.cpTl;
+      const users = await CpUser.find(
+        isProjectValidationNeed ? { role: parentRole(role) } : query,
+        projection,
+      );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users);
     } catch (error) {
       console.log("Error While Adding User", error);
