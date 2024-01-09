@@ -5,6 +5,7 @@ import {
   basicRolePermission,
   checkProjectValidation,
   checkValidParent,
+  parentRole,
   roleSubordinates,
   userDataObj,
 } from "../../shared/roleManagement";
@@ -31,6 +32,15 @@ class CPUserSrv {
     this.db = initDb;
 
     this.checkValidUserToAdd = async (providedUser, newUser, parentData) => {
+      // permission validation
+      if (
+        !providedUser[userDataObj?.permissions].includes(
+          permissionKeyNames?.userManagement,
+        )
+      ) {
+        console.log("Provider user dont have user permision");
+        return false;
+      }
       // Subordinate Validation+
       const subordinateValidation =
         (providedUser?.subordinateRoles || []).includes(newUser?.role) &&
@@ -38,11 +48,11 @@ class CPUserSrv {
           permissionKeyNames?.userManagement,
         );
       if (!subordinateValidation) {
-        console.log("Providing  user donesnot have role permission");
         return false;
       }
       // Project Validation
       const checkProjectValidationNeed = checkProjectValidation(newUser?.role);
+      console.log(checkProjectValidationNeed, newUser?.role);
       const checkParentValidation =
         newUser?.role !== roleNames?.mis &&
         newUser?.role !== roleNames?.admin &&
@@ -60,7 +70,7 @@ class CPUserSrv {
         }
       }
 
-      if (!checkProjectNameValidation) {
+      if (checkProjectValidationNeed) {
         for (let i = 0; i < newUser?.projects.length; i = 1 + i) {
           const project = await CpProject.findOne({
             name: newUser?.projects[i],
@@ -134,9 +144,11 @@ class CPUserSrv {
         userId: user._id,
       });
       sessionData.save();
-      const isSuperAdmin = role === roleNames?.superAdmin;
+      const isPriorityProvider =
+        role === roleNames?.superAdmin || role === roleNames?.cpBusinessHead;
+      // fetching projects details
       const projectDatas = await CpProject.find(
-        isSuperAdmin ? {} : { name: projects },
+        isPriorityProvider ? {} : { name: projects },
         { _id: 0, accessKey: 0, secretKey: 0 },
       );
 
@@ -206,6 +218,8 @@ class CPUserSrv {
         newUser.subordinateRoles = subordinateRoles;
       }
       const userSch = new CpUser(newUser);
+      console.log(userSch);
+
       await userSch.save();
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (err) {
@@ -250,6 +264,77 @@ class CPUserSrv {
         RESPONSE_MESSAGE?.ERROR,
         error,
       );
+    }
+  };
+
+  retriveParentUsers = async (providedUser, { role, projects }) => {
+    try {
+      await this.db();
+
+      let users = await CpUser.find(
+        { role: parentRole(role) },
+        {
+          password: 0,
+          email: 0,
+          phone: 0,
+          parentId: 0,
+          permissions: 0,
+          subordinateRoles: 0,
+          cpCode: 0,
+          createdBy: 0,
+        },
+      );
+      const isPriorityUser =
+        providedUser[userDataObj?.role] === roleNames?.superAdmin ||
+        providedUser[userDataObj?.role] === roleNames?.cpBusinessHead;
+      if (providedUser[userDataObj?.subordinateRoles].includes(role)) {
+        users = users.filter((user) => {
+          for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
+            if (projects.includes(user[userDataObj?.projects][i])) {
+              return (
+                isPriorityUser ||
+                providedUser[userDataObj?.projects].includes(
+                  user[userDataObj?.projects][i],
+                )
+              );
+            }
+          }
+        });
+      } else {
+        return new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
+          RESPONSE_MESSAGE?.INVALID,
+          null,
+        );
+      }
+
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users);
+    } catch (error) {
+      console.log("Error While Adding User", error);
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.ERROR,
+        error,
+      );
+    }
+  };
+
+  retriveUserById = async (providedUser, userId) => {
+    const userById = await CpUser.findOne({ _id: userId });
+    if (!userById) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.NOTFOUND,
+        null,
+      );
+    }
+    const isPriorityUser =
+      providedUser[userDataObj?.role] === roleNames?.superAdmin ||
+      providedUser[userDataObj?.role] === roleNames?.cpBusinessHead;
+    if (!isPriorityUser) {
+      const isValidProvider = (
+        providedUser[userDataObj?.subordinateRoles] || []
+      ).includes(userById[userDataObj?.role]);
     }
   };
 

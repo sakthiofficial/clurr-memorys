@@ -44,6 +44,7 @@ export async function POST(req) {
     if (srvResponse?.status === RESPONSE_STATUS?.OK) {
       const responseToken = srvResponse?.result?.token;
       cookies().set(TOKEN_VARIABLES?.TOKEN_NAME, responseToken);
+      delete srvResponse?.result?.token;
     }
     return new Response(JSON.stringify(srvResponse));
   } catch (err) {
