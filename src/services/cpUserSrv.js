@@ -53,7 +53,6 @@ class CPUserSrv {
       }
       // Project Validation
       const checkProjectValidationNeed = checkProjectValidation(newUser?.role);
-      console.log(checkProjectValidationNeed, newUser?.role);
       const checkParentValidation =
         newUser?.role !== roleNames?.mis &&
         newUser?.role !== roleNames?.admin &&
@@ -105,6 +104,35 @@ class CPUserSrv {
       } catch (error) {
         console.log("Error While validating token", error);
         return null;
+      }
+    };
+    this.getUserByRole = async (providedUser, role) => {
+      try {
+        await initDb();
+
+        const checkUserRole = isPriorityUser(providedUser[userDataObj?.role]);
+        if (!checkUserRole) {
+          return new ApiResponse(
+            RESPONSE_STATUS?.NOTFOUND,
+            RESPONSE_MESSAGE?.INVALID,
+            null,
+          );
+        }
+        const fields = "name _id projects";
+        const roleUsers = await CpUser.find({ role }).select(fields);
+
+        return new ApiResponse(
+          RESPONSE_STATUS?.OK,
+          RESPONSE_MESSAGE?.OK,
+          roleUsers,
+        );
+      } catch (error) {
+        console.log("While Performing Retriving user by role Error", error);
+        return new ApiResponse(
+          RESPONSE_STATUS?.ERROR,
+          RESPONSE_MESSAGE?.ERROR,
+          error,
+        );
       }
     };
   }
@@ -185,13 +213,13 @@ class CPUserSrv {
         const parentUserData = await CpUser.findOne({
           _id: newUser?.parentId || null,
         }).lean();
-
         if (
           !(await this.checkValidUserToAdd(
             providedUser,
             newUser,
             parentUserData,
-          ))
+          )) ||
+          newUser?.role === roleNames?.cpExecute
         ) {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
@@ -294,7 +322,9 @@ class CPUserSrv {
         cpCode: 0,
         createdBy: 0,
       };
-      const isProjectValidationNeed = isPriorityRole || roleNames?.cpTl;
+      const isProjectValidationNeed =
+        isPriorityRole || role === roleNames?.cpTl;
+
       const users = await CpUser.find(
         isProjectValidationNeed ? { role: parentRole(role) } : query,
         projection,

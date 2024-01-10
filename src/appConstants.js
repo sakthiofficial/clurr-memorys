@@ -44,3 +44,8 @@ export const SERVICE_RESPONSE = (success, message, result) => {
     result,
   };
 };
+
+export const genrateUnixTimestamp = (date) => {
+  const resDate = Math.floor(date || Date.now() / 1000);
+  return resDate;
+};

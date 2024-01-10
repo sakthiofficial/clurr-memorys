@@ -1,8 +1,12 @@
 import { headers } from "next/headers";
 import Joi from "joi";
 import getUserByToken from "../../../../../helper/getUserByToken";
-import { ApiResponse, RESPONSE_MESSAGE, RESPONSE_STATUS } from "@/appConstants";
-import CPUserSrv from "@/services/cpUserSrv";
+import {
+  ApiResponse,
+  RESPONSE_MESSAGE,
+  RESPONSE_STATUS,
+} from "../../../../../appConstants";
+import CPUserSrv from "../../../../../services/cpUserSrv";
 
 export async function GET(request, { params }) {
   const providedUser = await getUserByToken(request);
