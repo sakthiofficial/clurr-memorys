@@ -28,16 +28,23 @@ function basicRolePermission(role) {
     case roleNames?.mis:
       return [
         permissionKeyNames?.userManagement,
+        permissionKeyNames?.leadManagement,
 
         permissionKeyNames?.leadOnlyView,
         permissionKeyNames?.cpManagement,
       ];
 
     case roleNames?.cpTl:
-      return [permissionKeyNames?.leadViewWithNumber];
+      return [
+        permissionKeyNames?.leadViewWithNumber,
+        permissionKeyNames?.leadManagement,
+      ];
 
     case roleNames?.cpRm:
-      return [permissionKeyNames?.leadViewWithNumber];
+      return [
+        permissionKeyNames?.leadViewWithNumber,
+        permissionKeyNames?.leadManagement,
+      ];
 
     case roleNames?.cpExecute:
       return [
@@ -120,7 +127,6 @@ function parentRole(userRole) {
     roleNames?.cpBusinessHead,
     roleNames?.cpTl,
     roleNames?.cpRm,
-    roleNames?.cpComBusinessHead,
     roleNames?.cpExecute,
   ];
   for (let i = 0; i < roleHierarchyArr.length; i += 1) {
@@ -170,6 +176,8 @@ const userDataObj = {
   role: "role",
   projects: "projects",
   permissions: "permissions",
+  parentId: "parentId",
+  password: "password",
 };
 export {
   basicRolePermission,

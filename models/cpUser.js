@@ -1,5 +1,6 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
+const { genrateUnixTimestamp } = require("@/appConstants");
 
 const { Schema } = mongoose;
 const CpUserSchema = new Schema({
@@ -30,8 +31,7 @@ const CpUserSchema = new Schema({
   },
   phone: {
     type: String,
-    required: true,
-    unique: true,
+    default: null,
   },
   role: {
     type: String,
@@ -56,10 +56,13 @@ const CpUserSchema = new Schema({
   },
   cpCode: {
     type: String,
-    unique: true,
     default: null,
   },
-  createdBy: { type: Date, default: () => Math.floor(Date.now() / 1000) },
+  isPrimary: {
+    type: Boolean,
+    required: true,
+  },
+  createdBy: { type: Date, default: genrateUnixTimestamp() },
 });
 
 module.exports.CpUser =
