@@ -98,6 +98,7 @@ export default function Page() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          marginBottom:"50px",
         }}
       >
         <Grid sx={{ width: "60%" }}>
@@ -108,7 +109,7 @@ export default function Page() {
               color: "rgba(0, 0, 0, 1)",
             }}
           >
-            User List
+            CP List
           </Typography>
         </Grid>
         <Grid
@@ -119,7 +120,7 @@ export default function Page() {
             justifyContent: "end",
           }}
         >
-          <Link href="/usermanagement/adduser">
+          <Link href="/cpmanagement/adduser">
             <Button
               sx={{
                 backgroundColor: "rgba(0, 0, 0, 1)",
@@ -137,12 +138,12 @@ export default function Page() {
                 },
               }}
             >
-              Add User
+              Add CP
             </Button>
           </Link>
         </Grid>
       </Grid>
-      <Grid
+      {/* <Grid
         sx={{
           minHeight: "30vh",
           display: "flex",
@@ -213,7 +214,7 @@ export default function Page() {
             </Grid>
           </Grid>
         ))}
-      </Grid>
+      </Grid> */}
       <Grid>
         <TableContainer
           component={Paper}
@@ -237,9 +238,9 @@ export default function Page() {
               variant="h6"
               sx={{ fontSize: "16px", fontWeight: "500" }}
             >
-              User List
+              CP List
             </Typography>
-            <TextField
+            {/* <TextField
               variant="outlined"
               id="filled-hidden-label-small"
               size="small"
@@ -264,7 +265,7 @@ export default function Page() {
                   </InputAdornment>
                 ),
               }}
-            />
+            /> */}
           </Grid>
           <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
             <TableHead>
@@ -273,15 +274,17 @@ export default function Page() {
                   backgroundColor: "rgba(249, 184, 0, 0.1)",
                   fontWeight: "500",
                   color: "black",
+                  fontSize:"0.75rem"
                 }}
               >
-                <TableCell>Id#</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Contact</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Project</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell>COMPANY NAME	</TableCell>
+                <TableCell>CP CODE	</TableCell>
+                <TableCell>BRANCH HEAD	</TableCell>
+                <TableCell>NO. OF ACCOUNTS</TableCell>
+                <TableCell>RELATIONSHIP MANAGER</TableCell>
+                <TableCell>JOINED DATE</TableCell>
+                <TableCell>STATUS</TableCell>
+                <TableCell>ACTION</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

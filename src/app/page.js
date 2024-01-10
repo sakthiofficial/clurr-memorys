@@ -68,9 +68,9 @@ export default function Home() {
           gap: "15px",
         }}
       >
-        {users.map((item) => (
+        {users?.map((item) => (
           <Grid
-            key={item.name}
+            key={item?.name}
             sx={{
               width: "165px",
               height: "150px",
@@ -99,18 +99,23 @@ export default function Home() {
                   width: "51px",
                   height: "51px",
                   borderRadius: "9px",
-                  backgroundColor: getBackgroundColor(item.name),
+                  backgroundColor: getBackgroundColor(item?.name),
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                 }}
               >
-                <Image alt={item.name} src={item.icon} width={26} height={26} />
+                <Image
+                  alt={item?.name}
+                  src={item?.icon}
+                  width={26}
+                  height={26}
+                />
               </Grid>
               <Typography
                 sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}
               >
-                {item.name}
+                {item?.name}
               </Typography>
               <Typography
                 sx={{
@@ -119,7 +124,7 @@ export default function Home() {
                   fontWeight: "600",
                 }}
               >
-                {item.total}
+                {item?.total}
               </Typography>
             </Grid>
           </Grid>

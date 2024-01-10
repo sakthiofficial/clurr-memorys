@@ -15,9 +15,12 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import Link from "next/link";
-import { useGetParentsQuery } from "@/reduxSlice/apiSlice";
+import { useAddUsersMutation, useGetParentsQuery } from "@/reduxSlice/apiSlice";
+import { isPriorityUser } from "../../../../shared/roleManagement";
 
 export default function Page() {
+  const [selectParentId, setSelectParentId] = useState("");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,12 +29,12 @@ export default function Page() {
   });
 
   const [selectedValues, setSelectedValues] = useState({
-    project: [],
+    projects: [],
     role: "",
-    parent: "",
+    parentId: "",
   });
 
-  const [selectedProject, setSelectedProject] = useState([]);
+  const [selectedProjects, setSelectedProjects] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,10 +52,10 @@ export default function Page() {
     projects: [...selectedProjectsListP],
   };
 
-  console.log("Arrays before submit - Roles and Projects:", ParentDetails);
-  const result = useGetParentsQuery(ParentDetails);
+  // console.log("Arrays before submit - Roles and Projects:", ParentDetails);
+  const parentResult = useGetParentsQuery(ParentDetails);
 
-  console.log(result);
+  // console.log(parentResult.data.result);
 
   const handleChange = (name, value) => {
     setSelectedValues((prevValues) => ({
@@ -64,16 +67,30 @@ export default function Page() {
       setSelectedRolesListP(() => [value]);
     }
 
-    if (name === "project") {
+    if (name === "projects") {
       setSelectedProjectsListP((prevList) => [...prevList, value]);
 
       // Assuming you want to update the project property in selectedValues
       setSelectedValues((prevValues) => ({
         ...prevValues,
-        project: [...prevValues.project, value],
+        projects: [...prevValues.projects, value],
       }));
     }
+
+    if (name === "parentId") {
+      const resultId = value._id;
+      // setSelectedValues((prevValues) => ({
+      //   ...prevValues,
+      //   parent: parentId,
+      // }));
+      setSelectParentId(resultId);
+      // console.log(selectedParentId);
+    }
   };
+
+  const [sendUsers] = useAddUsersMutation();
+  const priorUser = isPriorityUser(selectedRolesListP[0]);
+  // console.log(sendUsers)
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -82,18 +99,16 @@ export default function Page() {
       (value) => value.trim() === "",
     );
 
-    if (
-      isAnyFieldEmpty ||
-      Object.values(selectedValues).some((value) => value === "")
-    ) {
+    if (isAnyFieldEmpty) {
       alert("Please fill in all fields before submitting.");
     } else {
       const updatedValues = {
         ...selectedValues,
-        project: selectedProject,
+        projects: selectedProjects,
+        parentId: priorUser ? userData._id : selectParentId,
       };
 
-      const allDataObject = {
+      const usersData = {
         ...formData,
         ...updatedValues,
       };
@@ -106,14 +121,17 @@ export default function Page() {
       });
 
       setSelectedValues({
-        project: [],
+        projects: [],
         role: "",
-        parent: "",
+        parentId: "",
       });
 
-      setSelectedProject([]); // Reset selectedProject
+      setSelectedProjects([]);
 
-      console.log("Form submitted with data:", allDataObject);
+      // console.log("Form submitted with data:", usersData);
+      const sendResult = sendUsers(usersData);
+      console.log(sendResult);
+      // window.location.href = "/usermanagement";
     }
   };
 
@@ -125,13 +143,12 @@ export default function Page() {
       password: "",
     });
     setSelectedValues({
-      project: [],
+      projects: [],
       role: "",
       parent: "",
     });
-    setSelectedProject([]); // Reset selectedProject
+    setSelectedProjects([]); // Reset selectedProject
   };
-  const parentOptions = ["ParentOne", "ParentTwo", "ParentThree"];
 
   const [userData, setUserData] = useState(null);
 
@@ -148,10 +165,9 @@ export default function Page() {
   }, []);
 
   if (!userData) {
-    return <div>Loading...</div>;
+    return <Grid sx={{ height: "100vh" }}>Loading...</Grid>;
   }
 
-  const LoginUserName = userData.name;
   const SubordinateRoles = userData.subordinateRoles;
   const SubordinateProjects = userData.projects;
 
@@ -159,7 +175,7 @@ export default function Page() {
     const {
       target: { value },
     } = event;
-    setSelectedProject(value);
+    setSelectedProjects(value);
     setSelectedProjectsListP(value);
   };
 
@@ -218,7 +234,7 @@ export default function Page() {
           <Typography
             sx={{ fontSize: "18px", fontWeight: "600", padding: "20px" }}
           >
-            Add New User - {LoginUserName}
+            Add New User
           </Typography>
         </Grid>
         <Grid
@@ -346,38 +362,6 @@ export default function Page() {
                       },
                   }}
                 >
-                  <InputLabel id="demo-multiple-checkbox-label">
-                    select project
-                  </InputLabel>
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={selectedProject}
-                    onChange={handleChangeProject}
-                    input={<OutlinedInput label="select project" />}
-                    renderValue={(selected) => selected.join(", ")}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    {SubordinateProjects.map((p) => (
-                      <MenuItem key={p.name} value={p.name}>
-                        <Checkbox
-                          checked={selectedProject.indexOf(p.name) > -1}
-                        />
-                        <ListItemText primary={p.name} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl
-                  sx={{
-                    minWidth: "397px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                >
                   <InputLabel
                     id="role-label"
                     sx={{ color: "#757575", fontSize: "14px" }}
@@ -393,13 +377,49 @@ export default function Page() {
                     onChange={(e) => handleChange("role", e.target.value)}
                     MenuProps={{ disableScrollLock: true }}
                   >
-                    {SubordinateRoles.map((option, index) => (
+                    {(SubordinateRoles || []).map((option, index) => (
                       <MenuItem key={index} value={option}>
                         {option}
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
+                {priorUser ? (
+                  ""
+                ) : (
+                  <FormControl
+                    sx={{
+                      minWidth: "397px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                  >
+                    <InputLabel id="demo-multiple-checkbox-label">
+                      select project
+                    </InputLabel>
+                    <Select
+                      labelId="demo-multiple-checkbox-label"
+                      id="demo-multiple-checkbox"
+                      multiple
+                      value={selectedProjects}
+                      onChange={handleChangeProject}
+                      input={<OutlinedInput label="select projects" />}
+                      renderValue={(selected) => selected.join(", ")}
+                      MenuProps={{ disableScrollLock: true }}
+                    >
+                      {SubordinateProjects?.map((p) => (
+                        <MenuItem key={p?.name} value={p?.name}>
+                          <Checkbox
+                            checked={selectedProjects.indexOf(p?.name) > -1}
+                          />
+                          <ListItemText primary={p?.name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
               </Grid>
               <Grid
                 sx={{
@@ -410,37 +430,51 @@ export default function Page() {
                   width: "80%",
                 }}
               >
-                <FormControl
-                  sx={{
-                    minWidth: "397px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                >
-                  <InputLabel
-                    id="parent-label"
-                    sx={{ color: "#757575", fontSize: "14px" }}
+                {priorUser ? (
+                  ""
+                ) : (
+                  <FormControl
+                    sx={{
+                      minWidth: "397px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
                   >
-                    Choose one parent
-                  </InputLabel>
-                  <Select
-                    labelId="parent-label"
-                    id="parent"
-                    displayEmpty
-                    value={selectedValues.parent}
-                    label="Choose one parent"
-                    onChange={(e) => handleChange("parent", e.target.value)}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    {parentOptions.map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                    <InputLabel
+                      id="parent-label"
+                      sx={{ color: "#757575", fontSize: "14px" }}
+                    >
+                      Choose one parent
+                    </InputLabel>
+                    {parentResult?.isSuccess ? (
+                      parentResult?.data?.result?.length > 0 ? (
+                        <Select
+                          labelId="parent-label"
+                          id="parentId"
+                          displayEmpty
+                          value={selectedValues.parentId}
+                          label="Choose one parent"
+                          onChange={(e) =>
+                            handleChange("parentId", e.target.value)
+                          }
+                          MenuProps={{ disableScrollLock: true }}
+                        >
+                          {parentResult?.data?.result?.map((option, index) => (
+                            <MenuItem key={index} value={option}>
+                              {option?.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      ) : (
+                        <p>No options available for parents</p>
+                      )
+                    ) : (
+                      <p>Loading parent options...</p>
+                    )}
+                  </FormControl>
+                )}
               </Grid>
 
               <Grid sx={{ marginTop: "40px" }}>

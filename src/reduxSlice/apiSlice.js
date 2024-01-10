@@ -43,6 +43,13 @@ export const apiSlice = createApi({
         body: id,
       }),
     }),
+    addUsers: builder.mutation({
+      query: (usersData) => ({
+        url: `/user`,
+        method: "POST",
+        body: usersData,
+      }),
+    }),
   }),
 });
 
@@ -52,4 +59,5 @@ export const {
   useGetUsersQuery,
   useDeleteUsersMutation,
   useGetParentsQuery,
+  useAddUsersMutation,
 } = apiSlice;

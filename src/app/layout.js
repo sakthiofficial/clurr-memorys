@@ -36,7 +36,6 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { useRouter } from "next/navigation";
 import store from "../store";
 import { useLoginUserDataMutation } from "@/reduxSlice/apiSlice";
 
@@ -55,6 +54,8 @@ const sidebarlist = [
   { title: "Dashboard", url: "", icon: DashboardIcon },
   { title: "Leads list", url: "leads", icon: AssignmentIcon },
   { title: "User Management", url: "usermanagement", icon: PeopleAltIcon },
+  { title: "CP Management", url: "cpmanagement", icon: PeopleAltIcon },
+
 ];
 
 function Login() {
@@ -75,14 +76,12 @@ function Login() {
     }));
   };
 
-  const router = useRouter();
-
   const [loginUserData] = useLoginUserDataMutation();
 
   const handleSubmit = async () => {
     try {
       const result = await loginUserData(formData);
-      if (result.data.status === 200) {
+      if (result?.data?.status === 200) {
         console.log(result);
         localStorage.setItem(
           "user",
@@ -98,7 +97,7 @@ function Login() {
   return (
     <Box
       sx={{
-        minHeight:"100vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -275,7 +274,7 @@ export default function RootLayout({ children }) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
     } else {
-      setUser(null); // Ensure user is set to null if no data is found
+      setUser(null);
       console.error('No data found in local storage for key "user".');
     }
   }, []);
@@ -283,16 +282,11 @@ export default function RootLayout({ children }) {
 
   const handleMenuClick = (setting) => {
     if (setting === "Logout") {
-      // Clear user data from local storage
       localStorage.removeItem("user");
 
-      // Redirect to the login page or perform any other logout-related tasks
-      // For example, you can use router.push("/login") if you are using Next.js
-      // router.push("/login");
-      window.location.href = "/login"; // Alternatively, force a full page reload
+      window.location.href = "/login";
     }
 
-    // Close the user menu
     handleCloseUserMenu();
   };
 
@@ -357,7 +351,7 @@ export default function RootLayout({ children }) {
                           }}
                         >
                           <Typography variant="h6">Hello,</Typography>
-                          <Typography variant="h6">{user.name}</Typography>
+                          <Typography variant="h6">{user?.name}</Typography>
                         </Grid>
                       </Grid>
                       <Grid
@@ -410,7 +404,7 @@ export default function RootLayout({ children }) {
                               onClose={handleCloseUserMenu}
                               disableScrollLock
                             >
-                              {settings.map((setting) => (
+                              {settings?.map((setting) => (
                                 <MenuItem
                                   key={setting}
                                   onClick={() => handleMenuClick(setting)}
@@ -422,7 +416,7 @@ export default function RootLayout({ children }) {
                               ))}
                             </Menu>
                           </Box>
-                          <Typography>{user.name}</Typography>
+                          <Typography>{user?.name}</Typography>
                           <KeyboardArrowDownIcon />
                         </Grid>
                       </Grid>

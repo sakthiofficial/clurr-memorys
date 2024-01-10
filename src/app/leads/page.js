@@ -223,9 +223,9 @@ export default function Page() {
           gap: "15px",
         }}
       >
-        {users.map((item) => (
+        {users?.map((item) => (
           <Grid
-            key={item.name}
+            key={item?.name}
             sx={{
               width: "165px",
               height: "150px",
@@ -254,18 +254,23 @@ export default function Page() {
                   width: "51px",
                   height: "51px",
                   borderRadius: "9px",
-                  backgroundColor: getBackgroundColor(item.name),
+                  backgroundColor: getBackgroundColor(item?.name),
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                 }}
               >
-                <Image alt={item.name} src={item.icon} width={26} height={26} />
+                <Image
+                  alt={item?.name}
+                  src={item?.icon}
+                  width={26}
+                  height={26}
+                />
               </Grid>
               <Typography
                 sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}
               >
-                {item.name}
+                {item?.name}
               </Typography>
               <Typography
                 sx={{
@@ -274,7 +279,7 @@ export default function Page() {
                   fontWeight: "600",
                 }}
               >
-                {item.total}
+                {item?.total}
               </Typography>
             </Grid>
           </Grid>
@@ -347,23 +352,23 @@ export default function Page() {
                 <TableCell>Contact</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Project</TableCell>
-                <TableCell>Status</TableCell>
                 <TableCell>Stage</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>Created By</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {slicedRows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.contact}</TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.project}</TableCell>
-                  <TableCell>{row.status}</TableCell>
-                  <TableCell>{row.stage}</TableCell>
-                  <TableCell>{row.createdBy}</TableCell>
+              {slicedRows?.map((row) => (
+                <TableRow key={row?.id}>
+                  <TableCell>{row?.name}</TableCell>
+                  <TableCell>{row?.id}</TableCell>
+                  <TableCell>{row?.contact}</TableCell>
+                  <TableCell>{row?.email}</TableCell>
+                  <TableCell>{row?.project}</TableCell>
+                  <TableCell>{row?.status}</TableCell>
+                  <TableCell>{row?.stage}</TableCell>
+                  <TableCell>{row?.createdBy}</TableCell>
                   <TableCell>
                     <Grid
                       sx={{
@@ -397,7 +402,7 @@ export default function Page() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={rows.length}
+            count={rows?.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
