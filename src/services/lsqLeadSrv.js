@@ -1,11 +1,6 @@
 import config from "@/lib/config";
 import { lsqLeadFieldNames } from "../../shared/lsqConstants";
-import {
-  ApiResponse,
-  RESPONSE_MESSAGE,
-  RESPONSE_MESSAGE_DETAILS,
-  RESPONSE_STATUS,
-} from "@/appConstants";
+import { ApiResponse, RESPONSE_MESSAGE, RESPONSE_STATUS } from "@/appConstants";
 import { CpUser } from "../../models/cpUser";
 
 const { default: axios } = require("axios");
@@ -82,7 +77,7 @@ class LSQLeadSrv {
     }
     const { lsqConfig } = config;
     const { accessKey, secretKey } = lsqConfig[project];
-    const apiPageIndex = 1;
+    let apiPageIndex = 1;
 
     const startDate = utcMonthStartDateFormat();
 
@@ -92,7 +87,7 @@ class LSQLeadSrv {
       console.log("FetchingData MTD PageIndex", pageIndex);
       try {
         const apiData = await axios.post(
-          `https://api-in21.leadsquared.com/v2/LeadManagement.svc/Leads.Get?accessKey=u$rc14713c6132c84aeffb24217ab56efd4&secretKey=021b006097b48fefe3f6815241d178d3de53fece`,
+          `${lsqConfig?.apiUrl}LeadManagement.svc/Leads.Get?accessKey=${accessKey}&secretKey=${secretKey}`,
           {
             Parameter: {
               LookupName: "CreatedOn",
@@ -109,7 +104,7 @@ class LSQLeadSrv {
             },
             Paging: {
               PageIndex: pageIndex,
-              PageSize: 100,
+              PageSize: 500,
             },
           },
         );
@@ -120,7 +115,8 @@ class LSQLeadSrv {
         return null;
       }
     }
-    const apiData = await fetchLeadData(apiPageIndex);
+    let apiData = await fetchLeadData(apiPageIndex);
+
     for (let i = 0; i < apiData?.data.length; i += 1) {
       const dateIst = convertUTCtoIST(
         apiData.data[i][lsqLeadFieldNames?.createdOn],
@@ -141,6 +137,12 @@ class LSQLeadSrv {
       const structuredApiData = apiData.data[i];
 
       data.push(structuredApiData);
+      if (i + 1 === apiData.data.length && apiData.data.length > 0) {
+        apiPageIndex += 1;
+
+        apiData = await fetchLeadData(apiPageIndex);
+        i = 0;
+      }
     }
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, data);
   };

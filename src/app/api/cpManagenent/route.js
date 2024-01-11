@@ -24,26 +24,32 @@ export async function POST(request) {
     const bodyData = await request.json();
 
     const validateQuery = Joi.object({
+      parentId: Joi.string().required(),
+
       cpCompany: Joi.object({
         name: Joi.string().required(),
         projects: Joi.array().items(Joi.string()).required(),
-        parentId: Joi.string().required(),
-        phone: Joi.string().required(),
       }),
-      cpExecutes: Joi.array()
-        .items(
-          Joi.object({
-            name: Joi.string().required(),
-            email: Joi.string().email().required(),
-            password: Joi.string().required(),
-            role: Joi.string().required(),
-            projects: Joi.array().items(Joi.string()).required(),
-            isPrimary: Joi.boolean().required(),
-            phone: Joi.string().required(),
-            parentId: Joi.string(),
-          }),
-        )
-        .required(),
+      cpBranchHead: Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().required(),
+        role: Joi.string().required(),
+        projects: Joi.array().items(Joi.string()).required(),
+        isPrimary: Joi.boolean().required(),
+        phone: Joi.string().required(),
+        parentId: Joi.string(),
+      }),
+      cpExecute: Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().required(),
+        role: Joi.string().required(),
+        projects: Joi.array().items(Joi.string()).required(),
+        isPrimary: Joi.boolean().required(),
+        phone: Joi.string().required(),
+        parentId: Joi.string(),
+      }),
     });
     const { error, value } = validateQuery.validate(bodyData);
 

@@ -41,34 +41,28 @@ class CpManagementSrv {
         throw errorMsg?.userExist;
       }
       const cpCompanySch = new CpCompany(cpCampanyData);
-      console.log(cpCompanySch);
       const cpCompanyResult = await cpCompanySch.save();
       return cpCompanyResult._id;
     };
-    this.validateCp = async (cps) => {
-      // return parent id
-      //  Check Cp
-      const cpNames = cps.map((cp) => cp?.name);
-      const names = cpNames.flat();
-      const cpData = await CpUser.find({ name: { $in: names } });
-      if (cpData.length > 0) {
-        console.log("Cp found", cpData);
-
-        return false;
-      }
-
-      // validate projects
-      const cpProjects = cps.map((cp) => cp?.projects);
-      const projects = cpProjects.flat();
-      const projectData = await CpProject.find({ name: { $in: projects } });
-      projects.map((cpProject) => {
-        if (!projectData.includes(cpProject)) {
-          console.log("Project not found", projects);
+    this.validateCp = async (parent, newUser) => {
+      (newUser[userDataObj?.projects] || []).map((userProject) => {
+        const validateProject =
+          parent[userDataObj?.projects].includes(userProject);
+        if (!validateProject) {
           return false;
         }
       });
 
       return true;
+    };
+    this.createCpBranchHead = async (user, parentId) => {
+      const parentUser = await CpUser.findOne({ _id: parentId });
+      if (!parentUser) {
+        return false;
+      }
+      const userSch = new CpUser(user);
+      const result = await userSch.save();
+      return result;
     };
     this.genrateCompanyCode = async () => {
       let lastCode = await CpCompany.findOne(
@@ -77,7 +71,7 @@ class CpManagementSrv {
         { sort: { _id: -1 } },
       ).lean();
       if (!lastCode) {
-        return "USERCP001";
+        return "URBHCP00001";
       }
 
       lastCode = lastCode.cpCode;
@@ -89,60 +83,63 @@ class CpManagementSrv {
     };
   }
 
-  createCpAccount = async (providedUser, cp) => {
+  createCpAccount = async (
+    providedUser,
+    { cpCompany, cpBranchHead, cpExecute, parentId },
+  ) => {
     // add parent account count validation // check cp ececute act count
+
     await initDb();
-    const companyCode = await this.genrateCompanyCode();
+    const cpGenratedCode = await this.genrateCompanyCode();
+    let parentUser = await CpUser.findOne({ _id: parentId });
+    let branchHeadId = null;
+    if (!parentUser) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
+    }
     try {
       if (isPriorityUser(providedUser[userDataObj?.role])) {
-        let { parentId } = cp.cpExecutes[0];
+        if (cpBranchHead) {
+          const cpCode = cpBranchHead[userDataObj?.cpCode] || cpGenratedCode;
+          cpBranchHead[userDataObj?.cpCode] = cpCode;
+          const validateCpCom = this.validateCp(parentUser, cpBranchHead);
 
-        const checkValidCps = await this.validateCp(cp?.cpExecutes);
-        if (!checkValidCps) {
-          return new ApiResponse(
-            RESPONSE_STATUS?.NOTFOUND,
-            RESPONSE_MESSAGE?.INVALID,
-            null,
-          );
-        }
-        if (cp?.cpCompany) {
-          cp.cpCompany[userDataObj?.cpCode] = companyCode;
-          const cpComId = await this.createCpCompany(cp?.cpCompany);
-          parentId = cpComId;
-        }
-        const cpExecutesDataPromise = Promise.all(
-          cp?.cpExecutes.map(async (cpExecuteData) => {
-            const saltRounds = 10;
-
-            const hashedPassword = await bcrypt.hash(
-              cpExecuteData[userDataObj?.password],
-              saltRounds,
+          if (!validateCpCom) {
+            return new ApiResponse(
+              RESPONSE_STATUS?.NOTFOUND,
+              RESPONSE_MESSAGE?.INVALID,
+              null,
             );
-            cpExecuteData[userDataObj?.password] = hashedPassword;
-            cpExecuteData[userDataObj?.parentId] = parentId;
-            cpExecuteData[userDataObj?.cpCode] = companyCode;
-
-            return {
-              insertOne: {
-                document: cpExecuteData,
-              },
-            };
-          }),
-        );
-        const cpExecutesData = await cpExecutesDataPromise;
-        const cpExecuteResult = await CpUser.bulkWrite(cpExecutesData);
-        if (cpExecuteResult?.insertedCount > 0) {
-          const result = await CpCompany.updateOne(
-            { _id: parentId },
-            { $inc: { account: cpExecuteResult.insertedCount } },
+          }
+          cpBranchHead[userDataObj?.parentId] = parentId;
+          const cpBranchResult = await this.createCpBranchHead(
+            cpBranchHead,
+            parentId,
           );
+          parentUser = cpBranchResult;
+          branchHeadId = cpBranchResult._id;
         }
-        return new ApiResponse(
-          RESPONSE_STATUS?.OK,
-          RESPONSE_MESSAGE?.OK,
-          cpExecuteResult,
-        );
+        if (cpCompany) {
+          const cpCode = cpCompany[userDataObj?.cpCode] || cpGenratedCode;
+          cpCompany[userDataObj?.cpCode] = cpCode;
+          cpCompany.branchHeadId = cpCompany?.branchHeadId || branchHeadId;
+          cpCompany[userDataObj?.parentId] =
+            cpCompany[userDataObj?.parentId] || parentId;
+
+          await this.createCpCompany(cpCompany);
+        }
+        cpExecute[userDataObj?.parentId] =
+          cpExecute[userDataObj?.parentId] || branchHeadId;
+        cpExecute[userDataObj?.cpCode] = cpGenratedCode;
+
+        const userSch = new CpUser(cpExecute);
+        await userSch.save();
+        return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
       }
+
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.UNAUTHORIZED,

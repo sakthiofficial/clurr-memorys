@@ -9,15 +9,17 @@ const CpCompanySchema = new Schema({
     required: true,
     unique: true,
   },
-  phone: {
-    type: String,
-    required: true,
-  },
+
   projects: {
     type: Array,
     required: true,
   },
   parentId: {
+    type: Schema.Types.Mixed,
+    required: true,
+    ref: "CpUser",
+  },
+  branchHeadId: {
     type: Schema.Types.Mixed,
     required: true,
     ref: "CpUser",
