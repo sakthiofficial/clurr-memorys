@@ -20,7 +20,10 @@ import {
 import Link from "next/link";
 import { DeleteOutline } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { useGetRealtionshipManagerQuery } from "@/reduxSlice/apiSlice";
+import {
+  useAddCpMutation,
+  useGetRealtionshipManagerQuery,
+} from "@/reduxSlice/apiSlice";
 
 export default function Page() {
   const [userData, setUserData] = useState(null);
@@ -32,6 +35,8 @@ export default function Page() {
 
   const result = useGetRealtionshipManagerQuery();
   console.log(result?.data?.result);
+
+  const [cpsAdd] = useAddCpMutation();
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -52,17 +57,28 @@ export default function Page() {
     },
     cpExecutes: [
       {
-        projects: selectedProjects,
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+        projects: [],
         role: "CP Executive",
-        isPrimary: true,
+        isPrimary: false,
       },
     ],
   });
 
   const handleRmChange = (event) => {
-    setSelectedCategory(event.target.value);
-    // Reset selected projects when category changes
-    setSelectedProjects([]);
+    const selectedCategoryValue = event.target.value;
+    setSelectedCategory(selectedCategoryValue);
+
+    // Find the selected category data
+    const selectedCategoryData = result?.data?.result.find(
+      (rm) => rm.name === selectedCategoryValue,
+    );
+
+    const initialSelectedProjects = selectedCategoryData?.projects || [];
+    setSelectedProjects(initialSelectedProjects);
   };
 
   const handleProjectsChange = (event) => {
@@ -129,15 +145,22 @@ export default function Page() {
   };
 
   const handleSwitchChange = (index, checked) => {
-    setFormData((prev) => ({
-      ...prev,
-      cpExecutes: prev.cpExecutes.map((item, i) => ({
+    setFormData((prev) => {
+      const updatedExecutes = prev.cpExecutes.map((item, i) => ({
         ...item,
-        isPrimary: i === index ? checked : !checked,
-      })),
-    }));
+        isPrimary: i === index ? checked : item.isPrimary,
+      }));
+
+      return {
+        ...prev,
+        cpExecutes: updatedExecutes,
+      };
+    });
   };
 
+  const selectedCategoryData = result?.data?.result.find(
+    (rm) => rm.name === selectedCategory,
+  );
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -147,20 +170,26 @@ export default function Page() {
       const updatedValues = {
         ...formData.cpCompany,
         projects: selectedProjects,
-        parentId: userData ? userData._id : formData.cpCompany.parentId,
+        parentId: selectedCategoryData._id,
       };
+      const cpExecutesp = formData.cpExecutes.map((exec) => ({
+        ...exec,
+        projects: selectedProjects,
+      }));
 
-      const usersData = {
-        ...formData,
+      const cpData = {
         cpCompany: updatedValues,
+        cpExecutes: cpExecutesp,
       };
 
-      console.log(usersData);
+      console.log(cpData);
+      cpsAdd(cpData);
     } else {
       console.error("Form is not valid. Please fill in all required fields.");
     }
   };
 
+  console.log(selectedCategoryData);
   return (
     <Grid sx={{ minHeight: "100vh" }}>
       <Grid
@@ -319,7 +348,7 @@ export default function Page() {
                       </Box>
                     )}
                   >
-                    {selectedProjects.map((project) => (
+                    {selectedCategoryData?.projects?.map((project) => (
                       <MenuItem key={project} value={project}>
                         {project}
                       </MenuItem>
@@ -375,9 +404,9 @@ export default function Page() {
                       <TextField
                         label={`number ${index + 1}`}
                         name={`cpExecutes[${index}].phone`}
-                        type="number"
+                        type="text"
                         size="small"
-                        sx={{ width: "12%" }}
+                        sx={{ width: "15%" }}
                         value={cpExecute.phone}
                         onChange={(e) =>
                           setFormData((prev) => ({
@@ -451,7 +480,22 @@ export default function Page() {
                 >
                   {showAddAccountButton ? (
                     <Button
-                      sx={{ border: "1px solid black" }}
+                      sx={{
+                        // border: "1px solid black",
+                        backgroundColor: "rgba(249, 184, 0, 1)",
+                        color: "black",
+                        height: "43px",
+                        borderRadius: "10px",
+                        border: "none",
+                        fontSize: "12px",
+                        fontWeight: "400",
+                        paddind: "5px",
+                        "&:hover": {
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          boxShadow: "none",
+                          border: "none",
+                        },
+                      }}
                       onClick={handleAddAccount}
                     >
                       Add Another Account
@@ -470,7 +514,28 @@ export default function Page() {
                   alignItems: "center",
                 }}
               >
-                <Button onClick={handleSubmit}>Submit</Button>
+                <Button
+                  sx={{
+                    // border: "1px solid black",
+                    backgroundColor: "rgba(249, 184, 0, 1)",
+                    color: "black",
+                    height: "43px",
+                    borderRadius: "5px",
+                    border: "none",
+                    fontSize: "12px",
+                    fontWeight: "400",
+                    paddind: "5px",
+                    padding: "10px",
+                    "&:hover": {
+                      backgroundColor: "rgba(249, 184, 0, 1)",
+                      boxShadow: "none",
+                      border: "none",
+                    },
+                  }}
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </Button>
               </Grid>
             </Grid>
           </Grid>

@@ -64,9 +64,9 @@ export default function AddLeadsBtn() {
             // width: "456px",
             border: "1px solid black",
             display: "flex",
-            justifyContent: "space-around",
+            justifyContent: "space-between",
             alignItems: "center",
-            padding: "5px",
+            padding: "10px",
           },
         }}
         disableScrollLock

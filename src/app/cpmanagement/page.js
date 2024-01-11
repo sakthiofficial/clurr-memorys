@@ -19,47 +19,11 @@ import {
 import { Search } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
-// icons
-import SuperAdmin from "../../../public/UserCard/SuperAdmin.svg";
-import Admin from "../../../public/UserCard/Admin.svg";
-import CPHead from "../../../public/UserCard/CPHead.svg";
-import CPLead from "../../../public/UserCard/CPLead.svg";
-import CPManager from "../../../public/UserCard/CPManager.svg";
-import ChanelPartner from "../../../public/UserCard/ChanelPartner.svg";
-import {
-  useDeleteUsersMutation,
-  useGetUsersQuery,
-} from "@/reduxSlice/apiSlice";
-
-// card details
-const users = [
-  { name: "Super Admin", icon: SuperAdmin, total: "123" },
-  { name: "Admin", icon: Admin, total: "123" },
-  { name: "CP Head", icon: CPHead, total: "123" },
-  { name: "CP Lead", icon: CPLead, total: "123" },
-  { name: "CP Manager", icon: CPManager, total: "123" },
-  { name: "Channel Partner", icon: ChanelPartner, total: "123" },
-];
+import { useGetCpQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page() {
-  // card background change
-  const getBackgroundColor = (name) => {
-    switch (name) {
-      case "CP Head":
-        return "rgba(255, 92, 0, 0.08)";
-      case "CP Lead":
-        return "rgba(205, 172, 0, 0.08)";
-      case "CP Manager":
-        return "rgba(219, 0, 255, 0.08)";
-      case "Channel Partner":
-        return "rgba(0, 173, 17, 0.08)";
-      default:
-        return "rgba(0, 133, 255, 0.08)";
-    }
-  };
-
   // table details
-  const { data, isLoading, isError, error } = useGetUsersQuery();
+  const { data, isLoading, isError, error } = useGetCpQuery();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const handleChangePage = (event, newPage) => {
@@ -86,19 +50,15 @@ export default function Page() {
     }
   }, [data, isLoading, isError, error]);
 
-  // const [deleteUserId, setDeleteUserId] = useState("");
-
-  //  useDeleteUsersMutation(deleteUserId);
-
   return (
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
         sx={{
-          height: "8vh",
+          height: "10vh",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom:"50px",
+          marginBottom: "20px",
         }}
       >
         <Grid sx={{ width: "60%" }}>
@@ -107,6 +67,7 @@ export default function Page() {
               fontSize: "18px",
               fontWeight: "500",
               color: "rgba(0, 0, 0, 1)",
+              // padding:"0px 10px"
             }}
           >
             CP List
@@ -274,12 +235,12 @@ export default function Page() {
                   backgroundColor: "rgba(249, 184, 0, 0.1)",
                   fontWeight: "500",
                   color: "black",
-                  fontSize:"0.75rem"
+                  fontSize: "0.75rem",
                 }}
               >
-                <TableCell>COMPANY NAME	</TableCell>
-                <TableCell>CP CODE	</TableCell>
-                <TableCell>BRANCH HEAD	</TableCell>
+                <TableCell>COMPANY NAME</TableCell>
+                <TableCell>CP CODE</TableCell>
+                <TableCell>BRANCH HEAD</TableCell>
                 <TableCell>NO. OF ACCOUNTS</TableCell>
                 <TableCell>RELATIONSHIP MANAGER</TableCell>
                 <TableCell>JOINED DATE</TableCell>
@@ -290,16 +251,13 @@ export default function Page() {
             <TableBody>
               {slicedRows?.map((row) => (
                 <TableRow key={row?.id}>
-                  <TableCell>{row?.id}</TableCell>
                   <TableCell>{row?.name}</TableCell>
-                  <TableCell>{row?.phone}</TableCell>
-                  <TableCell>{row?.email}</TableCell>
-                  <TableCell>
-                    {row?.projects && row?.projects?.length > 0
-                      ? row?.projects.join(", ")
-                      : ""}
-                  </TableCell>
-                  <TableCell>{row?.role}</TableCell>
+                  <TableCell>{row?.cpCode}</TableCell>
+                  <TableCell>null</TableCell>
+                  <TableCell>{row?.account}</TableCell>
+                  <TableCell>null</TableCell>
+                  <TableCell>null</TableCell>
+                  <TableCell>null</TableCell>
                   <TableCell>
                     <Grid
                       sx={{
@@ -307,36 +265,22 @@ export default function Page() {
                         alignItems: "center",
                       }}
                     >
-                      <Link
-                        href={{
-                          pathname: "/usermanagement/edit",
-                          query: {
-                            name: row?.name,
-                            phone: row?.phone,
-                            email: row?.email,
-                            projects: row?.projects,
-                            role: row?.role,
+                      <Button
+                        sx={{
+                          borderRadius: "10px",
+                          color: "black",
+                          width: "58px",
+                          height: "28px",
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(249, 184, 0, 1)",
+                            boxShadow: "none",
                           },
                         }}
                       >
-                        <Button
-                          sx={{
-                            borderRadius: "10px",
-                            color: "black",
-                            width: "58px",
-                            height: "28px",
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            "&:hover": {
-                              backgroundColor: "rgba(249, 184, 0, 1)",
-                              boxShadow: "none",
-                            },
-                          }}
-                        >
-                          edit
-                        </Button>
-                      </Link>
-                      {/* Commented out delete button as it needs completion */}
-                      {/* <Button
+                        null
+                      </Button>
+                      <Button
                         sx={{
                           border: "1px solid red",
                           borderRadius: "10px",
@@ -349,10 +293,9 @@ export default function Page() {
                             boxShadow: "none",
                           },
                         }}
-                        // onClick={() => setDeleteUserId(row.id)}
                       >
                         Delete
-                      </Button> */}
+                      </Button>
                     </Grid>
                   </TableCell>
                 </TableRow>

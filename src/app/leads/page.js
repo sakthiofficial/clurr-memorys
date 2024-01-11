@@ -15,6 +15,10 @@ import {
   TextField,
   InputAdornment,
   Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import Image from "next/image";
@@ -177,14 +181,21 @@ export default function Page() {
     page * rowsPerPage + rowsPerPage,
   );
 
+  const [selectedProject, setSelectedProject] = useState("");
+
+  const handleChangeProject = (event) => {
+    setSelectedProject(event.target.value);
+  };
   return (
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
         sx={{
-          height: "8vh",
+          height: "10vh",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          // padding:"0px 10px"
+
         }}
       >
         <Grid sx={{ width: "60%" }}>
@@ -199,6 +210,29 @@ export default function Page() {
             Lead List
           </Typography>
         </Grid>
+        <FormControl
+          size="small"
+          sx={{
+            minWidth: "280px",
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              borderRadius: "5px",
+            },
+          }}
+        >
+          <InputLabel id="demo-simple-select-label">select project</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={selectedProject}
+            label="project"
+            onChange={handleChangeProject}
+            MenuProps={{ disableScrollLock: true }}
+          >
+            <MenuItem value={10}>Project 1</MenuItem>
+            <MenuItem value={20}>Project 2</MenuItem>
+            <MenuItem value={30}>Project 3</MenuItem>
+          </Select>
+        </FormControl>
         <Grid
           sx={{
             gap: "10px",
@@ -311,32 +345,6 @@ export default function Page() {
             >
               Leads List
             </Typography>
-            <TextField
-              variant="outlined"
-              id="filled-hidden-label-small"
-              size="small"
-              placeholder="search"
-              sx={{
-                border: "1px solid rgba(182, 190, 196, 1)",
-                width: "298px",
-                height: "39px",
-                borderRadius: "11px",
-                "& .MuiOutlinedInput-input": {
-                  color: "rgba(158, 158, 158, 1)",
-                },
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: "11px",
-                  outline: "none !important",
-                },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search sx={{ color: "rgba(158, 158, 158, 1)" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
           </Grid>
           <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
             <TableHead>
@@ -377,22 +385,6 @@ export default function Page() {
                       }}
                     >
                       <ViewLeadsBtn />
-                      <Button
-                        sx={{
-                          border: "1px solid red",
-                          borderRadius: "10px",
-                          color: "red",
-                          marginLeft: "5px",
-                          width: "58px",
-                          height: "28px",
-                          "&:hover": {
-                            backgroundColor: "transparent",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        Delete
-                      </Button>
                     </Grid>
                   </TableCell>
                 </TableRow>
