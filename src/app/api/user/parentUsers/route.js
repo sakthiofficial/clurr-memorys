@@ -6,7 +6,10 @@ import {
 } from "../../../../appConstants";
 import getUserByToken from "../../../../helper/getUserByToken";
 import CPUserSrv from "../../../../services/cpUserSrv";
-import { isPriorityUser } from "../../../../../shared/roleManagement";
+import {
+  isPriorityUser,
+  parentRole,
+} from "../../../../../shared/roleManagement";
 
 export async function POST(request, res) {
   const providedUser = await getUserByToken(request);
@@ -25,7 +28,9 @@ export async function POST(request, res) {
   const bodyData = await request.json();
   const validateQuery = Joi.object({
     role: Joi.string().required(),
-    projects: isPriorityUser(bodyData?.role) ? Joi.array() : Joi.array().min(1),
+    projects: isPriorityUser(parentRole(bodyData?.role))
+      ? Joi.array()
+      : Joi.array().min(1),
   });
   const { error, value } = validateQuery.validate(bodyData);
 
