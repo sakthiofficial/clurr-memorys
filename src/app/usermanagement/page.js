@@ -94,7 +94,7 @@ export default function Page() {
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
         sx={{
-          height: "10vh",
+          height: "8vh",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -334,7 +334,7 @@ export default function Page() {
                           },
                         }}
                       >
-                        Delete
+                        null
                       </Button>
                     </Grid>
                   </TableCell>

@@ -24,6 +24,7 @@ import {
   useAddCpMutation,
   useGetRealtionshipManagerQuery,
 } from "@/reduxSlice/apiSlice";
+import CodeLeads from "@/app/components/CodeLeads";
 
 export default function Page() {
   const [userData, setUserData] = useState(null);
@@ -54,6 +55,7 @@ export default function Page() {
       name: "",
       projects: [],
       parentId: "",
+      phone: "6574839202",
     },
     cpExecutes: [
       {
@@ -63,7 +65,7 @@ export default function Page() {
         password: "",
         projects: [],
         role: "CP Executive",
-        isPrimary: false,
+        isPrimary: true,
       },
     ],
   });
@@ -279,7 +281,7 @@ export default function Page() {
                 }}
               >
                 <TextField
-                  label="channel partner company name"
+                  label="Channel Partner Company Name"
                   name="cpCompany.name"
                   type="text"
                   sx={{
@@ -324,9 +326,7 @@ export default function Page() {
                 </FormControl>
 
                 <FormControl sx={{ m: 1, width: 300 }} size="small">
-                  <InputLabel id="demo-projects-label">
-                    Projects (Chip)
-                  </InputLabel>
+                  <InputLabel id="demo-projects-label">Projects</InputLabel>
                   <Select
                     labelId="demo-projects-label"
                     id="demo-projects"
@@ -358,6 +358,19 @@ export default function Page() {
               </Grid>
               <Grid
                 sx={{
+                  // border: "1px solid black",
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "end",
+                  marginBottom: "30px",
+                  padding: "0px 15px",
+                }}
+              >
+                {" "}
+                <CodeLeads />
+              </Grid>
+              <Grid
+                sx={{
                   width: "100%",
                   minHeight: "100px",
                   display: "flex",
@@ -384,7 +397,7 @@ export default function Page() {
                       }}
                     >
                       <TextField
-                        label={`name ${index + 1}`}
+                        label={`Name ${index + 1}`}
                         name={`cpExecutes[${index}].name`}
                         type="text"
                         size="small"
@@ -402,7 +415,7 @@ export default function Page() {
                         }
                       />
                       <TextField
-                        label={`number ${index + 1}`}
+                        label={`Number ${index + 1}`}
                         name={`cpExecutes[${index}].phone`}
                         type="text"
                         size="small"
@@ -420,7 +433,7 @@ export default function Page() {
                         }
                       />
                       <TextField
-                        label={`email ${index + 1}`}
+                        label={`Email ${index + 1}`}
                         name={`cpExecutes[${index}].email`}
                         type="email"
                         size="small"
@@ -438,7 +451,7 @@ export default function Page() {
                         }
                       />
                       <TextField
-                        label={`password ${index + 1}`}
+                        label={`Password ${index + 1}`}
                         name={`cpExecutes[${index}].password`}
                         type="password"
                         size="small"
@@ -481,20 +494,20 @@ export default function Page() {
                   {showAddAccountButton ? (
                     <Button
                       sx={{
-                        // border: "1px solid black",
-                        backgroundColor: "rgba(249, 184, 0, 1)",
+                        border: "1px solid black",
+                        // backgroundColor: "rgba(249, 184, 0, 1)",
                         color: "black",
                         height: "43px",
-                        borderRadius: "10px",
-                        border: "none",
+                        borderRadius: "5px",
+                        // border: "none",
                         fontSize: "12px",
                         fontWeight: "400",
                         paddind: "5px",
-                        "&:hover": {
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          boxShadow: "none",
-                          border: "none",
-                        },
+                        // "&:hover": {
+                        //   backgroundColor: "rgba(249, 184, 0, 1)",
+                        //   boxShadow: "none",
+                        //   border: "none",
+                        // },
                       }}
                       onClick={handleAddAccount}
                     >
@@ -516,21 +529,21 @@ export default function Page() {
               >
                 <Button
                   sx={{
-                    // border: "1px solid black",
-                    backgroundColor: "rgba(249, 184, 0, 1)",
+                    border: "1px solid black",
+                    // backgroundColor: "rgba(249, 184, 0, 1)",
                     color: "black",
                     height: "43px",
                     borderRadius: "5px",
-                    border: "none",
+                    // border: "none",
                     fontSize: "12px",
                     fontWeight: "400",
                     paddind: "5px",
                     padding: "10px",
-                    "&:hover": {
-                      backgroundColor: "rgba(249, 184, 0, 1)",
-                      boxShadow: "none",
-                      border: "none",
-                    },
+                    // "&:hover": {
+                    //   backgroundColor: "rgba(249, 184, 0, 1)",
+                    //   boxShadow: "none",
+                    //   border: "none",
+                    // },
                   }}
                   onClick={handleSubmit}
                 >
