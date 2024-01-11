@@ -20,6 +20,7 @@ import { isPriorityUser } from "../../../../shared/roleManagement";
 
 export default function Page() {
   const [selectParentId, setSelectParentId] = useState("");
+  const [userData, setUserData] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -149,8 +150,6 @@ export default function Page() {
     });
     setSelectedProjects([]); // Reset selectedProject
   };
-
-  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");

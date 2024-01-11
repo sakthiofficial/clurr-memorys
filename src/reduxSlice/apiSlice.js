@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "../lib/config";
+import { roleNames } from "../../shared/cpNamings";
 
 export const apiSlice = createApi({
   reducerPath: "api",
@@ -50,6 +51,13 @@ export const apiSlice = createApi({
         body: usersData,
       }),
     }),
+    getRealtionshipManager: builder.query({
+      query: (usersData) => ({
+        url: `/user/retriveUserByRole/${roleNames?.cpRm}`,
+        method: "GET",
+        body: usersData,
+      }),
+    }),
   }),
 });
 
@@ -60,4 +68,5 @@ export const {
   useDeleteUsersMutation,
   useGetParentsQuery,
   useAddUsersMutation,
+  useGetRealtionshipManagerQuery,
 } = apiSlice;

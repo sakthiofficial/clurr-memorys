@@ -20,9 +20,18 @@ import {
 import Link from "next/link";
 import { DeleteOutline } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+import { useGetRealtionshipManagerQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page() {
   const [userData, setUserData] = useState(null);
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedProjects, setSelectedProjects] = useState([]);
+
+  const [showAddAccountButton, setShowAddAccountButton] = useState(true);
+
+  const result = useGetRealtionshipManagerQuery();
+  console.log(result?.data?.result);
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -43,59 +52,21 @@ export default function Page() {
     },
     cpExecutes: [
       {
-        projects: [],
+        projects: selectedProjects,
         role: "CP Executive",
         isPrimary: true,
       },
     ],
   });
 
-  const [personName, setPersonName] = useState([]);
-
-  const handleChangeChip = (event) => {
-    const { value } = event.target;
-    setPersonName(value);
-    setFormData({
-      cpCompany: {
-        ...formData.cpCompany,
-        projects: value,
-      },
-      cpExecutes: formData.cpExecutes.map((cpExecute) => ({
-        ...cpExecute,
-        projects: value,
-      })),
-    });
+  const handleRmChange = (event) => {
+    setSelectedCategory(event.target.value);
+    // Reset selected projects when category changes
+    setSelectedProjects([]);
   };
 
-  const names = ["Oliver Hansen", "Van Henry", "April Tucker", "Ralph Hubbard"];
-
-  const [age, setAge] = useState("");
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const isFormValid = validateForm();
-
-    if (isFormValid) {
-      const updatedValues = {
-        ...formData.cpCompany,
-        projects: personName,
-        parentId: userData ? userData._id : formData.cpCompany.parentId,
-      };
-
-      const usersData = {
-        ...formData,
-        cpCompany: updatedValues,
-      };
-
-      console.log(usersData);
-    } else {
-      console.error("Form is not valid. Please fill in all required fields.");
-    }
+  const handleProjectsChange = (event) => {
+    setSelectedProjects(event.target.value);
   };
 
   const validateForm = () => {
@@ -115,8 +86,6 @@ export default function Page() {
 
     return true;
   };
-
-  const [showAddAccountButton, setShowAddAccountButton] = useState(true);
 
   const handleAddAccount = () => {
     const updatedCpExecutes = [
@@ -164,9 +133,32 @@ export default function Page() {
       ...prev,
       cpExecutes: prev.cpExecutes.map((item, i) => ({
         ...item,
-        isPrimary: i === index ? checked : !checked ,
+        isPrimary: i === index ? checked : !checked,
       })),
     }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const isFormValid = validateForm();
+
+    if (isFormValid) {
+      const updatedValues = {
+        ...formData.cpCompany,
+        projects: selectedProjects,
+        parentId: userData ? userData._id : formData.cpCompany.parentId,
+      };
+
+      const usersData = {
+        ...formData,
+        cpCompany: updatedValues,
+      };
+
+      console.log(usersData);
+    } else {
+      console.error("Form is not valid. Please fill in all required fields.");
+    }
   };
 
   return (
@@ -277,32 +269,47 @@ export default function Page() {
                     })
                   }
                 />
-                <FormControl sx={{ width: "200px" }} size="small">
-                  <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={age}
-                    label="Age"
-                    onChange={handleChange}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                  </Select>
-                </FormControl>
                 <FormControl sx={{ m: 1, width: 300 }} size="small">
-                  <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
+                  <InputLabel id="demo-category-label">
+                    Category (RM)
+                  </InputLabel>
                   <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={handleChangeChip}
+                    labelId="demo-category-label"
+                    id="demo-category"
+                    value={selectedCategory}
+                    onChange={handleRmChange}
                     MenuProps={{ disableScrollLock: true }}
                     input={
-                      <OutlinedInput id="select-multiple-chip" label="Chip" />
+                      <OutlinedInput
+                        id="select-category"
+                        label="Category (RM)"
+                      />
+                    }
+                  >
+                    {result?.data?.result?.map((rm) => (
+                      <MenuItem key={rm.name} value={rm.name}>
+                        {rm.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width: 300 }} size="small">
+                  <InputLabel id="demo-projects-label">
+                    Projects (Chip)
+                  </InputLabel>
+                  <Select
+                    labelId="demo-projects-label"
+                    id="demo-projects"
+                    multiple
+                    value={selectedProjects}
+                    onChange={handleProjectsChange}
+                    MenuProps={{ disableScrollLock: true }}
+                    input={
+                      <OutlinedInput
+                        id="select-projects"
+                        label="Projects (Chip)"
+                      />
                     }
                     renderValue={(selected) => (
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
@@ -312,9 +319,9 @@ export default function Page() {
                       </Box>
                     )}
                   >
-                    {names.map((name) => (
-                      <MenuItem key={name} value={name}>
-                        {name}
+                    {selectedProjects.map((project) => (
+                      <MenuItem key={project} value={project}>
+                        {project}
                       </MenuItem>
                     ))}
                   </Select>
