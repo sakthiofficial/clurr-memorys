@@ -16,6 +16,7 @@ class CpManagementSrv {
   constructor() {
     this.createCpCompany = async (cpCampanyData) => {
       //   validation project & parentInd
+      console.log(cpCampanyData);
       const errorMsg = {
         userExist: "user already exist",
         inValidProject: "invalid project deatils",
@@ -41,6 +42,7 @@ class CpManagementSrv {
         throw errorMsg?.userExist;
       }
       const cpCompanySch = new CpCompany(cpCampanyData);
+      console.log(cpCompanySch);
       const cpCompanyResult = await cpCompanySch.save();
       return cpCompanyResult._id;
     };

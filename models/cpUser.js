@@ -60,7 +60,6 @@ const CpUserSchema = new Schema({
   },
   isPrimary: {
     type: Boolean,
-    required: true,
   },
   createdBy: { type: Date, default: genrateUnixTimestamp() },
 });

@@ -88,7 +88,7 @@ function roleSubordinates(userRole) {
       subordinates: [roleNames?.cpTl, roleNames?.cpRm],
     },
   ];
-  const cpRoleHierarchy = [roleNames?.cpRm];
+  const cpRoleHierarchy = [roleNames?.cpTl, roleNames?.cpRm];
   let roleHierarchyArr = [];
 
   if (
@@ -178,6 +178,7 @@ const userDataObj = {
   permissions: "permissions",
   parentId: "parentId",
   password: "password",
+  cpCode: "cpCode",
 };
 export {
   basicRolePermission,

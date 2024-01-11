@@ -47,8 +47,13 @@ class CPUserSrv {
         (providedUser?.subordinateRoles || []).includes(newUser?.role) &&
         (providedUser?.permissions || []).includes(
           permissionKeyNames?.userManagement,
-        );
+        ) &&
+        (parentData?.subordinateRoles || []).includes(newUser?.role);
       if (!subordinateValidation) {
+        console.log(
+          "parent or provider does not have permission to the user",
+          (parentData?.subordinateRoles || []).includes(newUser?.role),
+        );
         return false;
       }
       // Project Validation
@@ -57,7 +62,6 @@ class CPUserSrv {
         newUser?.role !== roleNames?.mis &&
         newUser?.role !== roleNames?.admin &&
         newUser?.role !== roleNames?.cpTl;
-      const checkProjectNameValidation = newUser?.role === roleNames?.cpTl;
       if (checkProjectValidationNeed) {
         if (checkParentValidation) {
           for (let i = 0; i < newUser?.projects.length; i = 1 + i) {
@@ -87,6 +91,7 @@ class CPUserSrv {
       if (
         !checkValidParent(newUser?.role, parentData?.role || providedUser?.role)
       ) {
+        console.log("not a valid parent", newUser?.role, parentData?.role);
         return false;
       }
 
@@ -212,13 +217,21 @@ class CPUserSrv {
         const parentUserData = await CpUser.findOne({
           _id: newUser?.parentId || null,
         }).lean();
+        const validationToUser = await this.checkValidUserToAdd(
+          providedUser,
+          newUser,
+          parentUserData,
+        );
+        const checkUserRole = isPriorityUser(providedUser[userDataObj?.role]);
+        const checkNewUserRole = isPriorityUser(newUser[userDataObj?.role]);
+        if (checkNewUserRole) {
+          newUser[userDataObj?.projects] = [];
+        }
+        console.log(validationToUser);
         if (
-          !(await this.checkValidUserToAdd(
-            providedUser,
-            newUser,
-            parentUserData,
-          )) ||
-          newUser?.role === roleNames?.cpExecute
+          !validationToUser ||
+          newUser?.role === roleNames?.cpExecute ||
+          !checkUserRole
         ) {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
