@@ -29,10 +29,6 @@ const CpUserSchema = new Schema({
     required: true,
     minlength: 6,
   },
-  phone: {
-    type: String,
-    default: null,
-  },
   role: {
     type: String,
     trim: true,
