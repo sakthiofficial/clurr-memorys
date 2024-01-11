@@ -103,9 +103,8 @@ export async function POST(req) {
       email: Joi.string().required(),
       role: Joi.string().required(),
       projects: checkProjectValidation(bodyData?.role)
-        ? Joi.array().length(1)
+        ? Joi.array().min(1)
         : Joi.array(),
-      phone: Joi.string().min(10),
       parentId:
         roleNames?.superAdmin === bodyData?.role
           ? Joi.string().allow("")
