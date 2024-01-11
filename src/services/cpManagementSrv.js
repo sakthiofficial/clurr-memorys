@@ -131,6 +131,13 @@ class CpManagementSrv {
 
           await this.createCpCompany(cpCompany);
         }
+        if (!cpExecute) {
+          return new ApiResponse(
+            RESPONSE_STATUS?.OK,
+            RESPONSE_MESSAGE?.OK,
+            null,
+          );
+        }
         cpExecute[userDataObj?.parentId] =
           cpExecute[userDataObj?.parentId] || branchHeadId;
         cpExecute[userDataObj?.cpCode] = cpGenratedCode;
