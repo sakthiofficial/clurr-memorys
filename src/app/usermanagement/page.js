@@ -94,10 +94,11 @@ export default function Page() {
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
         sx={{
-          height: "8vh",
+          height: "10vh",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          // padding: "0px 10px",
         }}
       >
         <Grid sx={{ width: "60%" }}>
@@ -239,7 +240,7 @@ export default function Page() {
             >
               User List
             </Typography>
-            <TextField
+            {/* <TextField
               variant="outlined"
               id="filled-hidden-label-small"
               size="small"
@@ -264,7 +265,7 @@ export default function Page() {
                   </InputAdornment>
                 ),
               }}
-            />
+            /> */}
           </Grid>
           <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
             <TableHead>
@@ -304,36 +305,22 @@ export default function Page() {
                         alignItems: "center",
                       }}
                     >
-                      <Link
-                        href={{
-                          pathname: "/usermanagement/edit",
-                          query: {
-                            name: row?.name,
-                            phone: row?.phone,
-                            email: row?.email,
-                            projects: row?.projects,
-                            role: row?.role,
+                      <Button
+                        sx={{
+                          borderRadius: "10px",
+                          color: "black",
+                          width: "58px",
+                          height: "28px",
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(249, 184, 0, 1)",
+                            boxShadow: "none",
                           },
                         }}
                       >
-                        <Button
-                          sx={{
-                            borderRadius: "10px",
-                            color: "black",
-                            width: "58px",
-                            height: "28px",
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            "&:hover": {
-                              backgroundColor: "rgba(249, 184, 0, 1)",
-                              boxShadow: "none",
-                            },
-                          }}
-                        >
-                          edit
-                        </Button>
-                      </Link>
-                      {/* Commented out delete button as it needs completion */}
-                      {/* <Button
+                        null
+                      </Button>
+                      <Button
                         sx={{
                           border: "1px solid red",
                           borderRadius: "10px",
@@ -346,10 +333,9 @@ export default function Page() {
                             boxShadow: "none",
                           },
                         }}
-                        // onClick={() => setDeleteUserId(row.id)}
                       >
                         Delete
-                      </Button> */}
+                      </Button>
                     </Grid>
                   </TableCell>
                 </TableRow>

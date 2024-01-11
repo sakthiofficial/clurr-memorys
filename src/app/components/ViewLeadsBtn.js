@@ -60,9 +60,9 @@ export default function ViewLeadsBtn() {
             height: "486px",
             width: "456px",
             display: "flex",
-            justifyContent: "space-around",
+            justifyContent: "center",
             alignItems: "center",
-            padding: "5px",
+            padding: "10px",
           },
         }}
         disableScrollLock
@@ -78,6 +78,7 @@ export default function ViewLeadsBtn() {
             alignItems: "center",
             justifyContent: "space-between",
             padding: "15px",
+            marginBottom: "10px",
           }}
         >
           <Typography sx={{ fontSize: "20px", fontWeight: "600" }}>

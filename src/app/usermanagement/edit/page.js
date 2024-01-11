@@ -158,7 +158,7 @@ export default function Page({ searchParams }) {
           <Typography
             sx={{ fontSize: "18px", fontWeight: "600", padding: "20px" }}
           >
-            Edit User - {LoginUserName} - {LoginUserRoles}
+            Edit User 
           </Typography>
         </Grid>
         <Grid

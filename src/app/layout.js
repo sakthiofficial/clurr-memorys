@@ -55,7 +55,6 @@ const sidebarlist = [
   { title: "Leads list", url: "leads", icon: AssignmentIcon },
   { title: "User Management", url: "usermanagement", icon: PeopleAltIcon },
   { title: "CP Management", url: "cpmanagement", icon: PeopleAltIcon },
-
 ];
 
 function Login() {
@@ -200,6 +199,7 @@ function Login() {
 export default function RootLayout({ children }) {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -273,11 +273,14 @@ export default function RootLayout({ children }) {
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
+      setIsLoggedIn(true);
     } else {
       setUser(null);
+      setIsLoggedIn(false);
       console.error('No data found in local storage for key "user".');
     }
-  }, []);
+  }, [localStorage.getItem("user")]);
+
   // console.log(user.name)
 
   const handleMenuClick = (setting) => {

@@ -58,6 +58,19 @@ export const apiSlice = createApi({
         body: usersData,
       }),
     }),
+    addCp: builder.mutation({
+      query: (cpData) => ({
+        url: `/cpManagenent`,
+        method: "POST",
+        body: cpData,
+      }),
+    }),
+    getCp: builder.query({
+      query: () => ({
+        url: `/cpManagenent`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -69,4 +82,6 @@ export const {
   useGetParentsQuery,
   useAddUsersMutation,
   useGetRealtionshipManagerQuery,
+  useAddCpMutation,
+  useGetCpQuery,
 } = apiSlice;
