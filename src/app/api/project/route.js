@@ -8,22 +8,11 @@ import {
   RESPONSE_MESSAGE,
 } from "../../../appConstants";
 import ProjectSrv from "../../../services/projectSrv";
+import getUserByToken from "../../../helper/getUserByToken";
 
 export async function POST(req) {
   try {
-    const cookieStore = cookies();
-
-    const userSession = cookieStore.get(TOKEN_VARIABLES?.TOKEN_NAME);
-    if (!userSession) {
-      const sendResponce = new ApiResponse(
-        RESPONSE_STATUS?.UNAUTHORIZED,
-        RESPONSE_MESSAGE_DETAILS?.AUTHENTICATION_FAILED,
-        null,
-      );
-      return new Response(sendResponce);
-    }
-    const { value: userToken } = userSession;
-
+    const providedUser = await getUserByToken(req);
     const validateQuery = Joi.object({
       name: Joi.string().required(),
       accessLevel: Joi.string().required(),
@@ -46,12 +35,8 @@ export async function POST(req) {
     }
 
     const project = new ProjectSrv();
-    const srvResponse = await project.createProject(userToken, value);
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null),
-      ),
-    );
+    const srvResponse = await project.createProject(providedUser, value);
+    return new Response(JSON.stringify(srvResponse));
   } catch (error) {
     console.log("Error While Send Project Response", error);
     return new Response(error);

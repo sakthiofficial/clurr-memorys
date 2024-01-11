@@ -1,5 +1,4 @@
 import Joi from "joi";
-import handler from "../../lib/handler";
 import config from "../../../lib/config";
 // import { LpLead } from "../../../models/lplead";
 import {
@@ -7,8 +6,10 @@ import {
   RESPONSE_MESSAGE,
   RESPONSE_STATUS,
 } from "../../../appConstants";
+import getUserByToken from "../../../helper/getUserByToken";
+import LSQLeadSrv from "@/services/lsqLeadSrv";
 
-export default handler({ checkAuthenticated: true }).post(async (req, res) => {
+export async function POST(req, res) {
   const providedUser = await getUserByToken(req);
   if (!providedUser) {
     return new Response(
@@ -61,4 +62,21 @@ export default handler({ checkAuthenticated: true }).post(async (req, res) => {
   const { accessKey, secretKey } = config.lsqConfig[value?.project];
 
   res.sendPromise(promise);
-});
+}
+export async function GET(request) {
+  const providedUser = await getUserByToken(request);
+  if (!providedUser) {
+    return new Response(
+      JSON.stringify(
+        new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
+          RESPONSE_MESSAGE?.UNAUTHORIZED,
+          null,
+        ),
+      ),
+    );
+  }
+  const leadSrv = new LSQLeadSrv();
+  const serviceRes = await leadSrv.retriveLead("WOJ Miyapur");
+  return new Response(JSON.stringify(serviceRes));
+}

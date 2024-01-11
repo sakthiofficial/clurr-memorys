@@ -9,7 +9,10 @@ const CpCompanySchema = new Schema({
     required: true,
     unique: true,
   },
-
+  phone: {
+    type: String,
+    required: true,
+  },
   projects: {
     type: Array,
     required: true,

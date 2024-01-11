@@ -61,10 +61,13 @@ class CpManagementSrv {
       const cpProjects = cps.map((cp) => cp?.projects);
       const projects = cpProjects.flat();
       const projectData = await CpProject.find({ name: { $in: projects } });
-      if (projectData.length !== projects.length) {
-        console.log("Project not found", projects);
-        return false;
-      }
+      projects.map((cpProject) => {
+        if (!projectData.includes(cpProject)) {
+          console.log("Project not found", projects);
+          return false;
+        }
+      });
+
       return true;
     };
     this.genrateCompanyCode = async () => {
@@ -93,11 +96,7 @@ class CpManagementSrv {
     try {
       if (isPriorityUser(providedUser[userDataObj?.role])) {
         let { parentId } = cp.cpExecutes[0];
-        if (cp?.cpCompany) {
-          cp.cpCompany[userDataObj?.cpCode] = companyCode;
-          const cpComId = await this.createCpCompany(cp?.cpCompany);
-          parentId = cpComId;
-        }
+
         const checkValidCps = await this.validateCp(cp?.cpExecutes);
         if (!checkValidCps) {
           return new ApiResponse(
@@ -105,6 +104,11 @@ class CpManagementSrv {
             RESPONSE_MESSAGE?.INVALID,
             null,
           );
+        }
+        if (cp?.cpCompany) {
+          cp.cpCompany[userDataObj?.cpCode] = companyCode;
+          const cpComId = await this.createCpCompany(cp?.cpCompany);
+          parentId = cpComId;
         }
         const cpExecutesDataPromise = Promise.all(
           cp?.cpExecutes.map(async (cpExecuteData) => {

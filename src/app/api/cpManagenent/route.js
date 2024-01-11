@@ -28,6 +28,7 @@ export async function POST(request) {
         name: Joi.string().required(),
         projects: Joi.array().items(Joi.string()).required(),
         parentId: Joi.string().required(),
+        phone: Joi.string().required(),
       }),
       cpExecutes: Joi.array()
         .items(
