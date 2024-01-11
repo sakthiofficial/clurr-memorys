@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -45,7 +45,24 @@ const users = [
 ];
 
 export default function Page() {
-  // card background change
+  const [permissions, setPermissions] = useState([]);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+
+    if (storedData) {
+      const jsonData = JSON.parse(storedData);
+      // setUser(jsonData);
+      // setPermissions(user?.permissions);
+      setPermissions(jsonData.permissions || []);
+      // setIsLoggedIn(true);
+    } else {
+      // setUser(null);
+      // setIsLoggedIn(false);
+      console.error('No data found in local storage for key "user".');
+    }
+  }, [localStorage.getItem("user")]);
+
   const getBackgroundColor = (name) => {
     switch (name) {
       case "Warm Leads":
@@ -58,7 +75,6 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-
   // table details
   const rows = [
     {
@@ -190,12 +206,11 @@ export default function Page() {
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
         sx={{
-          height: "10vh",
+          height: "8vh",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           // padding:"0px 10px"
-
         }}
       >
         <Grid sx={{ width: "60%" }}>
@@ -241,7 +256,7 @@ export default function Page() {
             justifyContent: "end",
           }}
         >
-          <AddLeadsBtn />
+          {permissions && permissions.includes("LM") && <AddLeadsBtn />}
           <ExportLeadsBtn />
         </Grid>
       </Grid>
