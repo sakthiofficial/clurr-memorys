@@ -279,14 +279,14 @@ export default function RootLayout({ children }) {
         </Grid>
       </Grid>
       <List>
-        <Link href="/">
+        {/* <Link href="/">
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>{React.createElement(DashboardIcon)}</ListItemIcon>
               <ListItemText primary="Dashboard" />
             </ListItemButton>
           </ListItem>
-        </Link>
+        </Link> */}
         <Link href="/leads">
           <ListItem disablePadding>
             <ListItemButton>
@@ -327,7 +327,7 @@ export default function RootLayout({ children }) {
       // setIsLoggedIn(false);
       console.error('No data found in local storage for key "user".');
     }
-  }, [localStorage.getItem("user")]);
+  }, []);
   // console.log(user.name)
 
   // console.log(permissions);

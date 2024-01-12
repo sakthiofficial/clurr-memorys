@@ -143,7 +143,7 @@ export default function Page() {
           </Link>
         </Grid>
       </Grid>
-      <Grid
+      {/* <Grid
         sx={{
           minHeight: "30vh",
           display: "flex",
@@ -214,7 +214,7 @@ export default function Page() {
             </Grid>
           </Grid>
         ))}
-      </Grid>
+      </Grid> */}
       <Grid>
         <TableContainer
           component={Paper}

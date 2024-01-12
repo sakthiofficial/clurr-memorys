@@ -169,7 +169,7 @@ export default function Page() {
           <ExportLeadsBtn />
         </Grid>
       </Grid>
-      <Grid
+      {/* <Grid
         sx={{
           minHeight: "30vh",
           display: "flex",
@@ -243,7 +243,7 @@ export default function Page() {
             </Grid>
           </Grid>
         ))}
-      </Grid>
+      </Grid> */}
       <Grid>
         <TableContainer
           component={Paper}
