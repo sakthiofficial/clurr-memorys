@@ -1,6 +1,13 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
@@ -24,7 +31,7 @@ export default function AddLeadsBtn() {
   const [addlead] = useAddLeadMutation();
 
   const result = useGetProjectQuery();
-  console.log(result)
+  // console.log(result?.data?.result);
 
   const [formData, setFormData] = useState({
     userName: "",
@@ -41,15 +48,17 @@ export default function AddLeadsBtn() {
     setOpen(false);
   };
 
-  const handleChange = (field) => (event) => {
+  const handleChange = (event) => {
+    const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [field]: event.target.value,
+      [name]: value,
     }));
   };
 
   const handleSubmit = () => {
     console.log("Form Data:", formData);
+    // Call your mutation function here with addlead(formData)
     handleClose();
   };
 
@@ -136,36 +145,43 @@ export default function AddLeadsBtn() {
           }}
         >
           <TextField
-            label="userName"
+            label="User Name"
+            name="userName"
             value={formData.userName}
-            onChange={handleChange("userName")}
+            onChange={handleChange}
             sx={{ width: "80%", borderRadius: "15px", height: "48px" }}
           />
           <TextField
             label="Email"
+            name="email"
             value={formData.email}
-            onChange={handleChange("email")}
+            onChange={handleChange}
             sx={{ width: "80%", borderRadius: "15px" }}
           />
           <TextField
             label="Phone"
+            name="phone"
             value={formData.phone}
-            onChange={handleChange("phone")}
+            onChange={handleChange}
             sx={{ width: "80%", borderRadius: "20px" }}
           />
 
-          <FormControl sx={{width:"80%"}}>
-            <InputLabel id="demo-simple-select-label">Project</InputLabel>
+          <FormControl sx={{ width: "80%" }}>
+            <InputLabel id="project-label">Project</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
+              labelId="project-label"
+              id="project"
+              name="project"
+              label="project"
               value={formData.project}
-              label="Age"
               onChange={handleChange}
+              MenuProps={{ disableScrollLock: true }}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              {result?.data?.result?.map((proj) => (
+                <MenuItem key={proj.id} value={proj.name}>
+                  {proj.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>

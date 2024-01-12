@@ -158,7 +158,8 @@ function Login() {
               src="/Logo.svg"
               width={300}
               height={100}
-              objectFit="contain"
+              style={{ objectFit: "contain" }}
+              alt="logo"
             />
           </Box>
           <Box
@@ -329,7 +330,7 @@ export default function RootLayout({ children }) {
   }, [localStorage.getItem("user")]);
   // console.log(user.name)
 
-  console.log(permissions);
+  // console.log(permissions);
 
   const handleMenuClick = (setting) => {
     if (setting === "Logout") {

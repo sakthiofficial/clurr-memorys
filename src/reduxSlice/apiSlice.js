@@ -72,8 +72,8 @@ export const apiSlice = createApi({
       }),
     }),
     getLeads: builder.query({
-      query: () => ({
-        url: `/lead?project=Oncloud33`,
+      query: (selectedProjectName) => ({
+        url: `/lead?project=OnCloud33 - Bachupally`,
         method: "GET",
       }),
     }),

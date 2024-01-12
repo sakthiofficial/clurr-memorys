@@ -33,7 +33,7 @@ import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
 import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
 import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
 import Booked from "../../../public/LeadsCard/bookLeads.svg";
-import { useGetLeadsQuery } from "@/reduxSlice/apiSlice";
+import { useGetLeadsQuery, useGetProjectQuery } from "@/reduxSlice/apiSlice";
 
 // card details
 const users = [
@@ -47,6 +47,18 @@ const users = [
 
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
+
+  const [selectedProject, setSelectedProject] = useState("");
+
+  const handleChangeProject = (event) => {
+    const selectedProjectName = event.target.value;
+    setSelectedProject(selectedProjectName);
+  };
+  const resultProjectName = useGetProjectQuery();
+// console.log(resultProjectName)
+
+const resultLeads = useGetLeadsQuery(selectedProject);
+// console.log(resultLeads.data);
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -64,6 +76,15 @@ export default function Page() {
     }
   }, [localStorage.getItem("user")]);
 
+  // useEffect(() => {
+  //   // Your local storage logic
+
+  //   // Fetch leads data when selectedProject changes
+  //   if (selectedProject) {
+  //     resultLeads.refetch({ project: selectedProject });
+  //   }
+  // }, [selectedProject]);
+
   const getBackgroundColor = (name) => {
     switch (name) {
       case "Warm Leads":
@@ -77,7 +98,7 @@ export default function Page() {
     }
   };
   const result = useGetLeadsQuery();
-  console.log(result.data);
+  // console.log(result.data);
 
   // pagination functions
   const [page, setPage] = useState(0);
@@ -96,11 +117,6 @@ export default function Page() {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
-  const [selectedProject, setSelectedProject] = useState("");
-
-  const handleChangeProject = (event) => {
-    setSelectedProject(event.target.value);
-  };
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -125,27 +141,22 @@ export default function Page() {
             Lead List
           </Typography>
         </Grid>
-        <FormControl
-          size="small"
-          sx={{
-            minWidth: "280px",
-            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "5px",
-            },
-          }}
-        >
-          <InputLabel id="demo-simple-select-label">select project</InputLabel>
+        <FormControl sx={{ width: "50%" }} size="small">
+          <InputLabel id="project-label">Project</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={selectedProject}
+            labelId="project-label"
+            id="project"
+            name="project"
             label="project"
+            value={selectedProject}
             onChange={handleChangeProject}
             MenuProps={{ disableScrollLock: true }}
           >
-            <MenuItem value={10}>Project 1</MenuItem>
-            <MenuItem value={20}>Project 2</MenuItem>
-            <MenuItem value={30}>Project 3</MenuItem>
+            {resultProjectName?.data?.result?.map((proj) => (
+              <MenuItem key={proj.id} value={proj.name}>
+                {proj.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <Grid
@@ -154,6 +165,7 @@ export default function Page() {
             width: "40%",
             display: "flex",
             justifyContent: "end",
+            paddingLeft: "20px",
           }}
         >
           {permissions && permissions.includes("LM") && <AddLeadsBtn />}

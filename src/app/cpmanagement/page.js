@@ -42,11 +42,11 @@ export default function Page() {
 
   useEffect(() => {
     if (isLoading) {
-      console.log("Loading...");
+      // console.log("Loading...");
     } else if (isError) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
     } else if (data) {
-      console.log("Query completed:", data?.result);
+      // console.log("Query completed:", data?.result);
     }
   }, [data, isLoading, isError, error]);
 
@@ -306,7 +306,9 @@ export default function Page() {
                   <TableCell>{row?.company?.cpCode}</TableCell>
                   <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>
                   <TableCell>
-                    {row?.cpExecutes && row?.cpBranchHead ? 2 : 1}
+                    {row?.cpBranchHead
+                      ? 1 + row?.cpExecutes.length
+                      : row?.cpExecutes.length}
                   </TableCell>
                   <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
                   {/* Add similar lines for other properties */}
