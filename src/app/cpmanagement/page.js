@@ -249,7 +249,7 @@ export default function Page() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {slicedRows?.map((row) => (
+              {/* {slicedRows?.map((row) => (
                 <TableRow key={row?.id}>
                   <TableCell>{row?.name}</TableCell>
                   <TableCell>{row?.cpCode}</TableCell>
@@ -258,6 +258,60 @@ export default function Page() {
                   <TableCell>null</TableCell>
                   <TableCell>null</TableCell>
                   <TableCell>null</TableCell>
+                  <TableCell>
+                    <Grid
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Button
+                        sx={{
+                          borderRadius: "10px",
+                          color: "black",
+                          width: "58px",
+                          height: "28px",
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(249, 184, 0, 1)",
+                            boxShadow: "none",
+                          },
+                        }}
+                      >
+                        null
+                      </Button>
+                      <Button
+                        sx={{
+                          border: "1px solid red",
+                          borderRadius: "10px",
+                          color: "red",
+                          marginLeft: "5px",
+                          width: "58px",
+                          height: "28px",
+                          "&:hover": {
+                            backgroundColor: "transparent",
+                            boxShadow: "none",
+                          },
+                        }}
+                      >
+                        null
+                      </Button>
+                    </Grid>
+                  </TableCell>
+                </TableRow>
+              ))} */}
+              {slicedRows?.map((row) => (
+                <TableRow key={row?._id}>
+                  <TableCell>{row?.company?.name}</TableCell>
+                  <TableCell>{row?.company?.cpCode}</TableCell>
+                  <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>
+                  <TableCell>
+                    {row?.cpExecutes && row?.cpBranchHead ? 2 : 1}
+                  </TableCell>
+                  <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
+                  {/* Add similar lines for other properties */}
+                  <TableCell>{row?.createdBy}</TableCell>
+                  <TableCell>{row?.status || "N/A"}</TableCell>
                   <TableCell>
                     <Grid
                       sx={{

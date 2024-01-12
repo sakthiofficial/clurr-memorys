@@ -33,6 +33,7 @@ import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
 import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
 import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
 import Booked from "../../../public/LeadsCard/bookLeads.svg";
+import { useGetLeadsQuery } from "@/reduxSlice/apiSlice";
 
 // card details
 const users = [
@@ -75,109 +76,8 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-  // table details
-  const rows = [
-    {
-      id: "1",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "2",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "3",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "4",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "5",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "6",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "7",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "8",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "9",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-    {
-      id: "10",
-      name: "asfer",
-      contact: "1000001000",
-      email: "asferali8384@gmail.com",
-      project: "HG",
-      status: "success",
-      stage: "New",
-      createdBy: "Ammer Khan - Moon Relators",
-    },
-  ];
+  const result = useGetLeadsQuery();
+  console.log(result.data);
 
   // pagination functions
   const [page, setPage] = useState(0);
@@ -192,16 +92,16 @@ export default function Page() {
     setPage(0);
   };
 
-  const slicedRows = rows.slice(
+  const slicedRows = result.data?.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
-
   const [selectedProject, setSelectedProject] = useState("");
 
   const handleChangeProject = (event) => {
     setSelectedProject(event.target.value);
   };
+
   return (
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
@@ -308,6 +208,7 @@ export default function Page() {
                   justifyContent: "center",
                   alignItems: "center",
                 }}
+                users
               >
                 <Image
                   alt={item?.name}
@@ -384,14 +285,30 @@ export default function Page() {
             <TableBody>
               {slicedRows?.map((row) => (
                 <TableRow key={row?.id}>
-                  <TableCell>{row?.name}</TableCell>
-                  <TableCell>{row?.id}</TableCell>
-                  <TableCell>{row?.contact}</TableCell>
-                  <TableCell>{row?.email}</TableCell>
-                  <TableCell>{row?.project}</TableCell>
-                  <TableCell>{row?.status}</TableCell>
-                  <TableCell>{row?.stage}</TableCell>
-                  <TableCell>{row?.createdBy}</TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.ProspectAutoId || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.FirstName || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.Phone || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.EmailAddress || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.mx_Origin_Project || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.ProspectStage || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.ProspectStage || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "11px" }}>
+                    {row?.CreatedOn || "N/A"}
+                  </TableCell>
                   <TableCell>
                     <Grid
                       sx={{
@@ -409,7 +326,7 @@ export default function Page() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={rows?.length}
+            count={result.data?.length || 0} // Use result.data for the count
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
