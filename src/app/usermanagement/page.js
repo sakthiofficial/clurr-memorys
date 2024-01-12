@@ -78,11 +78,11 @@ export default function Page() {
 
   useEffect(() => {
     if (isLoading) {
-      console.log("Loading...");
+      // console.log("Loading...");
     } else if (isError) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
     } else if (data) {
-      console.log("Query completed:", data?.result);
+      // console.log("Query completed:", data?.result);
     }
   }, [data, isLoading, isError, error]);
 
@@ -287,7 +287,7 @@ export default function Page() {
             </TableHead>
             <TableBody>
               {slicedRows?.map((row) => (
-                <TableRow key={row?.id}>
+                <TableRow key={row?.name}>
                   <TableCell>{row?.id}</TableCell>
                   <TableCell>{row?.name}</TableCell>
                   <TableCell>{row?.phone}</TableCell>
