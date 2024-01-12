@@ -18,5 +18,12 @@ export const lsqLeadFieldNames = {
   campaign: "SourceCampaign",
   stage: "ProspectStage",
   agency: "mx_Agency_Name",
-  subSource: "mx_First_Sub_Source",
+  subSource: "mx_Sub_Source",
+  notes:"Notes",
+  firstName:"FirstName",
+  email:"EmailAddress"
+};
+
+export const lsqFieldValues = {
+  source: "Channel Partner",
 };

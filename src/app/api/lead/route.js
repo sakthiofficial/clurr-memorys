@@ -7,7 +7,7 @@ import {
   RESPONSE_STATUS,
 } from "../../../appConstants";
 import getUserByToken from "../../../helper/getUserByToken";
-import LSQLeadSrv from "@/services/lsqLeadSrv";
+import LSQLeadSrv from "../../../services/lsqLeadSrv";
 
 export async function POST(req, res) {
   const providedUser = await getUserByToken(req);
@@ -24,11 +24,11 @@ export async function POST(req, res) {
   }
   const bodyData = await req.json();
   const validateQuery = Joi.object({
+    id: Joi.string().required(),
     userName: Joi.string().required(),
     email: Joi.string().required(),
-    phoneNo: Joi.string().required(),
-    source: Joi.string().required(),
-    subSource: Joi.string().required(),
+    phone: Joi.string().required(),
+    notes: Joi.string(),
     project: Joi.string().required(),
   });
   const { error, value } = validateQuery.validate(bodyData);
@@ -44,28 +44,15 @@ export async function POST(req, res) {
       ),
     );
   }
-
-  //   try {
-  //     await new LpLead({
-  //       FirstName: userName,
-  //       EmailAddress: email,
-  //       Phone: phoneNo,
-  //       Source: source,
-  //       SourceMedium: medium,
-  //       SourceCampaign: campaign,
-  //       SourceContent: content,
-  //     }).save();
-  //   } catch (err) {
-  //     console.log("Error saving to db");
-  //   }
-
-  const { accessKey, secretKey } = config.lsqConfig[value?.project];
-
-  res.sendPromise(promise);
+  const leadSrv = new LSQLeadSrv();
+  const serviceRes = await leadSrv.createLead(providedUser, value);
+  return new Response(JSON.stringify(serviceRes));
 }
 export async function GET(request) {
+  const project = request.nextUrl.searchParams.get("project");
+
   const providedUser = await getUserByToken(request);
-  if (!providedUser) {
+  if (!providedUser || !project) {
     return new Response(
       JSON.stringify(
         new ApiResponse(
@@ -77,6 +64,6 @@ export async function GET(request) {
     );
   }
   const leadSrv = new LSQLeadSrv();
-  const serviceRes = await leadSrv.retriveLead("WOJ Miyapur");
+  const serviceRes = await leadSrv.retriveLead(providedUser, project);
   return new Response(JSON.stringify(serviceRes));
 }

@@ -6,11 +6,16 @@ import {
 } from "../appConstants";
 
 import { CpProject } from "../../models/cpProject";
-import { isPriorityUser, userDataObj } from "../../shared/roleManagement";
+import {
+  basicRolePermission,
+  isPriorityUser,
+  userDataObj,
+} from "../../shared/roleManagement";
 import { CpCompany } from "../../models/cpCompany";
 // dont remove this schema
 import { CpUser } from "../../models/cpUser";
 import initDb from "../lib/db";
+import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 
 class CpManagementSrv {
   constructor() {
@@ -81,6 +86,39 @@ class CpManagementSrv {
 
       return `USER${String(newNumber).padStart(3, "0")}`;
     };
+    this.getCpCompanysBH = async (providedUser) => {
+      if (
+        !providedUser[userDataObj?.permissions].includes(
+          permissionKeyNames?.leadManagement,
+        )
+      ) {
+        return new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
+          RESPONSE_MESSAGE?.UNAUTHORIZED,
+          null,
+        );
+      }
+      const companies = await CpCompany.find().populate("branchHeadId");
+      const cpCompanyBranchHead = (companies || [])
+        .map((company) => {
+          const { branchHeadId } = company;
+          if (branchHeadId) {
+            return {
+              name: `${company[userDataObj?.name]} - ${
+                company?.branchHeadId[userDataObj?.name]
+              } `,
+              id: company._id,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+      return new ApiResponse(
+        RESPONSE_STATUS?.OK,
+        RESPONSE_MESSAGE?.OK,
+        cpCompanyBranchHead,
+      );
+    };
   }
 
   createCpAccount = async (
@@ -115,6 +153,16 @@ class CpManagementSrv {
             );
           }
           cpBranchHead[userDataObj?.parentId] = parentId;
+          const saltRounds = 10;
+          const hashedPassword = await bcrypt.hash(
+            cpBranchHead[userDataObj?.password],
+            saltRounds,
+          );
+          cpBranchHead[userDataObj?.password] = hashedPassword;
+          cpBranchHead[userDataObj?.role] = roleNames?.cpBranchHead;
+          cpBranchHead[userDataObj?.permissions] = basicRolePermission(
+            cpBranchHead[userDataObj?.role],
+          );
           const cpBranchResult = await this.createCpBranchHead(
             cpBranchHead,
             parentId,
@@ -141,7 +189,16 @@ class CpManagementSrv {
         cpExecute[userDataObj?.parentId] =
           cpExecute[userDataObj?.parentId] || branchHeadId;
         cpExecute[userDataObj?.cpCode] = cpGenratedCode;
-
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(
+          cpExecute[userDataObj?.password],
+          saltRounds,
+        );
+        cpExecute[userDataObj?.password] = hashedPassword;
+        cpExecute[userDataObj?.role] = roleNames?.cpExecute;
+        cpExecute[userDataObj?.permissions] = basicRolePermission(
+          cpExecute[userDataObj?.role],
+        );
         const userSch = new CpUser(cpExecute);
         await userSch.save();
         return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
@@ -171,10 +228,33 @@ class CpManagementSrv {
       );
     }
     const cpCompanys = await CpCompany.find();
+    const companiesWithUsers = await Promise.all(
+      cpCompanys.map(async (company) => {
+        const parentUser = await CpUser.findOne({ _id: company.parentId });
+
+        const allCompanyUsers = await CpUser.find({
+          cpCode: company.cpCode,
+        });
+
+        const cpBranchHead =
+          allCompanyUsers.find((user) => user.isPrimary) || null;
+        const cpExecutes = allCompanyUsers.filter((user) => !user.isPrimary);
+
+        return {
+          company: {
+            ...company._doc,
+          },
+          cpRm: parentUser,
+          cpBranchHead,
+          cpExecutes,
+        };
+      }),
+    );
+
     return new ApiResponse(
       RESPONSE_STATUS?.OK,
       RESPONSE_MESSAGE?.OK,
-      cpCompanys,
+      companiesWithUsers,
     );
   };
 }

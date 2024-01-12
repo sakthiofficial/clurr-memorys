@@ -6,7 +6,7 @@ const roleNames = {
   cpBusinessHead: "CP Business Head",
   cpTl: "CP Team Lead",
   cpRm: "CP Relationship Manager",
-  cpComBusinessHead: "CP Branch Head",
+  cpBranchHead: "CP Branch Head",
   cpExecute: "CP Executive",
 };
 const permissionKeyNames = {

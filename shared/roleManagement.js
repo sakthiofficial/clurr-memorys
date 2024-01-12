@@ -45,12 +45,13 @@ function basicRolePermission(role) {
         permissionKeyNames?.leadViewWithNumber,
         permissionKeyNames?.leadManagement,
       ];
-
-    case roleNames?.cpExecute:
+    case roleNames?.cpBranchHead:
       return [
         permissionKeyNames?.leadViewWithNumber,
         permissionKeyNames?.leadManagement,
       ];
+    case roleNames?.cpExecute:
+      return [permissionKeyNames?.leadViewWithNumber];
 
     default:
       return null;
@@ -179,6 +180,7 @@ const userDataObj = {
   parentId: "parentId",
   password: "password",
   cpCode: "cpCode",
+  name: "name",
 };
 export {
   basicRolePermission,

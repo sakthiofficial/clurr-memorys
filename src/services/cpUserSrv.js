@@ -244,16 +244,7 @@ class CPUserSrv {
         const permissions = basicRolePermission(newUser?.role);
         const subordinateRoles = roleSubordinates(newUser?.role);
         const parentId = newUser?.parentId === "" ? null : newUser?.parentId;
-        // const projects = [];
-        // Role hierrachy parent validation
 
-        // switch (key) {
-        //   case value:
-        //     break;
-
-        //   default:
-        //     break;
-        // }
         newUser.parentId = parentId;
         newUser.password = hashedPassword;
         newUser.permissions = permissions;
