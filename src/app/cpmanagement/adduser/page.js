@@ -150,6 +150,7 @@ export default function Page() {
     setFormData((prev) => {
       const updatedExecutes = prev.cpExecutes.map((item, i) => ({
         ...item,
+        role: i === index && checked ? "cpBranchHead" : "cpExecutes",
         isPrimary: i === index ? checked : item.isPrimary,
       }));
 
@@ -172,20 +173,28 @@ export default function Page() {
       const updatedValues = {
         ...formData.cpCompany,
         projects: selectedProjects,
-        parentId: selectedCategoryData._id,
+        parentId: selectedCategoryData?._id,
       };
-      const cpExecutesp = formData.cpExecutes.map((exec) => ({
-        ...exec,
-        projects: selectedProjects,
-      }));
+
+      const cpExecutesp = formData.cpExecutes.map((exec) => {
+        const role = exec.isPrimary ? "cpBranchHead" : "cpExecute";
+
+        return {
+          ...exec,
+          role,
+          projects: selectedProjects,
+        };
+      });
 
       const cpData = {
+        parentId: selectedCategoryData?._id,
         cpCompany: updatedValues,
-        cpExecutes: cpExecutesp,
+        cpExecute: cpExecutesp.find((exec) => exec.role === "cpExecute"),
+        cpBranchHead: cpExecutesp.find((exec) => exec.role === "cpBranchHead"),
       };
 
       console.log(cpData);
-      cpsAdd(cpData);
+      // cpsAdd(cpData);
     } else {
       console.error("Form is not valid. Please fill in all required fields.");
     }
