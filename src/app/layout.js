@@ -37,9 +37,11 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { VerifiedUser } from "@mui/icons-material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { ToastContainer, toast } from "react-toastify";
 import store from "../store";
 import { useLoginUserDataMutation } from "@/reduxSlice/apiSlice";
 import themeFont from "../theme";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -91,30 +93,38 @@ function Login() {
     try {
       const result = await loginUserData(formData);
       if (result?.data?.status === 200) {
-        console.log(result);
+        // console.log(result);
         localStorage.setItem(
           "user",
           JSON.stringify(result.data.result.userData),
         );
+        toast.success("Login successful!");
         window.location.href = "/";
+      } else {
+        toast.error("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      alert("Form submission failed. Please try again.", error);
+      console.error("Form submission failed", error);
+      toast.error("Form submission failed. Please try again.");
     }
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        border: "1px solid black",
-        flexDirection: isLargeScreen ? "row" : "column",
-      }}
-    >
-      {/* <Box
+    <>
+      <ToastContainer />
+
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          border: "1px solid black",
+          backgroundColor: "white",
+          flexDirection: isLargeScreen ? "row" : "column",
+        }}
+      >
+        {/* <Box
         sx={{
           width: isLargeScreen ? "55%" : "100%",
           height: "100%",
@@ -122,87 +132,94 @@ function Login() {
       >
         hi
       </Box> */}
-      <Box
-        sx={{
-          width: "50%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          gap: "30px",
-        }}
-      >
         <Box
           sx={{
-            height: "15%",
-            width: "250px",
-            border: "1px solid black",
+            width: "500px",
+            height: "500px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-          }}
-        >
-          Image
-        </Box>
-        <Box
-          sx={{
-            height: "40%",
-            width: "90%",
+            flexDirection: "column",
+            gap: "50px",
+            border: "1px solid black",
           }}
         >
           <Box
             sx={{
+              height: "15%",
+              width: "250px",
+              // border: "1px solid black",
               display: "flex",
-              justifyContent: "space-around",
+              justifyContent: "center",
               alignItems: "center",
-              width: "100%",
-              height: "100%",
-              flexDirection: "column",
             }}
           >
-            <Typography>SIGN IN TO CONTINUE</Typography>
+            <Image
+              src="/Logo.svg"
+              width={300}
+              height={100}
+              objectFit="contain"
+            />
+          </Box>
+          <Box
+            sx={{
+              height: "40%",
+              width: "90%",
+            }}
+          >
             <Box
-              width={{
-                width: "100%",
+              sx={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: "space-around",
+                alignItems: "center",
+                width: "100%",
+                height: "100%",
+                flexDirection: "column",
               }}
             >
-              <TextField
-                sx={{ width: "80%" }}
-                name="name"
-                label="Username / Email / Phone"
-                variant="outlined"
-                onChange={handleInputChange}
-              />
+              <Typography>SIGN IN TO CONTINUE</Typography>
+              <Box
+                width={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextField
+                  sx={{ width: "80%" }}
+                  name="name"
+                  label="Username / Email / Phone"
+                  variant="outlined"
+                  onChange={handleInputChange}
+                />
+              </Box>
+              <Box
+                width={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextField
+                  sx={{ width: "80%" }}
+                  name="password"
+                  label="Password"
+                  type="password"
+                  variant="outlined"
+                  onChange={handleInputChange}
+                />
+              </Box>
+              <Button
+                sx={{ border: "1px solid black", width: "80%" }}
+                onClick={handleSubmit}
+              >
+                Login
+              </Button>
             </Box>
-            <Box
-              width={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <TextField
-                sx={{ width: "80%" }}
-                name="password"
-                label="Password"
-                type="password"
-                variant="outlined"
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Button
-              sx={{ border: "1px solid black", width: "80%" }}
-              onClick={handleSubmit}
-            >
-              Login
-            </Button>
           </Box>
         </Box>
       </Box>
-    </Box>
+    </>
   );
 }
 
@@ -269,7 +286,7 @@ export default function RootLayout({ children }) {
             </ListItemButton>
           </ListItem>
         </Link>
-        <Link href="/leads" >
+        <Link href="/leads">
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>{React.createElement(AssignmentIcon)}</ListItemIcon>
