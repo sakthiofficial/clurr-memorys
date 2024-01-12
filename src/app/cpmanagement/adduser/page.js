@@ -54,8 +54,6 @@ export default function Page() {
     cpCompany: {
       name: "",
       projects: [],
-      parentId: "",
-      phone: "6574839202",
     },
     cpExecutes: [
       {
@@ -173,7 +171,6 @@ export default function Page() {
       const updatedValues = {
         ...formData.cpCompany,
         projects: selectedProjects,
-        parentId: selectedCategoryData?._id,
       };
 
       const cpExecutesp = formData.cpExecutes.map((exec) => {
@@ -194,7 +191,7 @@ export default function Page() {
       };
 
       console.log(cpData);
-      // cpsAdd(cpData);
+      cpsAdd(cpData);
     } else {
       console.error("Form is not valid. Please fill in all required fields.");
     }

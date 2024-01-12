@@ -140,7 +140,7 @@ function Login() {
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
-            gap: "50px",
+            gap: "20px",
             border: "1px solid black",
           }}
         >
@@ -163,7 +163,7 @@ function Login() {
           </Box>
           <Box
             sx={{
-              height: "40%",
+              height: "50%",
               width: "90%",
             }}
           >

@@ -1,13 +1,13 @@
-"use client";
-
 import * as React from "react";
 import Button from "@mui/material/Button";
-import { Grid, TextField } from "@mui/material";
+import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
+import { useState } from "react";
+import { useAddLeadMutation, useGetProjectQuery } from "@/reduxSlice/apiSlice";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -19,13 +19,38 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function AddLeadsBtn() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
+  const [addlead] = useAddLeadMutation();
+
+  const result = useGetProjectQuery();
+  console.log(result)
+
+  const [formData, setFormData] = useState({
+    userName: "",
+    email: "",
+    phone: "",
+    project: "",
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleChange = (field) => (event) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: event.target.value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    console.log("Form Data:", formData);
+    handleClose();
   };
 
   return (
@@ -34,13 +59,11 @@ export default function AddLeadsBtn() {
         variant="outlined"
         onClick={handleClickOpen}
         sx={{
-          // border: "1px solid black",
           backgroundColor: "rgba(0, 0, 0, 1)",
           color: "rgba(255, 255, 255, 1)",
           width: "125px",
           height: "43px",
           borderRadius: "13px",
-          border: "none",
           fontSize: "13px",
           fontWeight: "400",
           "&:hover": {
@@ -60,8 +83,7 @@ export default function AddLeadsBtn() {
         PaperProps={{
           sx: {
             borderRadius: "34px",
-            height: "486px",
-            // width: "456px",
+            minHeight: "486px",
             border: "1px solid black",
             display: "flex",
             justifyContent: "space-between",
@@ -114,23 +136,41 @@ export default function AddLeadsBtn() {
           }}
         >
           <TextField
+            label="userName"
+            value={formData.userName}
+            onChange={handleChange("userName")}
             sx={{ width: "80%", borderRadius: "15px", height: "48px" }}
           />
-          <TextField sx={{ width: "80%", borderRadius: "15px" }} />
-          <Grid
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "80%",
-            }}
-          >
-            <TextField sx={{ width: "25%", borderRadius: "20px" }} />
-            <TextField sx={{ width: "60%", borderRadius: "15px" }} />
-          </Grid>
-          <TextField sx={{ width: "80%", borderRadius: "15px" }} />
+          <TextField
+            label="Email"
+            value={formData.email}
+            onChange={handleChange("email")}
+            sx={{ width: "80%", borderRadius: "15px" }}
+          />
+          <TextField
+            label="Phone"
+            value={formData.phone}
+            onChange={handleChange("phone")}
+            sx={{ width: "80%", borderRadius: "20px" }}
+          />
+
+          <FormControl sx={{width:"80%"}}>
+            <InputLabel id="demo-simple-select-label">Project</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={formData.project}
+              label="Age"
+              onChange={handleChange}
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
         <Button
-          onClick={handleClose}
+          onClick={handleSubmit}
           sx={{
             border: "none",
             height: "56px",

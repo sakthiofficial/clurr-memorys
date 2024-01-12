@@ -10,9 +10,9 @@ const { default: axios } = require("axios");
 
 class LSQLeadSrv {
   constructor() {
-  this.lsqApiUrlToCaptureLead = "https://api-in21.leadsquared.com/v2/LeadManagement.svc/Lead.Capture"
+    this.lsqApiUrlToCaptureLead =
+      "https://api-in21.leadsquared.com/v2/LeadManagement.svc/Lead.Capture";
   }
-
 
   retriveLead = async (providedUser, project) => {
     function utcMonthStartDateFormat() {
@@ -151,64 +151,67 @@ class LSQLeadSrv {
       data.length,
     );
   };
-  createLead=async (providedUser,{id,project,userName,email,phone,notes}) =>{
+
+  createLead = async (
+    providedUser,
+    { id, project, userName, email, phone, notes },
+  ) => {
     // add project validation
-  try {
-    const cpCompany = await CpCompany.findOne({_id:id})
-    if(!cpCompany){
-      return new ApiResponse(
-        RESPONSE_STATUS?.NOTFOUND,
-        RESPONSE_MESSAGE?.INVALID,
-        null,
-      );
-    }
-    const {name,cpCode} = cpCompany
-    const { lsqConfig } = config;
-    const { accessKey, secretKey } = lsqConfig[project];
-    const {source} = lsqFieldValues
-    const postBody = [
-      {
-        Attribute: lsqLeadFieldNames?.firstName,
-        Value: userName,
-      },
-      {
-        Attribute:  lsqLeadFieldNames?.email,
-        Value: email,
-      },
-      {
-        Attribute:  lsqLeadFieldNames?.phone,
-        Value: phone,
-      },
-      {
-        Attribute:  lsqLeadFieldNames?.source,
-        Value: source,
-      },
-      {
-        Attribute:  lsqLeadFieldNames?.subSource,
-        Value: `${cpCode} - ${
-          name
-        } `,
-      },
-     
-      {
-        Attribute:  lsqLeadFieldNames?.notes,
-        Value:notes,
-      },
-  
-    
-    ];
-   
-  
+    try {
+      const cpCompany = await CpCompany.findOne({ _id: id });
+      if (!cpCompany) {
+        return new ApiResponse(
+          RESPONSE_STATUS?.NOTFOUND,
+          RESPONSE_MESSAGE?.INVALID,
+          null,
+        );
+      }
+      const { name, cpCode } = cpCompany;
+      const { lsqConfig } = config;
+      const { accessKey, secretKey } = lsqConfig[project];
+      const { source } = lsqFieldValues;
+      const postBody = [
+        {
+          Attribute: lsqLeadFieldNames?.firstName,
+          Value: userName,
+        },
+        {
+          Attribute: lsqLeadFieldNames?.email,
+          Value: email,
+        },
+        {
+          Attribute: lsqLeadFieldNames?.phone,
+          Value: phone,
+        },
+        {
+          Attribute: lsqLeadFieldNames?.source,
+          Value: source,
+        },
+        {
+          Attribute: lsqLeadFieldNames?.subSource,
+          Value: `${cpCode} - ${name} `,
+        },
+
+        {
+          Attribute: lsqLeadFieldNames?.notes,
+          Value: notes,
+        },
+      ];
+
       const promise = await axios.post(this.lsqApiUrlToCaptureLead, postBody, {
         params: {
           accessKey,
           secretKey,
         },
       });
-      return new ApiResponse(promise?.status,promise?.statusText,promise?.data)
-  } catch (error) {
-    console.log("While adding user error",error);
-  }
-  }
+      return new ApiResponse(
+        promise?.status,
+        promise?.statusText,
+        promise?.data,
+      );
+    } catch (error) {
+      console.log("While adding user error", error);
+    }
+  };
 }
 export default LSQLeadSrv;
