@@ -181,6 +181,7 @@ const userDataObj = {
   password: "password",
   cpCode: "cpCode",
   name: "name",
+  email: "email",
 };
 export {
   basicRolePermission,
