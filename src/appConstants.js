@@ -49,3 +49,13 @@ export const genrateUnixTimestamp = (date) => {
   const resDate = Math.floor(date || Date.now() / 1000);
   return resDate;
 };
+
+export const projectNames = {
+  woj: "The World oj joy - miyapur",
+  oncloud: "OnCloud33 - Bachupally",
+  balanagar: "Galleria Gardens - Balanagar",
+};
+export const projectActions ={
+leadViewOnly :"leadViewOnly",
+leadViewAndAdd:"leadAddAndView"
+}

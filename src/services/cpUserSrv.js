@@ -52,7 +52,7 @@ class CPUserSrv {
       if (!subordinateValidation) {
         console.log(
           "parent or provider does not have permission to the user",
-          (parentData?.subordinateRoles || []).includes(newUser?.role),
+         parentData,providedUser
         );
         return false;
       }

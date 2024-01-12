@@ -129,6 +129,7 @@ class CpManagementSrv {
 
     await initDb();
     const cpGenratedCode = await this.genrateCompanyCode();
+    console.log(cpGenratedCode);
     let parentUser = await CpUser.findOne({ _id: parentId });
     let branchHeadId = null;
     if (!parentUser) {

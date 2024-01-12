@@ -1,6 +1,7 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
 const { genrateUnixTimestamp } = require("@/appConstants");
+const { roleNames } = require("../shared/cpNamings");
 
 const { Schema } = mongoose;
 const CpUserSchema = new Schema({
@@ -33,6 +34,8 @@ const CpUserSchema = new Schema({
     type: String,
     trim: true,
     required: true,
+    enum: [roleNames?.superAdmin,roleNames?.cpBusinessHead,roleNames?.admin,roleNames?.mis,roleNames?.cpTl,roleNames?.cpRm,roleNames?.cpBranchHead,roleNames?.cpExecute ],
+
   },
   projects: {
     type: Array,

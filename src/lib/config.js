@@ -1,3 +1,5 @@
+import { projectNames } from "@/appConstants";
+
 function getDomainFromBrowser() {
   if (typeof window === "undefined") {
     return null;
@@ -5,11 +7,7 @@ function getDomainFromBrowser() {
   const domainUrl = window.location.origin;
   return domainUrl;
 }
-const projectNames = {
-  woj: "WOJ Miyapur",
-  oncloud: "Oncloud33",
-  balanagar: " Balanagar-Galleria Gardens",
-};
+
 export default {
   urlDb: process.env.URL_DB,
   appEnv: process.env.NEXT_PUBLIC_APPENV,
