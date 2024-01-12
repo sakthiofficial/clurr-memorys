@@ -49,29 +49,26 @@ export default function Page() {
   const [permissions, setPermissions] = useState([]);
 
   const [selectedProject, setSelectedProject] = useState("");
+  const [projects, setProjects] = useState([]);
 
   const handleChangeProject = (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
   };
-  const resultProjectName = useGetProjectQuery();
-// console.log(resultProjectName)
+  // const resultProjectName = useGetProjectQuery();
+  // console.log(resultProjectName)
 
-const resultLeads = useGetLeadsQuery(selectedProject);
-// console.log(resultLeads.data);
+  // const resultLeads = useGetLeadsQuery(selectedProject);
+  // console.log(resultLeads.data);
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
 
     if (storedData) {
       const jsonData = JSON.parse(storedData);
-      // setUser(jsonData);
-      // setPermissions(user?.permissions);
       setPermissions(jsonData.permissions || []);
-      // setIsLoggedIn(true);
+      setProjects(jsonData.projects || []);
     } else {
-      // setUser(null);
-      // setIsLoggedIn(false);
       console.error('No data found in local storage for key "user".');
     }
   }, [localStorage.getItem("user")]);
@@ -152,7 +149,7 @@ const resultLeads = useGetLeadsQuery(selectedProject);
             onChange={handleChangeProject}
             MenuProps={{ disableScrollLock: true }}
           >
-            {resultProjectName?.data?.result?.map((proj) => (
+            {projects?.map((proj) => (
               <MenuItem key={proj.id} value={proj.name}>
                 {proj.name}
               </MenuItem>
