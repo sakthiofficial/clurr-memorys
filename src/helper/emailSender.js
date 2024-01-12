@@ -38,7 +38,7 @@ export default async function sendMail(
       from: "CP PORTAL HYDRABAD <sakthivel.g@alliancezone.in>",
       to: userEmail,
       subject: "Message from Urbanrise",
-      text: `Hey ${userName},\n\nYou have been designated as a${role} for the projects ${projects}.\nPlease contact Urbanrise team to get your credentials.\n\nLogin to  https://cph.urbanriseprojects.in .\n\nBest regards,\n${parentName}`,
+      text: `Hey ${userName},\n\nYou have been designated as a ${role} for the projects ${projects}.\nPlease contact Urbanrise team to get your credentials.\n\nLogin to  https://cph.urbanriseprojects.in .\n\nBest regards,\n${parentName}`,
     };
     const result = await transport.sendMail(mailOptions);
     return result;

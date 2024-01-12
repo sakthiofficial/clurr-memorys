@@ -20,11 +20,6 @@ export function middleware(request) {
   if (!cookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-  const storedData = localStorage.getItem("user");
-  console.log(storedData);
-  if (storedData) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
 }
 export const config = {
   matcher: ["/api/user", "/api/lead", "/"],
