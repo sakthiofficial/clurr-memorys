@@ -96,7 +96,7 @@ function Login() {
         // console.log(result);
         localStorage.setItem(
           "user",
-          JSON.stringify(result.data.result.userData),
+          JSON.stringify(result.data.result.userData)
         );
         toast.success("Login successful!");
         window.location.href = "/";
@@ -315,6 +315,7 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
+    console.log("cookie", document.cookie);
 
     if (storedData) {
       const jsonData = JSON.parse(storedData);
@@ -335,7 +336,6 @@ export default function RootLayout({ children }) {
   const handleMenuClick = (setting) => {
     if (setting === "Logout") {
       localStorage.removeItem("user");
-
       window.location.href = "/login";
     }
 
