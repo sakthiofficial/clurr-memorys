@@ -39,7 +39,7 @@ export async function POST(request) {
         isPrimary: Joi.boolean().required(),
         phone: Joi.string().required(),
         parentId: Joi.string(),
-      }),
+      }).required(),
       cpExecute: Joi.object({
         name: Joi.string().required(),
         email: Joi.string().email().required(),
