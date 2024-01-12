@@ -73,7 +73,7 @@ class CpManagementSrv {
       let lastCode = await CpCompany.findOne(
         {},
         { cpCode: 1 },
-        { sort: { _id: -1 } },
+        { sort: { _id: -1 } }
       ).lean();
       if (!lastCode) {
         return "URBHCP00001";
@@ -89,13 +89,13 @@ class CpManagementSrv {
     this.getCpCompanysBH = async (providedUser) => {
       if (
         !providedUser[userDataObj?.permissions].includes(
-          permissionKeyNames?.leadManagement,
+          permissionKeyNames?.leadManagement
         )
       ) {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.UNAUTHORIZED,
-          null,
+          null
         );
       }
       const companies = await CpCompany.find().populate("branchHeadId");
@@ -116,14 +116,14 @@ class CpManagementSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.OK,
         RESPONSE_MESSAGE?.OK,
-        cpCompanyBranchHead,
+        cpCompanyBranchHead
       );
     };
   }
 
   createCpAccount = async (
     providedUser,
-    { cpCompany, cpBranchHead, cpExecute, parentId },
+    { cpCompany, cpBranchHead, cpExecute, parentId }
   ) => {
     // add parent account count validation // check cp ececute act count
 
@@ -136,7 +136,7 @@ class CpManagementSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
         RESPONSE_MESSAGE?.INVALID,
-        null,
+        null
       );
     }
     try {
@@ -150,23 +150,23 @@ class CpManagementSrv {
             return new ApiResponse(
               RESPONSE_STATUS?.NOTFOUND,
               RESPONSE_MESSAGE?.INVALID,
-              null,
+              null
             );
           }
           cpBranchHead[userDataObj?.parentId] = parentId;
           const saltRounds = 10;
           const hashedPassword = await bcrypt.hash(
             cpBranchHead[userDataObj?.password],
-            saltRounds,
+            saltRounds
           );
           cpBranchHead[userDataObj?.password] = hashedPassword;
           cpBranchHead[userDataObj?.role] = roleNames?.cpBranchHead;
           cpBranchHead[userDataObj?.permissions] = basicRolePermission(
-            cpBranchHead[userDataObj?.role],
+            cpBranchHead[userDataObj?.role]
           );
           const cpBranchResult = await this.createCpBranchHead(
             cpBranchHead,
-            parentId,
+            parentId
           );
           parentUser = cpBranchResult;
           branchHeadId = cpBranchResult._id;
@@ -184,7 +184,7 @@ class CpManagementSrv {
           return new ApiResponse(
             RESPONSE_STATUS?.OK,
             RESPONSE_MESSAGE?.OK,
-            null,
+            null
           );
         }
         cpExecute[userDataObj?.parentId] =
@@ -193,29 +193,37 @@ class CpManagementSrv {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(
           cpExecute[userDataObj?.password],
-          saltRounds,
+          saltRounds
         );
         cpExecute[userDataObj?.password] = hashedPassword;
         cpExecute[userDataObj?.role] = roleNames?.cpExecute;
         cpExecute[userDataObj?.permissions] = basicRolePermission(
-          cpExecute[userDataObj?.role],
+          cpExecute[userDataObj?.role]
         );
         const userSch = new CpUser(cpExecute);
         await userSch.save();
+        const userName = cpExecute[userDataObj?.name];
+        const parentName = "Urbanrise Team";
+        const userEmail = cpExecute[userDataObj?.email];
+        const role = cpExecute[userDataObj?.role];
+        const projects = cpExecute[userDataObj?.projects].join("/n");
+        sendMail(userName, parentName, userEmail, role, projects)
+          .then((result) => console.log("Email sent...", result))
+          .catch((error) => console.log(error.message));
         return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
       }
 
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.UNAUTHORIZED,
-        null,
+        null
       );
     } catch (error) {
       console.log("Error While Adding Cp", error);
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error,
+        error
       );
     }
   };
@@ -225,7 +233,7 @@ class CpManagementSrv {
     if (!checkRole) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.INVALID
       );
     }
     const cpCompanys = await CpCompany.find();
@@ -249,13 +257,13 @@ class CpManagementSrv {
           cpBranchHead,
           cpExecutes,
         };
-      }),
+      })
     );
 
     return new ApiResponse(
       RESPONSE_STATUS?.OK,
       RESPONSE_MESSAGE?.OK,
-      companiesWithUsers,
+      companiesWithUsers
     );
   };
 }

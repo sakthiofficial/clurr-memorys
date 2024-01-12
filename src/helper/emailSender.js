@@ -1,37 +1,48 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+const CLIENT_ID =
+  "328651052743-5cnsm90ijd4ostvd6i9i7e61ql9o7u69.apps.googleusercontent.com";
+const CLEINT_SECRET = "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";
+const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+const REFRESH_TOKEN =
+  "1//04pt0d0AFzD5BCgYIARAAGAQSNwF-L9Iro77czt8RAe4c7E075mz8YFpU_jxYRg9SwYhAtYK9hKw2NLk_Rp6Nx3-1VgCTrWx0Y24";
 
-export async function sendEmail(userName, parentName, userEmail, role, websiteLink) {
-  // Create a transporter using SMTP transport
-  const transporter = nodemailer.createTransport({
-    service: 'gmail', // Replace with your email service provider
-    auth: {
-      user: 'your-email@gmail.com',
-      pass: 'your-email-password',
-    },
-  });
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLEINT_SECRET,
+  REDIRECT_URI
+);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-  // Email content
-  const mailOptions = {
-    from: 'your-email@gmail.com',
-    to: userEmail,
-    subject: `Welcome, ${userName}!`,
-    text: `Hey ${userName},\n\nYou have been created as a ${role}. Please contact Urbanrise team to get your credentials.\n\nLogin to ${websiteLink}.\n\nBest regards,\n${parentName}`,
-  };
-
+export default async function sendMail(
+  userName,
+  parentName,
+  userEmail,
+  role,
+  projects
+) {
   try {
-    // Send the email
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent:', info.messageId);
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "sakthivel.g@alliancezone.in",
+        clientId: CLIENT_ID,
+        clientSecret: CLEINT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+    const mailOptions = {
+      from: "CP PORTAL HYDRABAD <sakthivel.g@alliancezone.in>",
+      to: userEmail,
+      subject: "Message from Urbanrise",
+      text: `Hey ${userName},\n\nYou have been designated as a${role} for the projects ${projects}.\nPlease contact Urbanrise team to get your credentials.\n\nLogin to  https://cph.urbanriseprojects.in .\n\nBest regards,\n${parentName}`,
+    };
+    const result = await transport.sendMail(mailOptions);
+    return result;
   } catch (error) {
-    console.error('Error sending email:', error);
+    return error;
   }
 }
-
-// Example usage
-const userName = 'John Doe';
-const parentName = 'Urbanrise Team';
-const userEmail = 'john.doe@example.com';
-const role = 'User'; // Replace with the actual role
-const websiteLink = 'https://example.com'; // Replace with the actual website link
-
-sendEmail(userName, parentName, userEmail, role, websiteLink);
