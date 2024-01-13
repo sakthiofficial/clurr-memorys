@@ -12,16 +12,12 @@ import {
   TablePagination,
   Grid,
   Typography,
-  TextField,
-  InputAdornment,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import Image from "next/image";
+
 // components
 import AddLeadsBtn from "../components/AddLeadsBtn";
 import ViewLeadsBtn from "../components/ViewLeadsBtn";
@@ -47,23 +43,21 @@ const users = [
 
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   const [selectedProject, setSelectedProject] = useState("");
-  const [projects, setProjects] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("This Month");
+  const handleChangeDate = (event) => {
+    setSelectedDate(event.target.value);
+  };
 
   const handleChangeProject = (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
   };
-  // const resultProjectName = useGetProjectQuery();
-  // console.log(resultProjectName)
-
-  // const resultLeads = useGetLeadsQuery(selectedProject);
-  // console.log(resultLeads.data);
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
-
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setPermissions(jsonData.permissions || []);
@@ -71,16 +65,7 @@ export default function Page() {
     } else {
       console.error('No data found in local storage for key "user".');
     }
-  }, [localStorage.getItem("user")]);
-
-  // useEffect(() => {
-  //   // Your local storage logic
-
-  //   // Fetch leads data when selectedProject changes
-  //   if (selectedProject) {
-  //     resultLeads.refetch({ project: selectedProject });
-  //   }
-  // }, [selectedProject]);
+  }, []);
 
   const getBackgroundColor = (name) => {
     switch (name) {
@@ -94,10 +79,8 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-  const result = useGetLeadsQuery();
-  // console.log(result.data);
+  const result = useGetLeadsQuery(selectedProject);
 
-  // pagination functions
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -110,10 +93,15 @@ export default function Page() {
     setPage(0);
   };
 
-  const slicedRows = result.data?.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage,
-  );
+  const slicedRows =
+    result?.data && result.data.length > 1
+      ? result.data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      : [];
+  useEffect(() => {
+    if (projects && projects.length > 0) {
+      setSelectedProject(projects[0].name);
+    }
+  }, [projects]);
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -126,7 +114,7 @@ export default function Page() {
           // padding:"0px 10px"
         }}
       >
-        <Grid sx={{ width: "60%" }}>
+        <Grid sx={{ width: "20%", paddingRight: "30px" }}>
           <Typography
             sx={{
               fontSize: "18px",
@@ -138,7 +126,39 @@ export default function Page() {
             Lead List
           </Typography>
         </Grid>
-        <FormControl sx={{ width: "50%" }} size="small">
+        <FormControl
+          sx={{
+            width: "50%",
+            marginRight: "20px",
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              borderRadius: "19px",
+            },
+          }}
+          size="small"
+        >
+          <InputLabel id="date-label">select date</InputLabel>
+          <Select
+            labelId="date-label"
+            id="select-date"
+            name="select-date"
+            label="select date"
+            value={selectedDate}
+            onChange={handleChangeDate}
+            MenuProps={{ disableScrollLock: true }}
+          >
+            <MenuItem value="This Month">This Month</MenuItem>
+            <MenuItem value="No Options">No Options</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl
+          sx={{
+            width: "50%",
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              borderRadius: "19px",
+            },
+          }}
+          size="small"
+        >
           <InputLabel id="project-label">Project</InputLabel>
           <Select
             labelId="project-label"
@@ -335,7 +355,7 @@ export default function Page() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={result.data?.length || 0} // Use result.data for the count
+            count={result.data?.length || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
