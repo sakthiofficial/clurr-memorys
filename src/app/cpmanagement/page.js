@@ -11,13 +11,9 @@ import {
   Paper,
   Grid,
   Typography,
-  TextField,
-  InputAdornment,
   Button,
   TablePagination,
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import Image from "next/image";
 import Link from "next/link";
 import { useGetCpQuery } from "@/reduxSlice/apiSlice";
 

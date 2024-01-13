@@ -11,13 +11,9 @@ import {
   Paper,
   Grid,
   Typography,
-  TextField,
-  InputAdornment,
   Button,
   TablePagination,
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import Image from "next/image";
 import Link from "next/link";
 // icons
 import SuperAdmin from "../../../public/UserCard/SuperAdmin.svg";
@@ -26,10 +22,7 @@ import CPHead from "../../../public/UserCard/CPHead.svg";
 import CPLead from "../../../public/UserCard/CPLead.svg";
 import CPManager from "../../../public/UserCard/CPManager.svg";
 import ChanelPartner from "../../../public/UserCard/ChanelPartner.svg";
-import {
-  useDeleteUsersMutation,
-  useGetUsersQuery,
-} from "@/reduxSlice/apiSlice";
+import { useGetUsersQuery } from "@/reduxSlice/apiSlice";
 
 // card details
 const users = [
@@ -85,10 +78,6 @@ export default function Page() {
       // console.log("Query completed:", data?.result);
     }
   }, [data, isLoading, isError, error]);
-
-  // const [deleteUserId, setDeleteUserId] = useState("");
-
-  //  useDeleteUsersMutation(deleteUserId);
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -240,32 +229,6 @@ export default function Page() {
             >
               User List
             </Typography>
-            {/* <TextField
-              variant="outlined"
-              id="filled-hidden-label-small"
-              size="small"
-              placeholder="search"
-              sx={{
-                border: "1px solid rgba(182, 190, 196, 1)",
-                width: "298px",
-                height: "39px",
-                borderRadius: "11px",
-                "& .MuiOutlinedInput-input": {
-                  color: "rgba(158, 158, 158, 1)",
-                },
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: "11px",
-                  outline: "none !important",
-                },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search sx={{ color: "rgba(158, 158, 158, 1)" }} />
-                  </InputAdornment>
-                ),
-              }}
-            /> */}
           </Grid>
           <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
             <TableHead>

@@ -58,7 +58,7 @@ export default function AddLeadsBtn() {
 
   const handleSubmit = () => {
     console.log("Form Data:", formData);
-    // Call your mutation function here with addlead(formData)
+    // addlead(formData)
     handleClose();
   };
 

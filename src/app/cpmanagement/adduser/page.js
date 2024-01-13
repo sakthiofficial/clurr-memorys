@@ -149,7 +149,7 @@ export default function Page() {
       const updatedExecutes = prev.cpExecutes.map((item, i) => ({
         ...item,
         role: i === index && checked ? "cpBranchHead" : "cpExecutes",
-        isPrimary: i === index ? checked : item.isPrimary,
+        isPrimary: i === index ? checked : !checked,
       }));
 
       return {

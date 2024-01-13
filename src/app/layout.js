@@ -99,7 +99,7 @@ function Login() {
           JSON.stringify(result.data.result.userData)
         );
         toast.success("Login successful!");
-        window.location.href = "/";
+        window.location.href = "/leads";
       } else {
         toast.error("Login failed. Please check your credentials.");
       }
@@ -227,7 +227,6 @@ function Login() {
 export default function RootLayout({ children }) {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [permissions, setPermissions] = useState([]);
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -320,12 +319,9 @@ export default function RootLayout({ children }) {
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
-      // setPermissions(user?.permissions);
       setPermissions(jsonData.permissions || []);
-      // setIsLoggedIn(true);
     } else {
       setUser(null);
-      // setIsLoggedIn(false);
       console.error('No data found in local storage for key "user".');
     }
   }, []);
