@@ -74,7 +74,7 @@ export default function Page() {
 
     // Find the selected category data
     const selectedCategoryData = result?.data?.result.find(
-      (rm) => rm.name === selectedCategoryValue,
+      (rm) => rm.name === selectedCategoryValue
     );
 
     const initialSelectedProjects = selectedCategoryData?.projects || [];
@@ -93,7 +93,7 @@ export default function Page() {
 
     if (
       formData.cpExecutes.some(
-        (exec) => !exec.name || !exec.phone || !exec.email || !exec.password,
+        (exec) => !exec.name || !exec.phone || !exec.email || !exec.password
       )
     ) {
       console.error("All CP Executive fields are required.");
@@ -151,7 +151,6 @@ export default function Page() {
         role: i === index && checked ? "cpBranchHead" : "cpExecutes",
         isPrimary: i === index ? checked : item.isPrimary,
       }));
-
       return {
         ...prev,
         cpExecutes: updatedExecutes,
@@ -160,7 +159,7 @@ export default function Page() {
   };
 
   const selectedCategoryData = result?.data?.result.find(
-    (rm) => rm.name === selectedCategory,
+    (rm) => rm.name === selectedCategory
   );
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -415,7 +414,7 @@ export default function Page() {
                             cpExecutes: prev.cpExecutes.map((item, i) =>
                               i === index
                                 ? { ...item, name: e.target.value }
-                                : item,
+                                : item
                             ),
                           }))
                         }
@@ -433,7 +432,7 @@ export default function Page() {
                             cpExecutes: prev.cpExecutes.map((item, i) =>
                               i === index
                                 ? { ...item, phone: e.target.value }
-                                : item,
+                                : item
                             ),
                           }))
                         }
@@ -451,7 +450,7 @@ export default function Page() {
                             cpExecutes: prev.cpExecutes.map((item, i) =>
                               i === index
                                 ? { ...item, email: e.target.value }
-                                : item,
+                                : item
                             ),
                           }))
                         }
@@ -469,7 +468,7 @@ export default function Page() {
                             cpExecutes: prev.cpExecutes.map((item, i) =>
                               i === index
                                 ? { ...item, password: e.target.value }
-                                : item,
+                                : item
                             ),
                           }))
                         }

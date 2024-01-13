@@ -16,6 +16,7 @@ import { CpCompany } from "../../models/cpCompany";
 import { CpUser } from "../../models/cpUser";
 import initDb from "../lib/db";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
+import sendMail from "@/helper/emailSender";
 
 class CpManagementSrv {
   constructor() {
@@ -119,6 +120,44 @@ class CpManagementSrv {
         cpCompanyBranchHead
       );
     };
+    this.validateCpAccounts = async (company, branchHead, cpExecute) => {
+      try {
+        const errormsg = {
+          companyFound: "Company  Already Register",
+          cpBranchHeadFound: "Branch Head Already Register",
+          cpExecuteFound: "CP Execute Already Register",
+        };
+        const cpCompany = await CpCompany.findOne({ name: company?.name });
+
+        const cpBranchHeadData = await CpUser.findOne({
+          role: roleNames?.cpBranchHead,
+          $or: [
+            { name: branchHead[userDataObj?.name] },
+            { email: branchHead[userDataObj?.email] },
+            { phone: branchHead[userDataObj?.phone] },
+          ],
+        });
+
+        const cpExecuteData = await CpUser.findOne({
+          $or: [
+            { name: cpExecute ? cpExecute[userDataObj?.name] : null },
+            { email: cpExecute ? cpExecute[userDataObj?.email] : null },
+            { phone: cpExecute ? cpExecute[userDataObj?.phone] : null },
+          ],
+        });
+        if (cpCompany) {
+          return errormsg?.companyFound;
+        } else if (cpBranchHeadData) {
+          return errormsg?.cpBranchHeadFound;
+        } else if (cpExecute) {
+          return errormsg?.cpExecuteFound;
+        }
+        console.log(cpCompany, cpBranchHeadData, cpExecuteData);
+      } catch (error) {
+        console.error("Error checking data existence:", error);
+        return false;
+      }
+    };
   }
 
   createCpAccount = async (
@@ -128,8 +167,21 @@ class CpManagementSrv {
     // add parent account count validation // check cp ececute act count
 
     await initDb();
+    if ((cpCompany, cpBranchHead)) {
+      const validateResult = await this.validateCpAccounts(
+        cpCompany,
+        cpBranchHead,
+        cpExecute
+      );
+      if (validateResult) {
+        return new ApiResponse(
+          RESPONSE_STATUS?.ERROR,
+          RESPONSE_MESSAGE?.INVALID,
+          validateResult
+        );
+      }
+    }
     const cpGenratedCode = await this.genrateCompanyCode();
-    console.log(cpGenratedCode);
     let parentUser = await CpUser.findOne({ _id: parentId });
     let branchHeadId = null;
     if (!parentUser) {
