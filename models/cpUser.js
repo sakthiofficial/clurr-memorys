@@ -34,8 +34,16 @@ const CpUserSchema = new Schema({
     type: String,
     trim: true,
     required: true,
-    enum: [roleNames?.superAdmin,roleNames?.cpBusinessHead,roleNames?.admin,roleNames?.mis,roleNames?.cpTl,roleNames?.cpRm,roleNames?.cpBranchHead,roleNames?.cpExecute ],
-
+    enum: [
+      roleNames?.superAdmin,
+      roleNames?.cpBusinessHead,
+      roleNames?.admin,
+      roleNames?.mis,
+      roleNames?.cpTl,
+      roleNames?.cpRm,
+      roleNames?.cpBranchHead,
+      roleNames?.cpExecute,
+    ],
   },
   projects: {
     type: Array,
