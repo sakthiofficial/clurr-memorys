@@ -20,7 +20,7 @@ import { CpProject } from "../../models/cpProject";
 import sendMail from "@/helper/emailSender";
 
 const { default: initDb } = require("../lib/db");
-const { CpUser } = require("../../models/cpUser");
+const { CpUser } = require("../../models/cpAppUser");
 
 class CPUserSrv {
   constructor() {

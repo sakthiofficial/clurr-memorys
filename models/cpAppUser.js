@@ -5,7 +5,7 @@ const { roleNames: ROLENAMES } = require("../shared/cpNamings");
 
 const { Schema } = mongoose;
 // Chnage Appuser
-const CpUserSchema = new Schema({
+const CpAppUserSchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -32,8 +32,7 @@ const CpUserSchema = new Schema({
     minlength: 6,
   },
   // make this to array
- sakthi:{
-},
+
   role: {
     type: String,
     trim: true,
@@ -96,5 +95,5 @@ const permissionSch = {
 
 
 }
-module.exports.CpUser =
-  mongoose.models.CpUser || mongoose.model("CpUser", CpUserSchema);
+module.exports.CpAppUser =
+  mongoose.models.CpAppUser || mongoose.model("CpAppUser", CpAppUserSchema);

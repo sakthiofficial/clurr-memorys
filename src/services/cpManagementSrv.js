@@ -13,7 +13,7 @@ import {
 } from "../../shared/roleManagement";
 import { CpCompany } from "../../models/cpCompany";
 // dont remove this schema
-import { CpUser } from "../../models/cpUser";
+import { CpUser } from "../../models/cpAppUser";
 import initDb from "../lib/db";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import sendMail from "@/helper/emailSender";

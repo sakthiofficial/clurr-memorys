@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
-const AppRoleSchema = new Schema({
+const CpAppRoleSchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -11,7 +11,7 @@ const AppRoleSchema = new Schema({
   permissions: [
     {
       type: String,
-      ref: "AppPermission",
+      ref: "CpAppPermission",
     },
   ],
   subordinateRoles: [
@@ -22,5 +22,5 @@ const AppRoleSchema = new Schema({
   ],
 });
 
-module.exports.AppRole =
-  mongoose.models.AppRole || mongoose.model("AppRole", AppRoleSchema);
+module.exports.CpAppRole =
+  mongoose.models.CpAppRole || mongoose.model("CpAppRole", CpAppRoleSchema);
