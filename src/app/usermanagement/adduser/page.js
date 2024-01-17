@@ -38,7 +38,7 @@ export default function Page() {
   });
 
   const [selectedProjects, setSelectedProjects] = useState([]);
-
+  // handle input data function
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -95,6 +95,7 @@ export default function Page() {
   const priorUser = isPriorityUser(selectedRolesListP[0]);
   // console.log(sendUsers)
 
+  // handle submit function
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -130,26 +131,28 @@ export default function Page() {
           ...updatedValues,
         };
 
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          password: "",
-        });
+        // setFormData({
+        //   name: "",
+        //   email: "",
+        //   phone: "",
+        //   password: "",
+        // });
 
-        setSelectedValues({
-          projects: [],
-          role: "",
-          parentId: "",
-        });
+        // setSelectedValues({
+        //   projects: [],
+        //   role: "",
+        //   parentId: "",
+        // });
 
-        setSelectedProjects([]);
+        // setSelectedProjects([]);
 
         sendUsers(usersData)
           .then((result) => {
             console.log(result);
             toast.success("User submitted successfully!");
-            // window.location.href = "/usermanagement";
+            setTimeout(() => {
+              window.location.href = "/usermanagement";
+            }, 2000);
           })
           .catch((error) => {
             console.error("User submission failed", error);
@@ -161,7 +164,7 @@ export default function Page() {
       }
     }
   };
-
+  // handle clear function
   const handleCancel = () => {
     setFormData({
       name: "",
@@ -193,9 +196,9 @@ export default function Page() {
     return <Grid sx={{ height: "100vh" }}>Loading...</Grid>;
   }
 
-  const SubordinateRoles = userData.subordinateRoles;
-  const SubordinateProjects = userData.projects;
-
+  const SubordinateRoles = userData?.subordinateRoles;
+  const SubordinateProjects = userData?.projects;
+  // handle project function
   const handleChangeProject = (event) => {
     const {
       target: { value },
@@ -297,10 +300,10 @@ export default function Page() {
                   }}
                 >
                   <TextField
-                    label="name"
+                    label="Name"
                     name="name"
                     type="text"
-                    value={formData.name}
+                    value={formData?.name}
                     onChange={handleInputChange}
                     sx={{
                       width: "397px",
@@ -315,7 +318,7 @@ export default function Page() {
                     label="Email"
                     name="email"
                     type="email"
-                    value={formData.email}
+                    value={formData?.email}
                     onChange={handleInputChange}
                     sx={{
                       width: "397px",
@@ -342,7 +345,7 @@ export default function Page() {
                     label="Phone"
                     name="phone"
                     type="text"
-                    value={formData.phone}
+                    value={formData?.phone}
                     onChange={handleInputChange}
                     sx={{
                       width: "397px",
@@ -357,7 +360,7 @@ export default function Page() {
                     label="Password"
                     name="password"
                     type="password"
-                    value={formData.password}
+                    value={formData?.password}
                     onChange={handleInputChange}
                     sx={{
                       width: "397px",
@@ -393,14 +396,14 @@ export default function Page() {
                       id="role-label"
                       sx={{ color: "#757575", fontSize: "14px" }}
                     >
-                      Choose one role
+                      Select Role
                     </InputLabel>
                     <Select
                       labelId="role-label"
                       id="role"
                       displayEmpty
-                      value={selectedValues.role}
-                      label="Choose one role"
+                      value={selectedValues?.role}
+                      label="Select Role"
                       onChange={(e) => handleChange("role", e.target.value)}
                       MenuProps={{ disableScrollLock: true }}
                     >
@@ -424,7 +427,7 @@ export default function Page() {
                       }}
                     >
                       <InputLabel id="demo-multiple-checkbox-label">
-                        select project
+                        Select Project
                       </InputLabel>
                       <Select
                         labelId="demo-multiple-checkbox-label"
@@ -473,7 +476,7 @@ export default function Page() {
                         id="parent-label"
                         sx={{ color: "#757575", fontSize: "14px" }}
                       >
-                        Choose one parent
+                        Select Parent
                       </InputLabel>
                       {parentResult?.isSuccess ? (
                         parentResult?.data?.result?.length > 0 ? (
@@ -481,7 +484,7 @@ export default function Page() {
                             labelId="parent-label"
                             id="parentId"
                             displayEmpty
-                            value={selectedValues.parentId}
+                            value={selectedValues?.parentId}
                             label="Choose one parent"
                             onChange={(e) =>
                               handleChange("parentId", e.target.value)

@@ -13,13 +13,16 @@ import {
   Typography,
   Button,
   TablePagination,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 import Link from "next/link";
 import { useGetCpQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page() {
-  // table details
+  // get cp data query
   const { data, isLoading, isError, error } = useGetCpQuery();
+  // set pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const handleChangePage = (event, newPage) => {
@@ -36,15 +39,15 @@ export default function Page() {
       ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  useEffect(() => {
-    if (isLoading) {
-      // console.log("Loading...");
-    } else if (isError) {
-      // console.error("Error:", error);
-    } else if (data) {
-      // console.log("Query completed:", data?.result);
-    }
-  }, [data, isLoading, isError, error]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     // console.log("Loading...");
+  //   } else if (isError) {
+  //     // console.error("Error:", error);
+  //   } else if (data) {
+  //     // console.log("Query completed:", data?.result);
+  //   }
+  // }, [data, isLoading, isError, error]);
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -224,136 +227,100 @@ export default function Page() {
               }}
             /> */}
           </Grid>
-          <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
-            <TableHead>
-              <TableRow
-                sx={{
-                  backgroundColor: "rgba(249, 184, 0, 0.1)",
-                  fontWeight: "500",
-                  color: "black",
-                  fontSize: "0.75rem",
-                }}
-              >
-                <TableCell>COMPANY NAME</TableCell>
-                <TableCell>CP CODE</TableCell>
-                <TableCell>BRANCH HEAD</TableCell>
-                <TableCell>NO. OF ACCOUNTS</TableCell>
-                <TableCell>RELATIONSHIP MANAGER</TableCell>
-                <TableCell>JOINED DATE</TableCell>
-                <TableCell>STATUS</TableCell>
-                <TableCell>ACTION</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* {slicedRows?.map((row) => (
-                <TableRow key={row?.id}>
-                  <TableCell>{row?.name}</TableCell>
-                  <TableCell>{row?.cpCode}</TableCell>
-                  <TableCell>null</TableCell>
-                  <TableCell>{row?.account}</TableCell>
-                  <TableCell>null</TableCell>
-                  <TableCell>null</TableCell>
-                  <TableCell>null</TableCell>
-                  <TableCell>
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Button
-                        sx={{
-                          borderRadius: "10px",
-                          color: "black",
-                          width: "58px",
-                          height: "28px",
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        null
-                      </Button>
-                      <Button
-                        sx={{
-                          border: "1px solid red",
-                          borderRadius: "10px",
-                          color: "red",
-                          marginLeft: "5px",
-                          width: "58px",
-                          height: "28px",
-                          "&:hover": {
-                            backgroundColor: "transparent",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        null
-                      </Button>
-                    </Grid>
-                  </TableCell>
+          {isLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                height: "80vh",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
+              <TableHead>
+                <TableRow
+                  sx={{
+                    backgroundColor: "rgba(249, 184, 0, 0.1)",
+                    fontWeight: "500",
+                    color: "black",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  <TableCell>COMPANY NAME</TableCell>
+                  <TableCell>CP CODE</TableCell>
+                  <TableCell>BRANCH HEAD</TableCell>
+                  <TableCell>NO. OF ACCOUNTS</TableCell>
+                  <TableCell>RELATIONSHIP MANAGER</TableCell>
+                  <TableCell>JOINED DATE</TableCell>
+                  <TableCell>STATUS</TableCell>
+                  <TableCell>ACTION</TableCell>
                 </TableRow>
-              ))} */}
-              {slicedRows?.map((row) => (
-                <TableRow key={row?._id}>
-                  <TableCell>{row?.company?.name}</TableCell>
-                  <TableCell>{row?.company?.cpCode}</TableCell>
-                  <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>
-                  <TableCell>
-                    {row?.cpBranchHead
-                      ? 1 + row?.cpExecutes.length
-                      : row?.cpExecutes.length}
-                  </TableCell>
-                  <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
-                  {/* Add similar lines for other properties */}
-                  <TableCell>{row?.createdBy}</TableCell>
-                  <TableCell>{row?.status || "N/A"}</TableCell>
-                  <TableCell>
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Button
+              </TableHead>
+              <TableBody>
+                {slicedRows?.map((row) => (
+                  <TableRow key={row?._id}>
+                    <TableCell>{row?.company?.name}</TableCell>
+                    <TableCell>{row?.company?.cpCode}</TableCell>
+                    <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>
+                    <TableCell>
+                      {row?.cpBranchHead
+                        ? 1 + row?.cpExecutes.length
+                        : row?.cpExecutes.length}
+                    </TableCell>
+                    <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
+                    <TableCell>{row?.createdBy}</TableCell>
+                    <TableCell>{row?.status || "N/A"}</TableCell>
+                    <TableCell>
+                      <Grid
                         sx={{
-                          borderRadius: "10px",
-                          color: "black",
-                          width: "58px",
-                          height: "28px",
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          "&:hover": {
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Button
+                          sx={{
+                            borderRadius: "10px",
+                            color: "black",
+                            width: "58px",
+                            height: "28px",
+                            fontSize: "10px",
                             backgroundColor: "rgba(249, 184, 0, 1)",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        null
-                      </Button>
-                      <Button
-                        sx={{
-                          border: "1px solid red",
-                          borderRadius: "10px",
-                          color: "red",
-                          marginLeft: "5px",
-                          width: "58px",
-                          height: "28px",
-                          "&:hover": {
-                            backgroundColor: "transparent",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        null
-                      </Button>
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                            "&:hover": {
+                              backgroundColor: "rgba(249, 184, 0, 1)",
+                              boxShadow: "none",
+                            },
+                          }}
+                        >
+                          edit
+                        </Button>
+                        <Button
+                          sx={{
+                            border: "1px solid red",
+                            borderRadius: "10px",
+                            color: "red",
+                            marginLeft: "5px",
+                            width: "58px",
+                            height: "28px",
+                            fontSize: "10px",
+                            "&:hover": {
+                              backgroundColor: "transparent",
+                              boxShadow: "none",
+                            },
+                          }}
+                        >
+                          delete
+                        </Button>
+                      </Grid>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
