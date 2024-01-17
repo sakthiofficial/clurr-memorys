@@ -1,6 +1,4 @@
 import Joi from "joi";
-import config from "../../../lib/config";
-// import { LpLead } from "../../../models/lplead";
 import {
   ApiResponse,
   RESPONSE_MESSAGE,
@@ -9,7 +7,7 @@ import {
 import getUserByToken from "../../../helper/getUserByToken";
 import LSQLeadSrv from "../../../services/lsqLeadSrv";
 
-export async function POST(req, res) {
+export async function POST(req) {
   const providedUser = await getUserByToken(req);
   if (!providedUser) {
     return new Response(

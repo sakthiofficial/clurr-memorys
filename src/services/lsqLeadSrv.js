@@ -157,6 +157,17 @@ class LSQLeadSrv {
     { id, project, userName, email, phone, notes },
   ) => {
     // add project validation
+    if (
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.cpManagement,
+      )
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
+    }
     try {
       const cpCompany = await CpCompany.findOne({ _id: id });
       if (!cpCompany) {

@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { NextResponse } from "next/server";
 import {
   ApiResponse,
   RESPONSE_MESSAGE,
@@ -69,17 +70,14 @@ export async function POST(request) {
       providedUser,
       value,
     );
-    return new Response(JSON.stringify(serviceRes));
+    return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.ERROR,
-          RESPONSE_MESSAGE?.INVALID,
-          error,
-        ),
-      ),
+    const response = new ApiResponse(
+      RESPONSE_STATUS?.ERROR,
+      RESPONSE_MESSAGE?.INVALID,
+      error,
     );
+    return NextResponse.json(response, { status: response?.status });
   }
 }
 export async function GET(request) {
@@ -99,16 +97,14 @@ export async function GET(request) {
 
     const cpManagementSrv = new CpManagementSrv();
     const serviceRes = await cpManagementSrv.retriveCpCompanys(providedUser);
-    return new Response(JSON.stringify(serviceRes));
+
+    return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.ERROR,
-          RESPONSE_MESSAGE?.INVALID,
-          error,
-        ),
-      ),
+    const response = new ApiResponse(
+      RESPONSE_STATUS?.ERROR,
+      RESPONSE_MESSAGE?.INVALID,
+      error,
     );
+    return NextResponse.json(response, { status: response?.status });
   }
 }
