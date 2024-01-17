@@ -18,9 +18,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function ViewLeadsBtn() {
+export default function ViewLeadsBtn({ leadData }) {
   const [open, setOpen] = React.useState(false);
-
+  // console.log(leadData)
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -114,43 +114,43 @@ export default function ViewLeadsBtn() {
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Name</Typography>
-            <Typography>asfer</Typography>
+            <Typography>{leadData.FirstName || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Contact</Typography>
-            <Typography>8220958384</Typography>
+            <Typography>{leadData.Phone || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Email</Typography>
-            <Typography>asferali8384@gmail.com</Typography>
+            <Typography>{leadData.EmailAddress || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Project</Typography>
-            <Typography>project1</Typography>
+            <Typography>{leadData.mx_Origin_Project || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Status</Typography>
-            <Typography>success</Typography>
+            <Typography>{leadData.Status || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Stage</Typography>
-            <Typography>new</Typography>
+            <Typography>{leadData.ProspectStage || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Created By</Typography>
-            <Typography>asfer</Typography>
+            <Typography>{leadData.mx_Agency_Name || "N/A"}</Typography>
           </Grid>
         </Grid>
       </BootstrapDialog>

@@ -16,6 +16,8 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 
 // components
@@ -29,7 +31,7 @@ import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
 import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
 import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
 import Booked from "../../../public/LeadsCard/bookLeads.svg";
-import { useGetLeadsQuery, useGetProjectQuery } from "@/reduxSlice/apiSlice";
+import { useGetLeadsQuery } from "@/reduxSlice/apiSlice";
 
 // card details
 const users = [
@@ -44,13 +46,16 @@ const users = [
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
+  // const [loading, setLoading] = useState(true);
 
   const [selectedProject, setSelectedProject] = useState("");
   const [selectedDate, setSelectedDate] = useState("This Month");
+
+  // handle date function
   const handleChangeDate = (event) => {
     setSelectedDate(event.target.value);
   };
-
+  // handle project function
   const handleChangeProject = (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
@@ -79,8 +84,13 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-  const result = useGetLeadsQuery(selectedProject);
 
+  // get leads query
+  const { data, error, isLoading } = useGetLeadsQuery(selectedProject);
+
+  // console.log(data);
+
+  // table functions
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -94,8 +104,8 @@ export default function Page() {
   };
 
   const slicedRows =
-    result?.data && result.data.length > 1
-      ? result.data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    data && data.length > 1
+      ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
   useEffect(() => {
     if (projects && projects.length > 0) {
@@ -131,7 +141,7 @@ export default function Page() {
             width: "50%",
             marginRight: "20px",
             "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "19px",
+              borderRadius: "8px",
             },
           }}
           size="small"
@@ -154,7 +164,7 @@ export default function Page() {
           sx={{
             width: "50%",
             "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "19px",
+              borderRadius: "8px",
             },
           }}
           size="small"
@@ -170,8 +180,8 @@ export default function Page() {
             MenuProps={{ disableScrollLock: true }}
           >
             {projects?.map((proj) => (
-              <MenuItem key={proj.id} value={proj.name}>
-                {proj.name}
+              <MenuItem key={proj?.id} value={proj?.name}>
+                {proj?.name}
               </MenuItem>
             ))}
           </Select>
@@ -291,71 +301,85 @@ export default function Page() {
               Leads List
             </Typography>
           </Grid>
-          <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
-            <TableHead>
-              <TableRow
-                sx={{
-                  backgroundColor: "rgba(249, 184, 0, 0.1)",
-                  fontWeight: "500",
-                  color: "black",
-                }}
-              >
-                <TableCell>Lead Id#</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Contact</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Project</TableCell>
-                <TableCell>Stage</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Created By</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {slicedRows?.map((row) => (
-                <TableRow key={row?.id}>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.ProspectAutoId || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.FirstName || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.Phone || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.EmailAddress || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.mx_Origin_Project || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.ProspectStage || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.ProspectStage || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "11px" }}>
-                    {row?.CreatedOn || "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <ViewLeadsBtn />
-                    </Grid>
-                  </TableCell>
+          {isLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                height: "80vh",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
+              <TableHead>
+                <TableRow
+                  sx={{
+                    backgroundColor: "rgba(249, 184, 0, 0.1)",
+                    fontWeight: "500",
+                    color: "black",
+                  }}
+                >
+                  <TableCell>Lead Id#</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Contact</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Project</TableCell>
+                  <TableCell>Stage</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Created By</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {slicedRows?.map((row) => (
+                  <TableRow key={row?.id}>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.ProspectAutoId || "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.FirstName || "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.Phone || "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.EmailAddress || "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.mx_Origin_Project || "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.ProspectStage || "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.ProspectStage || "N/A"}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>
+                      {row?.CreatedOn || "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      <Grid
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <ViewLeadsBtn leadData={row} />
+                      </Grid>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={result.data?.length || 0}
+            count={data?.length || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

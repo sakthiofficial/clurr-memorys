@@ -13,6 +13,8 @@ import {
   Typography,
   Button,
   TablePagination,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 import Link from "next/link";
 // icons
@@ -230,81 +232,97 @@ export default function Page() {
               User List
             </Typography>
           </Grid>
-          <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
-            <TableHead>
-              <TableRow
-                sx={{
-                  backgroundColor: "rgba(249, 184, 0, 0.1)",
-                  fontWeight: "500",
-                  color: "black",
-                }}
-              >
-                <TableCell>Id#</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Contact</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Project</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {slicedRows?.map((row) => (
-                <TableRow key={row?.name}>
-                  <TableCell>{row?.id}</TableCell>
-                  <TableCell>{row?.name}</TableCell>
-                  <TableCell>{row?.phone}</TableCell>
-                  <TableCell>{row?.email}</TableCell>
-                  <TableCell>
-                    {row?.projects && row?.projects?.length > 0
-                      ? row?.projects.join(", ")
-                      : ""}
-                  </TableCell>
-                  <TableCell>{row?.role}</TableCell>
-                  <TableCell>
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Button
-                        sx={{
-                          borderRadius: "10px",
-                          color: "black",
-                          width: "58px",
-                          height: "28px",
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        null
-                      </Button>
-                      <Button
-                        sx={{
-                          border: "1px solid red",
-                          borderRadius: "10px",
-                          color: "red",
-                          marginLeft: "5px",
-                          width: "58px",
-                          height: "28px",
-                          "&:hover": {
-                            backgroundColor: "transparent",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        null
-                      </Button>
-                    </Grid>
-                  </TableCell>
+          {isLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                height: "80vh",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
+              <TableHead>
+                <TableRow
+                  sx={{
+                    backgroundColor: "rgba(249, 184, 0, 0.1)",
+                    fontWeight: "500",
+                    color: "black",
+                  }}
+                >
+                  <TableCell>Id#</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Contact</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Project</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {slicedRows?.map((row) => (
+                  <TableRow key={row?.name}>
+                    <TableCell>{row?.id}</TableCell>
+                    <TableCell>{row?.name}</TableCell>
+                    <TableCell>{row?.phone}</TableCell>
+                    <TableCell>{row?.email}</TableCell>
+                    <TableCell>
+                      {row?.projects && row?.projects?.length > 0
+                        ? row?.projects.join(", ")
+                        : ""}
+                    </TableCell>
+                    <TableCell>{row?.role}</TableCell>
+                    <TableCell>
+                      <Grid
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Button
+                          sx={{
+                            borderRadius: "10px",
+                            color: "black",
+                            width: "58px",
+                            height: "28px",
+                            fontSize: "10px",
+                            backgroundColor: "rgba(249, 184, 0, 1)",
+                            "&:hover": {
+                              backgroundColor: "rgba(249, 184, 0, 1)",
+                              boxShadow: "none",
+                            },
+                          }}
+                        >
+                          edit
+                        </Button>
+                        <Button
+                          sx={{
+                            border: "1px solid red",
+                            borderRadius: "10px",
+                            color: "red",
+                            marginLeft: "5px",
+                            width: "58px",
+                            height: "28px",
+                            fontSize: "10px",
+                            "&:hover": {
+                              backgroundColor: "transparent",
+                              boxShadow: "none",
+                            },
+                          }}
+                        >
+                          delete
+                        </Button>
+                      </Grid>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
