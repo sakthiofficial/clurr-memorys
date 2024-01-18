@@ -22,6 +22,8 @@ function basicRolePermission(role) {
       ];
     case roleNames?.admin:
       return [
+        permissionKeyNames?.userManagement,
+        permissionKeyNames?.leadManagement,
         permissionKeyNames?.cpManagement,
         permissionKeyNames?.leadViewWithNumber,
       ];
@@ -30,7 +32,7 @@ function basicRolePermission(role) {
         permissionKeyNames?.userManagement,
         permissionKeyNames?.leadManagement,
 
-        permissionKeyNames?.leadOnlyView,
+        permissionKeyNames?.leadViewWithoutNumber,
         permissionKeyNames?.cpManagement,
       ];
 
@@ -51,7 +53,7 @@ function basicRolePermission(role) {
         permissionKeyNames?.leadManagement,
       ];
     case roleNames?.cpExecute:
-      return [permissionKeyNames?.leadViewWithNumber];
+      return [permissionKeyNames?.leadManagement];
 
     default:
       return null;
@@ -82,14 +84,29 @@ function roleSubordinates(userRole) {
     },
     {
       role: roleNames?.admin,
-      subordinates: [roleNames?.cpTl, roleNames?.cpRm],
+      subordinates: [
+        roleNames?.cpTl,
+        roleNames?.cpRm,
+        roleNames?.cpBranchHead,
+        roleNames?.cpExecute,
+      ],
     },
     {
       role: roleNames?.mis,
-      subordinates: [roleNames?.cpTl, roleNames?.cpRm],
+      subordinates: [
+        roleNames?.cpTl,
+        roleNames?.cpRm,
+        roleNames?.cpBranchHead,
+        roleNames?.cpExecute,
+      ],
     },
   ];
-  const cpRoleHierarchy = [roleNames?.cpTl, roleNames?.cpRm];
+  const cpRoleHierarchy = [
+    roleNames?.cpTl,
+    roleNames?.cpRm,
+    roleNames?.cpBranchHead,
+    roleNames?.cpExecute,
+  ];
   let roleHierarchyArr = [];
 
   if (
@@ -138,16 +155,30 @@ function parentRole(userRole) {
   return null;
 }
 function isPriorityUser(userRole) {
-  const isPriorityRoles =
-    userRole === roleNames?.admin ||
-    userRole === roleNames?.mis ||
-    userRole === roleNames?.cpBusinessHead ||
-    userRole === roleNames?.superAdmin;
-
-  if (isPriorityRoles) {
-    return true;
+  let roleArr = userRole;
+  if (typeof userRole === "string") {
+    roleArr = [userRole];
   }
-  return false;
+  const isPriorityRole =
+    roleArr.includes(roleNames?.superAdmin) ||
+    roleArr.includes(roleNames?.admin) ||
+    roleArr.includes(roleNames?.mis) ||
+    roleArr.includes(roleNames?.cpBusinessHead);
+
+  return isPriorityRole;
+}
+function isNonPriorityUser(userRole) {
+  let roleArr = userRole;
+  if (typeof userRole === "string") {
+    roleArr = [userRole];
+  }
+  const isPriorityRole =
+    roleArr.includes(roleNames?.superAdmin) ||
+    roleArr.includes(roleNames?.admin) ||
+    roleArr.includes(roleNames?.mis) ||
+    roleArr.includes(roleNames?.cpBusinessHead);
+
+  return !isPriorityRole;
 }
 function checkProjectValidation(role) {
   if (
@@ -191,5 +222,6 @@ export {
   checkProjectValidation,
   checkValidParent,
   isPriorityUser,
+  isNonPriorityUser,
   userDataObj,
 };

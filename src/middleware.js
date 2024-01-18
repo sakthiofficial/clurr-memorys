@@ -8,11 +8,13 @@ import {
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request) {
+  return NextResponse.next();
+
   const cookie = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
   if (request.nextUrl.pathname.startsWith("/api")) {
     if (!cookie) {
       return NextResponse.json(
-        new ApiResponse(RESPONSE_STATUS?.NOTFOUND, RESPONSE_MESSAGE?.INVALID)
+        new ApiResponse(RESPONSE_STATUS?.NOTFOUND, RESPONSE_MESSAGE?.INVALID),
       );
     }
     return NextResponse.next();

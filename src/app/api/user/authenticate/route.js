@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { cookies } from "next/headers";
 
+import { NextResponse } from "next/server";
 import CPUserSrv from "../../../../services/cpUserSrv";
 import {
   ApiResponse,
@@ -19,15 +20,7 @@ export async function POST(req) {
   const { error, value } = validateQuery.validate(bodyData);
 
   if (error) {
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.ERROR,
-          RESPONSE_MESSAGE?.INVALID,
-          error,
-        ),
-      ),
-    );
+    return NextResponse.json(error, { status: 500 });
   }
   try {
     const cookieStore = cookies();
@@ -46,7 +39,7 @@ export async function POST(req) {
       cookies().set(TOKEN_VARIABLES?.TOKEN_NAME, responseToken);
       delete srvResponse?.result?.token;
     }
-    return new Response(JSON.stringify(srvResponse));
+    return NextResponse.json(srvResponse, { status: srvResponse?.status });
   } catch (err) {
     console.log("error while requesting authentication", err);
     return new Response(

@@ -71,3 +71,6 @@ export function convertTimestampToDateTime(timestamp) {
   const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   return formattedDateTime;
 }
+export const userValidationErrors = {
+  IvalidPermission: "Permission Missing",
+};

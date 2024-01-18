@@ -10,14 +10,18 @@ const CpAppRoleSchema = new Schema({
   },
   permissions: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      required: true,
+
       ref: "CpAppPermission",
     },
   ],
   subordinateRoles: [
     {
-      type: String,
-      ref: "role",
+      type: Schema.Types.ObjectId,
+      required: true,
+
+      ref: "CpAppRole",
     },
   ],
 });

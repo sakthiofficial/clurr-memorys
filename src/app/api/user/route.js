@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import Joi from "joi";
 import CPUserSrv from "../../../services/cpUserSrv";
 import {
@@ -82,18 +81,18 @@ export async function PUT(request) {
 }
 export async function POST(req) {
   try {
-    const providedUser = await getUserByToken(req);
-    if (!providedUser) {
-      return new Response(
-        JSON.stringify(
-          new ApiResponse(
-            RESPONSE_STATUS?.UNAUTHORIZED,
-            RESPONSE_MESSAGE?.UNAUTHORIZED,
-            null,
-          ),
-        ),
-      );
-    }
+    // const providedUser = await getUserByToken(req);
+    // if (!providedUser) {
+    //   return new Response(
+    //     JSON.stringify(
+    //       new ApiResponse(
+    //         RESPONSE_STATUS?.UNAUTHORIZED,
+    //         RESPONSE_MESSAGE?.UNAUTHORIZED,
+    //         null,
+    //       ),
+    //     ),
+    //   );
+    // }
     const bodyData = await req.json();
     const validateQuery = Joi.object({
       name: Joi.string().required(),
@@ -101,7 +100,7 @@ export async function POST(req) {
       phone: Joi.string().required().min(10),
 
       email: Joi.string().required(),
-      role: Joi.string().required(),
+      role: Joi.array().required(),
       projects: checkProjectValidation(bodyData?.role)
         ? Joi.array().min(1)
         : Joi.array(),
@@ -125,13 +124,13 @@ export async function POST(req) {
     }
 
     const user = new CPUserSrv();
-    const srvResponse = await user.createUser(providedUser, value);
+    const srvResponse = await user.createUser(null, value);
 
     return new Response(JSON.stringify(srvResponse));
   } catch (error) {
     return new Response(
       JSON.stringify(
-        new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, null),
+        new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
       ),
     );
   }

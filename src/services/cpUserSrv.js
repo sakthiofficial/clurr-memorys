@@ -14,13 +14,16 @@ import {
   ApiResponse,
   RESPONSE_MESSAGE,
   RESPONSE_STATUS,
+  userValidationErrors,
 } from "../appConstants";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
-import { CpProject } from "../../models/cpProject";
-import sendMail from "@/helper/emailSender";
+import { CpAppProject } from "../../models/AppProject";
+import sendMail from "../helper/emailSender";
+import { CpAppRole } from "../../models/AppRole";
+import { CpAppPermission } from "../../models/Permission";
 
 const { default: initDb } = require("../lib/db");
-const { CpUser } = require("../../models/cpAppUser");
+const { CpUser, CpAppUser } = require("../../models/AppUser");
 
 class CPUserSrv {
   constructor() {
@@ -40,8 +43,7 @@ class CPUserSrv {
           permissionKeyNames?.userManagement,
         )
       ) {
-        console.log("Provider user dont have user permision");
-        return false;
+        throw userValidationErrors?.IvalidPermission;
       }
       // Subordinate Validation+
       const subordinateValidation =
@@ -59,7 +61,7 @@ class CPUserSrv {
         return false;
       }
       // Project Validation
-      const checkProjectValidationNeed = checkProjectValidation(newUser?.role);
+      const checkProjectValidationNeed = isPriorityUser(newUser?.role);
       const checkParentValidation =
         newUser?.role !== roleNames?.mis &&
         newUser?.role !== roleNames?.admin &&
@@ -78,7 +80,7 @@ class CPUserSrv {
 
       if (checkProjectValidationNeed) {
         for (let i = 0; i < newUser?.projects.length; i = 1 + i) {
-          const project = await CpProject.findOne({
+          const project = await CpAppProject.findOne({
             name: newUser?.projects[i],
           }).lean();
 
@@ -147,9 +149,35 @@ class CPUserSrv {
   authenticateUser = async ({ name, password }, authenticteToken) => {
     try {
       await this.db();
-      const user = await CpUser.findOne({
+      const user = await CpAppUser.findOne({
         $or: [{ name }, { email: name }, { phone: name }],
-      }).lean();
+      })
+        .populate({
+          path: "role",
+          populate: [
+            { path: "permissions", model: "CpAppPermission" },
+            { path: "subordinateRoles", model: "CpAppRole" },
+          ],
+        })
+        .lean();
+      const userPermissions = [
+        ...new Set(
+          user.role.flatMap((role) =>
+            role.permissions.map((permission) => permission.name),
+          ),
+        ),
+      ];
+      const userSubordinateRoles = [
+        ...new Set(
+          user.role.flatMap((role) =>
+            role.subordinateRoles.map((subordinate) => subordinate.name),
+          ),
+        ),
+      ];
+      user[userDataObj?.permissions] = userPermissions;
+      user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+      console.log(user);
+      return;
       if (authenticteToken) {
         await Session.deleteOne({
           token: authenticteToken,
@@ -183,7 +211,7 @@ class CPUserSrv {
       const isPriorityProvider =
         role === roleNames?.superAdmin || role === roleNames?.cpBusinessHead;
       // fetching projects details
-      const projectDatas = await CpProject.find(
+      const projectDatas = await CpAppProject.find(
         isPriorityProvider ? {} : { name: projects },
         { _id: 0, accessKey: 0, secretKey: 0 },
       );
@@ -211,49 +239,57 @@ class CPUserSrv {
   };
 
   createUser = async (providedUser, newUser) => {
+    const sampleData = {
+      name: "cprm",
+      password: "cprm",
+      phone: "987615432110",
+      email: "sakthiroky123@gmail.com",
+      role: "CP Relationship Manager",
+      projects: ["The World oj joy - miyapur"],
+      parentId: "65a0d34898f565a387407c9f",
+    };
     // add user activity // send mail to super admin
     await this.db();
     try {
       if (newUser) {
-        // Role Acess Vallidation
-        const parentUserData = await CpUser.findOne({
-          _id: newUser?.parentId || null,
-        }).lean();
-        const validationToUser = await this.checkValidUserToAdd(
-          providedUser,
-          newUser,
-          parentUserData,
-        );
-        const checkUserRole = isPriorityUser(providedUser[userDataObj?.role]);
-        const checkNewUserRole = isPriorityUser(newUser[userDataObj?.role]);
-        if (checkNewUserRole) {
-          newUser[userDataObj?.projects] = [];
-        }
-        console.log(validationToUser);
-        if (
-          !validationToUser ||
-          newUser?.role === roleNames?.cpExecute ||
-          !checkUserRole
-        ) {
-          return new ApiResponse(
-            RESPONSE_STATUS?.NOTFOUND,
-            RESPONSE_MESSAGE?.INVALID,
-            null,
-          );
-        }
+        // Role Acess Validation
+        // const parentUserData = await CpUser.findOne({
+        //   _id: newUser[userDataObj?.parentId] || null,
+        // }).lean();
+        // const validationToUser = await this.checkValidUserToAdd(
+        //   providedUser,
+        //   newUser,
+        //   parentUserData,
+        // );
+
+        // const checkUserRole = isPriorityUser(providedUser[userDataObj?.role]);
+        // const checkNewUserRole = isPriorityUser(newUser[userDataObj?.role]);
+
+        // if (
+        //   !validationToUser ||
+        //   newUser?.role === roleNames?.cpExecute ||
+        //   !checkUserRole
+        // ) {
+        //   return new ApiResponse(
+        //     RESPONSE_STATUS?.NOTFOUND,
+        //     RESPONSE_MESSAGE?.INVALID,
+        //     null,
+        //   );
+        // }
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(newUser?.password, saltRounds);
         const permissions = basicRolePermission(newUser?.role);
         const subordinateRoles = roleSubordinates(newUser?.role);
         const parentId = newUser?.parentId === "" ? null : newUser?.parentId;
-
+        const roleId = await CpAppRole.find({ name: { $in: newUser?.role } });
+        newUser.role = roleId.map((role) => role._id);
         newUser.parentId = parentId;
         newUser.password = hashedPassword;
         newUser.permissions = permissions;
         newUser.subordinateRoles = subordinateRoles;
       }
-      const userSch = new CpUser(newUser);
 
+      const userSch = new CpAppUser(newUser);
       await userSch.save();
       const userName = newUser[userDataObj?.name];
       const parentName = "Urbanrise Team";

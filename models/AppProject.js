@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
-const CpProjectSchema = new Schema({
+const CpAppProjectSchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -25,5 +25,6 @@ const CpProjectSchema = new Schema({
   },
 });
 
-module.exports.CpProject =
-  mongoose.models.CpProject || mongoose.model("CpProject", CpProjectSchema);
+module.exports.CpAppProject =
+  mongoose.models.CpAppProject ||
+  mongoose.model("CpAppProject", CpAppProjectSchema);

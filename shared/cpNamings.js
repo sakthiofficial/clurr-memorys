@@ -10,12 +10,12 @@ const roleNames = {
   cpExecute: "CP Executive",
 };
 const permissionKeyNames = {
-  userManagement: "UM",
-  projectManagement: "PM",
-  leadViewWithNumber: "LVN",
-  leadOnlyView: "LVO",
-  cpManagement: "CM",
-  activityHistory: "AH",
-  leadManagement: "LM",
+  userManagement: "User Management",
+  projectManagement: "Project Management",
+  leadViewWithNumber: "Lead View with Number",
+  leadViewWithoutNumber: "Lead View without Number",
+  cpManagement: "CP Management",
+  activityHistory: "Activity History",
+  leadManagement: "Lead Management",
 };
 export { roleNames, permissionKeyNames };

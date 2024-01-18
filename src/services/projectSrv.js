@@ -6,7 +6,7 @@ import {
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { isPriorityUser, userDataObj } from "../../shared/roleManagement";
 
-const { CpProject } = require("../../models/cpProject");
+const { CpAppProject: CpProject } = require("../../models/AppProject");
 
 class ProjectSrv {
   createProject = async (providedUser, project) => {

@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
-const AppPermissionSchema = new Schema({
+const CpAppPermissionSchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -10,6 +10,6 @@ const AppPermissionSchema = new Schema({
   },
 });
 
-module.exports.AppPermission =
-  mongoose.models.AppPermission ||
-  mongoose.model("AppPermission", AppPermissionSchema);
+module.exports.CpAppPermission =
+  mongoose.models.CpAppPermission ||
+  mongoose.model("CpAppPermission", CpAppPermissionSchema);

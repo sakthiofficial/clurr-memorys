@@ -1,10 +1,10 @@
 import config from "@/lib/config";
 import { lsqFieldValues, lsqLeadFieldNames } from "../../shared/lsqConstants";
 import { ApiResponse, RESPONSE_MESSAGE, RESPONSE_STATUS } from "@/appConstants";
-import { CpUser } from "../../models/cpAppUser";
+import { CpUser } from "../../models/AppUser";
 import { userDataObj } from "../../shared/roleManagement";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
-import { CpCompany } from "../../models/cpCompany";
+import { CpAppCompany } from "../../models/AppCompany";
 
 const { default: axios } = require("axios");
 
@@ -119,7 +119,7 @@ class LSQLeadSrv {
         let push = true;
         if (
           providedUser[userDataObj?.permissions].includes(
-            permissionKeyNames?.leadOnlyView,
+            permissionKeyNames?.leadViewWithoutNumber,
           )
         ) {
           structuredApiData[lsqLeadFieldNames?.phone] = null;
@@ -169,7 +169,7 @@ class LSQLeadSrv {
       );
     }
     try {
-      const cpCompany = await CpCompany.findOne({ _id: id });
+      const cpCompany = await CpAppCompany.findOne({ _id: id });
       if (!cpCompany) {
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
