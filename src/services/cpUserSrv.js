@@ -37,7 +37,7 @@ class CPUserSrv {
       // permission validation
       if (
         !providedUser[userDataObj?.permissions].includes(
-          permissionKeyNames?.userManagement
+          permissionKeyNames?.userManagement,
         )
       ) {
         console.log("Provider user dont have user permision");
@@ -47,14 +47,14 @@ class CPUserSrv {
       const subordinateValidation =
         (providedUser?.subordinateRoles || []).includes(newUser?.role) &&
         (providedUser?.permissions || []).includes(
-          permissionKeyNames?.userManagement
+          permissionKeyNames?.userManagement,
         ) &&
         (parentData?.subordinateRoles || []).includes(newUser?.role);
       if (!subordinateValidation) {
         console.log(
           "parent or provider does not have permission to the user",
           parentData,
-          providedUser
+          providedUser,
         );
         return false;
       }
@@ -122,7 +122,7 @@ class CPUserSrv {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
             RESPONSE_MESSAGE?.INVALID,
-            null
+            null,
           );
         }
         const fields = "name _id projects";
@@ -131,14 +131,14 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.OK,
           RESPONSE_MESSAGE?.OK,
-          roleUsers
+          roleUsers,
         );
       } catch (error) {
         console.log("While Performing Retriving user by role Error", error);
         return new ApiResponse(
           RESPONSE_STATUS?.ERROR,
           RESPONSE_MESSAGE?.ERROR,
-          error
+          error,
         );
       }
     };
@@ -146,10 +146,13 @@ class CPUserSrv {
 
   authenticateUser = async ({ name, password }, authenticteToken) => {
     try {
+      console.log("comming here");
       await this.db();
       const user = await CpUser.findOne({
         $or: [{ name }, { email: name }, { phone: name }],
       }).lean();
+      const userAll = await CpUser.find();
+      console.log(userAll);
       if (authenticteToken) {
         await Session.deleteOne({
           token: authenticteToken,
@@ -160,7 +163,7 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.UNAUTHORIZED,
-          null
+          null,
         );
       }
       const { projects, permissions, subordinateRoles, _id, role } = user;
@@ -171,7 +174,7 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.UNAUTHORIZED,
-          null
+          null,
         );
       }
       const sessionToken = this.genrateTokan();
@@ -185,7 +188,7 @@ class CPUserSrv {
       // fetching projects details
       const projectDatas = await CpProject.find(
         isPriorityProvider ? {} : { name: projects },
-        { _id: 0, accessKey: 0, secretKey: 0 }
+        { _id: 0, accessKey: 0, secretKey: 0 },
       );
 
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
@@ -205,7 +208,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error
+        error,
       );
     }
   };
@@ -222,7 +225,7 @@ class CPUserSrv {
         const validationToUser = await this.checkValidUserToAdd(
           providedUser,
           newUser,
-          parentUserData
+          parentUserData,
         );
         const checkUserRole = isPriorityUser(providedUser[userDataObj?.role]);
         const checkNewUserRole = isPriorityUser(newUser[userDataObj?.role]);
@@ -238,7 +241,7 @@ class CPUserSrv {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
             RESPONSE_MESSAGE?.INVALID,
-            null
+            null,
           );
         }
         const saltRounds = 10;
@@ -269,7 +272,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        err
+        err,
       );
     }
   };
@@ -280,7 +283,7 @@ class CPUserSrv {
 
       let users = await CpUser.find(
         { role: { $in: providedUser[userDataObj?.subordinateRoles] } },
-        { password: 0 }
+        { password: 0 },
       );
       if (
         providedUser[userDataObj?.role] !== roleNames?.superAdmin &&
@@ -290,7 +293,7 @@ class CPUserSrv {
           for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
             if (
               providedUser[userDataObj?.projects].includes(
-                user[userDataObj?.projects][i]
+                user[userDataObj?.projects][i],
               )
             ) {
               return user;
@@ -304,7 +307,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error
+        error,
       );
     }
   };
@@ -316,7 +319,7 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.INVALID,
-          null
+          null,
         );
       }
       await this.db();
@@ -340,7 +343,7 @@ class CPUserSrv {
 
       const users = await CpUser.find(
         isProjectValidationNeed ? { role: parentRole(role) } : query,
-        projection
+        projection,
       );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users);
     } catch (error) {
@@ -348,7 +351,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error
+        error,
       );
     }
   };
@@ -359,7 +362,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
         RESPONSE_MESSAGE?.NOTFOUND,
-        null
+        null,
       );
     }
     const isPriorityUser =
@@ -380,12 +383,12 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
         RESPONSE_MESSAGE?.INVALID,
-        null
+        null,
       );
     }
     if (
       (providedUser[userDataObj?.subordinateRoles] || []).includes(
-        removeUserData[userDataObj?.role]
+        removeUserData[userDataObj?.role],
       )
     ) {
       const { deletedCount } = await CpUser.deleteOne({
@@ -398,7 +401,7 @@ class CPUserSrv {
     return new ApiResponse(
       RESPONSE_STATUS?.NOTFOUND,
       RESPONSE_MESSAGE?.NOTFOUND,
-      null
+      null,
     );
   };
 
@@ -411,7 +414,7 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
           RESPONSE_MESSAGE?.INVALID,
-          null
+          null,
         );
       }
       let parentUser = providedUser;
@@ -430,7 +433,7 @@ class CPUserSrv {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
             RESPONSE_MESSAGE?.INVALID,
-            null
+            null,
           );
         }
         parentUser = updateUserParentData;
@@ -438,7 +441,7 @@ class CPUserSrv {
       const validProvider = await this.checkValidUserToAdd(
         providedUser,
         updateUser,
-        parentUser
+        parentUser,
       );
       if (validProvider) {
         const filter = { _id: updateUser.id };
@@ -450,14 +453,14 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
         RESPONSE_MESSAGE?.INVALID,
-        null
+        null,
       );
     } catch (error) {
       console.log("Error while updating user", error);
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error
+        error,
       );
     }
   };
