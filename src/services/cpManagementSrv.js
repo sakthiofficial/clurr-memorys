@@ -297,30 +297,81 @@ class CpManagementSrv {
   };
 
   retriveCpCompanys = async (providedUser) => {
-    const checkRole = isPriorityUser(providedUser[userDataObj?.role]);
+    const userSrv = new CPUserSrv();
+
+    const checkRole =
+      isPriorityUser(providedUser[userDataObj?.role]) &&
+      providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.cpManagement,
+      );
     if (!checkRole) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.INVALID,
       );
     }
-    const cpCompanys = await CpAppCompany.find();
+    const cpCompanys = await CpAppCompany.find().populate("projects");
+
     const companiesWithUsers = await Promise.all(
       cpCompanys.map(async (company) => {
-        const parentUser = await CpUser.findOne({ _id: company.parentId });
+        const parentUser = await userSrv.getUserById(company.parentId);
 
-        const allCompanyUsers = await CpUser.find({
+        let allCompanyUsers = await CpAppUser.find({
           cpCode: company.cpCode,
-        });
+        })
+          .populate({
+            path: "role",
+            populate: [
+              { path: "permissions", model: "CpAppPermission" },
+              { path: "subordinateRoles", model: "CpAppRole" },
+            ],
+          })
 
+          .populate({
+            path: "projects",
+            model: "CpAppProject",
+          })
+
+          .lean();
+        allCompanyUsers = allCompanyUsers.map((user) => {
+          const userPermissions = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.permissions.map((permission) => permission.name),
+              ),
+            ),
+          ];
+          const userSubordinateRoles = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.subordinateRoles.map((subordinate) => subordinate.name),
+              ),
+            ),
+          ];
+          user[userDataObj?.permissions] = userPermissions;
+          user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+          user[userDataObj?.role] = (user?.role || []).map(
+            (role) => role?.name,
+          );
+          user[userDataObj?.projects] = (user[userDataObj?.projects] || []).map(
+            (project) => project.name,
+          );
+          return user;
+        });
         const cpBranchHead =
-          allCompanyUsers.find((user) => user.isPrimary) || null;
-        const cpExecutes = allCompanyUsers.filter((user) => !user.isPrimary);
+          allCompanyUsers.find((user) =>
+            user[userDataObj?.role].includes(roleNames?.cpBranchHead),
+          ) || null;
+        const cpExecutes = allCompanyUsers.filter((user) =>
+          user[userDataObj?.role].includes(roleNames?.cpExecute),
+        );
+        const companyProjects = company[userDataObj?.projects].map(
+          (project) => project?.name,
+        );
+        company.projects = companyProjects;
 
         return {
-          company: {
-            ...company._doc,
-          },
+          company,
           cpRm: parentUser,
           cpBranchHead,
           cpExecutes,

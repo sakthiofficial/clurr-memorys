@@ -120,7 +120,11 @@ class CPUserSrv {
       try {
         await initDb();
 
-        const checkUserRole = isPriorityUser(providedUser[userDataObj?.role]);
+        const checkUserRole =
+          isPriorityUser(providedUser[userDataObj?.role]) &&
+          providedUser[userDataObj?.permissions].includes(
+            permissionKeyNames?.userManagement,
+          );
         if (!checkUserRole) {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
@@ -128,8 +132,15 @@ class CPUserSrv {
             null,
           );
         }
+        let roleId = await CpAppRole.findOne({ name: role });
+        roleId = roleId?._id;
+
         const fields = "name _id projects";
-        const roleUsers = await CpAppUser.find({ role }).select(fields);
+        const roleUsers = await CpAppUser.find({
+          role: { $in: [roleId] },
+        })
+          .populate("projects")
+          .select(fields);
 
         return new ApiResponse(
           RESPONSE_STATUS?.OK,
