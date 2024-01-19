@@ -17,20 +17,20 @@ export async function POST(req) {
     const providedUser = await getUserByToken(req);
     const validateQuery = Joi.object({
       name: Joi.string().required(),
-      accessLevel: Joi.string().required(),
+      permission: Joi.string().required(),
       secretKey: Joi.string().required(),
       accessKey: Joi.string().required(),
     });
     const bodyData = await req.json();
     const { error, value } = validateQuery.validate(bodyData);
 
-    if (error) {
+    if (error || !providedUser) {
       return new Response(
         JSON.stringify(
           new ApiResponse(
             RESPONSE_STATUS?.ERROR,
             RESPONSE_MESSAGE?.INVALID,
-            null,
+            error,
           ),
         ),
       );

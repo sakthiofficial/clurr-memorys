@@ -81,18 +81,18 @@ export async function PUT(request) {
 }
 export async function POST(req) {
   try {
-    // const providedUser = await getUserByToken(req);
-    // if (!providedUser) {
-    //   return new Response(
-    //     JSON.stringify(
-    //       new ApiResponse(
-    //         RESPONSE_STATUS?.UNAUTHORIZED,
-    //         RESPONSE_MESSAGE?.UNAUTHORIZED,
-    //         null,
-    //       ),
-    //     ),
-    //   );
-    // }
+    const providedUser = await getUserByToken(req);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
     const bodyData = await req.json();
     const validateQuery = Joi.object({
       name: Joi.string().required(),
@@ -124,7 +124,7 @@ export async function POST(req) {
     }
 
     const user = new CPUserSrv();
-    const srvResponse = await user.createUser(null, value);
+    const srvResponse = await user.createUser(providedUser, value);
 
     return new Response(JSON.stringify(srvResponse));
   } catch (error) {

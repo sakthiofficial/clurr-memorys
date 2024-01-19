@@ -192,15 +192,18 @@ function checkProjectValidation(role) {
   return true;
 }
 function checkValidParent(userRole, parentDataRole) {
-  if (
-    userRole !== roleNames?.mis &&
-    userRole !== roleNames?.admin &&
-    userRole !== roleNames?.cpBusinessHead
-  ) {
-    if (parentRole(userRole) !== parentDataRole) {
-      return false;
+  userRole.map((role) => {
+    if (
+      userRole !== roleNames?.mis &&
+      userRole !== roleNames?.admin &&
+      userRole !== roleNames?.cpBusinessHead
+    ) {
+      if (parentRole(userRole) !== parentDataRole) {
+        return false;
+      }
     }
-  }
+  });
+
   return true;
 }
 const userDataObj = {

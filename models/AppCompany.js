@@ -11,18 +11,21 @@ const CpAppCompanySchema = new Schema({
   },
 
   projects: {
-    type: Array,
-    required: true,
+    type: [
+      {
+        type: Schema.Types.ObjectId,
+      },
+    ],
   },
   parentId: {
-    type: Schema.Types.Mixed,
+    type: Schema.Types.ObjectId,
     required: true,
-    ref: "CpUser",
+    ref: "CpAppUser",
   },
   branchHeadId: {
-    type: Schema.Types.Mixed,
+    type: Schema.Types.ObjectId,
     required: true,
-    ref: "CpUser",
+    ref: "CpAppUser",
   },
   cpCode: {
     type: String,

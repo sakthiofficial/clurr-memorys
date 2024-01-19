@@ -8,9 +8,7 @@ const CpAppProjectSchema = new Schema({
     unique: true,
     index: true,
   },
-  // name -> permmision
-  accessLevel: {
-    // type -> object
+  permission: {
     type: String,
     enum: ["leadViewOnly", "leadAddAndView"],
     required: true,

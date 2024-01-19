@@ -11,7 +11,7 @@ const SessionSchema = new Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "CpUser",
+    ref: "CpAppUser",
   },
 });
 

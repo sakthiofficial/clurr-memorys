@@ -13,10 +13,12 @@ import {
 } from "../../shared/roleManagement";
 import { CpAppCompany } from "../../models/AppCompany";
 // dont remove this schema
-import { CpUser } from "../../models/AppUser";
+import { CpAppUser, CpUser } from "../../models/AppUser";
 import initDb from "../lib/db";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
-import sendMail from "@/helper/emailSender";
+import sendMail from "../helper/emailSender";
+import { CpAppRole } from "../../models/AppRole";
+import CPUserSrv from "./cpUserSrv";
 
 class CpManagementSrv {
   constructor() {
@@ -27,16 +29,19 @@ class CpManagementSrv {
         inValidProject: "invalid project deatils",
         userNotExist: "user not found",
       };
+      const userSrv = new CPUserSrv();
+      const parentUser = await userSrv.getUserById(
+        cpCampanyData[userDataObj?.parentId],
+      );
 
-      const parentUser = await CpUser.findOne({
-        _id: cpCampanyData[userDataObj?.parentId],
-      });
       if (!parentUser) {
         throw errorMsg?.userNotExist;
       }
       const projects = await CpAppProject.find({
         name: { $in: parentUser[userDataObj?.projects] },
       });
+      const projectIds = projects.map((project) => project?._id);
+      cpCampanyData[userDataObj?.projects] = projectIds;
       if (projects.length !== parentUser[userDataObj?.projects].length) {
         throw errorMsg?.inValidProject;
       }
@@ -50,23 +55,19 @@ class CpManagementSrv {
       const cpCompanyResult = await cpCompanySch.save();
       return cpCompanyResult._id;
     };
-    this.validateCp = async (parent, newUser) => {
-      (newUser[userDataObj?.projects] || []).map((userProject) => {
-        const validateProject =
-          parent[userDataObj?.projects].includes(userProject);
-        if (!validateProject) {
-          return false;
-        }
-      });
-
-      return true;
+    this.validateCp = (parent, newUser) => {
+      const result = (newUser[userDataObj?.projects] || []).filter(
+        (userProject) => parent[userDataObj?.projects].includes(userProject),
+      );
+      return result.length === newUser[userDataObj?.projects].length;
     };
     this.createCpBranchHead = async (user, parentId) => {
-      const parentUser = await CpUser.findOne({ _id: parentId });
+      const userSrv = new CPUserSrv();
+      const parentUser = await userSrv.getUserById(parentId);
       if (!parentUser) {
         return false;
       }
-      const userSch = new CpUser(user);
+      const userSch = new CpAppUser(user);
       const result = await userSch.save();
       return result;
     };
@@ -128,9 +129,16 @@ class CpManagementSrv {
           cpExecuteFound: "CP Execute Already Register",
         };
         const cpCompany = await CpAppCompany.findOne({ name: company?.name });
-
-        const cpBranchHeadData = await CpUser.findOne({
-          role: roleNames?.cpBranchHead,
+        let cpBranchRoleId = await CpAppRole.findOne({
+          name: roleNames?.cpBranchHead,
+        });
+        cpBranchRoleId = cpBranchRoleId?._id;
+        let cpExecuteRoleId = await CpAppRole.findOne({
+          name: roleNames?.cpExecute,
+        });
+        cpExecuteRoleId = cpExecuteRoleId?._id;
+        const cpBranchHeadData = await CpAppUser.findOne({
+          role: { $in: [cpBranchRoleId] },
           $or: [
             { name: branchHead[userDataObj?.name] },
             { email: branchHead[userDataObj?.email] },
@@ -138,13 +146,16 @@ class CpManagementSrv {
           ],
         });
 
-        const cpExecuteData = await CpUser.findOne({
+        const cpExecuteData = await CpAppUser.findOne({
+          role: { $in: [cpExecuteRoleId] },
+
           $or: [
             { name: cpExecute ? cpExecute[userDataObj?.name] : null },
             { email: cpExecute ? cpExecute[userDataObj?.email] : null },
             { phone: cpExecute ? cpExecute[userDataObj?.phone] : null },
           ],
         });
+
         if (cpCompany) {
           return errormsg?.companyFound;
         }
@@ -184,7 +195,8 @@ class CpManagementSrv {
       }
     }
     const cpGenratedCode = await this.genrateCompanyCode();
-    let parentUser = await CpUser.findOne({ _id: parentId });
+    const userSrv = new CPUserSrv();
+    let parentUser = await userSrv.getUserById(parentId);
     let branchHeadId = null;
     if (!parentUser) {
       return new ApiResponse(
@@ -218,8 +230,9 @@ class CpManagementSrv {
           cpBranchHead[userDataObj?.permissions] = basicRolePermission(
             cpBranchHead[userDataObj?.role],
           );
+          const branchUser = await userSrv.createSaveUser(cpBranchHead);
           const cpBranchResult = await this.createCpBranchHead(
-            cpBranchHead,
+            branchUser,
             parentId,
           );
           parentUser = cpBranchResult;
@@ -254,7 +267,8 @@ class CpManagementSrv {
         cpExecute[userDataObj?.permissions] = basicRolePermission(
           cpExecute[userDataObj?.role],
         );
-        const userSch = new CpUser(cpExecute);
+        const cpExecuteUser = await userSrv.createSaveUser(cpExecute);
+        const userSch = new CpAppUser(cpExecuteUser);
         await userSch.save();
         const userName = cpExecute[userDataObj?.name];
         const parentName = "Urbanrise Team";

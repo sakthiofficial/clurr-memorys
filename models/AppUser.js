@@ -51,12 +51,12 @@ const CpAppUserSchema = new Schema({
   },
   parentId: {
     type: Schema.Types.ObjectId,
-    ref: "CpAppUser",
+    ref: "CpAppProject",
   },
   additionalPermissions: {
     type: [
       {
-        type: Array,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: "CpAppPermission",
       },

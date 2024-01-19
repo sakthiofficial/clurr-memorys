@@ -72,5 +72,9 @@ export function convertTimestampToDateTime(timestamp) {
   return formattedDateTime;
 }
 export const userValidationErrors = {
-  IvalidPermission: "Permission Missing",
+  IvalidPermission: "Permission Denied",
+  HighLevelAccess: "Insufficient Access Level",
+  InvalidParentProject: "Parent Project Not Valid",
+  InvalidProject: "Project Not Located",
+  ParentRoleLimitation: "Parent Role Invalid",
 };
