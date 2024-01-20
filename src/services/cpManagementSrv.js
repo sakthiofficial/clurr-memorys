@@ -365,6 +365,7 @@ class CpManagementSrv {
         const cpExecutes = allCompanyUsers.filter((user) =>
           user[userDataObj?.role].includes(roleNames?.cpExecute),
         );
+        company = company.toObject();
         const companyProjects = company[userDataObj?.projects].map(
           (project) => project?.name,
         );

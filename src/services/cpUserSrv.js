@@ -136,12 +136,22 @@ class CPUserSrv {
         roleId = roleId?._id;
 
         const fields = "name _id projects";
-        const roleUsers = await CpAppUser.find({
+        let roleUsers = await CpAppUser.find({
           role: { $in: [roleId] },
         })
-          .populate("projects")
+          .populate({
+            path: "projects",
+            select: "name", // Select only the 'name' field from the projects
+          })
           .select(fields);
+        roleUsers = roleUsers.map((user) => {
+          user = user.toObject();
+          user.projects = user[userDataObj?.projects].map(
+            (project) => project.name,
+          );
 
+          return user;
+        });
         return new ApiResponse(
           RESPONSE_STATUS?.OK,
           RESPONSE_MESSAGE?.OK,
