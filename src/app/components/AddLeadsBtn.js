@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   FormControl,
@@ -13,7 +13,7 @@ import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
+import { Add } from "@mui/icons-material";
 import {
   useAddLeadMutation,
   useGetCpQuery,
@@ -39,14 +39,15 @@ function AddLeadsBtn() {
     cp: "",
     id: "",
   });
-
+  const [role, setRole] = useState("");
+  const [projects, setProjects] = useState();
   // get cp data
   const { data, isLoading, isError, error } = useGetCpQuery();
   console.log(data);
 
   // get project data
-  const result = useGetProjectQuery();
-  // console.log(result.data?.result)
+  // const result = useGetProjectQuery();
+  // console.log(result.data?.result);
   // handle cp function
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
@@ -65,11 +66,32 @@ function AddLeadsBtn() {
       }));
     }
   };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+    if (storedData) {
+      const jsonData = JSON.parse(storedData);
+      setProjects(jsonData.projects || []);
+      setRole(jsonData.role || "");
+    } else {
+      console.error('No data found in local storage for key "user".');
+    }
+  }, []);
   // handle submit function
   const handleSubmit = () => {
     console.log(formData);
-    console.log(data.result);
+
+    setFormData({
+      userName: "",
+      email: "",
+      phone: "",
+      project: "",
+      cp: "",
+      id: "",
+    });
+    setOpen(false);
   };
+  console.log(role);
   return (
     <Grid>
       <Button
@@ -90,6 +112,7 @@ function AddLeadsBtn() {
           },
         }}
       >
+        <Add sx={{ fontSize: "18px" }} />
         Add Lead
       </Button>
       <BootstrapDialog
@@ -113,7 +136,7 @@ function AddLeadsBtn() {
         <Grid
           sx={{
             border: "none",
-            height: "64px",
+            height: "55px",
             width: "400px",
             borderRadius: "19px",
             backgroundColor: "#F9B800",
@@ -153,34 +176,60 @@ function AddLeadsBtn() {
           }}
         >
           <TextField
+            size="small"
             label="Name"
             name="userName"
             value={formData?.userName}
             onChange={(e) =>
               setFormData({ ...formData, userName: e.target.value })
             }
-            sx={{ width: "80%", borderRadius: "15px", height: "48px" }}
+            sx={{
+              width: "90%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "15px",
+              },
+            }}
           />
           <TextField
+            size="small"
             label="Email"
             name="email"
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
-            sx={{ width: "80%", borderRadius: "15px" }}
+            sx={{
+              width: "90%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "15px",
+              },
+            }}
           />
           <TextField
+            size="small"
             label="Phone"
             name="phone"
             value={formData?.phone}
             onChange={(e) =>
               setFormData({ ...formData, phone: e.target.value })
             }
-            sx={{ width: "80%", borderRadius: "20px" }}
+            sx={{
+              width: "90%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "15px",
+              },
+            }}
           />
 
-          <FormControl sx={{ width: "80%" }}>
+          <FormControl
+            size="small"
+            sx={{
+              width: "90%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "15px",
+              },
+            }}
+          >
             <InputLabel id="project-label">Project</InputLabel>
             <Select
               labelId="project-label"
@@ -193,36 +242,48 @@ function AddLeadsBtn() {
               }
               MenuProps={{ disableScrollLock: true }}
             >
-              {result?.data?.result.map((proj) => (
+              {projects?.map((proj) => (
                 <MenuItem key={proj?._id} value={proj?.name}>
                   {proj?.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-          <FormControl sx={{ width: "80%" }}>
-            <InputLabel id="demo-simple-select-label">Company</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={formData?.cp}
-              label="Company"
-              onChange={handleCpChange}
-              name="cp"
+          {role === "CP Branch Head" ? (
+            ""
+          ) : (
+            <FormControl
+              size="small"
+              sx={{
+                width: "90%",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "15px",
+                },
+              }}
             >
-              {data?.result?.map((cp) => (
-                <MenuItem key={cp?.company?.id} value={cp?.company?.name}>
-                  {cp?.company?.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <InputLabel id="demo-simple-select-label">Company</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={formData?.cp}
+                label="Company"
+                onChange={handleCpChange}
+                name="cp"
+              >
+                {data?.result?.map((cp) => (
+                  <MenuItem key={cp?.company?.id} value={cp?.company?.name}>
+                    {cp?.company?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </Grid>
         <Button
           onClick={handleSubmit}
           sx={{
             border: "none",
-            height: "56px",
+            height: "55px",
             width: "400px",
             borderRadius: "19px",
             backgroundColor: "black",
@@ -234,6 +295,7 @@ function AddLeadsBtn() {
             },
           }}
         >
+          <Add sx={{ fontSize: "18px" }} />
           ADD USER
         </Button>
       </BootstrapDialog>

@@ -10,6 +10,7 @@ import WarmLeads from "../../public/LeadsCard/warmLeads.svg";
 import SiteVisit from "../../public/LeadsCard/siteVisit.svg";
 import SiteVisitDone from "../../public/LeadsCard/siteVisitDone.svg";
 import BookedLeads from "../../public/LeadsCard/bookLeads.svg";
+import NivoBump from "./components/Chart";
 
 // card details
 const users = [

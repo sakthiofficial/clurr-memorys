@@ -15,11 +15,20 @@ import {
   TablePagination,
   CircularProgress,
   Box,
+  DialogActions,
+  DialogContentText,
+  DialogContent,
+  DialogTitle,
+  Dialog,
 } from "@mui/material";
 import Link from "next/link";
-import { useGetCpQuery } from "@/reduxSlice/apiSlice";
+import { ToastContainer, toast } from "react-toastify";
+import { useDeleteUsersMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
+import { Add } from "@mui/icons-material";
 
 export default function Page() {
+  const [open, setOpen] = useState(false);
+
   // get cp data query
   const { data, isLoading, isError, error } = useGetCpQuery();
   // set pagination
@@ -39,71 +48,92 @@ export default function Page() {
       ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  // useEffect(() => {
-  //   if (isLoading) {
-  //     // console.log("Loading...");
-  //   } else if (isError) {
-  //     // console.error("Error:", error);
-  //   } else if (data) {
-  //     // console.log("Query completed:", data?.result);
-  //   }
-  // }, [data, isLoading, isError, error]);
+  useEffect(() => {
+    if (isLoading) {
+      // console.log("Loading...");
+    } else if (isError) {
+      // console.error("Error:", error);
+    } else if (data) {
+      // console.log("Query completed:", data?.result);
+    }
+  }, [data, isLoading, isError, error]);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const [deleteUser] = useDeleteUsersMutation();
+
+  const handleDelete = (id) => {
+    deleteUser(id);
+
+    toast.success("cp delete successfully ");
+    handleClose();
+    // setTimeout(() => window.location.reload(), 3000);
+  };
 
   return (
-    <Grid style={{ minHeight: "100vh" }}>
-      <Grid
-        sx={{
-          height: "8vh",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <Grid sx={{ width: "60%" }}>
-          <Typography
-            sx={{
-              fontSize: "18px",
-              fontWeight: "500",
-              color: "rgba(0, 0, 0, 1)",
-              // padding:"0px 10px"
-            }}
-          >
-            CP List
-          </Typography>
-        </Grid>
+    <>
+      <ToastContainer />
+
+      <Grid style={{ minHeight: "100vh" }}>
         <Grid
           sx={{
-            gap: "10px",
-            width: "40%",
+            height: "8vh",
             display: "flex",
-            justifyContent: "end",
+            justifyContent: "space-between",
+            alignItems: "center",
+            // marginBottom: "10px",
           }}
         >
-          <Link href="/cpmanagement/adduser">
-            <Button
+          <Grid sx={{ width: "60%" }}>
+            <Typography
               sx={{
-                backgroundColor: "rgba(0, 0, 0, 1)",
-                color: "rgba(255, 255, 255, 1)",
-                width: "125px",
-                height: "43px",
-                borderRadius: "13px",
-                border: "none",
-                fontSize: "13px",
-                fontWeight: "400",
-                "&:hover": {
-                  backgroundColor: "rgba(0, 0, 0, 1)",
-                  boxShadow: "none",
-                  border: "none",
-                },
+                fontSize: "18px",
+                fontWeight: "500",
+                color: "rgba(0, 0, 0, 1)",
+                // padding:"0px 10px"
               }}
             >
-              Add CP
-            </Button>
-          </Link>
+              CP List
+            </Typography>
+          </Grid>
+          <Grid
+            sx={{
+              gap: "10px",
+              width: "40%",
+              display: "flex",
+              justifyContent: "end",
+            }}
+          >
+            <Link href="/cpmanagement/addcp">
+              <Button
+                sx={{
+                  backgroundColor: "rgba(0, 0, 0, 1)",
+                  color: "rgba(255, 255, 255, 1)",
+                  width: "125px",
+                  height: "43px",
+                  borderRadius: "13px",
+                  border: "none",
+                  fontSize: "13px",
+                  fontWeight: "400",
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 1)",
+                    boxShadow: "none",
+                    border: "none",
+                  },
+                }}
+              >
+                <Add sx={{ fontSize: "18px" }} />
+                Add CP
+              </Button>
+            </Link>
+          </Grid>
         </Grid>
-      </Grid>
-      {/* <Grid
+        {/* <Grid
         sx={{
           minHeight: "30vh",
           display: "flex",
@@ -175,32 +205,32 @@ export default function Page() {
           </Grid>
         ))}
       </Grid> */}
-      <Grid>
-        <TableContainer
-          component={Paper}
-          sx={{
-            border: "1px solid lightgrey",
-            borderRadius: "29px",
-          }}
-        >
-          <Grid
+        <Grid>
+          <TableContainer
+            component={Paper}
             sx={{
-              padding: "20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              backgroundColor: "#021522",
-              color: "white",
-              height: "58px",
+              border: "1px solid lightgrey",
+              borderRadius: "29px",
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{ fontSize: "16px", fontWeight: "500" }}
+            <Grid
+              sx={{
+                padding: "20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "#021522",
+                color: "white",
+                height: "58px",
+              }}
             >
-              CP List
-            </Typography>
-            {/* <TextField
+              <Typography
+                variant="h6"
+                sx={{ fontSize: "16px", fontWeight: "500" }}
+              >
+                CP List
+              </Typography>
+              {/* <TextField
               variant="outlined"
               id="filled-hidden-label-small"
               size="small"
@@ -226,114 +256,145 @@ export default function Page() {
                 ),
               }}
             /> */}
-          </Grid>
-          {isLoading ? (
-            <Box
-              sx={{
-                display: "flex",
-                width: "100%",
-                height: "80vh",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : (
-            <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: "rgba(249, 184, 0, 0.1)",
-                    fontWeight: "500",
-                    color: "black",
-                    fontSize: "0.75rem",
-                  }}
-                >
-                  <TableCell>COMPANY NAME</TableCell>
-                  <TableCell>CP CODE</TableCell>
-                  <TableCell>BRANCH HEAD</TableCell>
-                  <TableCell>NO. OF ACCOUNTS</TableCell>
-                  <TableCell>RELATIONSHIP MANAGER</TableCell>
-                  <TableCell>JOINED DATE</TableCell>
-                  <TableCell>STATUS</TableCell>
-                  <TableCell>ACTION</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {slicedRows?.map((row) => (
-                  <TableRow key={row?._id}>
-                    <TableCell>{row?.company?.name}</TableCell>
-                    <TableCell>{row?.company?.cpCode}</TableCell>
-                    <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>
-                    <TableCell>
-                      {row?.cpBranchHead
-                        ? 1 + row?.cpExecutes.length
-                        : row?.cpExecutes.length}
-                    </TableCell>
-                    <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
-                    <TableCell>{row?.createdBy}</TableCell>
-                    <TableCell>{row?.status || "N/A"}</TableCell>
-                    <TableCell>
-                      <Grid
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Button
-                          sx={{
-                            borderRadius: "10px",
-                            color: "black",
-                            width: "58px",
-                            height: "28px",
-                            fontSize: "10px",
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            "&:hover": {
-                              backgroundColor: "rgba(249, 184, 0, 1)",
-                              boxShadow: "none",
-                            },
-                          }}
-                        >
-                          edit
-                        </Button>
-                        <Button
-                          sx={{
-                            border: "1px solid red",
-                            borderRadius: "10px",
-                            color: "red",
-                            marginLeft: "5px",
-                            width: "58px",
-                            height: "28px",
-                            fontSize: "10px",
-                            "&:hover": {
-                              backgroundColor: "transparent",
-                              boxShadow: "none",
-                            },
-                          }}
-                        >
-                          delete
-                        </Button>
-                      </Grid>
-                    </TableCell>
+            </Grid>
+            {isLoading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  width: "100%",
+                  height: "80vh",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      backgroundColor: "rgba(249, 184, 0, 0.1)",
+                      fontWeight: "500",
+                      color: "black",
+                      fontSize: "0.75rem",
+                    }}
+                  >
+                    <TableCell>COMPANY NAME</TableCell>
+                    <TableCell>CP CODE</TableCell>
+                    <TableCell>BRANCH HEAD</TableCell>
+                    <TableCell>NO. OF ACCOUNTS</TableCell>
+                    <TableCell>RELATIONSHIP MANAGER</TableCell>
+                    <TableCell>JOINED DATE</TableCell>
+                    <TableCell>STATUS</TableCell>
+                    <TableCell>ACTION</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={data?.result?.length || 0}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            sx={{ backgroundColor: "white" }}
-            disableScrollLock
-          />
-        </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {slicedRows?.map((row) => (
+                    <TableRow key={row?._id}>
+                      <TableCell>{row?.company?.name || "N/A"}</TableCell>
+                      <TableCell>{row?.company?.cpCode || "N/A"}</TableCell>
+                      <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>
+                      <TableCell>
+                        {row?.cpBranchHead
+                          ? 1 + row?.cpExecutes.length
+                          : row?.cpExecutes.length || "N/A"}
+                      </TableCell>
+                      <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
+                      <TableCell>{row?.createdBy || "N/A"}</TableCell>
+                      <TableCell>{row?.status || "N/A"}</TableCell>
+                      <TableCell>
+                        <Grid
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Button
+                            sx={{
+                              borderRadius: "10px",
+                              color: "black",
+                              width: "58px",
+                              height: "28px",
+                              fontSize: "10px",
+                              backgroundColor: "rgba(249, 184, 0, 1)",
+                              "&:hover": {
+                                backgroundColor: "rgba(249, 184, 0, 1)",
+                                boxShadow: "none",
+                              },
+                            }}
+                          >
+                            edit
+                          </Button>
+                          <Button
+                            onClick={handleOpen}
+                            sx={{
+                              border: "1px solid red",
+                              borderRadius: "10px",
+                              color: "red",
+                              marginLeft: "5px",
+                              width: "58px",
+                              height: "28px",
+                              fontSize: "10px",
+                              "&:hover": {
+                                backgroundColor: "transparent",
+                                boxShadow: "none",
+                              },
+                            }}
+                          >
+                            delete
+                          </Button>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                            disableScrollLock
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              Confirm Delete
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Are you sure you want to delete this user?
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleClose} color="primary">
+                                Cancel
+                              </Button>
+                              <Button
+                                onClick={() => handleDelete(row.id)}
+                                color="primary"
+                                autoFocus
+                              >
+                                Delete
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+                        </Grid>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={data?.result?.length || 0}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{ backgroundColor: "white" }}
+              disableScrollLock
+            />
+          </TableContainer>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 }

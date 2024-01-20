@@ -186,6 +186,9 @@ export default function Page() {
 
         if (resultRes.data.status == 400) {
           toast.error(resultRes.data.result);
+        } 
+        if(resultRes.data.status == 400) {
+          toast.error("something went wrong");
         }
 
         if (resultRes.data.status == 200) {
@@ -377,23 +380,36 @@ export default function Page() {
                       onChange={handleProjectsChange}
                       MenuProps={{ disableScrollLock: true }}
                       input={
-                        <OutlinedInput
-                          id="select-projects"
-                          label="Projects (Chip)"
-                        />
+                        <OutlinedInput id="select-projects" label="Projects" />
                       }
                       renderValue={(selected) => (
                         <Box
                           sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
                         >
                           {selected?.map((value) => (
-                            <Chip key={value} label={value} />
+                            <Chip
+                              key={value}
+                              label={value}
+                              sx={{
+                                backgroundColor: "rgba(250, 185, 0, 0.28)",
+                              }}
+                            />
                           ))}
                         </Box>
                       )}
                     >
                       {selectedCategoryData?.projects?.map((project) => (
-                        <MenuItem key={project} value={project}>
+                        <MenuItem
+                          key={project}
+                          value={project}
+                          sx={{
+                            "&.Mui-selected": {
+                              backgroundColor: "white",
+                              color: "orange",
+                              fontWeight: "500",
+                            },
+                          }}
+                        >
                           {project}
                         </MenuItem>
                       ))}

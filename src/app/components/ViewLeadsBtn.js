@@ -114,43 +114,43 @@ export default function ViewLeadsBtn({ leadData }) {
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Name</Typography>
-            <Typography>{leadData.FirstName || "N/A"}</Typography>
+            <Typography>{leadData?.FirstName || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Contact</Typography>
-            <Typography>{leadData.Phone || "N/A"}</Typography>
+            <Typography>{leadData?.Phone || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Email</Typography>
-            <Typography>{leadData.EmailAddress || "N/A"}</Typography>
+            <Typography>{leadData?.EmailAddress || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Project</Typography>
-            <Typography>{leadData.mx_Origin_Project || "N/A"}</Typography>
+            <Typography>{leadData?.mx_Origin_Project || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Status</Typography>
-            <Typography>{leadData.Status || "N/A"}</Typography>
+            <Typography>{leadData?.Status || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Stage</Typography>
-            <Typography>{leadData.ProspectStage || "N/A"}</Typography>
+            <Typography>{leadData?.ProspectStage || "N/A"}</Typography>
           </Grid>
           <Grid
             sx={{ display: "flex", width: "350px", justifyContent: "start" }}
           >
             <Typography sx={{ width: "150px" }}>Created By</Typography>
-            <Typography>{leadData.mx_Agency_Name || "N/A"}</Typography>
+            <Typography>{leadData?.CreatedOn || "N/A"}</Typography>
           </Grid>
         </Grid>
       </BootstrapDialog>
