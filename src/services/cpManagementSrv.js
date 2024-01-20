@@ -13,7 +13,7 @@ import {
 } from "../../shared/roleManagement";
 import { CpAppCompany } from "../../models/AppCompany";
 // dont remove this schema
-import { CpAppUser, CpUser } from "../../models/AppUser";
+import { CpAppUser } from "../../models/AppUser";
 import initDb from "../lib/db";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import sendMail from "../helper/emailSender";
@@ -166,6 +166,7 @@ class CpManagementSrv {
           return errormsg?.cpExecuteFound;
         }
         console.log(cpCompany, cpBranchHeadData, cpExecuteData);
+        return null;
       } catch (error) {
         console.error("Error checking data existence:", error);
         return false;
@@ -232,7 +233,7 @@ class CpManagementSrv {
           );
           const branchUser = await userSrv.createSaveUser(cpBranchHead);
           const cpBranchResult = await this.createCpBranchHead(
-            cpBranchHead,
+            branchUser,
             parentId,
           );
           parentUser = cpBranchResult;

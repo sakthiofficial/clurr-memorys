@@ -43,11 +43,8 @@ class CPUserSrv {
       }
       // Subordinate Validation+
       const subordinateValidation =
-        (providedUser?.subordinateRoles || []).includes(newUser?.role) &&
-        (providedUser?.permissions || []).includes(
-          permissionKeyNames?.userManagement,
-        ) &&
-        (parentData?.subordinateRoles || []).includes(newUser?.role);
+        (providedUser?.subordinateRoles || []).includes(newUser?.role[0]) &&
+        (parentData?.subordinateRoles || []).includes(newUser?.role[0]);
       if (!subordinateValidation) {
         console.log(
           "parent or provider does not have permission to the user",
@@ -249,6 +246,7 @@ class CPUserSrv {
         })
 
         .lean();
+
       if (authenticteToken) {
         await Session.deleteOne({
           token: authenticteToken,
@@ -279,7 +277,6 @@ class CPUserSrv {
           ),
         ),
       ];
-
       const userSubordinateRoles = [
         ...new Set(
           user.role.flatMap((role) =>
@@ -290,7 +287,7 @@ class CPUserSrv {
       user[userDataObj?.permissions] = userPermissions;
       user[userDataObj?.subordinateRoles] = userSubordinateRoles;
       user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
-      const { projects } = user;
+      let { projects } = user;
       const { permissions, subordinateRoles, _id, role } = user;
 
       const sessionToken = this.genrateTokan();
@@ -298,15 +295,14 @@ class CPUserSrv {
         token: sessionToken,
         userId: user._id,
       });
-      sessionData.save();
-      const isPriorityProvider =
-        role === roleNames?.superAdmin || role === roleNames?.cpBusinessHead;
-      // fetching projects details
-      const projectDatas = await CpAppProject.find(
-        isPriorityProvider ? {} : { name: projects },
-        { _id: 0, accessKey: 0, secretKey: 0 },
-      );
+      await sessionData.save();
+      const isPriorityProvider = isPriorityUser(role);
 
+      // // fetching projects details
+      if (isPriorityProvider) {
+        projects = await CpAppProject.find({});
+      }
+      projects = projects.map((project) => project.name);
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
         token: sessionToken,
 
@@ -334,33 +330,23 @@ class CPUserSrv {
     await this.db();
 
     try {
-      if (newUser) {
-        // Role Acess Vallidation
-        const parentUserData = await CpUser.findOne({
-          _id: newUser?.parentId || null,
-        }).lean();
-        const validationToUser = await this.checkValidUserToAdd(
-          providedUser,
-          newUser,
-          parentUserData,
+      if (
+        !providedUser[userDataObj?.permissions].includes(
+          permissionKeyNames?.userManagement,
+        )
+      ) {
+        return new ApiResponse(
+          RESPONSE_STATUS?.NOTFOUND,
+          RESPONSE_MESSAGE?.INVALID,
+          null,
         );
-        const checkUserRole = isPriorityUser(providedUser[userDataObj?.role]);
-        const checkNewUserRole = isPriorityUser(newUser[userDataObj?.role]);
-        if (checkNewUserRole) {
-          newUser[userDataObj?.projects] = [];
-        }
-        console.log(validationToUser);
-        if (
-          !validationToUser ||
-          newUser?.role === roleNames?.cpExecute ||
-          !checkUserRole
-        ) {
-          return new ApiResponse(
-            RESPONSE_STATUS?.NOTFOUND,
-            RESPONSE_MESSAGE?.INVALID,
-            null,
-          );
-        }
+      }
+      if (newUser) {
+        // Role Acess Validation
+        const parentUserData =
+          (await this.getUserById(newUser[userDataObj?.parentId] || null)) ||
+          providedUser;
+        await this.checkValidUserToAdd(providedUser, newUser, parentUserData);
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(newUser?.password, saltRounds);
 
@@ -409,16 +395,51 @@ class CPUserSrv {
     }
     try {
       await this.db();
+      const roleData = await CpAppRole.find({
+        name: providedUser[userDataObj?.subordinateRoles],
+      });
+      const roleIds = roleData.map((val) => val._id);
 
       let users = await CpAppUser.find(
-        { role: { $in: providedUser[userDataObj?.subordinateRoles] } },
+        { role: { $in: roleIds } },
         { password: 0 },
-      );
-      if (
-        providedUser[userDataObj?.role] !== roleNames?.superAdmin &&
-        providedUser[userDataObj?.role] !== roleNames?.cpBusinessHead
-      ) {
-        users = users.map((user) => {
+      )
+        .populate({
+          path: "role",
+          populate: [
+            { path: "permissions", model: "CpAppPermission" },
+            { path: "subordinateRoles", model: "CpAppRole" },
+          ],
+        })
+
+        .populate({
+          path: "projects",
+          model: "CpAppProject",
+        })
+
+        .lean();
+      users = users.map((user) => {
+        const userPermissions = [
+          ...new Set(
+            user.role.flatMap((role) =>
+              role.permissions.map((permission) => permission.name),
+            ),
+          ),
+        ];
+        const userSubordinateRoles = [
+          ...new Set(
+            user.role.flatMap((role) =>
+              role.subordinateRoles.map((subordinate) => subordinate.name),
+            ),
+          ),
+        ];
+        user[userDataObj?.permissions] = userPermissions;
+        user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+        user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
+        user[userDataObj?.projects] = (user[userDataObj?.projects] || []).map(
+          (project) => project.name,
+        );
+        if (!isPriorityUser(user[userDataObj?.role])) {
           for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
             if (
               providedUser[userDataObj?.projects].includes(
@@ -428,8 +449,10 @@ class CPUserSrv {
               return user;
             }
           }
-        });
-      }
+        }
+        return user;
+      });
+
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users);
     } catch (error) {
       console.log("Error While Adding User", error);
@@ -465,10 +488,25 @@ class CPUserSrv {
       const isProjectValidationNeed =
         isPriorityRole || role === roleNames?.cpTl;
 
-      const users = await CpUser.find(
-        isProjectValidationNeed ? { role: parentRole(role) } : query,
-        projection,
+      const userData = await CpAppUser.find(
+        isProjectValidationNeed ? { role: roleData?._id } : query,
       );
+      const users = await Promise.all(
+        userData.map(async (user) => {
+          const result = await this.getUserById(user._id);
+          delete result[userDataObj?.cpCode];
+          delete result[userDataObj?.email];
+
+          delete result[userDataObj?.parentId];
+          delete result[userDataObj?.password];
+          delete result[userDataObj?.permissions];
+          delete result[userDataObj?.phone];
+          delete result[userDataObj?.subordinateRoles];
+
+          return result;
+        }),
+      );
+
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users);
     } catch (error) {
       console.log("Error While Adding User", error);
@@ -517,25 +555,31 @@ class CPUserSrv {
     if (!removeUserData) {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.NOTFOUND,
         null,
       );
     }
-    if (
-      (providedUser[userDataObj?.subordinateRoles] || []).includes(
-        removeUserData[userDataObj?.role],
-      )
-    ) {
-      const { deletedCount } = await CpUser.deleteOne({
-        _id: removeUserData._id,
-      }).lean();
-      if (deletedCount > 0) {
-        return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
+    // chnage this to for loop
+    (removeUserData[userDataObj?.role] || []).map((role) => {
+      if (!providedUser[userDataObj?.subordinateRoles].includes(role?.name)) {
+        return new ApiResponse(
+          RESPONSE_STATUS?.NOTFOUND,
+          RESPONSE_MESSAGE?.NOTFOUND,
+          null,
+        );
       }
+      return null;
+    });
+
+    const { deletedCount } = await CpAppUser.deleteOne({
+      _id: removeUserData._id,
+    }).lean();
+    if (deletedCount > 0) {
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     }
     return new ApiResponse(
       RESPONSE_STATUS?.NOTFOUND,
-      RESPONSE_MESSAGE?.NOTFOUND,
+      RESPONSE_MESSAGE?.INVALID,
       null,
     );
   };

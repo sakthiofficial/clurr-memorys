@@ -1,7 +1,10 @@
-import config from "@/lib/config";
+import config from "../lib/config";
 import { lsqFieldValues, lsqLeadFieldNames } from "../../shared/lsqConstants";
-import { ApiResponse, RESPONSE_MESSAGE, RESPONSE_STATUS } from "@/appConstants";
-import { CpUser } from "../../models/AppUser";
+import {
+  ApiResponse,
+  RESPONSE_MESSAGE,
+  RESPONSE_STATUS,
+} from "../appConstants";
 import { userDataObj } from "../../shared/roleManagement";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { CpAppCompany } from "../../models/AppCompany";
