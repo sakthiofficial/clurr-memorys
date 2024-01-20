@@ -44,7 +44,8 @@ import store from "../store";
 import { useLoginUserDataMutation } from "@/reduxSlice/apiSlice";
 import themeFont from "../theme";
 import "react-toastify/dist/ReactToastify.css";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { permissionKeyNames } from "../../shared/cpNamings";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -65,14 +66,14 @@ const sidebarlist = [
     url: "usermanagement",
     insideUrl: "adduser",
     icon: PeopleAltIcon,
-    shortName: "UM",
+    shortName: permissionKeyNames?.userManagement,
   },
   {
     title: "CP Management",
     url: "cpmanagement",
     insideUrl: "addcp",
     icon: VerifiedUser,
-    shortName: "CM",
+    shortName: permissionKeyNames?.cpManagement,
   },
 ];
 // login function
