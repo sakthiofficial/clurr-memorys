@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const { Schema } = mongoose;
-const CpActivitySchema = new Schema({
+const CpAppActivitySchema = new Schema({
   entity: { type: String, required: true }, // e.g., 'role', 'project', 'cpItem', 'user', 'lead'
   entityId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -14,5 +14,6 @@ const CpActivitySchema = new Schema({
   performedRole: { type: String, required: true }, // Username or user ID who performed the action
 });
 
-export const CpActivity =
-  mongoose.model.CpActivity || mongoose.model("CpActivity", CpActivitySchema);
+export const CpAppActivity =
+  mongoose.model.CpAppActivity ||
+  mongoose.model("CpAppActivity", CpAppActivitySchema);

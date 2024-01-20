@@ -11,7 +11,7 @@ import {
   parentRole,
 } from "../../../../../shared/roleManagement";
 
-export async function POST(request, res) {
+export async function POST(request) {
   const providedUser = await getUserByToken(request);
 
   if (!providedUser) {
@@ -26,6 +26,7 @@ export async function POST(request, res) {
     );
   }
   const bodyData = await request.json();
+
   const validateQuery = Joi.object({
     role: Joi.string().required(),
     projects: isPriorityUser(parentRole(bodyData?.role))

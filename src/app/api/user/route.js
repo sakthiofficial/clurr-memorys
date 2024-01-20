@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import Joi from "joi";
 import CPUserSrv from "../../../services/cpUserSrv";
 import {
@@ -101,7 +100,7 @@ export async function POST(req) {
       phone: Joi.string().required().min(10),
 
       email: Joi.string().required(),
-      role: Joi.string().required(),
+      role: Joi.array().required(),
       projects: checkProjectValidation(bodyData?.role)
         ? Joi.array().min(1)
         : Joi.array(),
@@ -131,7 +130,7 @@ export async function POST(req) {
   } catch (error) {
     return new Response(
       JSON.stringify(
-        new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, null),
+        new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
       ),
     );
   }

@@ -5,18 +5,20 @@ import {
   RESPONSE_STATUS,
 } from "../appConstants";
 
-import { CpProject } from "../../models/cpProject";
+import { CpAppProject } from "../../models/AppProject";
 import {
   basicRolePermission,
   isPriorityUser,
   userDataObj,
 } from "../../shared/roleManagement";
-import { CpCompany } from "../../models/cpCompany";
+import { CpAppCompany } from "../../models/AppCompany";
 // dont remove this schema
-import { CpUser } from "../../models/cpUser";
+import { CpAppUser, CpUser } from "../../models/AppUser";
 import initDb from "../lib/db";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
-import sendMail from "@/helper/emailSender";
+import sendMail from "../helper/emailSender";
+import { CpAppRole } from "../../models/AppRole";
+import CPUserSrv from "./cpUserSrv";
 
 class CpManagementSrv {
   constructor() {
@@ -27,57 +29,56 @@ class CpManagementSrv {
         inValidProject: "invalid project deatils",
         userNotExist: "user not found",
       };
+      const userSrv = new CPUserSrv();
+      const parentUser = await userSrv.getUserById(
+        cpCampanyData[userDataObj?.parentId],
+      );
 
-      const parentUser = await CpUser.findOne({
-        _id: cpCampanyData[userDataObj?.parentId],
-      });
       if (!parentUser) {
         throw errorMsg?.userNotExist;
       }
-      const projects = await CpProject.find({
+      const projects = await CpAppProject.find({
         name: { $in: parentUser[userDataObj?.projects] },
       });
+      const projectIds = projects.map((project) => project?._id);
+      cpCampanyData[userDataObj?.projects] = projectIds;
       if (projects.length !== parentUser[userDataObj?.projects].length) {
         throw errorMsg?.inValidProject;
       }
-      const cpCompanyDb = await CpCompany.findOne({
+      const cpCompanyDb = await CpAppCompany.findOne({
         name: cpCampanyData?.name,
       });
       if (cpCompanyDb) {
         throw errorMsg?.userExist;
       }
-      const cpCompanySch = new CpCompany(cpCampanyData);
+      const cpCompanySch = new CpAppCompany(cpCampanyData);
       const cpCompanyResult = await cpCompanySch.save();
       return cpCompanyResult._id;
     };
-    this.validateCp = async (parent, newUser) => {
-      (newUser[userDataObj?.projects] || []).map((userProject) => {
-        const validateProject =
-          parent[userDataObj?.projects].includes(userProject);
-        if (!validateProject) {
-          return false;
-        }
-      });
-
-      return true;
+    this.validateCp = (parent, newUser) => {
+      const result = (newUser[userDataObj?.projects] || []).filter(
+        (userProject) => parent[userDataObj?.projects].includes(userProject),
+      );
+      return result.length === newUser[userDataObj?.projects].length;
     };
     this.createCpBranchHead = async (user, parentId) => {
-      const parentUser = await CpUser.findOne({ _id: parentId });
+      const userSrv = new CPUserSrv();
+      const parentUser = await userSrv.getUserById(parentId);
       if (!parentUser) {
         return false;
       }
-      const userSch = new CpUser(user);
+      const userSch = new CpAppUser(user);
       const result = await userSch.save();
       return result;
     };
     this.genrateCompanyCode = async () => {
-      let lastCode = await CpCompany.findOne(
+      let lastCode = await CpAppCompany.findOne(
         {},
         { cpCode: 1 },
         { sort: { _id: -1 } },
       ).lean();
       if (!lastCode) {
-        return "URBHCP00001";
+        return "URHCP00001";
       }
 
       lastCode = lastCode.cpCode;
@@ -85,7 +86,7 @@ class CpManagementSrv {
       const lastNumber = parseInt(lastCode.replace(/\D/g, ""), 10);
       const newNumber = lastNumber + 1;
 
-      return `USER${String(newNumber).padStart(3, "0")}`;
+      return `URBCHP${String(newNumber).padStart(5, "0")}`;
     };
     this.getCpCompanysBH = async (providedUser) => {
       if (
@@ -99,7 +100,7 @@ class CpManagementSrv {
           null,
         );
       }
-      const companies = await CpCompany.find().populate("branchHeadId");
+      const companies = await CpAppCompany.find().populate("branchHeadId");
       const cpCompanyBranchHead = (companies || [])
         .map((company) => {
           const { branchHeadId } = company;
@@ -127,10 +128,17 @@ class CpManagementSrv {
           cpBranchHeadFound: "Branch Head Already Register",
           cpExecuteFound: "CP Execute Already Register",
         };
-        const cpCompany = await CpCompany.findOne({ name: company?.name });
-
-        const cpBranchHeadData = await CpUser.findOne({
-          role: roleNames?.cpBranchHead,
+        const cpCompany = await CpAppCompany.findOne({ name: company?.name });
+        let cpBranchRoleId = await CpAppRole.findOne({
+          name: roleNames?.cpBranchHead,
+        });
+        cpBranchRoleId = cpBranchRoleId?._id;
+        let cpExecuteRoleId = await CpAppRole.findOne({
+          name: roleNames?.cpExecute,
+        });
+        cpExecuteRoleId = cpExecuteRoleId?._id;
+        const cpBranchHeadData = await CpAppUser.findOne({
+          role: { $in: [cpBranchRoleId] },
           $or: [
             { name: branchHead[userDataObj?.name] },
             { email: branchHead[userDataObj?.email] },
@@ -138,13 +146,16 @@ class CpManagementSrv {
           ],
         });
 
-        const cpExecuteData = await CpUser.findOne({
+        const cpExecuteData = await CpAppUser.findOne({
+          role: { $in: [cpExecuteRoleId] },
+
           $or: [
             { name: cpExecute ? cpExecute[userDataObj?.name] : null },
             { email: cpExecute ? cpExecute[userDataObj?.email] : null },
             { phone: cpExecute ? cpExecute[userDataObj?.phone] : null },
           ],
         });
+
         if (cpCompany) {
           return errormsg?.companyFound;
         }
@@ -184,7 +195,8 @@ class CpManagementSrv {
       }
     }
     const cpGenratedCode = await this.genrateCompanyCode();
-    let parentUser = await CpUser.findOne({ _id: parentId });
+    const userSrv = new CPUserSrv();
+    let parentUser = await userSrv.getUserById(parentId);
     let branchHeadId = null;
     if (!parentUser) {
       return new ApiResponse(
@@ -218,6 +230,7 @@ class CpManagementSrv {
           cpBranchHead[userDataObj?.permissions] = basicRolePermission(
             cpBranchHead[userDataObj?.role],
           );
+          const branchUser = await userSrv.createSaveUser(cpBranchHead);
           const cpBranchResult = await this.createCpBranchHead(
             cpBranchHead,
             parentId,
@@ -254,7 +267,8 @@ class CpManagementSrv {
         cpExecute[userDataObj?.permissions] = basicRolePermission(
           cpExecute[userDataObj?.role],
         );
-        const userSch = new CpUser(cpExecute);
+        const cpExecuteUser = await userSrv.createSaveUser(cpExecute);
+        const userSch = new CpAppUser(cpExecuteUser);
         await userSch.save();
         const userName = cpExecute[userDataObj?.name];
         const parentName = "Urbanrise Team";
@@ -283,30 +297,82 @@ class CpManagementSrv {
   };
 
   retriveCpCompanys = async (providedUser) => {
-    const checkRole = isPriorityUser(providedUser[userDataObj?.role]);
+    const userSrv = new CPUserSrv();
+
+    const checkRole =
+      isPriorityUser(providedUser[userDataObj?.role]) &&
+      providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.cpManagement,
+      );
     if (!checkRole) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.INVALID,
       );
     }
-    const cpCompanys = await CpCompany.find();
+    const cpCompanys = await CpAppCompany.find().populate("projects");
+
     const companiesWithUsers = await Promise.all(
       cpCompanys.map(async (company) => {
-        const parentUser = await CpUser.findOne({ _id: company.parentId });
+        const parentUser = await userSrv.getUserById(company.parentId);
 
-        const allCompanyUsers = await CpUser.find({
+        let allCompanyUsers = await CpAppUser.find({
           cpCode: company.cpCode,
-        });
+        })
+          .populate({
+            path: "role",
+            populate: [
+              { path: "permissions", model: "CpAppPermission" },
+              { path: "subordinateRoles", model: "CpAppRole" },
+            ],
+          })
 
+          .populate({
+            path: "projects",
+            model: "CpAppProject",
+          })
+
+          .lean();
+        allCompanyUsers = allCompanyUsers.map((user) => {
+          const userPermissions = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.permissions.map((permission) => permission.name),
+              ),
+            ),
+          ];
+          const userSubordinateRoles = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.subordinateRoles.map((subordinate) => subordinate.name),
+              ),
+            ),
+          ];
+          user[userDataObj?.permissions] = userPermissions;
+          user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+          user[userDataObj?.role] = (user?.role || []).map(
+            (role) => role?.name,
+          );
+          user[userDataObj?.projects] = (user[userDataObj?.projects] || []).map(
+            (project) => project.name,
+          );
+          return user;
+        });
         const cpBranchHead =
-          allCompanyUsers.find((user) => user.isPrimary) || null;
-        const cpExecutes = allCompanyUsers.filter((user) => !user.isPrimary);
+          allCompanyUsers.find((user) =>
+            user[userDataObj?.role].includes(roleNames?.cpBranchHead),
+          ) || null;
+        const cpExecutes = allCompanyUsers.filter((user) =>
+          user[userDataObj?.role].includes(roleNames?.cpExecute),
+        );
+        company = company.toObject();
+        const companyProjects = company[userDataObj?.projects].map(
+          (project) => project?.name,
+        );
+        company.projects = companyProjects;
 
         return {
-          company: {
-            ...company._doc,
-          },
+          company,
           cpRm: parentUser,
           cpBranchHead,
           cpExecutes,

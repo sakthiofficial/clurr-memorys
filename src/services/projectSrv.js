@@ -5,8 +5,10 @@ import {
 } from "../appConstants";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { isPriorityUser, userDataObj } from "../../shared/roleManagement";
+import { CpAppRole } from "../../models/AppRole";
+import { CpAppPermission } from "../../models/Permission";
 
-const { CpProject } = require("../../models/cpProject");
+const { CpAppProject } = require("../../models/AppProject");
 
 class ProjectSrv {
   createProject = async (providedUser, project) => {
@@ -14,7 +16,6 @@ class ProjectSrv {
       const isPriorityProvider = isPriorityUser(
         providedUser[userDataObj?.role],
       );
-      console.log(isPriorityProvider, providedUser[userDataObj?.permissions]);
       if (
         !isPriorityProvider &&
         !(providedUser[userDataObj?.projects] || []).includes(
@@ -27,10 +28,9 @@ class ProjectSrv {
           null,
         );
       }
-      const projectObj = new CpProject(project);
+      const projectObj = new CpAppProject(project);
       const result = await projectObj.save();
-      console.log(result, projectObj);
-      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, result);
     } catch (error) {
       console.log("While Saving Project Data Error", error);
       return new ApiResponse(

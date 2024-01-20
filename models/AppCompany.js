@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
-const CpCompanySchema = new Schema({
+const CpAppCompanySchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -11,18 +11,23 @@ const CpCompanySchema = new Schema({
   },
 
   projects: {
-    type: Array,
-    required: true,
+    type: [
+      {
+        type: Schema.Types.ObjectId,
+
+        ref: "CpAppProject",
+      },
+    ],
   },
   parentId: {
-    type: Schema.Types.Mixed,
+    type: Schema.Types.ObjectId,
     required: true,
-    ref: "CpUser",
+    ref: "CpAppUser",
   },
   branchHeadId: {
-    type: Schema.Types.Mixed,
+    type: Schema.Types.ObjectId,
     required: true,
-    ref: "CpUser",
+    ref: "CpAppUser",
   },
   cpCode: {
     type: String,
@@ -36,5 +41,6 @@ const CpCompanySchema = new Schema({
   createdBy: { type: Number, default: () => Math.floor(Date.now() / 1000) },
 });
 
-module.exports.CpCompany =
-  mongoose.models.CpCompany || mongoose.model("CpCompany", CpCompanySchema);
+module.exports.CpAppCompany =
+  mongoose.models.CpAppCompany ||
+  mongoose.model("CpAppCompany", CpAppCompanySchema);

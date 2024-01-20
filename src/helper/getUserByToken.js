@@ -1,12 +1,8 @@
-import { NextResponse } from "next/server";
 import initDb from "../lib/db";
 import { Session } from "../../models/session";
-import {
-  ApiResponse,
-  RESPONSE_MESSAGE,
-  RESPONSE_STATUS,
-  TOKEN_VARIABLES,
-} from "../appConstants";
+import { TOKEN_VARIABLES } from "../appConstants";
+import { CpAppUser } from "../../models/AppUser";
+import { userDataObj } from "../../shared/roleManagement";
 
 export default async function getUserByToken(request) {
   await initDb();
@@ -16,8 +12,45 @@ export default async function getUserByToken(request) {
   })
     .populate("userId")
     .lean();
+
+  const user = await CpAppUser.findOne({
+    _id: providedUserSessionData?.userId?._id,
+  })
+    .populate({
+      path: "role",
+      populate: [
+        { path: "permissions", model: "CpAppPermission" },
+        { path: "subordinateRoles", model: "CpAppRole" },
+      ],
+    })
+    .populate({
+      path: "projects",
+      model: "CpAppProject",
+    })
+    .lean();
+  const userPermissions = [
+    ...new Set(
+      user.role.flatMap((role) =>
+        role.permissions.map((permission) => permission.name),
+      ),
+    ),
+  ];
+  const userSubordinateRoles = [
+    ...new Set(
+      user.role.flatMap((role) =>
+        role.subordinateRoles.map((subordinate) => subordinate.name),
+      ),
+    ),
+  ];
+  user[userDataObj?.projects] = user[userDataObj?.projects].map(
+    (project) => project.name,
+  );
+  user[userDataObj?.permissions] = userPermissions;
+  user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+  user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
+
   if (!providedUserSessionData) {
     return null;
   }
-  return providedUserSessionData.userId;
+  return user;
 }
