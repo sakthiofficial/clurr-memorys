@@ -5,7 +5,10 @@ import {
   ApiResponse,
   RESPONSE_MESSAGE,
 } from "../../../appConstants";
-import { checkProjectValidation } from "../../../../shared/roleManagement";
+import {
+  checkProjectValidation,
+  isPriorityUser,
+} from "../../../../shared/roleManagement";
 import getUserByToken from "../../../helper/getUserByToken";
 import { roleNames } from "../../../../shared/cpNamings";
 
@@ -101,9 +104,9 @@ export async function POST(req) {
 
       email: Joi.string().required(),
       role: Joi.array().required(),
-      projects: checkProjectValidation(bodyData?.role)
-        ? Joi.array().min(1)
-        : Joi.array(),
+      projects: isPriorityUser(bodyData?.role)
+        ? Joi.array()
+        : Joi.array().min(1),
       parentId:
         roleNames?.superAdmin === bodyData?.role
           ? Joi.string().allow("")
