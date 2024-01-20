@@ -32,6 +32,8 @@ import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
 import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
 import Booked from "../../../public/LeadsCard/bookLeads.svg";
 import { useGetLeadsQuery } from "@/reduxSlice/apiSlice";
+import DateRange from "../components/DateRange";
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 // card details
 const users = [
@@ -49,7 +51,6 @@ export default function Page() {
   // const [loading, setLoading] = useState(true);
 
   const [selectedProject, setSelectedProject] = useState("");
-  const [selectedDate, setSelectedDate] = useState("This Month");
 
   // handle date function
   const handleChangeDate = (event) => {
@@ -113,6 +114,47 @@ export default function Page() {
     }
   }, [projects]);
 
+  const shortcutsItems = [
+    {
+      label: "This Week",
+      getValue: () => {
+        const today = dayjs();
+        return [today.startOf("week"), today.endOf("week")];
+      },
+    },
+    {
+      label: "Last Week",
+      getValue: () => {
+        const today = dayjs();
+        const prevWeek = today.subtract(7, "day");
+        return [prevWeek.startOf("week"), prevWeek.endOf("week")];
+      },
+    },
+    {
+      label: "Last 7 Days",
+      getValue: () => {
+        const today = dayjs();
+        return [today.subtract(7, "day"), today];
+      },
+    },
+    {
+      label: "Current Month",
+      getValue: () => {
+        const today = dayjs();
+        return [today.startOf("month"), today.endOf("month")];
+      },
+    },
+    {
+      label: "Next Month",
+      getValue: () => {
+        const today = dayjs();
+        const startOfNextMonth = today.endOf("month").add(1, "day");
+        return [startOfNextMonth, startOfNextMonth.endOf("month")];
+      },
+    },
+    { label: "Reset", getValue: () => [null, null] },
+  ];
+
   return (
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
@@ -122,9 +164,16 @@ export default function Page() {
           justifyContent: "space-between",
           alignItems: "center",
           // padding:"0px 10px"
+          // border: "1px solid black",
         }}
       >
-        <Grid sx={{ width: "20%", paddingRight: "30px" }}>
+        <Grid
+          sx={{
+            minWidth: "120px",
+            paddingRight: "30px",
+            // border: "1px solid black",
+          }}
+        >
           <Typography
             sx={{
               fontSize: "18px",
@@ -136,63 +185,54 @@ export default function Page() {
             Lead List
           </Typography>
         </Grid>
-        <FormControl
-          sx={{
-            width: "50%",
-            marginRight: "20px",
-            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "8px",
-            },
-          }}
-          size="small"
-        >
-          <InputLabel id="date-label">select date</InputLabel>
-          <Select
-            labelId="date-label"
-            id="select-date"
-            name="select-date"
-            label="select date"
-            value={selectedDate}
-            onChange={handleChangeDate}
-            MenuProps={{ disableScrollLock: true }}
+        <Grid sx={{ minWidth: "600px", display: "flex" }}>
+          <FormControl
+            sx={{
+              width: "300px",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "13px",
+              },
+            }}
+            size="small"
           >
-            <MenuItem value="This Month">This Month</MenuItem>
-            <MenuItem value="No Options">No Options</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl
-          sx={{
-            width: "50%",
-            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "8px",
-            },
-          }}
-          size="small"
-        >
-          <InputLabel id="project-label">Project</InputLabel>
-          <Select
-            labelId="project-label"
-            id="project"
-            name="project"
-            label="project"
-            value={selectedProject}
-            onChange={handleChangeProject}
-            MenuProps={{ disableScrollLock: true }}
+            <DateRange />
+          </FormControl>
+          <FormControl
+            sx={{
+              width: "300px",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "13px",
+              },
+            }}
+            size="small"
           >
-            {projects?.map((proj) => (
-              <MenuItem key={proj?.id} value={proj?.name}>
-                {proj?.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            <InputLabel id="project-label">Project</InputLabel>
+            <Select
+              labelId="project-label"
+              id="project"
+              name="project"
+              label="project"
+              value={selectedProject}
+              onChange={handleChangeProject}
+              MenuProps={{ disableScrollLock: true }}
+            >
+              {projects?.map((proj) => (
+                <MenuItem key={proj?.id} value={proj?.name}>
+                  {proj?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
         <Grid
           sx={{
             gap: "10px",
-            width: "40%",
+            minWidth: "300px",
             display: "flex",
             justifyContent: "end",
             paddingLeft: "20px",
+            // border: "1px solid black",
           }}
         >
           {permissions && permissions.includes("LM") && <AddLeadsBtn />}

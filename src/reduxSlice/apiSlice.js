@@ -32,7 +32,7 @@ export const apiSlice = createApi({
     }),
     deleteUsers: builder.mutation({
       query: (id) => ({
-        url: `/user/${id}`,
+        url: `/user?id=${id}`,
         method: "DELETE",
         body: id,
       }),
