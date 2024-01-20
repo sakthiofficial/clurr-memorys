@@ -164,7 +164,6 @@ function isPriorityUser(userRole) {
     roleArr.includes(roleNames?.admin) ||
     roleArr.includes(roleNames?.mis) ||
     roleArr.includes(roleNames?.cpBusinessHead);
-
   return isPriorityRole;
 }
 function isNonPriorityUser(userRole) {

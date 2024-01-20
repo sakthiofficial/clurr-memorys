@@ -99,8 +99,8 @@ export default function Page() {
   };
 
   const [sendUsers] = useAddUsersMutation();
-  const priorUser = isPriorityUser(selectedRolesListP[0]);
-  // console.log(sendUsers)
+  const priorUser = isPriorityUser(selectedRolesListP);
+  console.log(priorUser)
 
   // handle submit function
   const handleSubmit = (e) => {
@@ -141,7 +141,7 @@ export default function Page() {
 
         sendUsers(usersData)
           .then((result) => {
-            console.log(result.data.result.details);
+            console.log(result.data);
 
             if (result.data.status === 400) {
               result.data.result.details.map((res) => toast.error(res.message));
@@ -156,7 +156,6 @@ export default function Page() {
           })
           .catch((error) => {
             console.error("User submission failed", error);
-            toast.error("User submission failed. Please try again.");
           });
       } catch (error) {
         console.error("User submission failed", error);
@@ -463,8 +462,8 @@ export default function Page() {
                       >
                         {SubordinateProjects?.map((p) => (
                           <MenuItem
-                            key={p?.name}
-                            value={p?.name}
+                            key={p}
+                            value={p}
                             sx={{
                               "&.Mui-selected": {
                                 backgroundColor: "white",
@@ -473,7 +472,7 @@ export default function Page() {
                               },
                             }}
                           >
-                            <ListItemText primary={p?.name} />
+                            <ListItemText primary={p} />
                           </MenuItem>
                         ))}
                       </Select>
