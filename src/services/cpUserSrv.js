@@ -231,11 +231,24 @@ class CPUserSrv {
 
   authenticateUser = async ({ name, password }, authenticteToken) => {
     try {
-      console.log("comming here");
       await this.db();
       const user = await CpAppUser.findOne({
         $or: [{ name }, { email: name }, { phone: name }],
-      }).lean();
+      })
+        .populate({
+          path: "role",
+          populate: [
+            { path: "permissions", model: "CpAppPermission" },
+            { path: "subordinateRoles", model: "CpAppRole" },
+          ],
+        })
+
+        .populate({
+          path: "projects",
+          model: "CpAppProject",
+        })
+
+        .lean();
       if (authenticteToken) {
         await Session.deleteOne({
           token: authenticteToken,
@@ -259,7 +272,6 @@ class CPUserSrv {
           null,
         );
       }
-      console.log(user.role);
       const userPermissions = [
         ...new Set(
           user.role.flatMap((role) =>
