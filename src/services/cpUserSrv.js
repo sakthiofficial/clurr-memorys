@@ -259,6 +259,7 @@ class CPUserSrv {
           null,
         );
       }
+      console.log(user.role);
       const userPermissions = [
         ...new Set(
           user.role.flatMap((role) =>
@@ -266,6 +267,7 @@ class CPUserSrv {
           ),
         ),
       ];
+
       const userSubordinateRoles = [
         ...new Set(
           user.role.flatMap((role) =>
@@ -288,7 +290,7 @@ class CPUserSrv {
       const isPriorityProvider =
         role === roleNames?.superAdmin || role === roleNames?.cpBusinessHead;
       // fetching projects details
-      const projectDatas = await CpProject.find(
+      const projectDatas = await CpAppProject.find(
         isPriorityProvider ? {} : { name: projects },
         { _id: 0, accessKey: 0, secretKey: 0 },
       );
@@ -396,7 +398,7 @@ class CPUserSrv {
     try {
       await this.db();
 
-      let users = await CpUser.find(
+      let users = await CpAppUser.find(
         { role: { $in: providedUser[userDataObj?.subordinateRoles] } },
         { password: 0 },
       );
