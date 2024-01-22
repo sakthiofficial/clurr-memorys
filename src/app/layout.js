@@ -470,7 +470,12 @@ export default function RootLayout({ children }) {
                             alignItems: "center",
                           }}
                         >
-                          <Grid sx={{ display: "flex" }}>
+                          <Grid
+                            sx={{
+                              // display: "flex",
+                              display: { xs: "none", sm: "flex" },
+                            }}
+                          >
                             <Typography variant="h6">Hello,&nbsp;</Typography>
                             <Typography variant="h6">
                               {user?.name.split(" ")[0]}

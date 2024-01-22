@@ -39,14 +39,14 @@ export default function ExportsLeadsBtn() {
   };
 
   const handleExport = () => {
-    console.log(
-      "Exporting leads from",
-      selectedStartDate,
-      "to",
-      selectedEndDate,
-      "for project",
-      selectedProject,
-    );
+    // console.log(
+    //   "Exporting leads from",
+    //   selectedStartDate,
+    //   "to",
+    //   selectedEndDate,
+    //   "for project",
+    //   selectedProject,
+    // );
 
     setSelectedStartDate(null);
     setSelectedEndDate(null);
@@ -171,7 +171,7 @@ export default function ExportsLeadsBtn() {
           >
             <Typography
               sx={{
-                marginBottom: "10px",
+                marginBottom: "15px",
                 textAlign: "start",
                 display: "flex",
                 alignItems: "start",
@@ -201,8 +201,8 @@ export default function ExportsLeadsBtn() {
                 onChange={handleProjectChange}
               >
                 {projects?.map((proj) => (
-                  <MenuItem key={proj?.name} value={proj?.name}>
-                    {proj?.name}
+                  <MenuItem key={proj} value={proj}>
+                    {proj}
                   </MenuItem>
                 ))}
               </Select>
@@ -216,25 +216,35 @@ export default function ExportsLeadsBtn() {
             }}
           >
             <Grid sx={{ width: "40%" }}>
-              <Typography sx={{ marginBottom: "10px", fontSize: "12px" }}>
+              <Typography sx={{ marginBottom: "10px", fontSize: "13px" }}>
                 Duration from
               </Typography>
               <Input
                 type="date"
                 value={selectedStartDate}
                 onChange={handleProjectChange}
+                sx={{
+                  '& input[type="date"]': {
+                    borderBottom: 0,
+                    borderRadius: "5px",
+                    border: "1px solid lightgray",
+                    padding: "3px",
+                  },
+                }}
               />
             </Grid>
             <Grid sx={{ width: "40%" }}>
-              <Typography sx={{ marginBottom: "10px", fontSize: "12px" }}>
+              <Typography sx={{ marginBottom: "10px", fontSize: "13px" }}>
                 Duration to
               </Typography>
               <Input
                 type="date"
                 sx={{
                   '& input[type="date"]': {
-                    borderBottom: 0,
-                    borderRadius: "8px",
+                    outline: "none",
+                    borderRadius: "5px",
+                    border: "1px solid lightgray",
+                    padding: "5px",
                   },
                 }}
                 value={selectedEndDate}

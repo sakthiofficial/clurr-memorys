@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import { DeleteOutlineOutlined } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import {
   useAddCpMutation,
   useGetRealtionshipManagerQuery,
@@ -46,6 +47,8 @@ export default function Page() {
       },
     ],
   });
+  const router = useRouter();
+
   // get relational manager query
   const result = useGetRealtionshipManagerQuery();
   // console.log(result?.data?.result);
@@ -184,25 +187,19 @@ export default function Page() {
       try {
         const resultRes = await cpsAdd(cpData);
 
-        if (resultRes.data.status == 400) {
+        if (resultRes.data.status === 400) {
           toast.error(resultRes.data.result);
-        } 
-        if(resultRes.data.status == 400) {
+        }
+        if (resultRes.data.status === 400) {
           toast.error("something went wrong");
         }
 
-        if (resultRes.data.status == 200) {
+        if (resultRes.data.status === 200) {
           toast.success("CP added successfully!");
           setTimeout(() => {
-            window.location.href = "/cpmanagement";
-          }, 2000);
+            router.push("/cpmanagement");
+          }, 3000);
         }
-
-        // toast.success("CP added successfully!");
-        console.log(resultRes.data.status);
-        // Redirect to cpmanagement page on success
-        // window.location.href = "/cpmanagement";
-        console.log(cpData);
       } catch (error) {
         console.error("CP submission failed", error);
 
@@ -238,7 +235,7 @@ export default function Page() {
     <>
       <ToastContainer />
 
-      <Grid sx={{ minHeight: "100vh" }}>
+      <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
         <Grid
           sx={{
             height: "5vh",

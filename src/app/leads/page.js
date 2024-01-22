@@ -18,11 +18,12 @@ import {
   Select,
   CircularProgress,
   Box,
+  Button,
 } from "@mui/material";
 
 // components
+import Link from "next/link";
 import AddLeadsBtn from "../components/AddLeadsBtn";
-import ViewLeadsBtn from "../components/ViewLeadsBtn";
 import ExportLeadsBtn from "../components/ExportLeadsBtn";
 // card icons
 import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
@@ -31,9 +32,10 @@ import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
 import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
 import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
 import Booked from "../../../public/LeadsCard/bookLeads.svg";
+
 import { useGetLeadsQuery } from "@/reduxSlice/apiSlice";
 import DateRange from "../components/DateRange";
-import ExportLead from "./component/export";
+import { permissionKeyNames } from "../../../shared/cpNamings";
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 // card details
@@ -49,18 +51,25 @@ const users = [
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [projectLoaderVisible, setProjectLoaderVisible] = useState(false);
 
   const [selectedProject, setSelectedProject] = useState("");
-
+  // get leads query
+  const { data, isLoading } = useGetLeadsQuery(selectedProject);
   // handle date function
   const handleChangeDate = (event) => {
     setSelectedDate(event.target.value);
   };
   // handle project function
-  const handleChangeProject = (event) => {
+  const handleChangeProject = async (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
+    setProjectLoaderVisible(true);
+    setTimeout(() => {
+      setProjectLoaderVisible(false);
+    }, 6000);
+
+    // setSelectedProject(selectedProjectName);
   };
 
   useEffect(() => {
@@ -73,7 +82,7 @@ export default function Page() {
       console.error('No data found in local storage for key "user".');
     }
   }, []);
-
+  // console.log(projects);
   const getBackgroundColor = (name) => {
     switch (name) {
       case "Warm Leads":
@@ -86,11 +95,6 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-
-  // get leads query
-  const { data, error, isLoading } = useGetLeadsQuery(selectedProject);
-
-  // console.log(data);
 
   // table functions
   const [page, setPage] = useState(0);
@@ -111,7 +115,7 @@ export default function Page() {
       : [];
   useEffect(() => {
     if (projects && projects.length > 0) {
-      setSelectedProject(projects[0].name);
+      setSelectedProject(projects[0]);
     }
   }, [projects]);
 
@@ -218,8 +222,8 @@ export default function Page() {
               MenuProps={{ disableScrollLock: true }}
             >
               {projects?.map((proj) => (
-                <MenuItem key={proj?.id} value={proj?.name}>
-                  {proj?.name}
+                <MenuItem key={proj} value={proj}>
+                  {proj}
                 </MenuItem>
               ))}
             </Select>
@@ -236,7 +240,10 @@ export default function Page() {
             // border: "1px solid black",
           }}
         >
-          {permissions && permissions.includes("LM") && <AddLeadsBtn />}
+          {permissions &&
+            permissions.includes(permissionKeyNames.leadManagement) && (
+              <AddLeadsBtn />
+            )}
           <ExportLeadsBtn />
         </Grid>
       </Grid>
@@ -342,7 +349,7 @@ export default function Page() {
               Leads List
             </Typography>
           </Grid>
-          {isLoading ? (
+          {/* {projectLoaderVisible ? (
             <Box
               sx={{
                 display: "flex",
@@ -416,7 +423,121 @@ export default function Page() {
                 ))}
               </TableBody>
             </Table>
+          )} */}
+
+          {isLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                height: "80vh",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              {projectLoaderVisible ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "100%",
+                    height: "80vh",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Table
+                  sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}
+                >
+                  <TableHead>
+                    <TableRow
+                      sx={{
+                        backgroundColor: "rgba(249, 184, 0, 0.1)",
+                        fontWeight: "500",
+                        color: "black",
+                      }}
+                    >
+                      {/* <TableCell>Lead Id#</TableCell> */}
+                      <TableCell>Name</TableCell>
+                      <TableCell>Contact</TableCell>
+                      <TableCell>Email</TableCell>
+                      <TableCell>Project</TableCell>
+                      {/* <TableCell>Stage</TableCell> */}
+                      {/* <TableCell>Status</TableCell> */}
+                      <TableCell>Created By</TableCell>
+                      <TableCell>Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {slicedRows?.map((row) => (
+                      <TableRow key={row?.id}>
+                        {/* <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.ProspectAutoId || "N/A"}
+                        </TableCell> */}
+                        <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.FirstName || "N/A"}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.Phone || "N/A"}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.EmailAddress || "N/A"}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.mx_Origin_Project || "N/A"}
+                        </TableCell>
+                        {/* <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.ProspectStage || "N/A"}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.ProspectStage || "N/A"}
+                        </TableCell> */}
+                        <TableCell sx={{ fontSize: "11px" }}>
+                          {row?.CreatedOn || "N/A"}
+                        </TableCell>
+                        <TableCell>
+                          <Grid
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Link href="/leads/view">
+                              <Button
+                                variant="outlined"
+                                sx={{
+                                  borderRadius: "10px",
+                                  color: "black",
+                                  width: "58px",
+                                  height: "28px",
+                                  border: "none",
+                                  backgroundColor: "rgba(249, 184, 0, 1)",
+                                  "&:hover": {
+                                    backgroundColor: "rgba(249, 184, 0, 1)",
+                                    boxShadow: "none",
+                                    border: "none",
+                                  },
+                                }}
+                              >
+                                view
+                              </Button>
+                            </Link>
+                          </Grid>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </>
           )}
+
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
