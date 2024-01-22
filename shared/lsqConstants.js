@@ -19,9 +19,9 @@ export const lsqLeadFieldNames = {
   stage: "ProspectStage",
   agency: "mx_Agency_Name",
   subSource: "mx_Sub_Source",
-  notes:"Notes",
-  firstName:"FirstName",
-  email:"EmailAddress"
+  notes: "Notes",
+  firstName: "FirstName",
+  email: "EmailAddress",
 };
 
 export const lsqFieldValues = {

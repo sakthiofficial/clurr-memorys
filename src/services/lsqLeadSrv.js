@@ -4,6 +4,7 @@ import {
   ApiResponse,
   RESPONSE_MESSAGE,
   RESPONSE_STATUS,
+  convertTimestampToDateTime,
 } from "../appConstants";
 import { userDataObj } from "../../shared/roleManagement";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
@@ -15,33 +16,35 @@ class LSQLeadSrv {
   constructor() {
     this.lsqApiUrlToCaptureLead =
       "https://api-in21.leadsquared.com/v2/LeadManagement.svc/Lead.Capture";
+    this.leadFromLsqByPhone = async (phone, project) => {
+      const { lsqConfig } = config;
+      if (!lsqConfig[project]) {
+        return null;
+      }
+      const { accessKey, secretKey } = lsqConfig[project];
+
+      const lsqData = await axios.get(
+        `${lsqConfig?.apiUrl}LeadManagement.svc/RetrieveLeadByPhoneNumber?accessKey=${accessKey}&secretKey=${secretKey}&phone=${phone}`,
+      );
+      return lsqData.data;
+    };
   }
 
-  retriveLead = async (providedUser, project) => {
-    function utcMonthStartDateFormat() {
-      const now = new Date();
-      if (now.getDate() === 1) {
-        now.setMonth(now.getMonth() - 1);
-      }
-      now.setDate(1);
-
-      now.setHours(0, 0, 0, 0);
-      const utcDateTime = now
-        .toISOString()
-        .replace("T", " ")
-        .replace(/\.\d{3}Z$/, "");
-      return utcDateTime;
-    }
-    function utcEndDateFormat() {
-      const now = new Date();
-      now.setDate(now.getDate() - 1); // Set the day to 0, which rolls back to the last day of the previous month.
-      now.setHours(23, 59, 59, 999); // Set the time to 23:59:59.999 in UTC.
-      const utcDateTime = now
-        .toISOString()
-        .replace("T", " ")
-        .replace(/\.\d{3}Z$/, "");
-
-      return utcDateTime;
+  retriveLead = async (
+    providedUser,
+    { leadStartDate, leadEndDate, project },
+  ) => {
+    if (
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithNumber ||
+          permissionKeyNames?.leadViewWithoutNumber,
+      )
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
     }
     function convertUTCtoIST(utcTime) {
       const utcDate = new Date(utcTime);
@@ -56,13 +59,25 @@ class LSQLeadSrv {
 
       return formattedDate;
     }
+    function convertISTtoUTC(utcTime) {
+      const utcDate = new Date(utcTime);
+
+      // Format the date as 'YYYY-MM-DD HH:mm:ss'.
+      const formattedDate = utcDate
+        .toISOString()
+        .replace("T", " ")
+        .slice(0, -5);
+
+      return formattedDate;
+    }
+    const startDate = convertISTtoUTC(
+      convertTimestampToDateTime(leadStartDate),
+    );
+    const endDate = convertISTtoUTC(convertTimestampToDateTime(leadEndDate));
     const { lsqConfig } = config;
     const { accessKey, secretKey } = lsqConfig[project];
     let apiPageIndex = 1;
 
-    const startDate = utcMonthStartDateFormat();
-
-    const endDate = utcEndDateFormat();
     const data = [];
     async function fetchLeadData(pageIndex) {
       try {
@@ -226,6 +241,23 @@ class LSQLeadSrv {
     } catch (error) {
       console.log("While adding user error", error);
     }
+  };
+
+  retriveLeadByPhone = async (providedUser, { phone, project }) => {
+    if (
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithNumber ||
+          permissionKeyNames?.leadViewWithoutNumber,
+      )
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
+    }
+    const leadData = await this.leadFromLsqByPhone(phone, project);
+    return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, leadData);
   };
 }
 export default LSQLeadSrv;

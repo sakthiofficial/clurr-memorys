@@ -71,6 +71,13 @@ export function convertTimestampToDateTime(timestamp) {
   const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   return formattedDateTime;
 }
+export function convertDateToTimeStamp(date) {
+  if (!(date instanceof Date)) {
+    date = new Date(date);
+  }
+
+  return Math.floor(date.getTime() / 1000);
+}
 export const userValidationErrors = {
   IvalidPermission: "Permission Denied",
   HighLevelAccess: "Insufficient Access Level",

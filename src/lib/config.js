@@ -1,4 +1,4 @@
-import { projectNames } from "@/appConstants";
+import { projectNames } from "../appConstants";
 
 function getDomainFromBrowser() {
   if (typeof window === "undefined") {
