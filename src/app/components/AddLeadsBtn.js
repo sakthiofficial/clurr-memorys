@@ -91,7 +91,7 @@ function AddLeadsBtn() {
     });
     setOpen(false);
   };
-  console.log(role);
+  // console.log(role);
   return (
     <Grid>
       <Button
@@ -243,8 +243,8 @@ function AddLeadsBtn() {
               MenuProps={{ disableScrollLock: true }}
             >
               {projects?.map((proj) => (
-                <MenuItem key={proj?._id} value={proj?.name}>
-                  {proj?.name}
+                <MenuItem key={proj} value={proj}>
+                  {proj}
                 </MenuItem>
               ))}
             </Select>

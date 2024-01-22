@@ -23,14 +23,14 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
-import { useDeleteUsersMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
 import { Add } from "@mui/icons-material";
+import { useDeleteUsersMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page() {
   const [open, setOpen] = useState(false);
 
   // get cp data query
-  const { data, isLoading, isError, error } = useGetCpQuery();
+  const { data, isLoading, refetch } = useGetCpQuery();
   // set pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -48,15 +48,15 @@ export default function Page() {
       ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  useEffect(() => {
-    if (isLoading) {
-      // console.log("Loading...");
-    } else if (isError) {
-      // console.error("Error:", error);
-    } else if (data) {
-      // console.log("Query completed:", data?.result);
-    }
-  }, [data, isLoading, isError, error]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     // console.log("Loading...");
+  //   } else if (isError) {
+  //     // console.error("Error:", error);
+  //   } else if (data) {
+  //     // console.log("Query completed:", data?.result);
+  //   }
+  // }, [data, isLoading, isError, error]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -67,6 +67,7 @@ export default function Page() {
   };
   const [deleteUser] = useDeleteUsersMutation();
 
+  // handle delete function
   const handleDelete = (id) => {
     deleteUser(id);
 
@@ -74,6 +75,10 @@ export default function Page() {
     handleClose();
     // setTimeout(() => window.location.reload(), 3000);
   };
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <>

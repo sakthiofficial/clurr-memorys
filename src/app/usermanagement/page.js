@@ -69,7 +69,8 @@ export default function Page() {
   const [open, setOpen] = useState(false);
 
   // table details
-  const { data, isLoading, isError, error } = useGetUsersQuery();
+  const { data, isLoading, isError, error, refetch } = useGetUsersQuery();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const handleChangePage = (event, newPage) => {
@@ -86,16 +87,6 @@ export default function Page() {
       ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  useEffect(() => {
-    if (isLoading) {
-      // console.log("Loading...");
-    } else if (isError) {
-      // console.error("Error:", error);
-    } else if (data) {
-      // console.log("Query completed:", data?.result);
-    }
-  }, [data, isLoading, isError, error]);
-
   const [deleteUser] = useDeleteUsersMutation();
 
   const handleOpen = () => {
@@ -106,12 +97,21 @@ export default function Page() {
     setOpen(false);
   };
 
-  const handleDelete = (id) => {
-    deleteUser(id);
+  useEffect(() => {
+    refetch();
+  }, []);
 
-    toast.success("user delete successfully ");
-    handleClose();
-    setTimeout(() => window.location.reload(), 3000);
+  const handleDelete = async (id) => {
+    try {
+      handleClose();
+      await deleteUser(id);
+      toast.success("User deleted successfully ");
+      setTimeout(() => {
+        refetch();
+      }, 1000);
+    } catch (er) {
+      console.error("Error during user deletion:", er);
+    }
   };
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -121,6 +121,7 @@ export default function Page() {
       padding: theme.spacing(1),
     },
   }));
+
   return (
     <>
       <ToastContainer />
@@ -297,7 +298,7 @@ export default function Page() {
                       color: "black",
                     }}
                   >
-                    <TableCell>Id#</TableCell>
+                    {/* <TableCell>Id#</TableCell> */}
                     <TableCell>Name</TableCell>
                     <TableCell>Contact</TableCell>
                     <TableCell>Email</TableCell>
@@ -309,7 +310,7 @@ export default function Page() {
                 <TableBody>
                   {slicedRows?.map((row) => (
                     <TableRow key={row?.name || "N/A"}>
-                      <TableCell>{row?.id || "N/A"}</TableCell>
+                      {/* <TableCell>{row?.id || "N/A"}</TableCell> */}
                       <TableCell>{row?.name || "N/A"}</TableCell>
                       <TableCell>{row?.phone || "N/A"}</TableCell>
                       <TableCell>{row?.email || "N/A"}</TableCell>

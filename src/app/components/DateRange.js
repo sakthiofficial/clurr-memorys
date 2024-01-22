@@ -132,10 +132,10 @@ export default function DateRangeComponent() {
   };
 
   const handleDateRangeFilter = (newValue) => {
-    console.log(newValue);
+    // console.log(newValue);
     setSelectedDateRangeFilter(newValue);
     if (newValue[0] !== null && newValue[1] !== null) {
-      console.log("Selected date range", selectedDateRangeFilter);
+      console.log("Selected date range", selectedDateRangeFilter[0]);
     }
   };
 

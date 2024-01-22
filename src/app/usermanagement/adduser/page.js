@@ -11,7 +11,6 @@ import {
   Select,
   MenuItem,
   ListItemText,
-  Checkbox,
   OutlinedInput,
   Box,
   Chip,
@@ -21,12 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useAddUsersMutation, useGetParentsQuery } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
 import "react-toastify/dist/ReactToastify.css";
-
-function getStyles(projectName, pName) {
-  return {
-    backgroundColor: projectName.indexOf(pName) === -1 ? "transparent" : "",
-  };
-}
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [selectParentId, setSelectParentId] = useState("");
@@ -46,6 +40,11 @@ export default function Page() {
   });
 
   const [selectedProjects, setSelectedProjects] = useState([]);
+  const [selectedProjectsListP, setSelectedProjectsListP] = useState([]);
+  const [selectedRolesListP, setSelectedRolesListP] = useState("");
+
+  const router = useRouter();
+
   // handle input data function
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,10 +53,7 @@ export default function Page() {
       [name]: value,
     }));
   };
-
-  const [selectedProjectsListP, setSelectedProjectsListP] = useState([]);
-  const [selectedRolesListP, setSelectedRolesListP] = useState("");
-
+  // se
   const ParentDetails = {
     role: selectedRolesListP[0],
     projects: [...selectedProjectsListP],
@@ -68,6 +64,7 @@ export default function Page() {
 
   // console.log(parentResult.data.result);
 
+  // handle get input function
   const handleChange = (name, value) => {
     setSelectedValues((prevValues) => ({
       ...prevValues,
@@ -100,7 +97,7 @@ export default function Page() {
 
   const [sendUsers] = useAddUsersMutation();
   const priorUser = isPriorityUser(selectedRolesListP);
-  console.log(priorUser)
+  // console.log(priorUser);
 
   // handle submit function
   const handleSubmit = (e) => {
@@ -145,13 +142,14 @@ export default function Page() {
 
             if (result.data.status === 400) {
               result.data.result.details.map((res) => toast.error(res.message));
+              toast.error("something went wrong");
             }
 
             if (result.data.status === 200) {
               toast.success("User submitted successfully!");
               setTimeout(() => {
-                window.location.href = "/usermanagement";
-              }, 2000);
+                router.push("/usermanagement");
+              }, 3000);
             }
           })
           .catch((error) => {
@@ -209,7 +207,7 @@ export default function Page() {
   return (
     <>
       <ToastContainer />
-      <Grid sx={{ minHeight: "100vh" }}>
+      <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
         <Grid
           sx={{
             height: "5vh",
@@ -275,7 +273,9 @@ export default function Page() {
             <Grid
               sx={{
                 width: "100%",
-                minHeight: "500px",
+                minHeight: "550px",
+                padding: { xs: "20px" },
+                // display: { xs: "none" },
               }}
             >
               <form
@@ -451,6 +451,7 @@ export default function Page() {
                               <Chip
                                 sx={{
                                   backgroundColor: "rgba(250, 185, 0, 0.28)",
+                                  borderRadius: "10px",
                                 }}
                                 key={value}
                                 label={value}
@@ -542,8 +543,14 @@ export default function Page() {
                           </Typography>
                         )
                       ) : (
-                        <Typography sx={{ textAlign: "center" }}>
-                          Loading parent options...
+                        <Typography
+                          sx={{
+                            textAlign: "center",
+                            color: "red",
+                            letterSpacing: "1px",
+                          }}
+                        >
+                          No Parent User Found!
                         </Typography>
                       )}
                     </FormControl>
