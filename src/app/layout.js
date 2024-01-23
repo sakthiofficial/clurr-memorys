@@ -46,6 +46,7 @@ import themeFont from "../theme";
 import "react-toastify/dist/ReactToastify.css";
 import { usePathname } from "next/navigation";
 import { permissionKeyNames } from "../../shared/cpNamings";
+import LoginBanner from "../../public/loginBanner.png";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -128,124 +129,138 @@ function Login() {
   return (
     <>
       <ToastContainer />
-
       <Box
         sx={{
           minHeight: "100vh",
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          border: "1px solid black",
+          // border: "1px solid black",
           backgroundColor: "white",
-          flexDirection: isLargeScreen ? "row" : "column",
         }}
       >
-        <Box
-          sx={{
-            width: "500px",
-            height: "500px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            gap: "20px",
-            border: "1px solid black",
-          }}
-        >
+        <Grid sx={{ width: "60%", overFlow: "hidden" }}>
+          {/* <Image src={LoginBanner} width={850} height={575} /> */}
+        </Grid>
+        <Grid sx={{ width: "40%" }}>
           <Box
             sx={{
-              height: "15%",
-              width: "250px",
+              width: "100%",
+              height: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-            }}
-          >
-            <Image
-              src="/Logo.svg"
-              width={300}
-              height={100}
-              style={{ objectFit: "contain" }}
-              alt="logo"
-            />
-          </Box>
-          <Box
-            sx={{
-              height: "50%",
-              width: "90%",
+              flexDirection: "column",
+              gap: "20px",
+              // border: "1px solid black",
             }}
           >
             <Box
               sx={{
+                height: "15%",
+                width: "250px",
                 display: "flex",
-                justifyContent: "space-around",
+                justifyContent: "center",
                 alignItems: "center",
-                width: "100%",
-                height: "100%",
-                flexDirection: "column",
               }}
             >
-              <Typography>SIGN IN TO CONTINUE</Typography>
+              <Image
+                src="/Logo.svg"
+                width={300}
+                height={100}
+                style={{ objectFit: "contain" }}
+                alt="logo"
+              />
+            </Box>
+            <Box
+              sx={{
+                height: "50%",
+                width: "90%",
+              }}
+            >
               <Box
-                width={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <TextField
-                  sx={{ width: "80%" }}
-                  name="name"
-                  label="Username / Email / Phone"
-                  variant="outlined"
-                  onChange={handleInputChange}
-                />
-              </Box>
-              <Box
-                width={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <TextField
-                  sx={{ width: "80%" }}
-                  name="password"
-                  label="Password"
-                  type={showPassword ? "text" : "password"}
-                  variant="outlined"
-                  onChange={handleInputChange}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={toggleShowPassword} edge="end">
-                          {showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-              <Button
                 sx={{
-                  // border: "1px solid black",
-                  width: "80%",
-                  backgroundColor: "rgba(249, 184, 0, 1)",
-                  color: "white",
-                  "&:hover": {
-                    backgroundColor: "rgba(249, 184, 0, 1)",
-                    boxShadow: "none",
-                    border: "none",
-                  },
+                  display: "flex",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  width: "100%",
+                  height: "100%",
+                  flexDirection: "column",
                 }}
-                onClick={handleSubmit}
-                disabled={loginInProgress}
               >
-                {loginInProgress ? "Logging in..." : "Login"}
-              </Button>
+                <Typography>SIGN IN TO CONTINUE</Typography>
+                <Box
+                  width={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TextField
+                    sx={{
+                      width: "90%",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                    name="name"
+                    label="Username / Email / Phone"
+                    variant="outlined"
+                    onChange={handleInputChange}
+                  />
+                </Box>
+                <Box
+                  width={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TextField
+                    sx={{
+                      width: "90%",
+                      // padding: "5px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                    name="password"
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={toggleShowPassword} edge="end">
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
+                <Button
+                  sx={{
+                    // border: "1px solid black",
+                    width: "90%",
+                    backgroundColor: "rgba(249, 184, 0, 1)",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "rgba(249, 184, 0, 1)",
+                      boxShadow: "none",
+                      border: "none",
+                    },
+                  }}
+                  onClick={handleSubmit}
+                  disabled={loginInProgress}
+                >
+                  {loginInProgress ? "Logging in..." : "Login"}
+                </Button>
+              </Box>
             </Box>
           </Box>
-        </Box>
+        </Grid>
       </Box>
     </>
   );
