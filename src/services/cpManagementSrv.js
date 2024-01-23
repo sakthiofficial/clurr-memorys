@@ -387,5 +387,36 @@ class CpManagementSrv {
       companiesWithUsers,
     );
   };
+
+  removeCpByCode = async (providedUser, CpCompanyCode) => {
+    if (
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.cpManagement,
+      )
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
+        null,
+      );
+    }
+    const company = await CpAppCompany.findOne({
+      cpCode: CpCompanyCode,
+    });
+    if (!company) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.NOTFOUND,
+        null,
+      );
+    }
+    const companyResult = await CpAppCompany.deleteOne({ _id: company._id });
+    const cpsResult = await CpAppUser.deleteMany({ cpCode: CpCompanyCode });
+
+    return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+      cpsDeleteResult: cpsResult,
+      companyDeleteResult: companyResult,
+    });
+  };
 }
 export default CpManagementSrv;
