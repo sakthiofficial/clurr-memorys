@@ -71,22 +71,28 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
-    getLeads: builder.query({
-      query: (selectedProject) => ({
-        url: `/lead?project=${selectedProject}`,
-        method: "GET",
-      }),
-    }),
+    // getLeads: builder.query({
+    //   query: (selectedProject) => ({
+    //     url: `/lead?project=${selectedProject}`,
+    //     method: "GET",
+    //   }),
+    // }),
     addLead: builder.mutation({
       query: (leadData) => ({
         url: `/lead`,
         method: "GET",
-        body:leadData,
+        body: leadData,
       }),
     }),
     getProject: builder.query({
       query: () => ({
         url: `/project`,
+        method: "GET",
+      }),
+    }),
+    getLeadsByDate: builder.query({
+      query: (data) => ({
+        url: `/lead?project=${data.selectedProject}&leadStartDate=${data.selectedStartDate}&leadEndDate=${data.selectedEndDate}`,
         method: "GET",
       }),
     }),
@@ -106,4 +112,5 @@ export const {
   useGetLeadsQuery,
   useAddLeadMutation,
   useGetProjectQuery,
+  useGetLeadsByDateQuery,
 } = apiSlice;

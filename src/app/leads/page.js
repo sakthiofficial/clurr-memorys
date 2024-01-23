@@ -20,47 +20,133 @@ import {
   Box,
   Button,
 } from "@mui/material";
-
-// components
 import Link from "next/link";
+import { DateRangePicker } from "rsuite";
+import {
+  addDays,
+  addMonths,
+  endOfMonth,
+  endOfWeek,
+  startOfMonth,
+  startOfWeek,
+  subDays,
+} from "date-fns";
 import AddLeadsBtn from "../components/AddLeadsBtn";
 import ExportLeadsBtn from "../components/ExportLeadsBtn";
-// card icons
-import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
-import RegisterLeads from "../../../public/LeadsCard/registerLeads.svg";
-import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
-import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
-import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
-import Booked from "../../../public/LeadsCard/bookLeads.svg";
-
-import { useGetLeadsQuery } from "@/reduxSlice/apiSlice";
-import DateRange from "../components/DateRange";
+// import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
+// import RegisterLeads from "../../../public/LeadsCard/registerLeads.svg";
+// import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
+// import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
+// import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
+// import Booked from "../../../public/LeadsCard/bookLeads.svg";
 import { permissionKeyNames } from "../../../shared/cpNamings";
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { dateToUnixTimestamp } from "../../../shared/dateCalc";
+import "rsuite/dist/rsuite.min.css";
+import { useGetLeadsByDateQuery } from "@/reduxSlice/apiSlice";
 
 // card details
-const users = [
-  { name: "Total Leads", icon: TotalLeads, total: "123" },
-  { name: "Register Leads", icon: RegisterLeads, total: "123" },
-  { name: "Warm Leads", icon: WarmLeads, total: "123" },
-  { name: "Site Visit Scheduled", icon: SiteVisit, total: "123" },
-  { name: "Site Visit Done Leads", icon: SiteVisitDone, total: "123" },
-  { name: "Booked Leads", icon: Booked, total: "123" },
+// const users = [
+//   { name: "Total Leads", icon: TotalLeads, total: "123" },
+//   { name: "Register Leads", icon: RegisterLeads, total: "123" },
+//   { name: "Warm Leads", icon: WarmLeads, total: "123" },
+//   { name: "Site Visit Scheduled", icon: SiteVisit, total: "123" },
+//   { name: "Site Visit Done Leads", icon: SiteVisitDone, total: "123" },
+//   { name: "Booked Leads", icon: Booked, total: "123" },
+// ];
+
+// predefined dates
+const predefinedRanges = [
+  {
+    label: "Today",
+    value: [new Date(), new Date()],
+    placement: "left",
+  },
+  {
+    label: "Yesterday",
+    value: [addDays(new Date(), -1), addDays(new Date(), -1)],
+    placement: "left",
+  },
+  {
+    label: "This week",
+    value: [startOfWeek(new Date()), endOfWeek(new Date())],
+    placement: "left",
+  },
+  {
+    label: "Last 7 days",
+    value: [subDays(new Date(), 6), new Date()],
+    placement: "left",
+  },
+  {
+    label: "Last 30 days",
+    value: [subDays(new Date(), 29), new Date()],
+    placement: "left",
+  },
+  {
+    label: "This month",
+    value: [startOfMonth(new Date()), new Date()],
+    placement: "left",
+  },
+  {
+    label: "Last month",
+    value: [
+      startOfMonth(addMonths(new Date(), -1)),
+      endOfMonth(addMonths(new Date(), -1)),
+    ],
+    placement: "left",
+  },
+  {
+    label: "This year",
+    value: [new Date(new Date().getFullYear(), 0, 1), new Date()],
+    placement: "left",
+  },
+  {
+    label: "Last year",
+    value: [
+      new Date(new Date().getFullYear() - 1, 0, 1),
+      new Date(new Date().getFullYear(), 0, 0),
+    ],
+    placement: "left",
+  },
+  {
+    label: "All time",
+    value: [new Date("2023-09-15"), new Date()],
+    placement: "left",
+  },
+  {
+    label: "Last week",
+    closeOverlay: false,
+    value: (value) => {
+      const [start = new Date()] = value || [];
+
+      return [
+        addDays(startOfWeek(start, { weekStartsOn: 0 }), -7),
+        addDays(endOfWeek(start, { weekStartsOn: 0 }), -7),
+      ];
+    },
+    appearance: "default",
+  },
+  {
+    label: "Next week",
+    closeOverlay: false,
+    value: (value) => {
+      const [start = new Date()] = value || [];
+
+      return [
+        addDays(startOfWeek(start, { weekStartsOn: 0 }), 7),
+        addDays(endOfWeek(start, { weekStartsOn: 0 }), 7),
+      ];
+    },
+    appearance: "default",
+  },
 ];
 
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
   const [projectLoaderVisible, setProjectLoaderVisible] = useState(false);
-
   const [selectedProject, setSelectedProject] = useState("");
-  // get leads query
-  const { data, isLoading } = useGetLeadsQuery(selectedProject);
-  // handle date function
-  const handleChangeDate = (event) => {
-    setSelectedDate(event.target.value);
-  };
-  // handle project function
+
+  // project change and set intial project functions
   const handleChangeProject = async (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
@@ -71,7 +157,13 @@ export default function Page() {
 
     // setSelectedProject(selectedProjectName);
   };
+  useEffect(() => {
+    if (projects && projects.length > 0) {
+      setSelectedProject(projects[0]);
+    }
+  }, [projects]);
 
+  // permissions and project set for login user
   useEffect(() => {
     const storedData = localStorage.getItem("user");
     if (storedData) {
@@ -82,19 +174,85 @@ export default function Page() {
       console.error('No data found in local storage for key "user".');
     }
   }, []);
-  // console.log(projects);
-  const getBackgroundColor = (name) => {
-    switch (name) {
-      case "Warm Leads":
-        return "rgba(255, 92, 0, 0.08)";
-      case "Site Visit Scheduled":
-        return "rgba(205, 172, 0, 0.08)";
-      case "Site Visit Done Leads":
-        return "rgba(219, 0, 255, 0.08)";
-      default:
-        return "rgba(0, 133, 255, 0.08)";
+
+  // date range functions
+
+  const { combine, before, afterToday } = DateRangePicker;
+  const today = new Date();
+  const last7Days = new Date(today);
+  last7Days.setDate(today.getDate() - 6);
+  const defaultFilterValue = [new Date("2024-01-01"), new Date()];
+
+  const Calendar = {
+    sunday: "Su",
+    monday: "Mo",
+    tuesday: "Tu",
+    wednesday: "We",
+    thursday: "Th",
+    friday: "Fr",
+    saturday: "Sa",
+    ok: "Apply",
+    today: "Today",
+    yesterday: "Yesterday",
+    hours: "Hours",
+    minutes: "Minutes",
+    seconds: "Seconds",
+    formattedMonthPattern: "MMM yyyy",
+    formattedDayPattern: "dd MMM yyyy",
+  };
+  const locale = {
+    DateRangePicker: {
+      ...Calendar,
+      last7Days: "Last 7 Days",
+    },
+  };
+  const [selectedDateRangeFilter, setSelectedDateRangeFilter] = useState([
+    null,
+    null,
+  ]);
+
+  const intialStartDate = dateToUnixTimestamp(defaultFilterValue[0]);
+  const intialEndDate = dateToUnixTimestamp(defaultFilterValue[1]);
+
+  const [selectedStartDate, SetSelectedStartDate] = useState(intialStartDate);
+  const [selectedEndDate, SetSelectedEndDate] = useState(intialEndDate);
+
+  // console.log(data);
+
+  const handleDateRangeFilter = (newValue) => {
+    setSelectedDateRangeFilter(newValue);
+    if (newValue[0] !== null && newValue[1] !== null) {
+      const startSelectDate = dateToUnixTimestamp(newValue[0]);
+      SetSelectedStartDate(startSelectDate);
+      const endSelectDate = dateToUnixTimestamp(newValue[1]);
+      SetSelectedEndDate(endSelectDate);
     }
   };
+
+  const { data, isLoading } = useGetLeadsByDateQuery({
+    selectedProject,
+    selectedStartDate,
+    selectedEndDate,
+  });
+
+  // useEffect(() => {
+  //   if (
+  //     selectedDateRangeFilter[0] === null &&
+  //     selectedDateRangeFilter[1] === null
+  //   ) {
+  //     SetSelectedStartDate(predefinedRanges[0].value[0]);
+  //     SetSelectedEndDate(predefinedRanges[0].value[1]);
+  //   } else {
+  //     const [startDate, endDate] = selectedDateRangeFilter;
+
+  //     SetSelectedStartDate(startDate);
+  //     SetSelectedEndDate(endDate);
+  //   }
+  // }, [selectedDateRangeFilter]);
+  console.log(selectedProject);
+  console.log(selectedStartDate);
+  console.log(typeof selectedStartDate);
+  console.log(selectedEndDate);
 
   // table functions
   const [page, setPage] = useState(0);
@@ -113,52 +271,20 @@ export default function Page() {
     data && data.length > 1
       ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
-  useEffect(() => {
-    if (projects && projects.length > 0) {
-      setSelectedProject(projects[0]);
-    }
-  }, [projects]);
 
-  const shortcutsItems = [
-    {
-      label: "This Week",
-      getValue: () => {
-        const today = dayjs();
-        return [today.startOf("week"), today.endOf("week")];
-      },
-    },
-    {
-      label: "Last Week",
-      getValue: () => {
-        const today = dayjs();
-        const prevWeek = today.subtract(7, "day");
-        return [prevWeek.startOf("week"), prevWeek.endOf("week")];
-      },
-    },
-    {
-      label: "Last 7 Days",
-      getValue: () => {
-        const today = dayjs();
-        return [today.subtract(7, "day"), today];
-      },
-    },
-    {
-      label: "Current Month",
-      getValue: () => {
-        const today = dayjs();
-        return [today.startOf("month"), today.endOf("month")];
-      },
-    },
-    {
-      label: "Next Month",
-      getValue: () => {
-        const today = dayjs();
-        const startOfNextMonth = today.endOf("month").add(1, "day");
-        return [startOfNextMonth, startOfNextMonth.endOf("month")];
-      },
-    },
-    { label: "Reset", getValue: () => [null, null] },
-  ];
+  // card details
+  // const getBackgroundColor = (name) => {
+  //   switch (name) {
+  //     case "Warm Leads":
+  //       return "rgba(255, 92, 0, 0.08)";
+  //     case "Site Visit Scheduled":
+  //       return "rgba(205, 172, 0, 0.08)";
+  //     case "Site Visit Done Leads":
+  //       return "rgba(219, 0, 255, 0.08)";
+  //     default:
+  //       return "rgba(0, 133, 255, 0.08)";
+  //   }
+  // };
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -200,7 +326,16 @@ export default function Page() {
             }}
             size="small"
           >
-            <DateRange />
+            <DateRangePicker
+              defaultValue={defaultFilterValue}
+              ranges={predefinedRanges}
+              placeholder="Fitler By Date"
+              disabledDate={combine(before("08/10/2023"), afterToday())}
+              locale={locale}
+              style={{ width: 250 }}
+              onOk={(value) => handleDateRangeFilter(value)}
+              onChange={(value) => handleDateRangeFilter(value)}
+            />
           </FormControl>
           <FormControl
             sx={{
@@ -247,81 +382,7 @@ export default function Page() {
           <ExportLeadsBtn />
         </Grid>
       </Grid>
-      {/* <Grid
-        sx={{
-          minHeight: "30vh",
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          flexWrap: "wrap",
-          // border: "1px solid black",
-          marginTop: "5px",
-          gap: "15px",
-        }}
-      >
-        {users?.map((item) => (
-          <Grid
-            key={item?.name}
-            sx={{
-              width: "165px",
-              height: "150px",
-              boxShadow: "0px 0px 8px 0px rgba(0, 0, 0, 0.10)",
-              marginBottom: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "white",
-              border: "0.5px solid #BDBDBD",
-              borderRadius: "13px",
-            }}
-          >
-            <Grid
-              sx={{
-                // border: "1px solid black",
-                height: "80%",
-                width: "90%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
-              <Grid
-                sx={{
-                  width: "51px",
-                  height: "51px",
-                  borderRadius: "9px",
-                  backgroundColor: getBackgroundColor(item?.name),
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                users
-              >
-                <Image
-                  alt={item?.name}
-                  src={item?.icon}
-                  width={26}
-                  height={26}
-                />
-              </Grid>
-              <Typography
-                sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}
-              >
-                {item?.name}
-              </Typography>
-              <Typography
-                sx={{
-                  color: "rgba(0, 0, 0, 1)",
-                  fontSize: "24px",
-                  fontWeight: "600",
-                }}
-              >
-                {item?.total}
-              </Typography>
-            </Grid>
-          </Grid>
-        ))}
-      </Grid> */}
+
       <Grid>
         <TableContainer
           component={Paper}
@@ -349,82 +410,6 @@ export default function Page() {
               Leads List
             </Typography>
           </Grid>
-          {/* {projectLoaderVisible ? (
-            <Box
-              sx={{
-                display: "flex",
-                width: "100%",
-                height: "80vh",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : (
-            <Table sx={{ boxShadow: "0px 6px 32px 0px rgba(0, 0, 0, 0.15)" }}>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    backgroundColor: "rgba(249, 184, 0, 0.1)",
-                    fontWeight: "500",
-                    color: "black",
-                  }}
-                >
-                  <TableCell>Lead Id#</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Contact</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Project</TableCell>
-                  <TableCell>Stage</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Created By</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {slicedRows?.map((row) => (
-                  <TableRow key={row?.id}>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.ProspectAutoId || "N/A"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.FirstName || "N/A"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.Phone || "N/A"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.EmailAddress || "N/A"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.mx_Origin_Project || "N/A"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.ProspectStage || "N/A"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.ProspectStage || "N/A"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "11px" }}>
-                      {row?.CreatedOn || "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      <Grid
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <ViewLeadsBtn leadData={row} />
-                      </Grid>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )} */}
-
           {isLoading ? (
             <Box
               sx={{
@@ -463,13 +448,10 @@ export default function Page() {
                         color: "black",
                       }}
                     >
-                      {/* <TableCell>Lead Id#</TableCell> */}
                       <TableCell>Name</TableCell>
                       <TableCell>Contact</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>Project</TableCell>
-                      {/* <TableCell>Stage</TableCell> */}
-                      {/* <TableCell>Status</TableCell> */}
                       <TableCell>Created By</TableCell>
                       <TableCell>Action</TableCell>
                     </TableRow>
@@ -477,9 +459,6 @@ export default function Page() {
                   <TableBody>
                     {slicedRows?.map((row) => (
                       <TableRow key={row?.id}>
-                        {/* <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.ProspectAutoId || "N/A"}
-                        </TableCell> */}
                         <TableCell sx={{ fontSize: "11px" }}>
                           {row?.FirstName || "N/A"}
                         </TableCell>
@@ -492,12 +471,6 @@ export default function Page() {
                         <TableCell sx={{ fontSize: "11px" }}>
                           {row?.mx_Origin_Project || "N/A"}
                         </TableCell>
-                        {/* <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.ProspectStage || "N/A"}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.ProspectStage || "N/A"}
-                        </TableCell> */}
                         <TableCell sx={{ fontSize: "11px" }}>
                           {row?.CreatedOn || "N/A"}
                         </TableCell>
