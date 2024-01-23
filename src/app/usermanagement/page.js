@@ -16,16 +16,12 @@ import {
   CircularProgress,
   Box,
   DialogActions,
-  DialogContentText,
-  DialogContent,
-  DialogTitle,
   Dialog,
-  IconButton,
 } from "@mui/material";
 import Link from "next/link";
 // icons
 import { ToastContainer, toast } from "react-toastify";
-import { Add, Close, DeleteForever } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import SuperAdmin from "../../../public/UserCard/SuperAdmin.svg";
@@ -39,7 +35,6 @@ import {
   useGetUsersQuery,
 } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
-import ExportLead from "../leads/component/export";
 
 // card details
 const users = [
@@ -52,25 +47,10 @@ const users = [
 ];
 
 export default function Page() {
-  // card background change
-  const getBackgroundColor = (name) => {
-    switch (name) {
-      case "CP Head":
-        return "rgba(255, 92, 0, 0.08)";
-      case "CP Lead":
-        return "rgba(205, 172, 0, 0.08)";
-      case "CP Manager":
-        return "rgba(219, 0, 255, 0.08)";
-      case "Channel Partner":
-        return "rgba(0, 173, 17, 0.08)";
-      default:
-        return "rgba(0, 133, 255, 0.08)";
-    }
-  };
   const [open, setOpen] = useState(false);
 
   // table details
-  const { data, isLoading, isError, error, refetch } = useGetUsersQuery();
+  const { data, refetch, isFetching } = useGetUsersQuery();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -179,78 +159,6 @@ export default function Page() {
             </Link>
           </Grid>
         </Grid>
-        {/* <Grid
-        sx={{
-          minHeight: "30vh",
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          flexWrap: "wrap",
-          marginTop: "5px",
-          gap: "15px",
-        }}
-      >
-        {users?.map((item) => (
-          <Grid
-            key={item?.name}
-            sx={{
-              width: "165px",
-              height: "150px",
-              boxShadow: "0px 0px 8px 0px rgba(0, 0, 0, 0.10)",
-              marginBottom: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "white",
-              border: "0.5px solid #BDBDBD",
-              borderRadius: "13px",
-            }}
-          >
-            <Grid
-              sx={{
-                height: "80%",
-                width: "90%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
-              <Grid
-                sx={{
-                  width: "51px",
-                  height: "51px",
-                  borderRadius: "9px",
-                  backgroundColor: getBackgroundColor(item?.name),
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  alt={item?.name}
-                  src={item?.icon}
-                  width={26}
-                  height={26}
-                />
-              </Grid>
-              <Typography
-                sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}
-              >
-                {item?.name}
-              </Typography>
-              <Typography
-                sx={{
-                  color: "rgba(0, 0, 0, 1)",
-                  fontSize: "24px",
-                  fontWeight: "600",
-                }}
-              >
-                {item?.total}
-              </Typography>
-            </Grid>
-          </Grid>
-        ))}
-      </Grid> */}
         <Grid>
           <TableContainer
             component={Paper}
@@ -277,7 +185,7 @@ export default function Page() {
                 User List
               </Typography>
             </Grid>
-            {isLoading ? (
+            {isFetching ? (
               <Box
                 sx={{
                   display: "flex",
@@ -331,7 +239,7 @@ export default function Page() {
                         >
                           <Link
                             href={{
-                              pathname: "/usermanagement/adduser",
+                              pathname: "/usermanagement/edit",
                               query: { id: row?._id },
                             }}
                           >
