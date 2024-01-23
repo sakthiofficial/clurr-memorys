@@ -43,7 +43,7 @@ function AddLeadsBtn() {
   const [projects, setProjects] = useState();
   // get cp data
   const { data, isLoading, isError, error } = useGetCpQuery();
-  console.log(data);
+  // console.log(data);
 
   // get project data
   // const result = useGetProjectQuery();
@@ -271,7 +271,7 @@ function AddLeadsBtn() {
                 name="cp"
               >
                 {data?.result?.map((cp) => (
-                  <MenuItem key={cp?.company?.id} value={cp?.company?.name}>
+                  <MenuItem key={cp?.company?.name} value={cp?.company?.name}>
                     {cp?.company?.name}
                   </MenuItem>
                 ))}

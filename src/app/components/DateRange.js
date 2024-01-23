@@ -7,9 +7,11 @@ import {
   startOfWeek,
   subDays,
 } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateRangePicker } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
+import { dateToUnixTimestamp } from "../../../shared/dateCalc";
+import { useGetProjectByDateQuery } from "@/reduxSlice/apiSlice";
 
 const predefinedRanges = [
   {
@@ -96,13 +98,17 @@ const predefinedRanges = [
   },
 ];
 
-export default function DateRangeComponent() {
+export default function DateRangeComponent({ selectedProject }) {
   const [selectedDateRangeFilter, setSelectedDateRangeFilter] = useState([
     null,
     null,
   ]);
+
+  const [selectedStartDate, SetSelectedStartDate] = useState("");
+  const [selectedEndDate, SetSelectedEndDate] = useState("");
+
   const { combine, before, afterToday } = DateRangePicker;
-  const today = new Date(); // Current date
+  const today = new Date();
   const last7Days = new Date(today);
   last7Days.setDate(today.getDate() - 6);
   const defaultFilterValue = [new Date("2023-09-15"), new Date()];
@@ -131,13 +137,35 @@ export default function DateRangeComponent() {
     },
   };
 
+  // console.log(data);
   const handleDateRangeFilter = (newValue) => {
-    // console.log(newValue);
     setSelectedDateRangeFilter(newValue);
     if (newValue[0] !== null && newValue[1] !== null) {
-      console.log("Selected date range", selectedDateRangeFilter[0]);
+      const startSelectDate = dateToUnixTimestamp(newValue[0]);
+      SetSelectedStartDate(startSelectDate);
+      const endSelectDate = dateToUnixTimestamp(newValue[1]);
+      SetSelectedEndDate(endSelectDate);
     }
   };
+
+  const dummy1 = typeof selectedStartDate;
+  console.log("start date ", selectedStartDate);
+  console.log(dummy1);
+  console.log("end date", selectedEndDate);
+
+  // if(selectedProject){
+
+  // }
+  const { data, error, isLoading } = useGetProjectByDateQuery(selectedProject);
+
+  useEffect(() => {
+    if (selectedProject !== undefined && selectedProject !== null) {
+      if (!isLoading && !error && !data) {
+        console.log("Making API call for selectedProject:", selectedProject);
+      }
+    }
+  }, [selectedProject, isLoading, error, data]);
+
 
   return (
     <DateRangePicker

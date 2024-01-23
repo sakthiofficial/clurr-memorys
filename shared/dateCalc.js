@@ -3,5 +3,5 @@ export function dateToUnixTimestamp(dateString) {
 
   const unixTimestamp = dateObject.getTime();
 
-  return Math.floor(unixTimestamp / 1000);
+  return Math.floor(unixTimestamp / 1000).toString();
 }
