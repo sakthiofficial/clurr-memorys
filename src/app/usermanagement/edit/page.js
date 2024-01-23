@@ -88,8 +88,6 @@ export default function Page({ searchParams }) {
     return <div>Loading...</div>;
   }
 
-  const LoginUserName = userData.name;
-  const LoginUserRoles = userData.role;
   const SubordinateRoles = userData.subordinateRoles;
   const SubordinateProjects = userData.projects;
 
@@ -158,7 +156,7 @@ export default function Page({ searchParams }) {
           <Typography
             sx={{ fontSize: "18px", fontWeight: "600", padding: "20px" }}
           >
-            Edit User 
+            Edit User
           </Typography>
         </Grid>
         <Grid

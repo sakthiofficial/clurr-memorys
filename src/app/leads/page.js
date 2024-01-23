@@ -143,19 +143,12 @@ const predefinedRanges = [
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [projectLoaderVisible, setProjectLoaderVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState("");
 
   // project change and set intial project functions
   const handleChangeProject = async (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
-    setProjectLoaderVisible(true);
-    setTimeout(() => {
-      setProjectLoaderVisible(false);
-    }, 6000);
-
-    // setSelectedProject(selectedProjectName);
   };
   useEffect(() => {
     if (projects && projects.length > 0) {
@@ -206,10 +199,10 @@ export default function Page() {
       last7Days: "Last 7 Days",
     },
   };
-  const [selectedDateRangeFilter, setSelectedDateRangeFilter] = useState([
-    null,
-    null,
-  ]);
+  // const [selectedDateRangeFilter, setSelectedDateRangeFilter] = useState([
+  //   null,
+  //   null,
+  // ]);
 
   const intialStartDate = dateToUnixTimestamp(defaultFilterValue[0]);
   const intialEndDate = dateToUnixTimestamp(defaultFilterValue[1]);
@@ -220,7 +213,6 @@ export default function Page() {
   // console.log(data);
 
   const handleDateRangeFilter = (newValue) => {
-    setSelectedDateRangeFilter(newValue);
     if (newValue[0] !== null && newValue[1] !== null) {
       const startSelectDate = dateToUnixTimestamp(newValue[0]);
       SetSelectedStartDate(startSelectDate);
@@ -229,7 +221,7 @@ export default function Page() {
     }
   };
 
-  const { data, isLoading } = useGetLeadsByDateQuery({
+  const { data, isFetching, isLoading } = useGetLeadsByDateQuery({
     selectedProject,
     selectedStartDate,
     selectedEndDate,
@@ -249,12 +241,9 @@ export default function Page() {
   //     SetSelectedEndDate(endDate);
   //   }
   // }, [selectedDateRangeFilter]);
-  console.log(selectedProject);
-  console.log(selectedStartDate);
-  console.log(typeof selectedStartDate);
-  console.log(selectedEndDate);
 
   // table functions
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -266,10 +255,10 @@ export default function Page() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  const leadsDatas = data?.result || data || [];
   const slicedRows =
-    data && data.length > 1
-      ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    leadsDatas.length > 1
+      ? leadsDatas.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
   // card details
@@ -285,6 +274,7 @@ export default function Page() {
   //       return "rgba(0, 133, 255, 0.08)";
   //   }
   // };
+  // console.log(data.result);
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -424,7 +414,7 @@ export default function Page() {
             </Box>
           ) : (
             <>
-              {projectLoaderVisible ? (
+              {isFetching ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -514,7 +504,7 @@ export default function Page() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={data?.length || 0}
+            count={leadsDatas?.length || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

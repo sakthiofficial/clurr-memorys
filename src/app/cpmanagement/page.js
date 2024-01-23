@@ -30,7 +30,7 @@ export default function Page() {
   const [open, setOpen] = useState(false);
 
   // get cp data query
-  const { data, isLoading, refetch } = useGetCpQuery();
+  const { data, refetch, isFetching } = useGetCpQuery();
   // set pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -262,7 +262,7 @@ export default function Page() {
               }}
             /> */}
             </Grid>
-            {isLoading ? (
+            {isFetching ? (
               <Box
                 sx={{
                   display: "flex",

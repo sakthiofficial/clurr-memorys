@@ -198,7 +198,7 @@ export default function Page() {
           toast.success("CP added successfully!");
           setTimeout(() => {
             router.push("/cpmanagement");
-          }, 3000);
+          }, 1500);
         }
       } catch (error) {
         console.error("CP submission failed", error);

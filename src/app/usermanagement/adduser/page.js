@@ -149,7 +149,7 @@ export default function Page() {
               toast.success("User submitted successfully!");
               setTimeout(() => {
                 router.push("/usermanagement");
-              }, 3000);
+              }, 1500);
             }
           })
           .catch((error) => {
