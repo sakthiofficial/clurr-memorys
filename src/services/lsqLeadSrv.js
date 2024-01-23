@@ -163,11 +163,7 @@ class LSQLeadSrv {
         i = 0;
       }
     }
-    return new ApiResponse(
-      RESPONSE_STATUS?.OK,
-      RESPONSE_MESSAGE?.OK,
-      data.length,
-    );
+    return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, data);
   };
 
   createLead = async (
