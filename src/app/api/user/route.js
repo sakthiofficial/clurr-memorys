@@ -48,7 +48,9 @@ export async function PUT(request) {
       id: Joi.string().required(),
       name: Joi.string().required(),
       email: Joi.string().required(),
-      role: Joi.string().required(),
+      password: Joi.string(),
+
+      role: Joi.array().required(),
       projects: checkProjectValidation(bodyData?.role)
         ? Joi.array().length(1)
         : Joi.array(),

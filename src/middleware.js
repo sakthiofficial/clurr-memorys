@@ -12,7 +12,10 @@ export function middleware(request) {
   if (request.nextUrl.pathname.startsWith("/api")) {
     if (!cookie) {
       return NextResponse.json(
-        new ApiResponse(RESPONSE_STATUS?.NOTFOUND, RESPONSE_MESSAGE?.INVALID),
+        new ApiResponse(
+          RESPONSE_STATUS?.UNAUTHORIZED,
+          RESPONSE_MESSAGE?.INVALID,
+        ),
       );
     }
     return NextResponse.next();

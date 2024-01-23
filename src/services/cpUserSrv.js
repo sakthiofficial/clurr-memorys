@@ -586,9 +586,8 @@ class CPUserSrv {
 
   updateUser = async (providedUser, updateUser) => {
     try {
-      const updateUserDbData = await CpAppUser.findOne({
-        _id: updateUser.id,
-      }).lean();
+      const updateUserDbData = await this.getUserById(updateUser?.id);
+
       if (!updateUserDbData) {
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
@@ -603,10 +602,9 @@ class CPUserSrv {
         updateUser?.role !== roleNames?.admin &&
         updateUser?.role !== roleNames?.mis
       ) {
-        // add populate
-        const updateUserParentData = await CpAppUser.findOne({
-          _id: updateUser?.parentId,
-        }).lean();
+        const updateUserParentData = await this.getUserById(
+          updateUserDbData[userDataObj?.parentId],
+        );
 
         if (!updateUserParentData) {
           return new ApiResponse(
@@ -617,23 +615,27 @@ class CPUserSrv {
         }
         parentUser = updateUserParentData;
       }
-      const validProvider = await this.checkValidUserToAdd(
+      await this.checkValidUserToAdd(
         providedUser,
-        updateUser,
+        updateUserDbData,
         parentUser,
       );
-      if (validProvider) {
-        const filter = { _id: updateUser.id };
-        const update = { $set: updateUser };
-        const options = { new: true, useFindAndModify: false };
-        await CpAppUser.findOneAndUpdate(filter, update, options);
-        return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
-      }
-      return new ApiResponse(
-        RESPONSE_STATUS?.NOTFOUND,
-        RESPONSE_MESSAGE?.INVALID,
-        null,
+      const roleData = await CpAppRole.find({
+        name: updateUser[userDataObj?.role],
+      });
+      const roleIds = roleData.map((role) => role._id);
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(
+        updateUser?.password,
+        saltRounds,
       );
+      updateUser[userDataObj?.role] = roleIds;
+      updateUser[userDataObj?.password] = hashedPassword;
+      const filter = { _id: updateUser.id };
+      const update = { $set: updateUser };
+      const options = { new: true, useFindAndModify: false };
+      await CpAppUser.findOneAndUpdate(filter, update, options);
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (error) {
       console.log("Error while updating user", error);
       return new ApiResponse(

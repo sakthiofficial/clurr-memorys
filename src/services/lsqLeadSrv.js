@@ -91,7 +91,7 @@ class LSQLeadSrv {
             },
             Columns: {
               Include_CSV:
-                "mx_Origin_Project,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source",
+                "mx_Origin_Project,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source",
             },
             Sorting: {
               ColumnName: "CreatedOn",

@@ -1,6 +1,6 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
-const { genrateUnixTimestamp } = require("@/appConstants");
+const { genrateUnixTimestamp } = require("../src/appConstants");
 const { roleNames } = require("../shared/cpNamings");
 
 const { Schema } = mongoose;
