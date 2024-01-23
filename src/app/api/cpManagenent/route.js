@@ -108,3 +108,41 @@ export async function GET(request) {
     return NextResponse.json(response, { status: response?.status });
   }
 }
+export async function DELETE(request) {
+  try {
+    const providedUser = await getUserByToken(request);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
+    const cpCode = request.nextUrl.searchParams.get("cpCode");
+    if (!cpCode) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.NOTFOUND,
+            RESPONSE_MESSAGE?.INVALID,
+            null,
+          ),
+        ),
+      );
+    }
+    const userSrv = new CpManagementSrv();
+    const srvResponse = await userSrv.removeCpByCode(providedUser, cpCode);
+
+    return NextResponse.json(srvResponse, { status: srvResponse?.status });
+  } catch (error) {
+    return new Response(
+      JSON.stringify(
+        new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
+      ),
+    );
+  }
+}

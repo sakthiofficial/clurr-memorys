@@ -17,6 +17,7 @@ import { CpAppProject } from "../../models/AppProject";
 import sendMail from "../helper/emailSender";
 import { CpAppRole } from "../../models/AppRole";
 import { CpAppPermission } from "../../models/Permission";
+import { userMailOption } from "@/helper/email/mailOptions";
 
 const { default: initDb } = require("../lib/db");
 const { CpAppUser } = require("../../models/AppUser");
@@ -341,33 +342,40 @@ class CPUserSrv {
           null,
         );
       }
-      if (newUser) {
-        // Role Acess Validation
-        const parentUserData =
-          (await this.getUserById(newUser[userDataObj?.parentId] || null)) ||
-          providedUser;
-        await this.checkValidUserToAdd(providedUser, newUser, parentUserData);
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(newUser?.password, saltRounds);
+      // Role Acess Validation
+      const parentUserData =
+        (await this.getUserById(newUser[userDataObj?.parentId] || null)) ||
+        providedUser;
+      await this.checkValidUserToAdd(providedUser, newUser, parentUserData);
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newUser?.password, saltRounds);
 
-        const parentId = newUser?.parentId === "" ? null : newUser?.parentId;
-        const roleId = await CpAppRole.find({ name: { $in: newUser?.role } });
-        const projectIds = await CpAppProject.find({
-          name: { $in: newUser?.projects },
-        });
-        newUser.projects = projectIds.map((project) => project._id);
-        newUser.role = roleId.map((role) => role._id);
-        newUser.parentId = parentId;
-        newUser.password = hashedPassword;
-      }
+      const parentId = newUser?.parentId === "" ? null : newUser?.parentId;
+      const roleId = await CpAppRole.find({ name: { $in: newUser?.role } });
+      const projectIds = await CpAppProject.find({
+        name: { $in: newUser?.projects },
+      });
+      newUser.projects = projectIds.map((project) => project._id);
+      newUser.role = roleId.map((role) => role._id);
+      newUser.parentId = parentId;
+      newUser.password = hashedPassword;
       const userSch = new CpAppUser(newUser);
       await userSch.save();
+
+      // Trigering email to user and admin
       const userName = newUser[userDataObj?.name];
       const parentName = "Urbanrise Team";
       const userEmail = newUser[userDataObj?.email];
-      const role = newUser[userDataObj?.role];
-      const projects = newUser[userDataObj?.projects].join("/n");
-      sendMail(userName, parentName, userEmail, role, projects)
+      const role = roleId[0]?.name;
+      const projects = projectIds.map((project) => project?.name).join("/n");
+      const mailOptions = userMailOption(
+        userName,
+        parentName,
+        userEmail,
+        role,
+        projects,
+      );
+      sendMail(mailOptions)
         .then((result) => console.log("Email sent...", result))
         .catch((error) => console.log(error.message));
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
