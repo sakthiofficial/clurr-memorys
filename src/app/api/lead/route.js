@@ -68,7 +68,6 @@ export async function GET(request) {
       leadStartDate,
       leadEndDate,
     };
-    console.log(params);
 
     const validateQuery = Joi.object({
       project: Joi.string().required(),

@@ -9,7 +9,7 @@ import {
 } from "../../../appConstants";
 import ProjectSrv from "../../../services/projectSrv";
 import getUserByToken from "../../../helper/getUserByToken";
-import { isPriorityUser, userDataObj } from "../../../../shared/roleManagement";
+import { userDataObj } from "../../../../shared/roleManagement";
 import { CpAppProject } from "../../../../models/AppProject";
 
 export async function POST(req) {
