@@ -57,9 +57,7 @@ const inter = Inter({ subsets: ["latin"] });
 // };
 
 // drawer-size
-const drawerWidth = 260;
-// profile datas
-const settings = ["Logout"];
+const drawerWidth = 280;
 
 // sidebar datas
 const sidebarlist = [
@@ -281,19 +279,11 @@ export default function RootLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
-  const [anchorElUser, setAnchorElUser] = useState(null);
   // handle drawer functions
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
   const [user, setUser] = useState(null);
 
   const drawer = (
@@ -337,7 +327,7 @@ export default function RootLayout({ children }) {
 </ListItemButton>
 </ListItem>
 </Link> */}
-        <Link href="/leads">
+        <Link href="/leads" style={{ color: "none", textDecoration: "none" }}>
           <ListItem
             disablePadding
             style={{
@@ -366,9 +356,7 @@ export default function RootLayout({ children }) {
               key={item.title}
               href={`/${item.url}`}
               style={{
-                "&:hover": {
-                  textDecoration: "none",
-                },
+                textDecoration: "none",
               }}
             >
               <ListItem
