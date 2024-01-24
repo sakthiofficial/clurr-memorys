@@ -9,7 +9,7 @@ import {
 } from "../../../appConstants";
 import ProjectSrv from "../../../services/projectSrv";
 import getUserByToken from "../../../helper/getUserByToken";
-import { userDataObj } from "../../../../shared/roleManagement";
+import { isPriorityUser, userDataObj } from "../../../../shared/roleManagement";
 import { CpAppProject } from "../../../../models/AppProject";
 
 export async function POST(req) {
@@ -48,9 +48,8 @@ export async function GET(request) {
   try {
     const providedUser = await getUserByToken(request);
     let projects = providedUser[userDataObj?.projects];
-
     const projectData = await CpAppProject.find(
-      { name: projects },
+      isPriorityUser(providedUser[userDataObj?.role]) ? {} : { name: projects },
       {
         accessKey: 0,
         secretKey: 0,
