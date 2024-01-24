@@ -90,6 +90,7 @@ export async function GET(request) {
     const serviceRes = await leadSrv.retriveLead(providedUser, value);
     return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
+    console.log("Error while retriving lead", error);
     const errorResponse = new ApiResponse(
       RESPONSE_STATUS?.ERROR,
       RESPONSE_MESSAGE?.ERROR,

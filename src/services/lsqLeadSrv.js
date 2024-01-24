@@ -9,6 +9,9 @@ import {
 import { userDataObj } from "../../shared/roleManagement";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { CpAppCompany } from "../../models/AppCompany";
+import { CpAppRole } from "../../models/AppRole";
+import { CpAppProject } from "../../models/AppProject";
+import { CpAppPermission } from "../../models/Permission";
 
 const { default: axios } = require("axios");
 
@@ -103,7 +106,6 @@ class LSQLeadSrv {
             },
           },
         );
-
         return apiData;
       } catch (error) {
         console.log("Error While Fetch Lead Data ", error);

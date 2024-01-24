@@ -48,16 +48,15 @@ export async function GET(request) {
   try {
     const providedUser = await getUserByToken(request);
     let projects = providedUser[userDataObj?.projects];
-    if (isPriorityUser(providedUser[userDataObj?.role])) {
-      const projectData = await CpAppProject.find(
-        {},
-        {
-          accessKey: 0,
-          secretKey: 0,
-        },
-      );
-      projects = projectData;
-    }
+
+    const projectData = await CpAppProject.find(
+      { name: projects },
+      {
+        accessKey: 0,
+        secretKey: 0,
+      },
+    );
+    projects = projectData;
     return new Response(
       JSON.stringify(
         new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, projects),

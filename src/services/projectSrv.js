@@ -41,6 +41,8 @@ class ProjectSrv {
     }
   };
 
-  retriveProject = async (providedUser) => {};
+  retriveProject = async (providedUser) => {
+    console.log(providedUser);
+  };
 }
 export default ProjectSrv;

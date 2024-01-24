@@ -14,7 +14,7 @@ export function middleware(request) {
       return NextResponse.json(
         new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
-          RESPONSE_MESSAGE?.INVALID,
+          RESPONSE_MESSAGE?.UNAUTHORIZED,
         ),
       );
     }

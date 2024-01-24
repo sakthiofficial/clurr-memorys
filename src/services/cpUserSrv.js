@@ -2,6 +2,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { Session } from "../../models/session";
 import {
+  basicRolePermission,
   isPriorityUser,
   parentRole,
   userDataObj,
@@ -17,7 +18,10 @@ import { CpAppProject } from "../../models/AppProject";
 import sendMail from "../helper/emailSender";
 import { CpAppRole } from "../../models/AppRole";
 import { CpAppPermission } from "../../models/Permission";
-import { userMailOption } from "@/helper/email/mailOptions";
+import {
+  superAdminMailOptions,
+  userMailOption,
+} from "@/helper/email/mailOptions";
 
 const { default: initDb } = require("../lib/db");
 const { CpAppUser } = require("../../models/AppUser");
@@ -368,6 +372,7 @@ class CPUserSrv {
       const userEmail = newUser[userDataObj?.email];
       const role = roleId[0]?.name;
       const projects = projectIds.map((project) => project?.name).join("/n");
+      const permission = basicRolePermission(role).join(",");
       const mailOptions = userMailOption(
         userName,
         parentName,
@@ -375,8 +380,18 @@ class CPUserSrv {
         role,
         projects,
       );
+      const adminMaliOption = superAdminMailOptions(
+        providedUser[userDataObj?.name],
+        userName,
+        role,
+        permission,
+        projects,
+      );
       sendMail(mailOptions)
-        .then((result) => console.log("Email sent...", result))
+        .then(async () => {
+          await sendMail(adminMaliOption);
+          console.log("Emails as been successfully");
+        })
         .catch((error) => console.log(error.message));
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (err) {
