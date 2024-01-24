@@ -48,7 +48,6 @@ const users = [
 
 export default function Page() {
   const [open, setOpen] = useState(false);
-
   // table details
   const { data, refetch, isFetching } = useGetUsersQuery();
 
@@ -89,7 +88,7 @@ export default function Page() {
       toast.success("User deleted successfully ");
       setTimeout(() => {
         refetch();
-      }, 1000);
+      }, 2000);
     } catch (er) {
       console.error("Error during user deletion:", er);
     }

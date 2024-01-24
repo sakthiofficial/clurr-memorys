@@ -24,9 +24,20 @@ import {
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import { Add } from "@mui/icons-material";
-import { useDeleteUsersMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
+import Image from "next/image";
+import styled from "@emotion/styled";
+import { useCpDeleteMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
+import Trash from "../../../public/trash.png";
 
 export default function Page() {
+  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    "& .MuiDialogContent-root": {
+      padding: theme.spacing(2),
+    },
+    "& .MuiDialogActions-root": {
+      padding: theme.spacing(1),
+    },
+  }));
   const [open, setOpen] = useState(false);
 
   // get cp data query
@@ -48,38 +59,36 @@ export default function Page() {
       ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  // useEffect(() => {
-  //   if (isLoading) {
-  //     // console.log("Loading...");
-  //   } else if (isError) {
-  //     // console.error("Error:", error);
-  //   } else if (data) {
-  //     // console.log("Query completed:", data?.result);
-  //   }
-  // }, [data, isLoading, isError, error]);
+  const [deleteCp] = useCpDeleteMutation();
 
-  const handleOpen = () => {
+  const handleOpen = (row) => {
     setOpen(true);
+    console.log(row);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
-  const [deleteUser] = useDeleteUsersMutation();
 
   // handle delete function
-  const handleDelete = (id) => {
-    deleteUser(id);
-
-    toast.success("cp delete successfully ");
-    handleClose();
-    // setTimeout(() => window.location.reload(), 3000);
+  const handleDelete = async (company) => {
+    try {
+      handleClose();
+      await deleteCp(company.cpCode);
+      toast.success("User deleted successfully ");
+      setTimeout(() => {
+        refetch();
+      }, 2000);
+    } catch (er) {
+      console.error("Error during user deletion:", er);
+    }
   };
 
   useEffect(() => {
     refetch();
   }, []);
 
+  // console.log(data);
   return (
     <>
       <ToastContainer />
@@ -138,78 +147,6 @@ export default function Page() {
             </Link>
           </Grid>
         </Grid>
-        {/* <Grid
-        sx={{
-          minHeight: "30vh",
-          display: "flex",
-          justifyContent: "start",
-          alignItems: "center",
-          flexWrap: "wrap",
-          marginTop: "5px",
-          gap: "15px",
-        }}
-      >
-        {users?.map((item) => (
-          <Grid
-            key={item?.name}
-            sx={{
-              width: "165px",
-              height: "150px",
-              boxShadow: "0px 0px 8px 0px rgba(0, 0, 0, 0.10)",
-              marginBottom: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "white",
-              border: "0.5px solid #BDBDBD",
-              borderRadius: "13px",
-            }}
-          >
-            <Grid
-              sx={{
-                height: "80%",
-                width: "90%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
-              <Grid
-                sx={{
-                  width: "51px",
-                  height: "51px",
-                  borderRadius: "9px",
-                  backgroundColor: getBackgroundColor(item?.name),
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  alt={item?.name}
-                  src={item?.icon}
-                  width={26}
-                  height={26}
-                />
-              </Grid>
-              <Typography
-                sx={{ color: "#454545", fontSize: "14px", fontWeight: "400" }}
-              >
-                {item?.name}
-              </Typography>
-              <Typography
-                sx={{
-                  color: "rgba(0, 0, 0, 1)",
-                  fontSize: "24px",
-                  fontWeight: "600",
-                }}
-              >
-                {item?.total}
-              </Typography>
-            </Grid>
-          </Grid>
-        ))}
-      </Grid> */}
         <Grid>
           <TableContainer
             component={Paper}
@@ -351,34 +288,124 @@ export default function Page() {
                             delete
                           </Button>
 
-                          <Dialog
+                          <BootstrapDialog
+                            onClose={handleOpen}
+                            aria-labelledby="customized-dialog-title"
                             open={open}
-                            onClose={handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
+                            maxWidth="xs"
+                            PaperProps={{
+                              sx: {
+                                borderRadius: "30px",
+                                // border: "1px solid red",
+                                justifyContent: "center",
+                                display: "flex",
+                                alignItems: "center",
+                              },
+                            }}
                             disableScrollLock
                           >
-                            <DialogTitle id="alert-dialog-title">
-                              Confirm Delete
-                            </DialogTitle>
-                            <DialogContent>
-                              <DialogContentText id="alert-dialog-description">
-                                Are you sure you want to delete this user?
-                              </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                              <Button onClick={handleClose} color="primary">
-                                Cancel
+                            <Grid
+                              sx={{
+                                height: "250px",
+                                // border: "1px solid black",
+                                justifyContent: "space-evenly",
+                                alignItems: "center",
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <Grid
+                                sx={{
+                                  width: "80px",
+                                  height: "80px",
+                                  // border: "1px solid black",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  borderRadius: "50%",
+                                  backgroundColor: "rgba(255, 0, 0, 0.1)",
+                                }}
+                              >
+                                <Image
+                                  width={39}
+                                  height={39}
+                                  src={Trash}
+                                  sx={{ color: "red" }}
+                                />
+                              </Grid>
+                              <Grid
+                                sx={{
+                                  fontSize: "20px",
+                                  lineHeight: "24px",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                Delete the CP ?
+                              </Grid>
+                              <Grid
+                                sx={{
+                                  width: "80%",
+                                  textAlign: "center",
+                                  color: "#757575",
+                                }}
+                              >
+                                "Are you certain about your intention to delete
+                                this chanel partner from the table?"
+                              </Grid>
+                            </Grid>
+                            <DialogActions
+                              sx={{
+                                // border: "1px solid black",
+                                width: "80%",
+                                display: "flex",
+                                justifyContent: "space-around",
+                              }}
+                            >
+                              <Button
+                                onClick={handleClose}
+                                color="primary"
+                                sx={{
+                                  border: "none",
+                                  width: "124px",
+                                  height: "43px",
+                                  color: "black",
+                                  borderRadius: "12px",
+                                  backgroundColor: "#D9D9D9",
+                                  textTransform: "capitalize",
+                                  fontWeight: "800",
+                                  "&:hover": {
+                                    backgroundColor: "#D9D9D9",
+                                    boxShadow: "none",
+                                    border: "none",
+                                  },
+                                }}
+                              >
+                                No Keep
                               </Button>
                               <Button
-                                onClick={() => handleDelete(row.id)}
+                                onClick={() => handleDelete(row.company)}
                                 color="primary"
+                                sx={{
+                                  border: "none",
+                                  width: "124px",
+                                  height: "43px",
+                                  color: "white",
+                                  borderRadius: "12px",
+                                  backgroundColor: "#E50000",
+                                  textTransform: "capitalize",
+                                  fontWeight: "800",
+                                  "&:hover": {
+                                    backgroundColor: "#E50000",
+                                    boxShadow: "none",
+                                    border: "none",
+                                  },
+                                }}
                                 autoFocus
                               >
-                                Delete
+                                Yes, Delete!
                               </Button>
                             </DialogActions>
-                          </Dialog>
+                          </BootstrapDialog>
                         </Grid>
                       </TableCell>
                     </TableRow>

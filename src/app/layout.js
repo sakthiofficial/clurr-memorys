@@ -137,8 +137,13 @@ function Login() {
           backgroundColor: "white",
         }}
       >
-        <Grid sx={{ width: "60%", overFlow: "hidden" }}>
-          {/* <Image src={LoginBanner} width={850} height={575} /> */}
+        <Grid sx={{ width: "60%", position: "relative" }}>
+          <Image
+            style={{ backgroundColor: "white" }}
+            src={LoginBanner}
+            layout="fill"
+            objectFit="contain"
+          />
         </Grid>
         <Grid sx={{ width: "40%" }}>
           <Box
@@ -151,6 +156,7 @@ function Login() {
               flexDirection: "column",
               gap: "20px",
               // border: "1px solid black",
+              backgroundColor: "white",
             }}
           >
             <Box

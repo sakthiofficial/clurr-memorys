@@ -96,6 +96,18 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    cpDelete: builder.mutation({
+      query: (CpCode) => ({
+        url: `/cpManagenent?cpCode=${CpCode}`,
+        method: "DELETE",
+      }),
+    }),
+    getUserById: builder.query({
+      query: (id) => ({
+        url: `/user/retriveUserById/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -113,4 +125,6 @@ export const {
   useAddLeadMutation,
   useGetProjectQuery,
   useGetLeadsByDateQuery,
+  useCpDeleteMutation,
+  useGetUserByIdQuery,
 } = apiSlice;

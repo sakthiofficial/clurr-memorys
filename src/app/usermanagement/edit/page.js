@@ -15,21 +15,23 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import Link from "next/link";
+import { useGetUserByIdQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page({ searchParams }) {
   const [formData, setFormData] = useState({
-    username: searchParams.name || "",
+    username: searchParams.id || "",
     email: searchParams.email || "",
     phone: searchParams.phone || "",
     password: "",
   });
 
-  const [selectedValues, setSelectedValues] = useState({
-    project: searchParams.projects || [],
-    role: searchParams.role || "",
-    parent: "",
+  const [selectedId, setSelectedId] = useState({
+    id: searchParams.id,
   });
+  console.log(selectedId);
 
+  const result = useGetUserByIdQuery(selectedId.id);
+  console.log(result);
   const [personName, setPersonName] = useState([]);
 
   const handleInputChange = (e) => {
@@ -85,7 +87,7 @@ export default function Page({ searchParams }) {
   }, []);
 
   if (!userData) {
-    return <div>Loading...</div>;
+    return <Grid sx={{ height: "100vh" }}>Loading...</Grid>;
   }
 
   const SubordinateRoles = userData.subordinateRoles;
@@ -102,6 +104,12 @@ export default function Page({ searchParams }) {
     setPersonName(updatedProjects);
     handleChange("project", updatedProjects);
   };
+
+  // const result = useGetUserByIdQuery()
+
+  // useEffect(()=>{
+
+  // },[])
 
   return (
     <Grid sx={{ minHeight: "100vh" }}>
@@ -274,80 +282,7 @@ export default function Page({ searchParams }) {
                   width: "80%",
                   marginBottom: "40px",
                 }}
-              >
-                <FormControl
-                  sx={{
-                    minWidth: "397px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                >
-                  <InputLabel id="demo-multiple-checkbox-label">
-                    select project
-                  </InputLabel>
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={
-                      Array.isArray(selectedValues.project)
-                        ? selectedValues.project
-                        : [selectedValues.project]
-                    }
-                    onChange={handleChangeProject}
-                    input={<OutlinedInput label="select project" />}
-                    renderValue={(selected) => selected.join(", ")}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    {SubordinateProjects.map((p) => (
-                      <MenuItem key={p.name} value={p.name}>
-                        <Checkbox
-                          checked={selectedValues.project.indexOf(p.name) > -1}
-                        />
-                        <ListItemText primary={p.name} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl
-                  sx={{
-                    minWidth: "397px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                >
-                  <InputLabel
-                    id="role-label"
-                    sx={{ color: "#757575", fontSize: "14px" }}
-                  >
-                    Choose one role
-                  </InputLabel>
-                  <Select
-                    labelId="role-label"
-                    id="role"
-                    displayEmpty
-                    value={selectedValues.role}
-                    label="Choose one role"
-                    onChange={(e) => handleChange("role", e.target.value)}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    {selectedValues.project.length === 0 && (
-                      <MenuItem value="" disabled>
-                        No Project
-                      </MenuItem>
-                    )}
-                    {SubordinateRoles.map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
+              />
               <Grid
                 sx={{
                   display: "flex",
@@ -376,7 +311,7 @@ export default function Page({ searchParams }) {
                     labelId="parent-label"
                     id="parent"
                     displayEmpty
-                    value={selectedValues.parent}
+                    // value={select.parent}
                     label="Choose one parent"
                     onChange={(e) => handleChange("parent", e.target.value)}
                     MenuProps={{ disableScrollLock: true }}
