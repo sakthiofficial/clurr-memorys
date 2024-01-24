@@ -42,7 +42,10 @@ import ExportLeadsBtn from "../components/ExportLeadsBtn";
 import { permissionKeyNames } from "../../../shared/cpNamings";
 import { dateToUnixTimestamp } from "../../../shared/dateCalc";
 import "rsuite/dist/rsuite.min.css";
-import { useGetLeadsByDateQuery } from "@/reduxSlice/apiSlice";
+import {
+  useGetLeadsByDateQuery,
+  useGetProjectWithPermissionQuery,
+} from "@/reduxSlice/apiSlice";
 
 // card details
 // const users = [
@@ -167,6 +170,9 @@ export default function Page() {
       console.error('No data found in local storage for key "user".');
     }
   }, []);
+
+  const resultProject = useGetProjectWithPermissionQuery();
+  console.log(resultProject);
 
   // date range functions
 

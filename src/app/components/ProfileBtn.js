@@ -74,7 +74,7 @@ export function ProfileInfo({ name, role }) {
           top="3rem"
           xs={12}
           sx={{
-            width: "269px",
+            width: "280px",
             height: "191px",
             flexShrink: "0",
             borderRadius: "18px",
