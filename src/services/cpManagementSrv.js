@@ -388,6 +388,38 @@ class CpManagementSrv {
     );
   };
 
+  retriveCpUser = async (providedUser) => {
+    const cpCompanyresult = await this.retriveCpCompanys(providedUser);
+    const cpCompanyData = cpCompanyresult?.result;
+    const cpUsers = [];
+
+    if (cpCompanyData) {
+      cpCompanyData.map((companyData) => {
+        const cpCompany = companyData?.company;
+        const cpBranchHead = companyData?.cpBranchHead;
+        cpUsers.push(
+          `${cpCompany[userDataObj?.name]} - ${
+            cpBranchHead[userDataObj?.name]
+          }`,
+        );
+        (companyData.cpExecutes || []).map((cpExecute) => {
+          cpUsers.push(
+            `${cpCompany[userDataObj?.name]} - ${cpExecute[userDataObj?.name]}`,
+          );
+          return null;
+        });
+        return null;
+      });
+      return new ApiResponse(
+        RESPONSE_STATUS?.OK,
+        RESPONSE_MESSAGE?.OK,
+        cpUsers,
+      );
+    }
+
+    return cpCompanyresult;
+  };
+
   removeCpByCode = async (providedUser, CpCompanyCode) => {
     if (
       !providedUser[userDataObj?.permissions].includes(

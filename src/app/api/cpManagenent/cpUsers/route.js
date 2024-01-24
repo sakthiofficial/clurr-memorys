@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import {
   ApiResponse,
   RESPONSE_MESSAGE,
@@ -22,17 +23,15 @@ export async function GET(request) {
     }
 
     const cpManagementSrv = new CpManagementSrv();
-    const serviceRes = await cpManagementSrv.getCpCompanysBH(providedUser);
-    return new Response(JSON.stringify(serviceRes));
+    const serviceRes = await cpManagementSrv.retriveCpUser(providedUser);
+
+    return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
-    return new Response(
-      JSON.stringify(
-        new ApiResponse(
-          RESPONSE_STATUS?.ERROR,
-          RESPONSE_MESSAGE?.INVALID,
-          error,
-        ),
-      ),
+    const response = new ApiResponse(
+      RESPONSE_STATUS?.ERROR,
+      RESPONSE_MESSAGE?.INVALID,
+      error,
     );
+    return NextResponse.json(response, { status: response?.status });
   }
 }
