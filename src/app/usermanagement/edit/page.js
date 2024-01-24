@@ -18,20 +18,19 @@ import Link from "next/link";
 import { useGetUserByIdQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page({ searchParams }) {
-  const [formData, setFormData] = useState({
-    username: searchParams.id || "",
-    email: searchParams.email || "",
-    phone: searchParams.phone || "",
-    password: "",
-  });
-
   const [selectedId, setSelectedId] = useState({
     id: searchParams.id,
   });
-  console.log(selectedId);
+  const { data, isFetching } = useGetUserByIdQuery(selectedId?.id);
+  console.log(data?.result);
 
-  const result = useGetUserByIdQuery(selectedId.id);
-  console.log(result);
+  const [formData, setFormData] = useState({
+    username: data?.result?.name || "",
+    email: data?.result?.email || "",
+    phone: data?.result?.phone || "",
+    password: "",
+  });
+
   const [personName, setPersonName] = useState([]);
 
   const handleInputChange = (e) => {
@@ -90,26 +89,16 @@ export default function Page({ searchParams }) {
     return <Grid sx={{ height: "100vh" }}>Loading...</Grid>;
   }
 
-  const SubordinateRoles = userData.subordinateRoles;
-  const SubordinateProjects = userData.projects;
-
   const handleChangeProject = (event) => {
     const {
       target: { value },
     } = event;
 
-    // Ensure value is an array
     const updatedProjects = Array.isArray(value) ? value : [value];
 
     setPersonName(updatedProjects);
     handleChange("project", updatedProjects);
   };
-
-  // const result = useGetUserByIdQuery()
-
-  // useEffect(()=>{
-
-  // },[])
 
   return (
     <Grid sx={{ minHeight: "100vh" }}>
@@ -179,176 +168,180 @@ export default function Page({ searchParams }) {
               minHeight: "500px",
             }}
           >
-            <form
-              onSubmit={handleSubmit}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                minHeight: "500px",
-              }}
-            >
-              <Grid
-                sx={{
+            {isFetching ? (
+              ""
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                style={{
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "space-around",
-                  flexWrap: "wrap",
-                  marginBottom: "40px",
-                  width: "80%",
+                  justifyContent: "center",
+                  minHeight: "500px",
                 }}
               >
-                <TextField
-                  label="Username"
-                  name="username"
-                  type="text"
-                  value={formData.username}
-                  onChange={handleInputChange}
+                <Grid
                   sx={{
-                    width: "397px",
-                    color: "black",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                />
-                <TextField
-                  label="Email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  sx={{
-                    width: "397px",
-                    color: "black",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                />
-              </Grid>
-
-              <Grid
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  flexWrap: "wrap",
-                  marginBottom: "40px",
-                  width: "80%",
-                }}
-              >
-                <TextField
-                  label="Phone"
-                  name="phone"
-                  type="text"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  sx={{
-                    width: "397px",
-                    color: "black",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                />
-                <TextField
-                  label="Password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  sx={{
-                    width: "397px",
-                    color: "black",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
-                  }}
-                />
-              </Grid>
-
-              <Grid
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  flexWrap: "wrap",
-                  width: "80%",
-                  marginBottom: "40px",
-                }}
-              />
-              <Grid
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  flexWrap: "wrap",
-                  width: "80%",
-                }}
-              >
-                <FormControl
-                  sx={{
-                    minWidth: "397px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "19px",
-                      },
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    flexWrap: "wrap",
+                    marginBottom: "40px",
+                    width: "80%",
                   }}
                 >
-                  <InputLabel
-                    id="parent-label"
-                    sx={{ color: "#757575", fontSize: "14px" }}
-                  >
-                    Choose one parent
-                  </InputLabel>
-                  <Select
-                    labelId="parent-label"
-                    id="parent"
-                    displayEmpty
-                    // value={select.parent}
-                    label="Choose one parent"
-                    onChange={(e) => handleChange("parent", e.target.value)}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    {parentOptions.map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
+                  <TextField
+                    label="Username"
+                    name="username"
+                    type="text"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    sx={{
+                      width: "397px",
+                      color: "black",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                  />
+                  <TextField
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    sx={{
+                      width: "397px",
+                      color: "black",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                  />
+                </Grid>
 
-              <Grid sx={{ marginTop: "40px" }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
+                <Grid
                   sx={{
-                    marginLeft: "20px",
-                    width: "145px",
-                    backgroundColor: "#F9B800",
-                    color: "black",
-                    height: "43px",
-                    borderRadius: "12px",
-                    boxShadow: "none",
-                    border: "none",
-                    "&:hover": {
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    flexWrap: "wrap",
+                    marginBottom: "40px",
+                    width: "80%",
+                  }}
+                >
+                  <TextField
+                    label="Phone"
+                    name="phone"
+                    type="text"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    sx={{
+                      width: "397px",
+                      color: "black",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                  />
+                  <TextField
+                    label="Password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    sx={{
+                      width: "397px",
+                      color: "black",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                  />
+                </Grid>
+
+                <Grid
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    flexWrap: "wrap",
+                    width: "80%",
+                    marginBottom: "40px",
+                  }}
+                />
+                <Grid
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    flexWrap: "wrap",
+                    width: "80%",
+                  }}
+                >
+                  <FormControl
+                    sx={{
+                      minWidth: "397px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "19px",
+                        },
+                    }}
+                  >
+                    <InputLabel
+                      id="parent-label"
+                      sx={{ color: "#757575", fontSize: "14px" }}
+                    >
+                      Choose one parent
+                    </InputLabel>
+                    <Select
+                      labelId="parent-label"
+                      id="parent"
+                      displayEmpty
+                      // value={select.parent}
+                      label="Choose one parent"
+                      onChange={(e) => handleChange("parent", e.target.value)}
+                      MenuProps={{ disableScrollLock: true }}
+                    >
+                      {parentOptions.map((option, index) => (
+                        <MenuItem key={index} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid sx={{ marginTop: "40px" }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      marginLeft: "20px",
+                      width: "145px",
                       backgroundColor: "#F9B800",
+                      color: "black",
+                      height: "43px",
+                      borderRadius: "12px",
                       boxShadow: "none",
-                    },
-                  }}
-                >
-                  Submit
-                </Button>
-              </Grid>
-            </form>
+                      border: "none",
+                      "&:hover": {
+                        backgroundColor: "#F9B800",
+                        boxShadow: "none",
+                      },
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </Grid>
+              </form>
+            )}
           </Grid>
         </Grid>
       </Grid>

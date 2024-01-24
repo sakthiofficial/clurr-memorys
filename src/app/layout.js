@@ -47,6 +47,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { usePathname } from "next/navigation";
 import { permissionKeyNames } from "../../shared/cpNamings";
 import LoginBanner from "../../public/loginBanner.png";
+import { ProfileInfo } from "./components/ProfileBtn";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -361,7 +362,15 @@ export default function RootLayout({ children }) {
         {sidebarlist
           .filter((item) => permissions.includes(item.shortName))
           .map((item) => (
-            <Link key={item.title} href={`/${item.url}`}>
+            <Link
+              key={item.title}
+              href={`/${item.url}`}
+              style={{
+                "&:hover": {
+                  textDecoration: "none",
+                },
+              }}
+            >
               <ListItem
                 disablePadding
                 style={{
@@ -377,9 +386,19 @@ export default function RootLayout({ children }) {
                     pathname === `/${item.url}/${item.insideUrl}`
                       ? "2px solid rgba(250, 185, 0, 1)"
                       : "none",
+                  "&:hover": {
+                    textDecoration: "none",
+                  },
                 }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  key={item.title}
+                  sx={{
+                    "&:hover": {
+                      textDecoration: "none",
+                    },
+                  }}
+                >
                   <ListItemIcon alt={item.title}>
                     {React.createElement(item.icon)}
                   </ListItemIcon>
@@ -406,18 +425,19 @@ export default function RootLayout({ children }) {
     }
     setLoading(false);
   }, []);
+  // console.log(user.role[0])
   // console.log(user.name)
 
   // console.log(permissions);
 
-  const handleMenuClick = (setting) => {
-    if (setting === "Logout") {
-      localStorage.removeItem("user");
-      window.location.href = "/login";
-    }
+  // const handleMenuClick = (setting) => {
+  //   if (setting === "Logout") {
+  //     localStorage.removeItem("user");
+  //     window.location.href = "/login";
+  //   }
 
-    handleCloseUserMenu();
-  };
+  //   handleCloseUserMenu();
+  // };
 
   return (
     <Provider store={store}>
@@ -518,9 +538,11 @@ export default function RootLayout({ children }) {
                           display: "flex",
                           justifyContent: "end",
                           alignItems: "center",
+                          // border: "1px solid black",
                         }}
                       >
-                        <Grid
+                        <ProfileInfo name={user?.name} role={user?.role[0]} />
+                        {/* <Grid
                           sx={{
                             minWidth: "120px",
                             heigth: "43px",
@@ -575,7 +597,7 @@ export default function RootLayout({ children }) {
                             {user?.name}
                           </Typography>
                           <KeyboardArrowDownIcon />
-                        </Grid>
+                        </Grid> */}
                       </Grid>
                     </Toolbar>
                   </AppBar>
