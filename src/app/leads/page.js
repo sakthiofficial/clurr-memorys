@@ -449,21 +449,11 @@ export default function Page() {
                   <TableBody>
                     {slicedRows?.map((row) => (
                       <TableRow key={row?.id}>
-                        <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.FirstName || "N/A"}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.Phone || "N/A"}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.EmailAddress || "N/A"}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.mx_Origin_Project || "N/A"}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: "11px" }}>
-                          {row?.CreatedOn || "N/A"}
-                        </TableCell>
+                        <TableCell>{row?.FirstName || "N/A"}</TableCell>
+                        <TableCell>{row?.Phone || "N/A"}</TableCell>
+                        <TableCell>{row?.EmailAddress || "N/A"}</TableCell>
+                        <TableCell>{row?.mx_Origin_Project || "N/A"}</TableCell>
+                        <TableCell>{row?.CreatedOn || "N/A"}</TableCell>
                         <TableCell>
                           <Grid
                             sx={{

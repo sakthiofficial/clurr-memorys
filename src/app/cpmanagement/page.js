@@ -219,7 +219,6 @@ export default function Page() {
                       backgroundColor: "rgba(249, 184, 0, 0.1)",
                       fontWeight: "500",
                       color: "black",
-                      fontSize: "0.75rem",
                     }}
                   >
                     <TableCell>COMPANY NAME</TableCell>

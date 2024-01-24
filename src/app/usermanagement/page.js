@@ -206,7 +206,6 @@ export default function Page() {
                       color: "black",
                     }}
                   >
-                    {/* <TableCell>Id#</TableCell> */}
                     <TableCell>Name</TableCell>
                     <TableCell>Contact</TableCell>
                     <TableCell>Email</TableCell>
@@ -218,7 +217,6 @@ export default function Page() {
                 <TableBody>
                   {slicedRows?.map((row) => (
                     <TableRow key={row?.name || "N/A"}>
-                      {/* <TableCell>{row?.id || "N/A"}</TableCell> */}
                       <TableCell>{row?.name || "N/A"}</TableCell>
                       <TableCell>{row?.phone || "N/A"}</TableCell>
                       <TableCell>{row?.email || "N/A"}</TableCell>
@@ -236,29 +234,29 @@ export default function Page() {
                             marginBottom: "10px",
                           }}
                         >
-                          <Link
+                          {/* <Link
                             href={{
                               pathname: "/usermanagement/edit",
                               query: { id: row?._id },
                             }}
-                          >
-                            <Button
-                              sx={{
-                                borderRadius: "10px",
-                                color: "black",
-                                width: "58px",
-                                height: "28px",
-                                fontSize: "10px",
+                          > */}
+                          <Button
+                            sx={{
+                              borderRadius: "10px",
+                              color: "black",
+                              width: "58px",
+                              height: "28px",
+                              fontSize: "10px",
+                              backgroundColor: "rgba(249, 184, 0, 1)",
+                              "&:hover": {
                                 backgroundColor: "rgba(249, 184, 0, 1)",
-                                "&:hover": {
-                                  backgroundColor: "rgba(249, 184, 0, 1)",
-                                  boxShadow: "none",
-                                },
-                              }}
-                            >
-                              edit
-                            </Button>
-                          </Link>
+                                boxShadow: "none",
+                              },
+                            }}
+                          >
+                            edit
+                          </Button>
+                          {/* </Link> */}
                           <Button
                             onClick={handleOpen}
                             sx={{

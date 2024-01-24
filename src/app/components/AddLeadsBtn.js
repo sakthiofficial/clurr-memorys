@@ -272,7 +272,14 @@ function AddLeadsBtn() {
               >
                 {data?.result?.map((cp) => (
                   <MenuItem key={cp?.company?.name} value={cp?.company?.name}>
-                    {cp?.company?.name}
+                    {`${cp?.company?.name} - ${cp?.cpBranchHead?.name} - `}
+                    {cp?.cpExecutes?.map((executive, index) => (
+                      <Typography key={index}>
+                        {`${executive.name}${
+                          index !== cp?.cpExecutes.length - 1 ? ", " : ""
+                        }`}
+                      </Typography>
+                    ))}
                   </MenuItem>
                 ))}
               </Select>
