@@ -526,6 +526,8 @@ export default function RootLayout({ children }) {
                           display: "flex",
                           justifyContent: "end",
                           alignItems: "center",
+                          paddingRight:"10px",
+
                           // border: "1px solid black",
                         }}
                       >

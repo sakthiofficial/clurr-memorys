@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PropTypes from "prop-types";
@@ -10,6 +10,7 @@ export function ProfileInfo({ name, role }) {
     window.location.href = "/login";
     // handleCloseUserMenu();
   };
+  const firstLetter = name.charAt(0).toUpperCase();
 
   return (
     <Grid
@@ -26,17 +27,7 @@ export function ProfileInfo({ name, role }) {
       }}
       onClick={() => setprofileInfo(!profileInfo)}
     >
-      <Box
-        sx={{
-          width: "48px",
-          height: "48px",
-          flexShrink: "0",
-          borderRadius: "48px",
-          backgroundColor: "black",
-          // display:"flex"
-        }}
-      />
-
+      <Avatar>{firstLetter}</Avatar>
       <Grid
         sx={{
           display: { md: "flex", xs: "none" },
@@ -74,6 +65,7 @@ export function ProfileInfo({ name, role }) {
           top="3rem"
           xs={12}
           sx={{
+            // minWidth: "200px",
             width: "280px",
             height: "191px",
             flexShrink: "0",
@@ -85,15 +77,7 @@ export function ProfileInfo({ name, role }) {
         >
           <Grid container xs={12} alignItems="center">
             <Grid item xs={3}>
-              <Box
-                sx={{
-                  width: "48px",
-                  height: "48px",
-                  flexShrink: "0",
-                  borderRadius: "48px",
-                  backgroundColor: "black",
-                }}
-              />
+              <Avatar>{firstLetter}</Avatar>
             </Grid>
             <Grid
               item
