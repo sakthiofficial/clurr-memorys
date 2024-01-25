@@ -461,7 +461,7 @@ class CPUserSrv {
         user[userDataObj?.subordinateRoles] = userSubordinateRoles;
         user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
         user[userDataObj?.projects] = isPriorityUser(user[userDataObj?.role])
-          ? "All"
+          ? ["All"]
           : (user[userDataObj?.projects] || []).map((project) => project.name);
         if (!isPriorityUser(user[userDataObj?.role])) {
           for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
