@@ -481,57 +481,59 @@ export default function Page() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {slicedRows?.length === 0 ? (
-                      <TableRow>
-                        <TableCell>*******</TableCell>
-                        <TableCell>*******</TableCell>
-                        <TableCell>*******</TableCell>
-                        <TableCell>*******</TableCell>
-                        <TableCell>*******</TableCell>
-                        <TableCell>*******</TableCell>
-                        <TableCell>*******</TableCell>
-                      </TableRow>
-                    ) : (
-                      slicedRows?.map((row) => (
-                        <TableRow key={row?.id}>
-                          <TableCell>{row?.FirstName || "N/A"}</TableCell>
-                          <TableCell>{row?.Phone || "N/A"}</TableCell>
-                          <TableCell>{row?.EmailAddress || "N/A"}</TableCell>
-                          <TableCell>{row?.mx_Sub_Source || "N/A"}</TableCell>
-                          <TableCell>{row?.ProspectStage || "N/A"}</TableCell>
-                          <TableCell>{row?.CreatedOn || "N/A"}</TableCell>
-                          <TableCell>
-                            <Grid
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              <Link href="/leads/view">
-                                <Button
-                                  variant="outlined"
-                                  sx={{
-                                    borderRadius: "10px",
-                                    color: "black",
-                                    width: "58px",
-                                    height: "28px",
-                                    border: "none",
-                                    backgroundColor: "rgba(249, 184, 0, 1)",
-                                    "&:hover": {
-                                      backgroundColor: "rgba(249, 184, 0, 1)",
-                                      boxShadow: "none",
+                    {slicedRows?.length === 0
+                      ? [0, 1, 2, 3, 4, 5, 6].map(() => {
+                          return (
+                            <TableRow>
+                              <TableCell>*******</TableCell>
+                              <TableCell>*******</TableCell>
+                              <TableCell>*******</TableCell>
+                              <TableCell>*******</TableCell>
+                              <TableCell>*******</TableCell>
+                              <TableCell>*******</TableCell>
+                              <TableCell>*******</TableCell>
+                            </TableRow>
+                          );
+                        })
+                      : slicedRows?.map((row) => (
+                          <TableRow key={row?.id}>
+                            <TableCell>{row?.FirstName || "N/A"}</TableCell>
+                            <TableCell>{row?.Phone || "N/A"}</TableCell>
+                            <TableCell>{row?.EmailAddress || "N/A"}</TableCell>
+                            <TableCell>{row?.mx_Sub_Source || "N/A"}</TableCell>
+                            <TableCell>{row?.ProspectStage || "N/A"}</TableCell>
+                            <TableCell>{row?.CreatedOn || "N/A"}</TableCell>
+                            <TableCell>
+                              <Grid
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Link href="/leads/view">
+                                  <Button
+                                    variant="outlined"
+                                    sx={{
+                                      borderRadius: "10px",
+                                      color: "black",
+                                      width: "58px",
+                                      height: "28px",
                                       border: "none",
-                                    },
-                                  }}
-                                >
-                                  view
-                                </Button>
-                              </Link>
-                            </Grid>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
+                                      backgroundColor: "rgba(249, 184, 0, 1)",
+                                      "&:hover": {
+                                        backgroundColor: "rgba(249, 184, 0, 1)",
+                                        boxShadow: "none",
+                                        border: "none",
+                                      },
+                                    }}
+                                  >
+                                    view
+                                  </Button>
+                                </Link>
+                              </Grid>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                   </TableBody>
                 </Table>
               )}
