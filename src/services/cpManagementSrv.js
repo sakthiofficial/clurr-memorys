@@ -439,6 +439,9 @@ class CpManagementSrv {
         const cpCompany = companyData?.company;
         const cpBranchHead = companyData?.cpBranchHead;
         const companyCode = companyData?.company?.cpCode;
+        if (!cpCompany || !cpBranchHead || !companyCode) {
+          return;
+        }
         cpUsers.push({
           name: `${cpCompany[userDataObj?.name]} - ${
             cpBranchHead[userDataObj?.name]
@@ -456,7 +459,6 @@ class CpManagementSrv {
           });
           return null;
         });
-        return null;
       });
       return new ApiResponse(
         RESPONSE_STATUS?.OK,

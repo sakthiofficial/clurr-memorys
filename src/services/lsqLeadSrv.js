@@ -18,6 +18,7 @@ import { CpAppProject } from "../../models/AppProject";
 import { CpAppPermission } from "../../models/Permission";
 import { CpAppUser } from "../../models/AppUser";
 import CPUserSrv from "./cpUserSrv";
+import { CpAppLead } from "../../models/AppLead";
 
 const { default: axios } = require("axios");
 
@@ -252,7 +253,17 @@ class LSQLeadSrv {
           Value: notes,
         },
       ];
+      const cpLeadSchema = new CpAppLead({
+        FirstName: userName,
+        EmailAddress: email,
+        Phone: phone,
+        Source: source,
 
+        Project: project,
+        subSource,
+        createdBy: id,
+      });
+      await cpLeadSchema.save();
       const promise = await axios.post(this.lsqApiUrlToCaptureLead, postBody, {
         params: {
           accessKey,
