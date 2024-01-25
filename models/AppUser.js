@@ -67,7 +67,7 @@ const CpAppUserSchema = new Schema({
     default: null,
     ref: "CpAppCompany",
   },
-  createdBy: { type: Date, default: genrateUnixTimestamp() },
+  createdBy: { type: Number, default: genrateUnixTimestamp() },
 });
 
 module.exports.CpAppUser =

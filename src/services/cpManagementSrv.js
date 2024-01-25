@@ -19,6 +19,7 @@ import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import sendMail from "../helper/emailSender";
 import { CpAppRole } from "../../models/AppRole";
 import CPUserSrv from "./cpUserSrv";
+import { cpMailOption } from "@/helper/email/mailOptions";
 
 class CpManagementSrv {
   constructor() {
@@ -71,7 +72,14 @@ class CpManagementSrv {
       const result = await userSch.save();
       return result;
     };
-    this.genrateCompanyCode = async () => {
+    this.genrateCompanyCode = async (code) => {
+      if (code) {
+        code = String(code);
+        const companyCode = "URHCP";
+
+        const cpCode = `${companyCode}${code.padStart(5, "0")}`;
+        return cpCode;
+      }
       let lastCode = await CpAppCompany.findOne(
         {},
         { cpCode: 1 },
@@ -176,7 +184,7 @@ class CpManagementSrv {
 
   createCpAccount = async (
     providedUser,
-    { cpCompany, cpBranchHead, cpExecute, parentId },
+    { cpCompany, cpBranchHead, cpExecute, parentId, cpEnteredCode },
   ) => {
     // add parent account count validation // check cp ececute act count
 
@@ -187,6 +195,7 @@ class CpManagementSrv {
         cpBranchHead,
         cpExecute,
       );
+
       if (validateResult) {
         return new ApiResponse(
           RESPONSE_STATUS?.ERROR,
@@ -195,7 +204,9 @@ class CpManagementSrv {
         );
       }
     }
-    const cpGenratedCode = await this.genrateCompanyCode();
+
+    const cpGenratedCode = await this.genrateCompanyCode(cpEnteredCode);
+
     const userSrv = new CPUserSrv();
     let parentUser = await userSrv.getUserById(parentId);
     let branchHeadId = null;
@@ -206,9 +217,15 @@ class CpManagementSrv {
         null,
       );
     }
+
     try {
       if (isPriorityUser(providedUser[userDataObj?.role])) {
         if (cpBranchHead) {
+          const userName = cpBranchHead[userDataObj?.name];
+          const parentName = "Urbanrise Team";
+          const userEmail = cpBranchHead[userDataObj?.email];
+          const role = cpBranchHead[userDataObj?.role];
+          const projects = cpBranchHead[userDataObj?.projects].join("/n");
           const cpCode = cpBranchHead[userDataObj?.cpCode] || cpGenratedCode;
           cpBranchHead[userDataObj?.cpCode] = cpCode;
           const validateCpCom = this.validateCp(parentUser, cpBranchHead);
@@ -238,6 +255,22 @@ class CpManagementSrv {
           );
           parentUser = cpBranchResult;
           branchHeadId = cpBranchResult._id;
+          // Trigering email to user and admin
+
+          const mailOptions = cpMailOption(
+            userName,
+            parentName,
+            userEmail,
+            role,
+            projects,
+            cpCode,
+          );
+
+          sendMail(mailOptions)
+            .then(async () => {
+              console.log("Emails as been successfully");
+            })
+            .catch((error) => console.log(error.message));
         }
         if (cpCompany) {
           const cpCode = cpCompany[userDataObj?.cpCode] || cpGenratedCode;
@@ -255,6 +288,11 @@ class CpManagementSrv {
             null,
           );
         }
+        const userName = cpExecute[userDataObj?.name];
+        const parentName = "Urbanrise Team";
+        const userEmail = cpExecute[userDataObj?.email];
+        const role = cpExecute[userDataObj?.role];
+        const projects = cpExecute[userDataObj?.projects].join("/n");
         cpExecute[userDataObj?.parentId] =
           cpExecute[userDataObj?.parentId] || branchHeadId;
         cpExecute[userDataObj?.cpCode] = cpGenratedCode;
@@ -271,12 +309,16 @@ class CpManagementSrv {
         const cpExecuteUser = await userSrv.createSaveUser(cpExecute);
         const userSch = new CpAppUser(cpExecuteUser);
         await userSch.save();
-        const userName = cpExecute[userDataObj?.name];
-        const parentName = "Urbanrise Team";
-        const userEmail = cpExecute[userDataObj?.email];
-        const role = cpExecute[userDataObj?.role];
-        const projects = cpExecute[userDataObj?.projects].join("/n");
-        sendMail(userName, parentName, userEmail, role, projects)
+
+        const mailOptions = cpMailOption(
+          userName,
+          parentName,
+          userEmail,
+          role,
+          projects,
+          cpGenratedCode,
+        );
+        sendMail(mailOptions)
           .then((result) => console.log("Email sent...", result))
           .catch((error) => console.log(error.message));
         return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
@@ -392,20 +434,26 @@ class CpManagementSrv {
     const cpCompanyresult = await this.retriveCpCompanys(providedUser);
     const cpCompanyData = cpCompanyresult?.result;
     const cpUsers = [];
-
     if (cpCompanyData) {
       cpCompanyData.map((companyData) => {
         const cpCompany = companyData?.company;
         const cpBranchHead = companyData?.cpBranchHead;
-        cpUsers.push(
-          `${cpCompany[userDataObj?.name]} - ${
+        const companyCode = companyData?.company?.cpCode;
+        cpUsers.push({
+          name: `${cpCompany[userDataObj?.name]} - ${
             cpBranchHead[userDataObj?.name]
           }`,
-        );
+          id: cpBranchHead?._id,
+          companyCode,
+        });
         (companyData.cpExecutes || []).map((cpExecute) => {
-          cpUsers.push(
-            `${cpCompany[userDataObj?.name]} - ${cpExecute[userDataObj?.name]}`,
-          );
+          cpUsers.push({
+            name: `${cpCompany[userDataObj?.name]} - ${
+              cpExecute[userDataObj?.name]
+            }`,
+            id: cpExecute?._id,
+            companyCode,
+          });
           return null;
         });
         return null;

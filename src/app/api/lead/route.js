@@ -64,13 +64,13 @@ export async function GET(request) {
     const leadStartDate = searchParams.get("leadStartDate");
     const leadEndDate = searchParams.get("leadEndDate");
     const params = {
-      project,
+      project: project || "",
       leadStartDate,
       leadEndDate,
     };
 
     const validateQuery = Joi.object({
-      project: Joi.string().required(),
+      project: Joi.string().allow(""),
       leadStartDate: Joi.string().required(),
       leadEndDate: Joi.string().required(),
     });

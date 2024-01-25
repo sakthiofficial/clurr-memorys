@@ -1,10 +1,7 @@
-import { cookies } from "next/headers";
 import Joi from "joi";
 import {
-  RESPONSE_MESSAGE_DETAILS,
   RESPONSE_STATUS,
   ApiResponse,
-  TOKEN_VARIABLES,
   RESPONSE_MESSAGE,
 } from "../../../appConstants";
 import ProjectSrv from "../../../services/projectSrv";

@@ -112,3 +112,63 @@ export function userMailOption(
     `,
   };
 }
+export function cpMailOption(
+  userName,
+  parentName,
+  userEmail,
+  role,
+  projects,
+  companyCode,
+) {
+  return {
+    from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
+    to: userEmail,
+    subject: "Message from Urbanrise",
+    html: `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              background-color: #f4f4f4;
+            }
+            .container {
+              max-width: 600px;
+              background-color: #ffffff;
+              padding: 30px;
+              border-radius: 10px;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              margin: 20px auto;
+            }
+            h1 {
+              color: #000;
+            }
+            p {
+              color: #555;
+              line-height: 1.5;
+              margin-bottom: 15px;
+            }
+            a {
+              color: #F9B800; /* Secondary color */
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Dear ${userName},</h1>
+  
+            <p>Congratulations! You have been designated as a ${role} for the following Urbanrise Hyderabad projects: ${projects}.</p>
+  
+            <p>Your company code is: ${companyCode}</p>
+
+            <p>Please contact the Urbanrise team to obtain your credentials.</p>
+  
+            <p>Login to our portal at: <a href="https://cph.urbanriseprojects.in" style="color: #F9B800;">https://cph.urbanriseprojects.in</a></p>
+  
+            <p>Best regards,<br>${parentName}</p>
+          </div>
+        </body>
+      </html>
+    `,
+  };
+}

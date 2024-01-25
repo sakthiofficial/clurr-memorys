@@ -26,7 +26,7 @@ export async function POST(request) {
 
     const validateQuery = Joi.object({
       parentId: Joi.string().required(),
-
+      cpEnteredCode: Joi.number(),
       cpCompany: Joi.object({
         name: Joi.string().required(),
         projects: Joi.array().items(Joi.string()).required(),

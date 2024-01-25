@@ -6,7 +6,7 @@ import {
   RESPONSE_STATUS,
   convertTimestampToDateTime,
 } from "../appConstants";
-import { userDataObj } from "../../shared/roleManagement";
+import { isPriorityUser, userDataObj } from "../../shared/roleManagement";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { CpAppCompany } from "../../models/AppCompany";
 import { CpAppRole } from "../../models/AppRole";
@@ -78,104 +78,117 @@ class LSQLeadSrv {
     );
     const endDate = convertISTtoUTC(convertTimestampToDateTime(leadEndDate));
     const { lsqConfig } = config;
-    const { accessKey, secretKey } = lsqConfig[project];
-    let apiPageIndex = 1;
+    const { projectCredential } = lsqConfig;
+    const projectArr = isPriorityUser(providedUser[userDataObj?.role])
+      ? Object.keys(projectCredential)
+      : providedUser[userDataObj?.projects];
+    const projectKeys = project ? [project] : projectArr;
 
+    console.log("projectkey", project, projectKeys);
     const data = [];
-    async function fetchLeadData(pageIndex) {
-      try {
-        const apiData = await axios.post(
-          `${lsqConfig?.apiUrl}LeadManagement.svc/Leads.Get?accessKey=${accessKey}&secretKey=${secretKey}`,
-          {
-            Parameter: {
-              LookupName: "CreatedOn",
-              LookupValue: startDate,
-              SqlOperator: ">=",
-            },
-            Columns: {
-              Include_CSV:
-                "mx_Origin_Project,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source",
-            },
-            Sorting: {
-              ColumnName: "CreatedOn",
-              Direction: "0",
-            },
-            Paging: {
-              PageIndex: pageIndex,
-              PageSize: 500,
-            },
-          },
-        );
-        return apiData;
-      } catch (error) {
-        console.log("Error While Fetch Lead Data ", error);
-        return null;
-      }
-    }
-    let apiData = await fetchLeadData(apiPageIndex);
 
-    for (let i = 0; i < apiData?.data.length; i += 1) {
-      const dateIst = convertUTCtoIST(
-        apiData.data[i][lsqLeadFieldNames?.createdOn],
-      );
+    await Promise.all(
+      projectKeys.map(async (projectName) => {
+        console.log(project);
+        const { accessKey, secretKey } = projectCredential[projectName];
+        let apiPageIndex = 1;
 
-      const createOnDate =
-        apiData.data[i][lsqLeadFieldNames.createdOn].split(" ");
-      const endApiDate = endDate.split(" ");
-      // if the data is
-      if (
-        createOnDate[0] === endApiDate[0] &&
-        apiData.data[i][lsqLeadFieldNames.createdOn].split(" ")[1] >
-          endDate.split(" ")[1]
-      ) {
-        console.log("comming here", data.length);
-        return data;
-      }
-      apiData.data[i][lsqLeadFieldNames?.createdOn] = dateIst;
-      const source = apiData.data[i][lsqLeadFieldNames?.source];
-
-      const structuredApiData = apiData.data[i];
-      if (source === lsqFieldValues?.source) {
-        let push = true;
-        if (
-          providedUser[userDataObj?.permissions].includes(
-            permissionKeyNames?.leadViewWithoutNumber,
-          )
-        ) {
-          structuredApiData[lsqLeadFieldNames?.phone] = null;
+        async function fetchLeadData(pageIndex) {
+          console.log(`Fetching in${projectName} and in ${pageIndex}`);
+          try {
+            const apiData = await axios.post(
+              `${lsqConfig?.apiUrl}LeadManagement.svc/Leads.Get?accessKey=${accessKey}&secretKey=${secretKey}`,
+              {
+                Parameter: {
+                  LookupName: "CreatedOn",
+                  LookupValue: startDate,
+                  SqlOperator: ">=",
+                },
+                Columns: {
+                  Include_CSV:
+                    "mx_Origin_Project,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source",
+                },
+                Sorting: {
+                  ColumnName: "CreatedOn",
+                  Direction: "0",
+                },
+                Paging: {
+                  PageIndex: pageIndex,
+                  PageSize: 500,
+                },
+              },
+            );
+            return apiData;
+          } catch (error) {
+            console.log("Error While Fetch Lead Data ", error);
+            return null;
+          }
         }
-        if (
-          providedUser[userDataObj?.role] === roleNames?.cpExecute ||
-          providedUser[userDataObj?.role] === roleNames?.cpBranchHead
-        ) {
-          const lsqCpCode =
-            apiData.data[i][lsqLeadFieldNames?.subSource].split(" ")[0];
-          const cpCode = providedUser[userDataObj?.cpCode];
-          push = cpCode === lsqCpCode;
-        }
+        let apiData = await fetchLeadData(apiPageIndex);
 
-        if (push) {
-          data.push(structuredApiData);
-        }
-      }
-      if (i + 1 === apiData.data.length && apiData.data.length > 0) {
-        apiPageIndex += 1;
+        for (let i = 0; i < apiData?.data.length; i += 1) {
+          const dateIst = convertUTCtoIST(
+            apiData.data[i][lsqLeadFieldNames?.createdOn],
+          );
 
-        apiData = await fetchLeadData(apiPageIndex);
-        i = 0;
-      }
-    }
+          const createOnDate =
+            apiData.data[i][lsqLeadFieldNames.createdOn].split(" ");
+          const endApiDate = endDate.split(" ");
+          // if the data is
+          if (
+            createOnDate[0] === endApiDate[0] &&
+            apiData.data[i][lsqLeadFieldNames.createdOn].split(" ")[1] >
+              endDate.split(" ")[1]
+          ) {
+            return data;
+          }
+          apiData.data[i][lsqLeadFieldNames?.createdOn] = dateIst;
+          const source = apiData.data[i][lsqLeadFieldNames?.source];
+
+          const structuredApiData = apiData.data[i];
+          if (source === lsqFieldValues?.source) {
+            let push = true;
+            if (
+              providedUser[userDataObj?.permissions].includes(
+                permissionKeyNames?.leadViewWithoutNumber,
+              )
+            ) {
+              structuredApiData[lsqLeadFieldNames?.phone] = null;
+            }
+            if (
+              providedUser[userDataObj?.role] === roleNames?.cpExecute ||
+              providedUser[userDataObj?.role] === roleNames?.cpBranchHead
+            ) {
+              const lsqCpCode =
+                apiData.data[i][lsqLeadFieldNames?.subSource].split(" ")[0];
+              const cpCode = providedUser[userDataObj?.cpCode];
+              push = cpCode === lsqCpCode;
+            }
+
+            if (push) {
+              data.push(structuredApiData);
+            }
+          }
+          if (i + 1 === apiData.data.length && apiData.data.length > 0) {
+            apiPageIndex += 1;
+
+            apiData = await fetchLeadData(apiPageIndex);
+            i = 0;
+          }
+        }
+      }),
+    );
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, data);
   };
 
   createLead = async (
     providedUser,
-    { id, project, userName, email, phone, notes },
+    { code, project, userName, email, phone, notes },
   ) => {
     // add project validation
     if (
       !providedUser[userDataObj?.permissions].includes(
-        permissionKeyNames?.cpManagement,
+        permissionKeyNames?.leadManagement,
       )
     ) {
       return new ApiResponse(
@@ -185,7 +198,7 @@ class LSQLeadSrv {
       );
     }
     try {
-      const cpCompany = await CpAppCompany.findOne({ _id: id });
+      const cpCompany = await CpAppCompany.findOne({ cpCode: code });
       if (!cpCompany) {
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
