@@ -28,7 +28,7 @@ export async function POST(req) {
 
       companyCode: Joi.string().required(),
       userName: Joi.string().required(),
-      email: Joi.string().required(),
+      email: Joi.string(),
       phone: Joi.string().required(),
       notes: Joi.string(),
       project: Joi.string().required(),
