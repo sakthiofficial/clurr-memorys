@@ -316,7 +316,7 @@ class CPUserSrv {
           permissions,
           subordinateRoles,
           _id,
-          name,
+          name: user[userDataObj?.name],
           role,
         },
       });
