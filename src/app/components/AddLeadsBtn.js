@@ -39,7 +39,7 @@ function AddLeadsBtn() {
     email: "",
     phone: "",
     project: "",
-    cp: "",
+    companyCode: "",
     id: "",
   });
   const [role, setRole] = useState("");
@@ -56,14 +56,15 @@ function AddLeadsBtn() {
   // handle cp function
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
-    setFormData((prevData) => ({
-      ...prevData,
-      cp: selectedCpName,
-    }));
 
     const selectedCp = resultCps?.data?.result?.find(
       (cp) => cp?.name === selectedCpName,
     );
+    setFormData((prevData) => ({
+      ...prevData,
+      companyCode: selectedCp?.companyCode,
+    }));
+
     if (selectedCp) {
       setFormData((prevData) => ({
         ...prevData,
@@ -100,7 +101,7 @@ function AddLeadsBtn() {
       email: "",
       phone: "",
       project: "",
-      cp: "",
+      companyCode: "",
       id: "",
       notes: "",
     });
@@ -265,7 +266,7 @@ function AddLeadsBtn() {
               </Select>
             </FormControl>
           )}
-          {/* <FormControl
+          <FormControl
             size="small"
             sx={{
               width: "90%",
@@ -289,7 +290,7 @@ function AddLeadsBtn() {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl> */}
+          </FormControl>
           <FormControl
             size="small"
             sx={{
