@@ -27,9 +27,10 @@ export async function GET(request) {
 
     return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
+    console.log(error);
     const response = new ApiResponse(
       RESPONSE_STATUS?.ERROR,
-      RESPONSE_MESSAGE?.INVALID,
+      RESPONSE_MESSAGE?.ERROR,
       error,
     );
     return NextResponse.json(response, { status: response?.status });

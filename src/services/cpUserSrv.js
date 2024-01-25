@@ -293,7 +293,7 @@ class CPUserSrv {
       user[userDataObj?.subordinateRoles] = userSubordinateRoles;
       user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
       let { projects } = user;
-      const { permissions, subordinateRoles, _id, role } = user;
+      const { permissions, subordinateRoles, _id, role, cpCode } = user;
 
       const sessionToken = this.genrateTokan();
       const sessionData = new Session({
@@ -318,6 +318,7 @@ class CPUserSrv {
           _id,
           name: user[userDataObj?.name],
           role,
+          cpCode,
         },
       });
     } catch (error) {
