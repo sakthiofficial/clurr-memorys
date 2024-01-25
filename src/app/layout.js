@@ -46,7 +46,7 @@ import themeFont from "../theme";
 import "react-toastify/dist/ReactToastify.css";
 import { usePathname } from "next/navigation";
 import { permissionKeyNames } from "../../shared/cpNamings";
-import LoginBanner from "../../public/loginBanner.png";
+import LoginBanner from "../../public/loginBanner2.png";
 import { ProfileInfo } from "./components/ProfileBtn";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -140,8 +140,9 @@ function Login() {
           <Image
             style={{ backgroundColor: "white" }}
             src={LoginBanner}
+            // width="100%"
             layout="fill"
-            objectFit="contain"
+            objectFit="cover"
           />
         </Grid>
         <Grid sx={{ width: "40%" }}>
@@ -249,10 +250,12 @@ function Login() {
                   sx={{
                     // border: "1px solid black",
                     width: "90%",
-                    backgroundColor: "rgba(249, 184, 0, 1)",
+                    backgroundColor: "black",
                     color: "white",
+                    height: "45px",
+                    borderRadius: "20px",
                     "&:hover": {
-                      backgroundColor: "rgba(249, 184, 0, 1)",
+                      backgroundColor: "black",
                       boxShadow: "none",
                       border: "none",
                     },
@@ -260,7 +263,13 @@ function Login() {
                   onClick={handleSubmit}
                   disabled={loginInProgress}
                 >
-                  {loginInProgress ? "Logging in..." : "Login"}
+                  {loginInProgress ? (
+                    <Typography sx={{ color: "gray" }}>
+                      Logging in...
+                    </Typography>
+                  ) : (
+                    <Typography sx={{ color: "white" }}>Login</Typography>
+                  )}
                 </Button>
               </Box>
             </Box>
@@ -526,7 +535,7 @@ export default function RootLayout({ children }) {
                           display: "flex",
                           justifyContent: "end",
                           alignItems: "center",
-                          paddingRight:"10px",
+                          paddingRight: "10px",
 
                           // border: "1px solid black",
                         }}

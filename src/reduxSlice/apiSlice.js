@@ -114,6 +114,12 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    getCPS: builder.query({
+      query: () => ({
+        url: `/cpManagenent/cpUsers`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -134,4 +140,5 @@ export const {
   useCpDeleteMutation,
   useGetUserByIdQuery,
   useGetProjectWithPermissionQuery,
+  useGetCPSQuery,
 } = apiSlice;

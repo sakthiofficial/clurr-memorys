@@ -16,6 +16,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Add } from "@mui/icons-material";
 import {
   useAddLeadMutation,
+  useGetCPSQuery,
   useGetCpQuery,
   useGetProjectQuery,
   useGetProjectWithPermissionQuery,
@@ -32,6 +33,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 function AddLeadsBtn() {
   const [open, setOpen] = useState(false);
+  const [permissionproject, setPermissionProject] = useState([]);
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
@@ -43,9 +45,10 @@ function AddLeadsBtn() {
   const [role, setRole] = useState("");
   const [projects, setProjects] = useState([]);
   // get cp data
-  const { data, isLoading, isError, error } = useGetCpQuery();
   // console.log(data);
   const resultProject = useGetProjectWithPermissionQuery();
+  const resultCps = useGetCPSQuery();
+
   // console.log(resultProject);
   // get project data
   // const result = useGetProjectQuery();
@@ -58,18 +61,15 @@ function AddLeadsBtn() {
       cp: selectedCpName,
     }));
 
-    const selectedCp = data?.result?.find(
-      (cp) => cp?.company?.name === selectedCpName,
+    const selectedCp = resultCps?.data?.result?.find(
+      (cp) => cp?.name === selectedCpName,
     );
     if (selectedCp) {
       setFormData((prevData) => ({
         ...prevData,
-        id: selectedCp?.company?._id,
+        id: selectedCp?.id,
       }));
-    }
-    if (selectedCp) {
-      const branchHead = selectedCp?.cpBranchHead?.name;
-      console.log("Branch Head:", branchHead);
+      console.log(selectedCp.id);
     }
   };
 
@@ -84,17 +84,11 @@ function AddLeadsBtn() {
   }, []);
 
   useEffect(() => {
-    if (resultProject.data) {
-      const datafilterProject = resultProject.data.result.map((item) => {
-        const result = item?.permissions?.find(
-          (permission) => permission === "leadAddAndView",
-        );
-        // console.log("hi", datafilterProject);
-      });
-      console.log("hi", datafilterProject);
-
-      // console.log("hi", resultProject.data.result);
-    }
+    const projectsWithLeadAddPermission = resultProject.data.result.filter(
+      (project) => project?.permission === "leadAddAndView",
+    );
+    setPermissionProject(projectsWithLeadAddPermission);
+    console.log(projectsWithLeadAddPermission);
   }, []);
 
   // handle submit function
@@ -112,7 +106,7 @@ function AddLeadsBtn() {
     });
     setOpen(false);
   };
-  // console.log(role);
+  console.log(role);
   return (
     <Grid>
       <Button
@@ -242,7 +236,60 @@ function AddLeadsBtn() {
               },
             }}
           />
-
+          {role[0] === "CP Branch Head" || "CP Executive" ? (
+            ""
+          ) : (
+            <FormControl
+              size="small"
+              sx={{
+                width: "90%",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "15px",
+                },
+              }}
+            >
+              <InputLabel id="demo-simple-select-label">Company</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={formData?.cp}
+                label="Company"
+                onChange={handleCpChange}
+                name="cp"
+              >
+                {resultCps?.data?.result?.map((cp) => (
+                  <MenuItem key={cp?.name} value={cp?.name}>
+                    {cp?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          {/* <FormControl
+            size="small"
+            sx={{
+              width: "90%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "15px",
+              },
+            }}
+          >
+            <InputLabel id="demo-simple-select-label">Company</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={formData?.cp}
+              label="Company"
+              onChange={handleCpChange}
+              name="cp"
+            >
+              {resultCps?.data?.result?.map((cp) => (
+                <MenuItem key={cp?.name} value={cp?.name}>
+                  {cp?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl> */}
           <FormControl
             size="small"
             sx={{
@@ -264,49 +311,20 @@ function AddLeadsBtn() {
               }
               MenuProps={{ disableScrollLock: true }}
             >
-              {projects?.map((proj) => (
-                <MenuItem key={proj} value={proj}>
-                  {proj}
+              {permissionproject?.map((proj) => (
+                <MenuItem key={proj.id} value={proj.name}>
+                  {proj.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-          {role === "CP Branch Head" ? (
-            ""
-          ) : (
-            <FormControl
-              size="small"
-              sx={{
-                width: "90%",
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: "15px",
-                },
-              }}
-            >
-              <InputLabel id="demo-simple-select-label">Company</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={formData?.cp}
-                label="Company"
-                onChange={handleCpChange}
-                name="cp"
-              >
-                {data?.result?.map((cp) => (
-                  <MenuItem key={cp?.company?.name} value={cp?.company?.name}>
-                    {`${cp?.company?.name} - ${cp?.cpBranchHead?.name}`}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
           <TextField
             // size="small"
             label="Notes"
             name="phone"
             type="text"
             id="outlined-textarea"
-            placeholder="Placeholder"
+            placeholder="enter exclusive notes..."
             multiline
             value={formData?.notes}
             onChange={(e) =>

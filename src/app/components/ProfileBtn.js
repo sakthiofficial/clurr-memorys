@@ -20,7 +20,8 @@ export function ProfileInfo({ name, role }) {
         gap: "5px",
         cursor: "pointer",
         position: "relative",
-        border: "1px solid black",
+        border: "1px solid rgba(250, 185, 0, 1)",
+        backgroundColor: "rgba(250, 185, 0, 0.2)",
         // width: "100%",
         padding: "5px",
         borderRadius: "48px",
@@ -67,7 +68,7 @@ export function ProfileInfo({ name, role }) {
           sx={{
             // minWidth: "200px",
             width: "280px",
-            height: "191px",
+            minHeight: "161px",
             flexShrink: "0",
             borderRadius: "18px",
             backgroundColor: "#FFF",
@@ -75,64 +76,30 @@ export function ProfileInfo({ name, role }) {
             padding: "1rem 0.5rem",
           }}
         >
-          <Grid container xs={12} alignItems="center">
-            <Grid item xs={3}>
-              <Avatar>{firstLetter}</Avatar>
-            </Grid>
-            <Grid
-              item
-              xs={9}
+          <Grid
+            sx={{
+              // border: "1px solid black",
+              width: "100%",
+              minHeight: "50px",
+              marginBottom: "15px",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{marginBottom:"10px"}}>{firstLetter}</Avatar>
+            {/* <Typography>{name}</Typography> */}
+            <Box
               sx={{
                 // border: "1px solid black",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-                alignItems: "center",
+                padding: "4px",
+                background: "rgba(0, 108, 181, 0.10)",
+                borderRadius: "15px",
               }}
             >
-              <Typography
-                variant="body1"
-                sx={{
-                  color: "#212121",
-
-                  fontSize: "18px",
-                  fontStyle: "normal",
-                  fontWeight: "600",
-                  padding: "5px",
-                  // lineHeight: "30px",
-                  // margin: "0px 5px",
-                }}
-              >
-                {name}
-              </Typography>
-              <Box
-                sx={{
-                  width: "108px",
-                  height: "34px",
-                  flexShrink: "0",
-                  borderRadius: "8px",
-                  background: "rgba(0, 108, 181, 0.10)",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  // margin: "5px 10px",
-                }}
-              >
-                <Typography
-                  variant="body"
-                  sx={{
-                    color: "#006CB5",
-                    fontSize: "10px",
-                    fontStyle: "normal",
-                    fontWeight: "500",
-                    padding: "2px",
-                    // lineHeight: "30px",
-                  }}
-                >
-                  {role}
-                </Typography>
-              </Box>
-            </Grid>
+              <Typography sx={{ fontSize: "12px",padding:"2px" }}>{role}</Typography>
+            </Box>
           </Grid>
           <Grid container xs={12}>
             <Button

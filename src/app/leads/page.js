@@ -282,6 +282,8 @@ export default function Page() {
       ? leadsDatas.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
+  const rowlength = slicedRows.length;
+  console.log(rowlength);
   // card details
   // const getBackgroundColor = (name) => {
   //   switch (name) {
@@ -472,50 +474,64 @@ export default function Page() {
                       <TableCell>Name</TableCell>
                       <TableCell>Contact</TableCell>
                       <TableCell>Email</TableCell>
-                      <TableCell>Project</TableCell>
+                      <TableCell>CP Name</TableCell>
+                      <TableCell>Stage</TableCell>
                       <TableCell>Created By</TableCell>
                       <TableCell>Action</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {slicedRows?.map((row) => (
-                      <TableRow key={row?.id}>
-                        <TableCell>{row?.FirstName || "N/A"}</TableCell>
-                        <TableCell>{row?.Phone || "N/A"}</TableCell>
-                        <TableCell>{row?.EmailAddress || "N/A"}</TableCell>
-                        <TableCell>{row?.mx_Origin_Project || "N/A"}</TableCell>
-                        <TableCell>{row?.CreatedOn || "N/A"}</TableCell>
-                        <TableCell>
-                          <Grid
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Link href="/leads/view">
-                              <Button
-                                variant="outlined"
-                                sx={{
-                                  borderRadius: "10px",
-                                  color: "black",
-                                  width: "58px",
-                                  height: "28px",
-                                  border: "none",
-                                  backgroundColor: "rgba(249, 184, 0, 1)",
-                                  "&:hover": {
-                                    backgroundColor: "rgba(249, 184, 0, 1)",
-                                    boxShadow: "none",
-                                    border: "none",
-                                  },
-                                }}
-                              >
-                                view
-                              </Button>
-                            </Link>
-                          </Grid>
-                        </TableCell>
+                    {slicedRows?.length === 0 ? (
+                      <TableRow>
+                        <TableCell>*******</TableCell>
+                        <TableCell>*******</TableCell>
+                        <TableCell>*******</TableCell>
+                        <TableCell>*******</TableCell>
+                        <TableCell>*******</TableCell>
+                        <TableCell>*******</TableCell>
+                        <TableCell>*******</TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      slicedRows?.map((row) => (
+                        <TableRow key={row?.id}>
+                          <TableCell>{row?.FirstName || "N/A"}</TableCell>
+                          <TableCell>{row?.Phone || "N/A"}</TableCell>
+                          <TableCell>{row?.EmailAddress || "N/A"}</TableCell>
+                          <TableCell>{row?.mx_Sub_Source || "N/A"}</TableCell>
+                          <TableCell>{row?.ProspectStage || "N/A"}</TableCell>
+                          <TableCell>{row?.CreatedOn || "N/A"}</TableCell>
+                          <TableCell>
+                            <Grid
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Link href="/leads/view">
+                                <Button
+                                  variant="outlined"
+                                  sx={{
+                                    borderRadius: "10px",
+                                    color: "black",
+                                    width: "58px",
+                                    height: "28px",
+                                    border: "none",
+                                    backgroundColor: "rgba(249, 184, 0, 1)",
+                                    "&:hover": {
+                                      backgroundColor: "rgba(249, 184, 0, 1)",
+                                      boxShadow: "none",
+                                      border: "none",
+                                    },
+                                  }}
+                                >
+                                  view
+                                </Button>
+                              </Link>
+                            </Grid>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               )}
