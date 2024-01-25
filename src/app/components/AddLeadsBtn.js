@@ -38,6 +38,7 @@ function AddLeadsBtn() {
   const [permissionproject, setPermissionProject] = useState([]);
   const [userId, setUserId] = useState("");
   const [role, setRole] = useState("");
+  const [userCpCode, setUserCpCode] = useState("");
   const [selectedCompanyName, setSelectedCompanyName] = useState("");
   const checkBranchHeadAndExecutes = checkValidRoleToAddLead(role);
   console.log(checkBranchHeadAndExecutes);
@@ -61,6 +62,7 @@ function AddLeadsBtn() {
       const jsonData = JSON.parse(storedData);
       setRole(jsonData.role || "");
       setUserId(jsonData._id);
+      setUserCpCode(jsonData.cpCode);
     } else {
       console.error("No data found");
     }
@@ -69,22 +71,9 @@ function AddLeadsBtn() {
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
     setSelectedCompanyName(selectedCpName);
-    // const selectedCp = resultCps?.data?.result?.find(
-    //   (cp) => cp?.name === selectedCpName,
-    // );
-    // setFormData((prevData) => ({
-    //   ...prevData,
-    //   companyCode: selectedCp?.companyCode,
-    // }));
-
-    // if (selectedCp) {
-    //   setFormData((prevData) => ({
-    //     ...prevData,
-    //     id: selectedCp?.id,
-    //   }));
-    // }
   };
-  // console.log(userId)
+
+  
   useEffect(() => {
     const projectsWithLeadAddPermission = resultProject.data.result.filter(
       (project) => project?.permission === "leadAddAndView",
@@ -98,7 +87,7 @@ function AddLeadsBtn() {
       (cp) => cp?.name === selectedCompanyName,
     );
 
-    if (selectedCp) {
+    if (selectedCompanyName) {
       setFormData((prevData) => ({
         ...prevData,
         companyCode: selectedCp?.companyCode,
@@ -108,11 +97,11 @@ function AddLeadsBtn() {
       console.error(`Company with name  not found in resultCps.`);
       setFormData((prevData) => ({
         ...prevData,
-        companyCode: "DEFAULT_COMPANY_CODE",
+        companyCode: userCpCode,
         id: userId,
       }));
     }
-  }, [resultCps]);
+  }, [resultCps, selectedCompanyName]);
 
   // handle submit function
   // const handleSubmit = () => {
