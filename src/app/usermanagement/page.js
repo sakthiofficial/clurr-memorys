@@ -222,7 +222,7 @@ export default function Page() {
                       <TableCell>{row?.email || "N/A"}</TableCell>
                       <TableCell>
                         {row?.projects && row?.projects?.length > 0
-                          ? row?.projects.join(", ")
+                          ? row?.projects.join(",")
                           : "N/A"}
                       </TableCell>
                       <TableCell>{row?.role || "N/A"}</TableCell>

@@ -14,6 +14,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import { Add } from "@mui/icons-material";
+import { toast } from "react-toastify";
 import {
   useAddLeadMutation,
   useGetCPSQuery,
@@ -21,6 +22,7 @@ import {
   useGetProjectQuery,
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
+import { checkValidRoleToAddLead } from "../../../shared/roleManagement";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -34,6 +36,12 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 function AddLeadsBtn() {
   const [open, setOpen] = useState(false);
   const [permissionproject, setPermissionProject] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [role, setRole] = useState("");
+  const [userCpCode, setUserCpCode] = useState("");
+  const [selectedCompanyName, setSelectedCompanyName] = useState("");
+  const checkBranchHeadAndExecutes = checkValidRoleToAddLead(role);
+  console.log(checkBranchHeadAndExecutes);
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
@@ -42,48 +50,30 @@ function AddLeadsBtn() {
     companyCode: "",
     id: "",
   });
-  const [role, setRole] = useState("");
-  const [projects, setProjects] = useState([]);
+  console.log(formData.id);
   // get cp data
   // console.log(data);
   const resultProject = useGetProjectWithPermissionQuery();
   const resultCps = useGetCPSQuery();
-
-  // console.log(resultProject);
-  // get project data
-  // const result = useGetProjectQuery();
-  // console.log(result.data?.result);
-  // handle cp function
-  const handleCpChange = (event) => {
-    const selectedCpName = event.target.value;
-
-    const selectedCp = resultCps?.data?.result?.find(
-      (cp) => cp?.name === selectedCpName,
-    );
-    setFormData((prevData) => ({
-      ...prevData,
-      companyCode: selectedCp?.companyCode,
-    }));
-
-    if (selectedCp) {
-      setFormData((prevData) => ({
-        ...prevData,
-        id: selectedCp?.id,
-      }));
-      console.log(selectedCp.id);
-    }
-  };
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setRole(jsonData.role || "");
+      setUserId(jsonData._id);
+      setUserCpCode(jsonData.cpCode);
     } else {
       console.error("No data found");
     }
   }, []);
 
+  const handleCpChange = (event) => {
+    const selectedCpName = event.target.value;
+    setSelectedCompanyName(selectedCpName);
+  };
+
+  
   useEffect(() => {
     const projectsWithLeadAddPermission = resultProject.data.result.filter(
       (project) => project?.permission === "leadAddAndView",
@@ -92,21 +82,62 @@ function AddLeadsBtn() {
     console.log(projectsWithLeadAddPermission);
   }, []);
 
-  // handle submit function
-  const handleSubmit = () => {
-    console.log(formData);
+  useEffect(() => {
+    const selectedCp = resultCps?.data?.result?.find(
+      (cp) => cp?.name === selectedCompanyName,
+    );
 
-    setFormData({
-      userName: "",
-      email: "",
-      phone: "",
-      project: "",
-      companyCode: "",
-      id: "",
-      notes: "",
-    });
-    setOpen(false);
+    if (selectedCompanyName) {
+      setFormData((prevData) => ({
+        ...prevData,
+        companyCode: selectedCp?.companyCode,
+        id: selectedCp?.id,
+      }));
+    } else {
+      console.error(`Company with name  not found in resultCps.`);
+      setFormData((prevData) => ({
+        ...prevData,
+        companyCode: userCpCode,
+        id: userId,
+      }));
+    }
+  }, [resultCps, selectedCompanyName]);
+
+  // handle submit function
+  // const handleSubmit = () => {
+  //   if (!formData.id || !formData.companyCode) {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       id: userId,
+  //       companyCode: "DEFAULT_COMPANY_CODE",
+  //     }));
+  //   }
+
+  //   console.log(formData);
+
+  //   try {
+  //     setFormData({
+  //       userName: "",
+  //       email: "",
+  //       phone: "",
+  //       project: "",
+  //       companyCode: "",
+  //       id: "",
+  //       notes: "",
+  //     });
+  //     setOpen(false);
+  //   } catch (error) {
+  //     console.error("User submission failed", error);
+  //     // Toast.error("User submission failed. Please try again.");
+  //   }
+  // };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(formData);
   };
+
   console.log(role);
   return (
     <Grid>
@@ -237,7 +268,7 @@ function AddLeadsBtn() {
               },
             }}
           />
-          {role[0] === "CP Branch Head" || "CP Executive" ? (
+          {role[0] === "CP Branch Head" || role[0] === "CP Executive" ? (
             ""
           ) : (
             <FormControl
@@ -266,31 +297,6 @@ function AddLeadsBtn() {
               </Select>
             </FormControl>
           )}
-          <FormControl
-            size="small"
-            sx={{
-              width: "90%",
-              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderRadius: "15px",
-              },
-            }}
-          >
-            <InputLabel id="demo-simple-select-label">Company</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={formData?.cp}
-              label="Company"
-              onChange={handleCpChange}
-              name="cp"
-            >
-              {resultCps?.data?.result?.map((cp) => (
-                <MenuItem key={cp?.name} value={cp?.name}>
-                  {cp?.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           <FormControl
             size="small"
             sx={{
