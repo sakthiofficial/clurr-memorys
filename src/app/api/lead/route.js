@@ -25,6 +25,8 @@ export async function POST(req) {
     const bodyData = await req.json();
     const validateQuery = Joi.object({
       id: Joi.string().required(),
+
+      companyCode: Joi.string().required(),
       userName: Joi.string().required(),
       email: Joi.string().required(),
       phone: Joi.string().required(),

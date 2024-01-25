@@ -166,6 +166,17 @@ function isPriorityUser(userRole) {
     roleArr.includes(roleNames?.cpBusinessHead);
   return isPriorityRole;
 }
+function checkValidRoleToAddLead(userRole) {
+  let roleArr = userRole;
+  if (typeof userRole === "string") {
+    roleArr = [userRole];
+  }
+  const isCpRole =
+    roleArr.includes(roleNames?.cpBranchHead) ||
+    roleArr.includes(roleNames?.cpExecute);
+
+  return isCpRole;
+}
 function isNonPriorityUser(userRole) {
   let roleArr = userRole;
   if (typeof userRole === "string") {
@@ -225,5 +236,6 @@ export {
   checkValidParent,
   isPriorityUser,
   isNonPriorityUser,
+  checkValidRoleToAddLead,
   userDataObj,
 };

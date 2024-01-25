@@ -19,7 +19,7 @@ import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import sendMail from "../helper/emailSender";
 import { CpAppRole } from "../../models/AppRole";
 import CPUserSrv from "./cpUserSrv";
-import { cpMailOption } from "@/helper/email/mailOptions";
+import { cpMailOption } from "../helper/email/mailOptions";
 
 class CpManagementSrv {
   constructor() {

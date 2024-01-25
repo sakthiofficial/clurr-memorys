@@ -6,12 +6,18 @@ import {
   RESPONSE_STATUS,
   convertTimestampToDateTime,
 } from "../appConstants";
-import { isPriorityUser, userDataObj } from "../../shared/roleManagement";
+import {
+  checkValidRoleToAddLead,
+  isPriorityUser,
+  userDataObj,
+} from "../../shared/roleManagement";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { CpAppCompany } from "../../models/AppCompany";
 import { CpAppRole } from "../../models/AppRole";
 import { CpAppProject } from "../../models/AppProject";
 import { CpAppPermission } from "../../models/Permission";
+import { CpAppUser } from "../../models/AppUser";
+import CPUserSrv from "./cpUserSrv";
 
 const { default: axios } = require("axios");
 
@@ -21,10 +27,11 @@ class LSQLeadSrv {
       "https://api-in21.leadsquared.com/v2/LeadManagement.svc/Lead.Capture";
     this.leadFromLsqByPhone = async (phone, project) => {
       const { lsqConfig } = config;
-      if (!lsqConfig[project]) {
+      const { projectCredential } = lsqConfig;
+      if (!projectCredential[project]) {
         return null;
       }
-      const { accessKey, secretKey } = lsqConfig[project];
+      const { accessKey, secretKey } = projectCredential[project];
 
       const lsqData = await axios.get(
         `${lsqConfig?.apiUrl}LeadManagement.svc/RetrieveLeadByPhoneNumber?accessKey=${accessKey}&secretKey=${secretKey}&phone=${phone}`,
@@ -183,7 +190,7 @@ class LSQLeadSrv {
 
   createLead = async (
     providedUser,
-    { code, project, userName, email, phone, notes },
+    { id, companyCode, project, userName, email, phone, notes },
   ) => {
     // add project validation
     if (
@@ -198,17 +205,22 @@ class LSQLeadSrv {
       );
     }
     try {
-      const cpCompany = await CpAppCompany.findOne({ cpCode: code });
-      if (!cpCompany) {
+      const cpCompany = await CpAppCompany.findOne({ cpCode: companyCode });
+      const userSrv = new CPUserSrv();
+      const cpUser = await userSrv.getUserById(id);
+
+      if (!cpCompany || !checkValidRoleToAddLead(cpUser[userDataObj?.role])) {
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
           RESPONSE_MESSAGE?.INVALID,
           null,
         );
       }
-      const { name, cpCode } = cpCompany;
+      const subSource = `${companyCode} - ${cpUser[userDataObj?.name]} `;
+
       const { lsqConfig } = config;
-      const { accessKey, secretKey } = lsqConfig[project];
+      const { projectCredential } = lsqConfig;
+      const { accessKey, secretKey } = projectCredential[project];
       const { source } = lsqFieldValues;
       const postBody = [
         {
@@ -229,9 +241,12 @@ class LSQLeadSrv {
         },
         {
           Attribute: lsqLeadFieldNames?.subSource,
-          Value: `${cpCode} - ${name} `,
+          Value: subSource,
         },
-
+        {
+          Attribute: lsqLeadFieldNames?.project,
+          Value: project,
+        },
         {
           Attribute: lsqLeadFieldNames?.notes,
           Value: notes,
@@ -244,6 +259,7 @@ class LSQLeadSrv {
           secretKey,
         },
       });
+      console.log(promise);
       return new ApiResponse(
         promise?.status,
         promise?.statusText,
@@ -268,6 +284,7 @@ class LSQLeadSrv {
       );
     }
     const leadData = await this.leadFromLsqByPhone(phone, project);
+    console.log(leadData);
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, leadData);
   };
 }
