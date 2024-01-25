@@ -18,6 +18,7 @@ import {
   useAddLeadMutation,
   useGetCpQuery,
   useGetProjectQuery,
+  useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -40,11 +41,12 @@ function AddLeadsBtn() {
     id: "",
   });
   const [role, setRole] = useState("");
-  const [projects, setProjects] = useState();
+  const [projects, setProjects] = useState([]);
   // get cp data
   const { data, isLoading, isError, error } = useGetCpQuery();
   // console.log(data);
-
+  const resultProject = useGetProjectWithPermissionQuery();
+  // console.log(resultProject);
   // get project data
   // const result = useGetProjectQuery();
   // console.log(result.data?.result);
@@ -65,18 +67,36 @@ function AddLeadsBtn() {
         id: selectedCp?.company?._id,
       }));
     }
+    if (selectedCp) {
+      const branchHead = selectedCp?.cpBranchHead?.name;
+      console.log("Branch Head:", branchHead);
+    }
   };
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
     if (storedData) {
       const jsonData = JSON.parse(storedData);
-      setProjects(jsonData.projects || []);
       setRole(jsonData.role || "");
     } else {
-      console.error('No data found in local storage for key "user".');
+      console.error("No data found");
     }
   }, []);
+
+  useEffect(() => {
+    if (resultProject.data) {
+      const datafilterProject = resultProject.data.result.map((item) => {
+        const result = item?.permissions?.find(
+          (permission) => permission === "leadAddAndView",
+        );
+        // console.log("hi", datafilterProject);
+      });
+      console.log("hi", datafilterProject);
+
+      // console.log("hi", resultProject.data.result);
+    }
+  }, []);
+
   // handle submit function
   const handleSubmit = () => {
     console.log(formData);
@@ -88,6 +108,7 @@ function AddLeadsBtn() {
       project: "",
       cp: "",
       id: "",
+      notes: "",
     });
     setOpen(false);
   };
@@ -119,12 +140,13 @@ function AddLeadsBtn() {
         onClose={() => setOpen(false)}
         aria-labelledby="customized-dialog-title"
         open={open}
-        maxWidth="xs"
+        maxWidth="md"
         PaperProps={{
           sx: {
             borderRadius: "34px",
-            minHeight: "500px",
-            border: "1px solid black",
+            minHeight: "550px",
+            width: "40%",
+            // border: "1px solid black",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -137,7 +159,7 @@ function AddLeadsBtn() {
           sx={{
             border: "none",
             height: "55px",
-            width: "400px",
+            width: "100%",
             borderRadius: "19px",
             backgroundColor: "#F9B800",
             display: "flex",
@@ -166,8 +188,8 @@ function AddLeadsBtn() {
         <Grid
           sx={{
             border: "1px solid rgba(189, 189, 189, 1)",
-            height: "340px",
-            width: "400px",
+            height: "390px",
+            width: "100%",
             borderRadius: "19px",
             display: "flex",
             flexDirection: "column",
@@ -272,26 +294,38 @@ function AddLeadsBtn() {
               >
                 {data?.result?.map((cp) => (
                   <MenuItem key={cp?.company?.name} value={cp?.company?.name}>
-                    {`${cp?.company?.name} - ${cp?.cpBranchHead?.name} - `}
-                    {cp?.cpExecutes?.map((executive, index) => (
-                      <Typography key={index}>
-                        {`${executive.name}${
-                          index !== cp?.cpExecutes.length - 1 ? ", " : ""
-                        }`}
-                      </Typography>
-                    ))}
+                    {`${cp?.company?.name} - ${cp?.cpBranchHead?.name}`}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           )}
+          <TextField
+            // size="small"
+            label="Notes"
+            name="phone"
+            type="text"
+            id="outlined-textarea"
+            placeholder="Placeholder"
+            multiline
+            value={formData?.notes}
+            onChange={(e) =>
+              setFormData({ ...formData, notes: e.target.value })
+            }
+            sx={{
+              width: "90%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "15px",
+              },
+            }}
+          />
         </Grid>
         <Button
           onClick={handleSubmit}
           sx={{
             border: "none",
             height: "55px",
-            width: "400px",
+            width: "100%",
             borderRadius: "19px",
             backgroundColor: "black",
             color: "white",
@@ -302,8 +336,9 @@ function AddLeadsBtn() {
             },
           }}
         >
+          Save Lead &nbsp;
           <Add sx={{ fontSize: "18px" }} />
-          ADD USER
+          &nbsp; ADD Another Lead
         </Button>
       </BootstrapDialog>
     </Grid>

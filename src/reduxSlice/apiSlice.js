@@ -108,6 +108,12 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    getProjectWithPermission: builder.query({
+      query: () => ({
+        url: `/project`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -127,4 +133,5 @@ export const {
   useGetLeadsByDateQuery,
   useCpDeleteMutation,
   useGetUserByIdQuery,
+  useGetProjectWithPermissionQuery,
 } = apiSlice;

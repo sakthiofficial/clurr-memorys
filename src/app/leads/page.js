@@ -42,7 +42,10 @@ import ExportLeadsBtn from "../components/ExportLeadsBtn";
 import { permissionKeyNames } from "../../../shared/cpNamings";
 import { dateToUnixTimestamp } from "../../../shared/dateCalc";
 import "rsuite/dist/rsuite.min.css";
-import { useGetLeadsByDateQuery } from "@/reduxSlice/apiSlice";
+import {
+  useGetLeadsByDateQuery,
+  useGetProjectWithPermissionQuery,
+} from "@/reduxSlice/apiSlice";
 
 // card details
 // const users = [
@@ -144,17 +147,37 @@ export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState("");
-
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const resultProject = useGetProjectWithPermissionQuery();
+  const projectloader = resultProject.isFetching;
+  // console.log(projectloader);
   // project change and set intial project functions
   const handleChangeProject = async (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
+
+    const selectProject = resultProject?.data?.result?.find(
+      (project) => project.name === selectedProjectName,
+    );
+
+    setSelectedProjectId(selectProject?._id || null);
+
+    // console.log(selectedProject);
   };
+
+  // console.log(selectedProjectId);
   useEffect(() => {
     if (projects && projects.length > 0) {
       setSelectedProject(projects[0]);
     }
   }, [projects]);
+
+  useEffect(() => {
+    if (resultProject?.data?.result && resultProject.data.result.length > 0) {
+      const initialSelectedProject = resultProject.data.result[0];
+      setSelectedProjectId(initialSelectedProject?._id || null);
+    }
+  }, [resultProject]);
 
   // permissions and project set for login user
   useEffect(() => {
@@ -167,6 +190,8 @@ export default function Page() {
       console.error('No data found in local storage for key "user".');
     }
   }, []);
+
+  // console.log(resultProject?.data?.result);
 
   // date range functions
 
@@ -199,10 +224,6 @@ export default function Page() {
       last7Days: "Last 7 Days",
     },
   };
-  // const [selectedDateRangeFilter, setSelectedDateRangeFilter] = useState([
-  //   null,
-  //   null,
-  // ]);
 
   const intialStartDate = dateToUnixTimestamp(defaultFilterValue[0]);
   const intialEndDate = dateToUnixTimestamp(defaultFilterValue[1]);
@@ -275,7 +296,6 @@ export default function Page() {
   //   }
   // };
   // console.log(data.result);
-
   return (
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
@@ -346,9 +366,9 @@ export default function Page() {
               onChange={handleChangeProject}
               MenuProps={{ disableScrollLock: true }}
             >
-              {projects?.map((proj) => (
-                <MenuItem key={proj} value={proj}>
-                  {proj}
+              {resultProject?.data?.result?.map((proj) => (
+                <MenuItem key={proj.name} value={proj.name}>
+                  {proj.name}
                 </MenuItem>
               ))}
             </Select>
@@ -365,11 +385,22 @@ export default function Page() {
             // border: "1px solid black",
           }}
         >
-          {permissions &&
+          {/* {permissions &&
             permissions.includes(permissionKeyNames.leadManagement) && (
               <AddLeadsBtn />
+            )} */}
+          {permissions &&
+            permissions.includes(permissionKeyNames.leadManagement) && (
+              <>
+                {resultProject?.data?.result?.map((permission) => (
+                  <Grid key={permission.id}>
+                    {permission.permission === "leadAddAndView" &&
+                      permission._id === selectedProjectId && <AddLeadsBtn />}
+                  </Grid>
+                ))}
+              </>
             )}
-          <ExportLeadsBtn />
+          {/* <ExportLeadsBtn /> */}
         </Grid>
       </Grid>
 
