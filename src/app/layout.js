@@ -316,7 +316,7 @@ export default function RootLayout({ children }) {
             // alignItems: "center",
           }}
         >
-          <Link href="/">
+          <Link href="/leads">
             <Image
               priority
               src="/Logo.svg"
@@ -410,18 +410,24 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
-    console.log("cookie", document.cookie);
+    // console.log("cookie", document.cookie);
 
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
       setPermissions(jsonData.permissions || []);
+
+      // Redirect to "/leads" if the user tries to access the home page
+      if (pathname === "/") {
+        window.location.href = "/leads";
+      }
     } else {
       setUser(null);
       console.error('No data found in local storage for key "user".');
     }
     setLoading(false);
-  }, []);
+  }, [pathname]);
+
   // console.log(user.role[0])
   // console.log(user.name)
 

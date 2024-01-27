@@ -1,14 +1,24 @@
 "use client";
 
-import { Button, Grid, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { useGetLeadByPhoneQuery } from "@/reduxSlice/apiSlice";
 
-export default function Page() {
+export default function Page({ searchParams }) {
   const router = useRouter();
+  const { phone } = searchParams;
+  const { project } = searchParams;
+
+  const phonenumber = phone.slice(4, 14);
+  // console.log(phonenumber);
+  // console.log(project);
+
+  // get leads by phone
+  const { data, isFetching } = useGetLeadByPhoneQuery({ project, phonenumber });
+  // console.log(data);
 
   // handle back function
-
   const handleBack = () => {
     router.push("/leads");
   };
@@ -28,228 +38,251 @@ export default function Page() {
           back
         </Button>
       </Grid>
-      <Grid
-        sx={{
-          minHeight: "100vh",
-        }}
-      >
+      {isFetching && (
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            height: "80vh",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+      {data?.result.map((leads) => (
         <Grid
           sx={{
-            border: "1px solid lightgrey",
-            minheight: "20vh",
-            borderRadius: "30px",
-            marginBottom: "20px",
+            minHeight: "100vh",
           }}
         >
           <Grid
             sx={{
-              height: "10vh",
-              display: "flex",
-              alignItems: "center",
-              backgroundColor: "rgba(250, 185, 0, 0.06)",
-              borderRadius: "30px 30px 0px 0px",
+              border: "1px solid lightgrey",
+              minheight: "20vh",
+              borderRadius: "30px",
+              marginBottom: "20px",
             }}
           >
-            <Typography
+            <Grid
               sx={{
-                fontSize: "20px",
+                height: "10vh",
+                display: "flex",
+                alignItems: "center",
+                backgroundColor: "rgba(250, 185, 0, 0.06)",
+                borderRadius: "30px 30px 0px 0px",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "20px",
+                  padding: " 0px 30px",
+                }}
+              >
+                Client Details
+              </Typography>
+            </Grid>
+            <Grid
+              sx={{
+                height: "10vh",
+                display: "flex",
+                alignItems: "center",
                 padding: " 0px 30px",
+                width: "100%",
+                justifyContent: "space-between",
               }}
             >
-              Client Details
-            </Typography>
-          </Grid>
-          <Grid
-            sx={{
-              height: "10vh",
-              display: "flex",
-              alignItems: "center",
-              padding: " 0px 30px",
-              width: "100%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Grid sx={{ display: "flex" }}>
-              <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                Name
-              </Typography>
-              &nbsp;:&nbsp;&nbsp;
-              <Typography>Asfer</Typography>
-            </Grid>
-            <Grid sx={{ display: "flex" }}>
-              <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                Email
-              </Typography>
-              &nbsp;:&nbsp;&nbsp;
-              <Typography>asfar@gmail.com</Typography>
-            </Grid>
-            <Grid sx={{ display: "flex" }}>
-              <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                Phone
-              </Typography>
-              &nbsp;:&nbsp;&nbsp;
-              <Typography>8220958384</Typography>
+              <Grid sx={{ display: "flex" }}>
+                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  Name
+                </Typography>
+                &nbsp;:&nbsp;&nbsp;
+                <Typography>{leads?.FirstName || "N/A"}</Typography>
+              </Grid>
+              <Grid sx={{ display: "flex" }}>
+                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  Email
+                </Typography>
+                &nbsp;:&nbsp;&nbsp;
+                <Typography>{leads?.EmailAddress || "N/A"}</Typography>
+              </Grid>
+              <Grid sx={{ display: "flex" }}>
+                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  Phone
+                </Typography>
+                &nbsp;:&nbsp;&nbsp;
+                <Typography>{leads?.Phone || "N/A"}</Typography>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid sx={{ minHeight: "50vh", marginBottom: "20px" }}>
-          <Grid
-            sx={{
-              height: "50vh",
-              // border: "1px solid black",
-              display: "flex",
-              justifyContent: "space-between",
-              // flexDirection: "column",
-              flexWrap: "wrap",
-            }}
-          >
+          <Grid sx={{ minHeight: "50vh", marginBottom: "20px" }}>
             <Grid
               sx={{
-                width: "48%",
-                border: "1px solid lightgray",
-                borderRadius: "30px",
+                height: "50vh",
+                // border: "1px solid black",
                 display: "flex",
-                // justifyContent: "space-around",
-                padding: "30px 0px",
+                justifyContent: "space-between",
+                // flexDirection: "column",
+                flexWrap: "wrap",
               }}
             >
               <Grid
                 sx={{
-                  // border: "1px solid black",
-                  // height: "100%",
+                  width: "48%",
+                  border: "1px solid lightgray",
+                  borderRadius: "30px",
                   display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  paddingLeft: "20px",
-                  paddingRight: "40px",
+                  // justifyContent: "space-around",
+                  padding: "30px 0px",
                 }}
               >
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Project
-                </Typography>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Lead Sourse
-                </Typography>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Cp Name
-                </Typography>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Is Primary
-                </Typography>
-              </Grid>
-              <Grid
-                sx={{
-                  // border: "1px solid black",
-                  // height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  // padding: "40px",
-                }}
-              >
-                <Typography>City with Infinite Life</Typography>
-                <Typography>Channel Partner</Typography>
-                <Typography>Damani Consulting Services - URBCP00076</Typography>
-                <Typography>yes</Typography>
-              </Grid>
-            </Grid>
-            <Grid
-              sx={{
-                width: "48%",
-                border: "1px solid lightgray",
-                borderRadius: "30px",
-                display: "flex",
-                // justifyContent: "space-around",
-                padding: "30px 0px",
-              }}
-            >
-              <Grid
-                sx={{
-                  // border: "1px solid black",
-                  // height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  // padding: "40px",
-                  paddingLeft: "20px",
-                  paddingRight: "40px",
-                }}
-              >
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Lead Status
-                </Typography>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Registration Status
-                </Typography>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Created Date & Time
-                </Typography>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                  Created By
-                </Typography>
-              </Grid>
-              <Grid
-                sx={{
-                  // border: "1px solid black",
-                  // height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  // padding: "40px",
-                }}
-              >
-                <Grid>
-                  <Typography
-                    sx={{
-                      display: "inline-block",
-                      minWidth: "80px",
-                      // height: "20px",
-                      borderRadius: "10px",
-                      backgroundColor: "#00ad11",
-                      color: "white",
-                      paddingLeft: "10px",
-                      paddingRight: "10px",
-                      alignItems: "center",
-                      textAlign: "center",
-                    }}
-                  >
-                  site visit done and booked
+                <Grid
+                  sx={{
+                    // border: "1px solid black",
+                    // height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    paddingLeft: "20px",
+                    paddingRight: "40px",
+                  }}
+                >
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Project
+                  </Typography>
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Lead Sourse
+                  </Typography>
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Cp Name
+                  </Typography>
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Is Primary
                   </Typography>
                 </Grid>
-                <Typography>Success</Typography>
-                <Typography>Jan 22, 2024 12:20 PM</Typography>
-                <Typography>Asfer</Typography>
+                <Grid
+                  sx={{
+                    // border: "1px solid black",
+                    // height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    // padding: "40px",
+                  }}
+                >
+                  <Typography>{project || "N/A"}</Typography>
+                  <Typography>{leads?.Source || "N/A"}</Typography>
+                  <Typography>{leads?.mx_Sub_Source || "N/A"}</Typography>
+                  <Typography>N/A</Typography>
+                </Grid>
+              </Grid>
+              <Grid
+                sx={{
+                  width: "48%",
+                  border: "1px solid lightgray",
+                  borderRadius: "30px",
+                  display: "flex",
+                  // justifyContent: "space-around",
+                  padding: "30px 0px",
+                }}
+              >
+                <Grid
+                  sx={{
+                    // border: "1px solid black",
+                    // height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    // padding: "40px",
+                    paddingLeft: "20px",
+                    paddingRight: "40px",
+                  }}
+                >
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Lead Status
+                  </Typography>
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Registration Status
+                  </Typography>
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Created Date & Time
+                  </Typography>
+                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                    Created By
+                  </Typography>
+                </Grid>
+                <Grid
+                  sx={{
+                    // border: "1px solid black",
+                    // height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    // padding: "40px",
+                  }}
+                >
+                  <Grid>
+                    <Typography
+                      sx={{
+                        display: "inline-block",
+                        minWidth: "80px",
+                        // height: "20px",
+                        borderRadius: "10px",
+                        backgroundColor: "#00ad11",
+                        color: "white",
+                        paddingLeft: "10px",
+                        paddingRight: "10px",
+                        alignItems: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      {leads?.ProspectStage}
+                    </Typography>
+                  </Grid>
+                  <Typography>N/A</Typography>
+                  <Typography>{leads?.CreatedOn || "N/A"}</Typography>
+                  <Typography>{leads?.CreatedByName || "N/A"}</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid
+            sx={{
+              border: "1px solid lightgrey",
+              minheight: "20vh",
+              borderRadius: "30px",
+            }}
+          >
+            <Grid
+              sx={{
+                height: "20vh",
+                display: "flex",
+                alignItems: "center",
+                // flexDirection:"column",
+              }}
+            >
+              <Grid
+                sx={{ fontSize: "15px", padding: " 0px 30px", display: "flex" }}
+              >
+                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  Notes By Cp
+                </Typography>
+                &nbsp;&nbsp;:&nbsp;&nbsp;
+                <Typography
+                  sx={{
+                    fontSize: "15px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {leads?.Notes || "N/A"}
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-        <Grid
-          sx={{
-            border: "1px solid lightgrey",
-            minheight: "20vh",
-            borderRadius: "30px",
-          }}
-        >
-          <Grid
-            sx={{
-              height: "20vh",
-              display: "flex",
-              alignItems: "center",
-              // flexDirection:"column",
-            }}
-          >
-            <Grid
-              sx={{ fontSize: "15px", padding: " 0px 30px", display: "flex" }}
-            >
-              <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
-                Notes By Cp
-              </Typography>
-              &nbsp;&nbsp;:&nbsp;&nbsp;
-              <Typography>Need 50L House</Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+      ))}
     </Grid>
   );
 }

@@ -16,9 +16,6 @@ import {
   CircularProgress,
   Box,
   DialogActions,
-  DialogContentText,
-  DialogContent,
-  DialogTitle,
   Dialog,
 } from "@mui/material";
 import Link from "next/link";
@@ -30,6 +27,11 @@ import { useCpDeleteMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
 
 export default function Page() {
+  const [open, setOpen] = useState(false);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
       padding: theme.spacing(2),
@@ -38,13 +40,11 @@ export default function Page() {
       padding: theme.spacing(1),
     },
   }));
-  const [open, setOpen] = useState(false);
 
   // get cp data query
   const { data, refetch, isFetching } = useGetCpQuery();
+
   // set pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -59,11 +59,12 @@ export default function Page() {
       ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
+  // delete mutation
   const [deleteCp] = useCpDeleteMutation();
 
-  const handleOpen = (row) => {
+  const handleOpen = () => {
     setOpen(true);
-    console.log(row);
+    // console.log(row);
   };
 
   const handleClose = () => {
@@ -84,6 +85,7 @@ export default function Page() {
     }
   };
 
+  // refetch
   useEffect(() => {
     refetch();
   }, []);
@@ -233,7 +235,7 @@ export default function Page() {
                 </TableHead>
                 <TableBody>
                   {slicedRows?.map((row) => (
-                    <TableRow key={row?._id}>
+                    <TableRow key={row?.cpCode}>
                       <TableCell>{row?.company?.name || "N/A"}</TableCell>
                       <TableCell>{row?.company?.cpCode || "N/A"}</TableCell>
                       <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>

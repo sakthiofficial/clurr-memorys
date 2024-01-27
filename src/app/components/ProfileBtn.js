@@ -88,7 +88,7 @@ export function ProfileInfo({ name, role }) {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{marginBottom:"10px"}}>{firstLetter}</Avatar>
+            <Avatar sx={{ marginBottom: "10px" }}>{firstLetter}</Avatar>
             {/* <Typography>{name}</Typography> */}
             <Box
               sx={{
@@ -98,7 +98,11 @@ export function ProfileInfo({ name, role }) {
                 borderRadius: "15px",
               }}
             >
-              <Typography sx={{ fontSize: "12px",padding:"2px" }}>{role}</Typography>
+              <Typography
+                sx={{ fontSize: "12px", padding: "2px", textAlign: "center" }}
+              >
+                {role}
+              </Typography>
             </Box>
           </Grid>
           <Grid container xs={12}>
@@ -129,5 +133,5 @@ export function ProfileInfo({ name, role }) {
 }
 ProfileInfo.propTypes = {
   name: PropTypes.string.isRequired,
-  photo: PropTypes.string.isRequired,
+  // photo: PropTypes.string.isRequired,
 };

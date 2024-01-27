@@ -53,13 +53,13 @@ export default function Page() {
       [name]: value,
     }));
   };
-  // se
+  // select project
   const ParentDetails = {
     role: selectedRolesListP[0],
     projects: [...selectedProjectsListP],
   };
 
-  // console.log("Arrays before submit - Roles and Projects:", ParentDetails);
+  // get parent query
   const parentResult = useGetParentsQuery(ParentDetails);
 
   // console.log(parentResult.data.result);
@@ -94,8 +94,9 @@ export default function Page() {
       setSelectParentId(resultId);
     }
   };
-
+  // user add mutation
   const [sendUsers] = useAddUsersMutation();
+  // check prior user
   const priorUser = isPriorityUser(selectedRolesListP);
   // console.log(priorUser);
 
@@ -176,7 +177,7 @@ export default function Page() {
     });
     setSelectedProjects([]); // Reset selectedProject
   };
-
+  // get userdata
   useEffect(() => {
     const storedData = localStorage.getItem("user");
 

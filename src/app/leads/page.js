@@ -143,7 +143,7 @@ const predefinedRanges = [
   },
 ];
 
-export default function Page() {
+export default function Page({ searchParams }) {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState("");
@@ -152,6 +152,7 @@ export default function Page() {
   const projectloader = resultProject.isFetching;
   // console.log(projectloader);
   // project change and set intial project functions
+
   const handleChangeProject = async (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
@@ -174,7 +175,7 @@ export default function Page() {
 
   useEffect(() => {
     if (resultProject?.data?.result && resultProject.data.result.length > 0) {
-      const initialSelectedProject = resultProject.data.result[0];
+      const initialSelectedProject = resultProject.data.result[0].name;
       setSelectedProjectId(initialSelectedProject?._id || null);
     }
   }, [resultProject]);
@@ -283,7 +284,7 @@ export default function Page() {
       : [];
 
   const rowlength = slicedRows.length;
-  console.log(rowlength);
+  // console.log(rowlength);
   // card details
   // const getBackgroundColor = (name) => {
   //   switch (name) {
@@ -476,7 +477,7 @@ export default function Page() {
                       <TableCell>Email</TableCell>
                       <TableCell>CP Name</TableCell>
                       <TableCell>Stage</TableCell>
-                      <TableCell>Created By</TableCell>
+                      <TableCell>Created Date</TableCell>
                       <TableCell>Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -510,7 +511,12 @@ export default function Page() {
                                   alignItems: "center",
                                 }}
                               >
-                                <Link href="/leads/view">
+                                <Link
+                                  href={{
+                                    pathname: "/leads/view",
+                                    search: `?phone=${row?.Phone}&project=${selectedProject}`,
+                                  }}
+                                >
                                   <Button
                                     variant="outlined"
                                     sx={{
