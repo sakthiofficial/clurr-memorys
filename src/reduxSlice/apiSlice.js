@@ -80,7 +80,7 @@ export const apiSlice = createApi({
     addLead: builder.mutation({
       query: (leadData) => ({
         url: `/lead`,
-        method: "GET",
+        method: "POST",
         body: leadData,
       }),
     }),
@@ -120,6 +120,12 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    getLeadByPhone: builder.query({
+      query: (data) => ({
+        url: `/lead/retriveLeadByPhone?project=${data.project}&phone=${data.phonenumber}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -141,4 +147,5 @@ export const {
   useGetUserByIdQuery,
   useGetProjectWithPermissionQuery,
   useGetCPSQuery,
+  useGetLeadByPhoneQuery,
 } = apiSlice;

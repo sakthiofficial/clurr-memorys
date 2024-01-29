@@ -146,12 +146,13 @@ const predefinedRanges = [
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState("");
+  const [selectedProject, setSelectedProject] = useState("All");
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const resultProject = useGetProjectWithPermissionQuery();
   const projectloader = resultProject.isFetching;
   // console.log(projectloader);
   // project change and set intial project functions
+
   const handleChangeProject = async (event) => {
     const selectedProjectName = event.target.value;
     setSelectedProject(selectedProjectName);
@@ -166,11 +167,11 @@ export default function Page() {
   };
 
   // console.log(selectedProjectId);
-  useEffect(() => {
-    if (projects && projects.length > 0) {
-      setSelectedProject(projects[0]);
-    }
-  }, [projects]);
+  // useEffect(() => {
+  //   if (projects && projects.length > 0) {
+  //     setSelectedProject(projects[0]);
+  //   }
+  // }, [projects]);
 
   useEffect(() => {
     if (resultProject?.data?.result && resultProject.data.result.length > 0) {
@@ -282,8 +283,8 @@ export default function Page() {
       ? leadsDatas.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  const rowlength = slicedRows.length;
-  console.log(rowlength);
+  // const rowlength = slicedRows.length;
+  // console.log(rowlength);
   // card details
   // const getBackgroundColor = (name) => {
   //   switch (name) {
@@ -368,6 +369,7 @@ export default function Page() {
               onChange={handleChangeProject}
               MenuProps={{ disableScrollLock: true }}
             >
+              <MenuItem value="All">All</MenuItem>
               {resultProject?.data?.result?.map((proj) => (
                 <MenuItem key={proj.name} value={proj.name}>
                   {proj.name}
@@ -476,7 +478,7 @@ export default function Page() {
                       <TableCell>Email</TableCell>
                       <TableCell>CP Name</TableCell>
                       <TableCell>Stage</TableCell>
-                      <TableCell>Created By</TableCell>
+                      <TableCell>Created Date</TableCell>
                       <TableCell>Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -510,7 +512,12 @@ export default function Page() {
                                   alignItems: "center",
                                 }}
                               >
-                                <Link href="/leads/view">
+                                <Link
+                                  href={{
+                                    pathname: "/leads/view",
+                                    search: `?phone=${row?.Phone}&project=${selectedProject}`,
+                                  }}
+                                >
                                   <Button
                                     variant="outlined"
                                     sx={{

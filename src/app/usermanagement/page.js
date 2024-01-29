@@ -234,29 +234,29 @@ export default function Page() {
                             marginBottom: "10px",
                           }}
                         >
-                          {/* <Link
+                          <Link
                             href={{
-                              pathname: "/usermanagement/edit",
-                              query: { id: row?._id },
-                            }}
-                          > */}
-                          <Button
-                            sx={{
-                              borderRadius: "10px",
-                              color: "black",
-                              width: "58px",
-                              height: "28px",
-                              fontSize: "10px",
-                              backgroundColor: "rgba(249, 184, 0, 1)",
-                              "&:hover": {
-                                backgroundColor: "rgba(249, 184, 0, 1)",
-                                boxShadow: "none",
-                              },
+                              pathname: "usermanagement/edit",
+                              search: `?id=${row?._id}`,
                             }}
                           >
-                            edit
-                          </Button>
-                          {/* </Link> */}
+                            <Button
+                              sx={{
+                                borderRadius: "10px",
+                                color: "black",
+                                width: "58px",
+                                height: "28px",
+                                fontSize: "10px",
+                                backgroundColor: "rgba(249, 184, 0, 1)",
+                                "&:hover": {
+                                  backgroundColor: "rgba(249, 184, 0, 1)",
+                                  boxShadow: "none",
+                                },
+                              }}
+                            >
+                              edit
+                            </Button>
+                          </Link>
                           <Button
                             onClick={handleOpen}
                             sx={{
