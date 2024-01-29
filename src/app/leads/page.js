@@ -143,10 +143,10 @@ const predefinedRanges = [
   },
 ];
 
-export default function Page({ searchParams }) {
+export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState("");
+  const [selectedProject, setSelectedProject] = useState("All");
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const resultProject = useGetProjectWithPermissionQuery();
   const projectloader = resultProject.isFetching;
@@ -167,15 +167,15 @@ export default function Page({ searchParams }) {
   };
 
   // console.log(selectedProjectId);
-  useEffect(() => {
-    if (projects && projects.length > 0) {
-      setSelectedProject(projects[0]);
-    }
-  }, [projects]);
+  // useEffect(() => {
+  //   if (projects && projects.length > 0) {
+  //     setSelectedProject(projects[0]);
+  //   }
+  // }, [projects]);
 
   useEffect(() => {
     if (resultProject?.data?.result && resultProject.data.result.length > 0) {
-      const initialSelectedProject = resultProject.data.result[0].name;
+      const initialSelectedProject = resultProject.data.result[0];
       setSelectedProjectId(initialSelectedProject?._id || null);
     }
   }, [resultProject]);
@@ -283,7 +283,7 @@ export default function Page({ searchParams }) {
       ? leadsDatas.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  const rowlength = slicedRows.length;
+  // const rowlength = slicedRows.length;
   // console.log(rowlength);
   // card details
   // const getBackgroundColor = (name) => {
@@ -369,6 +369,7 @@ export default function Page({ searchParams }) {
               onChange={handleChangeProject}
               MenuProps={{ disableScrollLock: true }}
             >
+              <MenuItem value="All">All</MenuItem>
               {resultProject?.data?.result?.map((proj) => (
                 <MenuItem key={proj.name} value={proj.name}>
                   {proj.name}

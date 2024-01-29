@@ -16,7 +16,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
-import { useGetUserByIdQuery } from "@/reduxSlice/apiSlice";
+import { useGetParentsQuery, useGetUserByIdQuery } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
 
 export default function Page({ searchParams }) {
@@ -25,9 +25,34 @@ export default function Page({ searchParams }) {
   const [userData, setUserData] = useState(null);
 
   const { data, isFetching } = useGetUserByIdQuery(id);
-  // console.log(data?.result);
-  const priorUser = isPriorityUser(data?.result?.role[0] || "N/A");
+  console.log(data?.result?.parentId);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedProjects, setSelectedProjects] = useState(
+    data?.result?.projects || [],
+  );
+  const [defaultParent, setDefaultParent] = useState();
+  const [parentId, setParentId] = useState(null);
+  // const priorUser = true;
 
+  useEffect(() => {
+    if (data?.result?.role) {
+      setSelectedRole(data?.result?.role[0]);
+    }
+    if (data?.result?.projects) {
+      setSelectedProjects(data?.result?.projects);
+    }
+  }, [data]);
+
+  const ParentDetails = {
+    role: selectedRole,
+    projects: [...selectedProjects],
+  };
+  const parentResult = useGetParentsQuery(ParentDetails);
+
+  const priorUser = isPriorityUser(selectedRole || []);
+  // console.log(selectedProjects);
+  // console.log()
+  // console.log(priorUser);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -53,10 +78,10 @@ export default function Page({ searchParams }) {
       setSelectedValues({
         projects: data?.result?.projects || [],
         role: data?.result?.role || [],
-        parent: "",
+        parent: defaultParent || "",
       });
     }
-  }, [data]);
+  }, [data, parentResult, defaultParent]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,20 +96,43 @@ export default function Page({ searchParams }) {
       ...prevValues,
       [name]: value,
     }));
+    if (name === "role") {
+      setSelectedRole(value);
+    }
+    if (name === "projects") {
+      setSelectedProjects(value);
+    }
+    // console.log(selectedValues.projects);
+    // if (name === "parent") {
+    //   const selectedParent = parentResult?.data?.result.find(
+    //     (parent) => parent.name === value,
+    //   );
+    //   const parentId = selectedParent?._id || null;
+    //   setSelectedValues((prevValues) => ({
+    //     ...prevValues,
+    //     parent: parentId,
+    //   }));
+    // }
   };
 
+  // console.log(ParentDetails);
+  // console.log(parentResult?.data?.result);
+  // console.log(selectedProjects);
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const updatedParentValues = {
+      ...selectedValues,
+      parent: parentId,
+    };
+
     const updatedValue = {
       ...formData,
-      ...selectedValues,
+      ...updatedParentValues,
     };
 
     console.log(updatedValue);
   };
-
-  const parentOptions = ["ParentOne", "ParentTwo", "ParentThree"];
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -98,6 +146,28 @@ export default function Page({ searchParams }) {
     }
   }, []);
   // console.log(userData);
+  // console.log(data);
+  useEffect(() => {
+    const filterParent = parentResult?.data?.result?.filter(
+      (parent) => parent?._id === data?.result?.parentId,
+    );
+    if (filterParent && filterParent.length > 0) {
+      const parentName = filterParent[0]?.name;
+      setDefaultParent(parentName);
+    }
+  }, [parentResult, data]);
+
+  useEffect(() => {
+    if (selectedValues.parent && parentResult?.data?.result) {
+      const selectedParent = parentResult?.data?.result.find(
+        (parent) => parent.name === selectedValues.parent,
+      );
+      const selectedparentId = selectedParent?._id || null;
+      setParentId(selectedparentId);
+    }
+  }, [selectedValues.parent, parentResult]);
+  console.log(parentId);
+
   return (
     <Grid sx={{ minHeight: "100vh" }}>
       <Grid
@@ -315,6 +385,7 @@ export default function Page({ searchParams }) {
                       <Select
                         labelId="parent-label"
                         id="parent"
+                        name="role"
                         displayEmpty
                         value={selectedValues.role}
                         label="Choose one role"
@@ -347,6 +418,7 @@ export default function Page({ searchParams }) {
                         <Select
                           labelId="demo-multiple-chip-label"
                           id="demo-multiple-chip"
+                          name="projects"
                           multiple
                           value={selectedValues.projects}
                           onChange={(e) =>
@@ -420,15 +492,16 @@ export default function Page({ searchParams }) {
                       <Select
                         labelId="parent-label"
                         id="parent"
+                        name="parent"
                         displayEmpty
                         value={selectedValues.parent}
                         label="Choose one parent"
                         onChange={(e) => handleChange("parent", e.target.value)}
                         MenuProps={{ disableScrollLock: true }}
                       >
-                        {parentOptions.map((option, index) => (
-                          <MenuItem key={index} value={option}>
-                            {option}
+                        {parentResult?.data?.result.map((parent, index) => (
+                          <MenuItem key={index} value={parent.name}>
+                            {parent.name}
                           </MenuItem>
                         ))}
                       </Select>
