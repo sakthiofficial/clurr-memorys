@@ -85,3 +85,5 @@ export const userValidationErrors = {
   InvalidProject: "Project Not Located",
   ParentRoleLimitation: "Parent Role Invalid",
 };
+export const activityList = {};
+export const activityType = {};

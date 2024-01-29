@@ -45,6 +45,7 @@ class LSQLeadSrv {
     providedUser,
     { leadStartDate, leadEndDate, project },
   ) => {
+    console.log(project);
     if (
       !providedUser[userDataObj?.permissions].includes(
         permissionKeyNames?.leadViewWithNumber ||
@@ -90,14 +91,13 @@ class LSQLeadSrv {
     const projectArr = isPriorityUser(providedUser[userDataObj?.role])
       ? Object.keys(projectCredential)
       : providedUser[userDataObj?.projects];
-    const projectKeys = project ? [project] : projectArr;
+    const projectKeys = project !== "All" ? [project] : projectArr;
 
     console.log("projectkey", project, projectKeys);
     const data = [];
 
     await Promise.all(
       projectKeys.map(async (projectName) => {
-        console.log(project);
         const { accessKey, secretKey } = projectCredential[projectName];
         let apiPageIndex = 1;
 
@@ -114,7 +114,7 @@ class LSQLeadSrv {
                 },
                 Columns: {
                   Include_CSV:
-                    "mx_Origin_Project,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source",
+                    "mx_Origin_Project,mx_Project_Name,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source",
                 },
                 Sorting: {
                   ColumnName: "CreatedOn",
@@ -172,7 +172,7 @@ class LSQLeadSrv {
               const cpCode = providedUser[userDataObj?.cpCode];
               push = cpCode === lsqCpCode;
             }
-
+            structuredApiData.Project = projectName;
             if (push) {
               data.push(structuredApiData);
             }

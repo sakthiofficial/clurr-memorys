@@ -4,7 +4,8 @@ import { genrateUnixTimestamp } from "../src/appConstants";
 const { Schema } = mongoose;
 
 const CpAppLeadSchema = new Schema({
-  FirstName: { type: String, trim: true },
+  // change -> camalcase
+  firstName: { type: String, trim: true },
   EmailAddress: { type: String, trim: true },
   Phone: { type: String, trim: true },
   Source: { type: String, trim: true },
@@ -13,6 +14,7 @@ const CpAppLeadSchema = new Schema({
   createdDate: { type: Number, default: genrateUnixTimestamp() },
   createdBy: { type: Schema.Types.ObjectId, ref: "CpAppUser", required: true },
 });
+// have a refrence old project to add created hook
 
 export const CpAppLead =
   mongoose.models.CpAppLead || mongoose.model("CpAppLead", CpAppLeadSchema);

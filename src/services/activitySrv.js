@@ -4,7 +4,7 @@ class ActivitySrv {
     this.providedUser = providedUser;
   }
 
-  userManagementActions = (newUser) => {
+  createActivity = (activityType, entityId, performedId) => {
     // add //edit //delete //permission
   };
 }

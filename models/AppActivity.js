@@ -10,7 +10,6 @@ const CpAppActivitySchema = new Schema({
   }, // e.g., 'role', 'project', 'cpItem', 'user', 'lead'
   entityId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: "CpAppUser",
   }, // Reference to the entity
   actionType: { type: String, required: true }, // e.g., 'add', 'delete', 'edit'
