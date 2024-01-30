@@ -281,6 +281,8 @@ class LSQLeadSrv {
   };
 
   retriveLeadByPhone = async (providedUser, { phone, project }) => {
+    const phoneNumberSplit = phone.split("-");
+    phone = phoneNumberSplit.length > 1 ? phoneNumberSplit[1] : phone;
     if (
       !providedUser[userDataObj?.permissions].includes(
         permissionKeyNames?.leadViewWithNumber ||
