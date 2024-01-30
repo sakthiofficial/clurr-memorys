@@ -18,7 +18,7 @@ import {
 import Link from "next/link";
 import { defaultConfig } from "next/dist/server/config-shared";
 import { ToastContainer, toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useEditUserMutation,
   useGetParentsQuery,
@@ -26,9 +26,10 @@ import {
 } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
 
-export default function Page({ searchParams }) {
-  const { id } = searchParams;
+export default function Page() {
   // console.log(id);
+  const params = useSearchParams();
+  const id = params.get("id");
   const [userData, setUserData] = useState(null);
 
   const { data, isFetching, refetch } = useGetUserByIdQuery(id);
