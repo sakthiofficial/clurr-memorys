@@ -25,7 +25,7 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 import { useCpDeleteMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
-import { dateToUnixTimestamp } from "../../../shared/dateCalc";
+import { unixToDate } from "../../../shared/dateCalc";
 
 export default function Page() {
   const [open, setOpen] = useState(false);
@@ -246,7 +246,7 @@ export default function Page() {
                       </TableCell>
                       <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
                       <TableCell>
-                        {dateToUnixTimestamp(row?.company?.createdBy) || "N/A"}
+                        {unixToDate(row?.company?.createdBy) || "N/A"}
                       </TableCell>
                       <TableCell>
                         <Grid
