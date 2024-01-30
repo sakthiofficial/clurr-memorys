@@ -13,11 +13,12 @@ export default function Page({ searchParams }) {
 
   const [phonenumber, setPhoneNumber] = useState("");
   useEffect(() => {
+    console.log(phone, project);
     if (phone) {
       setPhoneNumber(phone.split("-").length > 1 ? phone.split("-")[1] : phone);
     }
-  }, [phone]);
-  console.log(phonenumber);
+  }, [searchParams]);
+  console.log(phonenumber, project);
 
   // get leads by phone
   const { data, isFetching } = useGetLeadByPhoneQuery({ project, phonenumber });
