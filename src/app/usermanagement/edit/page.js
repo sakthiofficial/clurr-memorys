@@ -44,7 +44,7 @@ export default function Page() {
   // const priorUser = true;
   const router = useRouter();
 
-  console.log(typeof selectedRole);
+  // console.log(typeof selectedRole);
 
   useEffect(() => {
     if (data?.result?.role) {
@@ -133,7 +133,9 @@ export default function Page() {
     }));
   }, [defaultParent]);
 
-  // console.log(defaultParent);
+  console.log(defaultParent);
+  console.log(selectedValues.parentId);
+
   // console.log(selectedValues.parentId, "parentid");
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -153,7 +155,7 @@ export default function Page() {
       [name]: value,
     }));
     if (name === "role") {
-      setSelectedRole([value]);
+      setSelectedRole(value);
     }
     if (name === "projects") {
       setSelectedProjects(value);
@@ -187,8 +189,8 @@ export default function Page() {
 
     const updatedParentValues = {
       ...selectedValues,
-      parentId: selectedParentId,
-      role: selectedRole,
+      parentId: priorUser ? userData._id : selectedParentId,
+      role: [selectedRole],
       id,
     };
 
@@ -200,7 +202,7 @@ export default function Page() {
       console.log(result.data);
 
       if (result.data.status === 400) {
-        result.data.result.details.map((res) => toast.error(res.message));
+        // result.data.result.details.map((res) => toast.error(res.message));
         toast.error("something went wrong");
       }
 
