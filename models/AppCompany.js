@@ -29,15 +29,19 @@ const CpAppCompanySchema = new Schema({
     required: true,
     ref: "CpAppUser",
   },
+  cpExecutes: [
+    {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "CpAppUser",
+    },
+  ],
   cpCode: {
     type: String,
     unique: true,
     required: true,
   },
-  account: {
-    type: Number,
-    default: 0,
-  },
+
   createdBy: { type: Number, default: () => Math.floor(Date.now() / 1000) },
 });
 

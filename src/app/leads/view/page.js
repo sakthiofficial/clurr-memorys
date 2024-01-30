@@ -9,8 +9,8 @@ export default function Page({ searchParams }) {
   const router = useRouter();
   const { phone } = searchParams;
   const { project } = searchParams;
-
-  const phonenumber = phone.slice(4, 14);
+  const phonenumber = phone.split("-").length > 1 ? phone.split("-")[1] : phone;
+  console.log(phonenumber);
   // console.log(phonenumber);
   // console.log(project);
 
