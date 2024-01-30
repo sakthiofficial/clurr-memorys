@@ -19,7 +19,10 @@ import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import sendMail from "../helper/emailSender";
 import { CpAppRole } from "../../models/AppRole";
 import CPUserSrv from "./cpUserSrv";
-import { cpMailOption } from "../helper/email/mailOptions";
+import {
+  cpMailOption,
+  superAdminMailOptions,
+} from "../helper/email/mailOptions";
 
 class CpManagementSrv {
   constructor() {
@@ -293,6 +296,7 @@ class CpManagementSrv {
         const userEmail = cpExecute[userDataObj?.email];
         const role = cpExecute[userDataObj?.role];
         const projects = cpExecute[userDataObj?.projects].join("/n");
+        const permission = basicRolePermission(cpExecute[userDataObj?.role]);
         cpExecute[userDataObj?.parentId] =
           cpExecute[userDataObj?.parentId] || branchHeadId;
         cpExecute[userDataObj?.cpCode] = cpGenratedCode;
@@ -303,9 +307,7 @@ class CpManagementSrv {
         );
         cpExecute[userDataObj?.password] = hashedPassword;
         cpExecute[userDataObj?.role] = roleNames?.cpExecute;
-        cpExecute[userDataObj?.permissions] = basicRolePermission(
-          cpExecute[userDataObj?.role],
-        );
+        cpExecute[userDataObj?.permissions] = permission;
         const cpExecuteUser = await userSrv.createSaveUser(cpExecute);
         const userSch = new CpAppUser(cpExecuteUser);
         await userSch.save();
@@ -318,8 +320,18 @@ class CpManagementSrv {
           projects,
           cpGenratedCode,
         );
+        const adminMaliOption = superAdminMailOptions(
+          providedUser[userDataObj?.name],
+          userName,
+          role,
+          permission,
+          projects,
+        );
         sendMail(mailOptions)
-          .then((result) => console.log("Email sent...", result))
+          .then(async () => {
+            await sendMail(adminMaliOption);
+            console.log("Emails as been successfully");
+          })
           .catch((error) => console.log(error.message));
         return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
       }

@@ -146,11 +146,11 @@ const predefinedRanges = [
 export default function Page() {
   const [permissions, setPermissions] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState("All");
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const resultProject = useGetProjectWithPermissionQuery();
+  const [selectedProject, setSelectedProject] = useState("All");
+
   const projectloader = resultProject.isFetching;
-  // console.log(projectloader);
   // project change and set intial project functions
 
   const handleChangeProject = async (event) => {
@@ -177,6 +177,11 @@ export default function Page() {
     if (resultProject?.data?.result && resultProject.data.result.length > 0) {
       const initialSelectedProject = resultProject.data.result[0];
       setSelectedProjectId(initialSelectedProject?._id || null);
+      setSelectedProject(
+        resultProject.data?.result.length > 1
+          ? "All"
+          : resultProject.data?.result[0]?.name,
+      );
     }
   }, [resultProject]);
 
