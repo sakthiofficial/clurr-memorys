@@ -43,7 +43,7 @@ export function superAdminMailOptions(
             <div class="container">
               <h1>New User Created in CP Portal</h1>
     
-              <p>Hey Admin,</p>
+              <p>Dear Idris,</p>
     
               <p>The user ${adduser} has created a new user ${createdUser} with the role ${role}. Permissions granted include: <strong>${permissions}</strong>.</p>
     
@@ -98,8 +98,9 @@ export function userMailOption(
         <body>
           <div class="container">
             <h1>Dear ${userName},</h1>
-  
-            <p>Congratulations! You have been designated as a ${role} for the following Urbanrise Hydrabad projects ${projects}.</p>
+
+           <p>Your account is successfully created in Urbanrise Hyderabad CP Portal.</p>
+            <p>Your current role is ${role} for the following Urbanrise Hydrabad projects ${projects}.</p>
   
             <p>Please contact the Urbanrise team to obtain your credentials.</p>
   
@@ -156,8 +157,9 @@ export function cpMailOption(
         <body>
           <div class="container">
             <h1>Dear ${userName},</h1>
+            <p>Your account is successfully created in Urbanrise Hyderabad CP Portal.</p>
   
-            <p>Congratulations! You have been designated as a ${role} for the following Urbanrise Hyderabad projects: ${projects}.</p>
+            <p>Your current role is ${role} for the following Urbanrise Hyderabad projects: ${projects}.</p>
   
             <p>Your company code is: ${companyCode}</p>
 

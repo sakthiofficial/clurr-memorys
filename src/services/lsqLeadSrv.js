@@ -254,13 +254,12 @@ class LSQLeadSrv {
         },
       ];
       const cpLeadSchema = new CpAppLead({
-        FirstName: userName,
-        EmailAddress: email,
-        Phone: phone,
-        Source: source,
+        name: userName,
+        email,
+        phone,
 
-        Project: project,
-        subSource,
+        project,
+
         createdBy: id,
       });
       await cpLeadSchema.save();

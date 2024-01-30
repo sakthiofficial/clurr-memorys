@@ -5,12 +5,10 @@ const { Schema } = mongoose;
 
 const CpAppLeadSchema = new Schema({
   // change -> camalcase
-  firstName: { type: String, trim: true },
-  EmailAddress: { type: String, trim: true },
-  Phone: { type: String, trim: true },
-  Source: { type: String, trim: true },
-  subSource: { type: String, trim: true },
-  Project: { type: String },
+  name: { type: String, trim: true },
+  email: { type: String, trim: true },
+  phone: { type: String, trim: true },
+  project: { type: String },
   createdDate: { type: Number, default: genrateUnixTimestamp() },
   createdBy: { type: Schema.Types.ObjectId, ref: "CpAppUser", required: true },
 });
