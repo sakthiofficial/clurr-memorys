@@ -255,6 +255,9 @@ export default function Page() {
   const handleClose = () => {
     setOpen(false);
   };
+  const handleClear = () => {
+    setCpEnteredCode("");
+  };
   // console.log(selectedCategoryData);
   return (
     <>
@@ -536,24 +539,52 @@ export default function Page() {
                           value={cpEnteredCode}
                         />
                       </Grid>
-                      <Button
-                        onClick={handleClose}
+                      <Grid
                         sx={{
-                          border: "none",
-                          height: "56px",
-                          width: "150px",
-                          borderRadius: "19px",
-                          backgroundColor: "black",
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: "black",
-                            boxShadow: "none",
-                            border: "none",
-                          },
+                          // border: "1px solid black",
+                          display: "flex",
+                          // flexDirection: "column",
+                          justifyContent: "space-around",
+                          width: "100%",
                         }}
                       >
-                        Submit
-                      </Button>
+                        <Button
+                          onClick={handleClear}
+                          sx={{
+                            border: "1px solid black",
+                            height: "46px",
+                            width: "120px",
+                            borderRadius: "19px",
+                            backgroundColor: "white",
+                            color: "black",
+                            "&:hover": {
+                              backgroundColor: "white",
+                              boxShadow: "none",
+                              border: "1px solid black",
+                            },
+                          }}
+                        >
+                          clear
+                        </Button>
+                        <Button
+                          onClick={handleClose}
+                          sx={{
+                            border: "1px solid black",
+                            height: "46px",
+                            width: "120px",
+                            borderRadius: "19px",
+                            backgroundColor: "white",
+                            color: "black",
+                            "&:hover": {
+                              backgroundColor: "white",
+                              boxShadow: "none",
+                              border: "1px solid black",
+                            },
+                          }}
+                        >
+                          Submit
+                        </Button>
+                      </Grid>
                     </BootstrapDialog>
                   </Grid>
                 </Grid>

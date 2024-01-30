@@ -396,7 +396,7 @@ export default function Page() {
         >
           {permissions &&
             permissions.includes(permissionKeyNames.leadManagement) &&
-            selectedProject === "All" && <AddLeadsBtn />}
+            selectedProject === "All" && <AddLeadsBtn refetch={refetch} />}
 
           {permissions &&
             permissions.includes(permissionKeyNames.leadManagement) &&
