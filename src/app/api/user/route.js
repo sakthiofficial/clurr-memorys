@@ -51,9 +51,9 @@ export async function PUT(request) {
       password: Joi.string().allow(""),
 
       role: Joi.array(),
-      projects: checkProjectValidation(bodyData?.role)
-        ? Joi.array().length(1)
-        : Joi.array(),
+      projects: isPriorityUser(bodyData?.role)
+        ? Joi.array()
+        : Joi.array().length(1),
       phone: Joi.string(),
       parentId:
         roleNames?.superAdmin === bodyData?.role
