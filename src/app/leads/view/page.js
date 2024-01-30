@@ -11,12 +11,12 @@ export default function Page() {
 
   const phone = params.get("phone");
   const project = params.get("project");
-  // const [phonenumber, setPhoneNumber] = useState(phone);
+  const [phonenumber, setPhoneNumber] = useState(phone);
   console.log("phone number check", phone);
   // console.log(project);
 
   // get leads by phone
-  const { data, isFetching } = useGetLeadByPhoneQuery({ project, phone });
+  const { data, isFetching } = useGetLeadByPhoneQuery({ project, phonenumber });
   // console.log(data);
 
   // handle back function
