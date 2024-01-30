@@ -96,7 +96,7 @@ class CpManagementSrv {
 
       return `URBCHP${String(newNumber).padStart(5, "0")}`;
     };
-    this.getCpCompanysBH = async (providedUser) => {
+    this.retriveBranchHead = async (providedUser) => {
       if (
         !providedUser[userDataObj?.permissions].includes(
           permissionKeyNames?.leadManagement,
@@ -500,5 +500,7 @@ class CpManagementSrv {
       companyDeleteResult: companyResult,
     });
   };
+
+  retriveCpByCompany = async (providedUser, id) => {};
 }
 export default CpManagementSrv;

@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import { object } from "joi";
 import { Session } from "../../models/session";
 import {
   basicRolePermission,
@@ -212,7 +213,8 @@ class CPUserSrv {
       user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
       return user;
     };
-    this.createSaveUser = async (user) => {
+    this.createSaveUser = async (createUser) => {
+      const user = { ...createUser };
       let roleIds = await CpAppRole.find({ name: user[userDataObj?.role] });
       roleIds = roleIds.map((role) => role._id);
       let projectIds = await CpAppProject.find({
@@ -645,19 +647,36 @@ class CPUserSrv {
         updateUserDbData,
         parentUser,
       );
-      const roleData = await CpAppRole.find({
-        name: updateUser[userDataObj?.role],
+
+      if (updateUser[userDataObj?.password]) {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(
+          updateUser?.password,
+          saltRounds,
+        );
+        updateUser[userDataObj?.password] = hashedPassword;
+      } else {
+        delete updateUser.password;
+      }
+
+      const userData = await this.createSaveUser(updateUser);
+      const updateUserObjKeys = Object.keys(updateUser);
+      const createdUserKeys = Object.keys(userData);
+      createdUserKeys.map((key) => {
+        if (!updateUserObjKeys.includes(key)) {
+          delete userData[key];
+        }
+        return null;
       });
-      const roleIds = roleData.map((role) => role._id);
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(
-        updateUser?.password,
-        saltRounds,
-      );
-      updateUser[userDataObj?.role] = roleIds;
-      updateUser[userDataObj?.password] = hashedPassword;
+      if (
+        isPriorityUser(updateUser[userDataObj?.role]) &&
+        updateUser[userDataObj?.projects].length > 0
+      ) {
+        delete userData.projects;
+      }
+
       const filter = { _id: updateUser.id };
-      const update = { $set: updateUser };
+      const update = { $set: userData };
       const options = { new: true, useFindAndModify: false };
       await CpAppUser.findOneAndUpdate(filter, update, options);
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);

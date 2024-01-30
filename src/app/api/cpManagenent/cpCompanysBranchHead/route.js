@@ -22,7 +22,7 @@ export async function GET(request) {
     }
 
     const cpManagementSrv = new CpManagementSrv();
-    const serviceRes = await cpManagementSrv.getCpCompanysBH(providedUser);
+    const serviceRes = await cpManagementSrv.retriveBranchHead(providedUser);
     return new Response(JSON.stringify(serviceRes));
   } catch (error) {
     return new Response(
