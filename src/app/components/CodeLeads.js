@@ -104,19 +104,8 @@ export default function AddLeadsBtn() {
           <TextField
             sx={{ width: "80%", borderRadius: "15px", height: "48px" }}
             placeholder="enter code"
+            type="number"
           />
-          {/* <TextField sx={{ width: "80%", borderRadius: "15px" }} /> */}
-          {/* <Grid
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "80%",
-            }}
-          >
-            <TextField sx={{ width: "25%", borderRadius: "20px" }} />
-            <TextField sx={{ width: "60%", borderRadius: "15px" }} />
-          </Grid> */}
-          {/* <TextField sx={{ width: "80%", borderRadius: "15px" }} /> */}
         </Grid>
         <Button
           onClick={handleClose}

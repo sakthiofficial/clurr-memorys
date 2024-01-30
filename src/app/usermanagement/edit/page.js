@@ -24,6 +24,7 @@ import {
   useGetUserByIdQuery,
 } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
+import { useRouter } from "next/navigation";
 
 export default function Page({ searchParams }) {
   const { id } = searchParams;
@@ -40,6 +41,7 @@ export default function Page({ searchParams }) {
   const [defaultParent, setDefaultParent] = useState();
   const [selectedParentId, setSelectedParentId] = useState(null);
   // const priorUser = true;
+  const router = useRouter();
 
   useEffect(() => {
     if (data?.result?.role) {
@@ -190,7 +192,21 @@ export default function Page({ searchParams }) {
       ...formData,
       ...updatedParentValues,
     };
-    editUserData(updatedValue);
+    editUserData(updatedValue).then((result) => {
+      console.log(result.data);
+
+      if (result.data.status === 400) {
+        result.data.result.details.map((res) => toast.error(res.message));
+        toast.error("something went wrong");
+      }
+
+      if (result.data.status === 200) {
+        toast.success("User edit successfully!");
+        setTimeout(() => {
+          router.push("/usermanagement");
+        }, 1500);
+      }
+    });
     // console.log(updatedValue);
   };
 

@@ -14,21 +14,35 @@ import {
   Switch,
   Chip,
   Box,
+  IconButton,
+  Dialog,
 } from "@mui/material";
 import Link from "next/link";
 import { DeleteOutlineOutlined } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { styled } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   useAddCpMutation,
   useGetRealtionshipManagerQuery,
 } from "@/reduxSlice/apiSlice";
 import CodeLeads from "@/app/components/CodeLeads";
 
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+}));
+
 export default function Page() {
   const [userData, setUserData] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProjects, setSelectedProjects] = useState([]);
+  const [cpEnteredCode, setCpEnteredCode] = useState(null);
   const [showAddAccountButton, setShowAddAccountButton] = useState(true);
   const [formData, setFormData] = useState({
     cpCompany: {
@@ -181,6 +195,7 @@ export default function Page() {
       const cpData = {
         parentId: selectedCategoryData?._id,
         cpCompany: updatedValues,
+        cpEnteredCode: parseInt(cpEnteredCode),
         cpExecute: cpExecutesp.find((exec) => exec.role === "cpExecute"),
         cpBranchHead: cpExecutesp.find((exec) => exec.role === "cpBranchHead"),
       };
@@ -219,7 +234,7 @@ export default function Page() {
       toast.error("Form is not valid. Please fill in all required fields.");
     }
   };
-
+  // console.log(cpEnteredCode);
   // login user get
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -232,6 +247,14 @@ export default function Page() {
     }
   }, []);
 
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   // console.log(selectedCategoryData);
   return (
     <>
@@ -425,8 +448,114 @@ export default function Page() {
                     padding: "0px 15px",
                   }}
                 >
-                  {" "}
-                  <CodeLeads />
+                  {/* {" "} */}
+                  {/* <CodeLeads /> */}
+                  <Grid>
+                    <Button
+                      variant="outlined"
+                      onClick={handleClickOpen}
+                      sx={{
+                        color: "red",
+                        border: "1px solid  black",
+                      }}
+                    >
+                      enter cp code
+                    </Button>
+                    <BootstrapDialog
+                      onClose={handleClose}
+                      aria-labelledby="customized-dialog-title"
+                      open={open}
+                      maxWidth="200px"
+                      PaperProps={{
+                        sx: {
+                          borderRadius: "34px",
+                          minHeight: "300px",
+                          // width: "456px",
+                          border: "1px solid black",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "10px",
+                        },
+                      }}
+                      disableScrollLock
+                    >
+                      <Grid
+                        sx={{
+                          border: "none",
+                          height: "64px",
+                          width: "400px",
+                          borderRadius: "19px",
+                          backgroundColor: "#F9B800",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "15px",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontSize: "20px", fontWeight: "600" }}
+                        >
+                          ENTER CP CODE
+                        </Typography>
+                        <IconButton
+                          aria-label="close"
+                          onClick={handleClose}
+                          sx={{
+                            cursor: "pointer",
+                            "&:hover": {
+                              backgroundColor: "transparent",
+                              boxShadow: "none",
+                            },
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </Grid>
+                      <Grid
+                        sx={{
+                          // border: "1px solid rgba(189, 189, 189, 1)",
+                          minHeight: "100px",
+                          width: "400px",
+                          borderRadius: "19px",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "space-around",
+                        }}
+                      >
+                        <TextField
+                          sx={{
+                            width: "80%",
+                            borderRadius: "15px",
+                            height: "48px",
+                          }}
+                          placeholder="Provide only cpcode numbers"
+                          type="number"
+                          onChange={(e) => setCpEnteredCode(e.target.value)}
+                          value={cpEnteredCode}
+                        />
+                      </Grid>
+                      <Button
+                        onClick={handleClose}
+                        sx={{
+                          border: "none",
+                          height: "56px",
+                          width: "150px",
+                          borderRadius: "19px",
+                          backgroundColor: "black",
+                          color: "white",
+                          "&:hover": {
+                            backgroundColor: "black",
+                            boxShadow: "none",
+                            border: "none",
+                          },
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    </BootstrapDialog>
+                  </Grid>
                 </Grid>
                 <Grid
                   sx={{
