@@ -8,6 +8,7 @@ import { useGetLeadByPhoneQuery } from "@/reduxSlice/apiSlice";
 export default function Page({ searchParams }) {
   const router = useRouter();
   const { phone } = searchParams;
+  console.log(phone);
   const { project } = searchParams;
   const [phonenumber, setPhoneNumber] = useState("");
   useEffect(() => {
