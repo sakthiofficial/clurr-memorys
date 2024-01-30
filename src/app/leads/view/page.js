@@ -2,14 +2,17 @@
 
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useGetLeadByPhoneQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page({ searchParams }) {
   const router = useRouter();
   const { phone } = searchParams;
   const { project } = searchParams;
-  const phonenumber = phone.split("-").length > 1 ? phone.split("-")[1] : phone;
+  const [phonenumber, setPhoneNumber] = useState("");
+  useEffect(() => {
+    setPhoneNumber(phone.split("-").length > 1 ? phone.split("-")[1] : phone);
+  }, [phone]);
   console.log(phonenumber);
   // console.log(phonenumber);
   // console.log(project);
