@@ -44,7 +44,7 @@ import store from "../store";
 import { useLoginUserDataMutation } from "@/reduxSlice/apiSlice";
 import themeFont from "../theme";
 import "react-toastify/dist/ReactToastify.css";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { permissionKeyNames } from "../../shared/cpNamings";
 import LoginBanner from "../../public/loginBanner2.png";
 import { ProfileInfo } from "./components/ProfileBtn";
@@ -287,7 +287,7 @@ export default function RootLayout({ children }) {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-
+  const router = useRouter();
   // handle drawer functions
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -416,17 +416,18 @@ export default function RootLayout({ children }) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
       setPermissions(jsonData.permissions || []);
-
-      // Redirect to "/leads" if the user tries to access the home page
-      if (pathname === "/") {
-        window.location.href = "/leads";
-      }
     } else {
       setUser(null);
       console.error('No data found in local storage for key "user".');
+      // router.push("/login");
     }
     setLoading(false);
-  }, [pathname]);
+  }, []);
+  // useEffect(() => {
+  //   if (user === null && pathname === "/*") {
+  //     router.push("/login");
+  //   }
+  // }, [user, pathname, router]);
 
   // console.log(user.role[0])
   // console.log(user.name)

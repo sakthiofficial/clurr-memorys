@@ -1,15 +1,19 @@
 "use client";
 
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useGetLeadByPhoneQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page({ searchParams }) {
   const router = useRouter();
-  const { phone } = searchParams;
+
+  // const { phone, project } = router.query;
+  console.log(phone);
+
+  // const { phone } = searchParams;
   // console.log(phone);
-  const { project } = searchParams;
+  // const { project } = searchParams;
 
   const [phonenumber, setPhoneNumber] = useState("");
   useEffect(() => {
