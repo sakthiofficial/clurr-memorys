@@ -664,6 +664,20 @@ export default function RootLayout({ children }) {
                     >
                       {children}
                     </Grid>
+                    <Grid
+                      sx={{
+                        // border: "1px solid black",
+                        minHeight: "5vh",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "start",
+                        color: "grey",
+                      }}
+                    >
+                      <Typography sx={{ padding: "10px", marginLeft: "10px" }}>
+                        © 2024 Hyderabad CP Portal
+                      </Typography>
+                    </Grid>
                   </Box>
                 </Box>
               )}

@@ -16,7 +16,13 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
-import { useGetParentsQuery, useGetUserByIdQuery } from "@/reduxSlice/apiSlice";
+import { defaultConfig } from "next/dist/server/config-shared";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  useEditUserMutation,
+  useGetParentsQuery,
+  useGetUserByIdQuery,
+} from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
 
 export default function Page({ searchParams }) {
@@ -25,13 +31,14 @@ export default function Page({ searchParams }) {
   const [userData, setUserData] = useState(null);
 
   const { data, isFetching } = useGetUserByIdQuery(id);
-  console.log(data?.result?.parentId);
+  // console.log(data?.result?.parentId);
+  const [editUserData] = useEditUserMutation();
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedProjects, setSelectedProjects] = useState(
     data?.result?.projects || [],
   );
   const [defaultParent, setDefaultParent] = useState();
-  const [parentId, setParentId] = useState(null);
+  const [selectedParentId, setSelectedParentId] = useState(null);
   // const priorUser = true;
 
   useEffect(() => {
@@ -45,16 +52,16 @@ export default function Page({ searchParams }) {
 
   const ParentDetails = {
     role: selectedRole,
-    projects: [...selectedProjects],
+    projects: [...selectedProjects] || [],
   };
   const parentResult = useGetParentsQuery(ParentDetails);
 
   const priorUser = isPriorityUser(selectedRole || []);
-  // console.log(selectedProjects);
+  // console.log(selectedProjects);GET
   // console.log()
   // console.log(priorUser);
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     phone: "",
     password: "",
@@ -63,26 +70,66 @@ export default function Page({ searchParams }) {
   const [selectedValues, setSelectedValues] = useState({
     projects: [],
     role: [],
-    parent: "",
+    parentId: "",
   });
+
+  useEffect(() => {
+    if (data?.result?.parentId) {
+      const filterParent = (parentResult?.data?.result || [])?.filter(
+        (parent) => parent?._id === data?.result?.parentId,
+      );
+      if (filterParent && filterParent.length > 0) {
+        const parentName = filterParent[0]?.name;
+        setDefaultParent(parentName);
+      }
+      // console.log("set name working");
+    }
+  }, [parentResult, data]);
+
+  // useEffect(() => {
+  //   if (data?.result) {
+  //     setFormData({
+  //       username: data.result.name || "",
+  //       email: data.result.email || "",
+  //       phone: data.result.phone || "",
+  //       password: "",
+  //     });
+
+  //     setSelectedValues({
+  //       projects: data?.result?.projects || [],
+  //       role: data?.result?.role || [],
+  //       parentId: defaultParent || "",
+  //     });
+  //   }
+  //   console.log("set parent set working");
+  // }, [parentResult, data, defaultParent]);
 
   useEffect(() => {
     if (data?.result) {
       setFormData({
-        username: data.result.name || "",
+        name: data.result.name || "",
         email: data.result.email || "",
         phone: data.result.phone || "",
         password: "",
       });
 
-      setSelectedValues({
+      setSelectedValues((prevValues) => ({
+        ...prevValues,
         projects: data?.result?.projects || [],
         role: data?.result?.role || [],
-        parent: defaultParent || "",
-      });
+      }));
     }
-  }, [data, parentResult, defaultParent]);
+  }, [data]);
 
+  useEffect(() => {
+    setSelectedValues((prevValues) => ({
+      ...prevValues,
+      parentId: defaultParent || "",
+    }));
+  }, [defaultParent]);
+
+  // console.log(defaultParent);
+  // console.log(selectedValues.parentId, "parentid");
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -92,6 +139,10 @@ export default function Page({ searchParams }) {
   };
 
   const handleChange = (name, value) => {
+    if (name === "projects" && value.length === 0) {
+      toast.error("Please select at least one project.");
+      return;
+    }
     setSelectedValues((prevValues) => ({
       ...prevValues,
       [name]: value,
@@ -120,18 +171,27 @@ export default function Page({ searchParams }) {
   // console.log(selectedProjects);
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!selectedValues.parentId && !priorUser) {
+      toast.error("Please select at least one parent.");
+      return;
+    }
+    if (!parentResult?.isSuccess || parentResult?.data?.result?.length === 0) {
+      toast.error("No options available for parents or no parent user found.");
+      return;
+    }
 
     const updatedParentValues = {
       ...selectedValues,
-      parent: parentId,
+      parentId: selectedParentId,
+      id,
     };
 
     const updatedValue = {
       ...formData,
       ...updatedParentValues,
     };
-
-    console.log(updatedValue);
+    editUserData(updatedValue);
+    // console.log(updatedValue);
   };
 
   useEffect(() => {
@@ -147,396 +207,497 @@ export default function Page({ searchParams }) {
   }, []);
   // console.log(userData);
   // console.log(data);
-  useEffect(() => {
-    const filterParent = parentResult?.data?.result?.filter(
-      (parent) => parent?._id === data?.result?.parentId,
-    );
-    if (filterParent && filterParent.length > 0) {
-      const parentName = filterParent[0]?.name;
-      setDefaultParent(parentName);
-    }
-  }, [parentResult, data]);
 
+  // console.log(defaultParent);
   useEffect(() => {
-    if (selectedValues.parent && parentResult?.data?.result) {
+    if (selectedValues.parentId && parentResult?.data?.result) {
       const selectedParent = parentResult?.data?.result.find(
-        (parent) => parent.name === selectedValues.parent,
+        (parent) => parent.name === selectedValues.parentId,
       );
-      const selectedparentId = selectedParent?._id || null;
-      setParentId(selectedparentId);
+      const retriveparentId = selectedParent?._id || null;
+      setSelectedParentId(retriveparentId);
     }
-  }, [selectedValues.parent, parentResult]);
-  console.log(parentId);
+  }, [selectedValues.parentId, parentResult]);
+  // console.log(selectedParentId);
 
   return (
-    <Grid sx={{ minHeight: "100vh" }}>
-      <Grid
-        sx={{
-          height: "5vh",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <Link href="/usermanagement">
-          <Button
-            sx={{
-              backgroundColor: "transparent",
-              color: "black",
-              width: "92px",
-              height: "39px",
-              borderRadius: "13px",
-              border: "1px solid black",
-              fontSize: "13px",
-              fontWeight: "400",
-              "&:hover": {
-                backgroundColor: "transparent",
-                boxShadow: "none",
-              },
-            }}
-          >
-            back
-          </Button>
-        </Link>
-      </Grid>
-      <Grid
-        sx={{
-          minHeight: "581px",
-          borderRadius: "29px",
-          boxShadow: " 0px 6px 32px 0px rgba(0, 0, 0, 0.15)",
-          border: "1px solid #9E9E9E",
-          width: "100%",
-        }}
-      >
+    <>
+      <ToastContainer />
+
+      <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
         <Grid
           sx={{
-            height: "59px",
-            backgroundColor: "black",
-            color: "white",
-            borderRadius: "29px 29px 0px 0px",
+            height: "5vh",
             display: "flex",
             alignItems: "center",
+            marginBottom: "20px",
           }}
         >
-          <Typography
-            sx={{ fontSize: "18px", fontWeight: "600", padding: "20px" }}
-          >
-            Edit User
-          </Typography>
-        </Grid>
-        {isFetching ? (
-          <Box
-            sx={{
-              display: "flex",
-              width: "100%",
-              height: "80vh",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Grid
-            sx={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Grid
+          <Link href="/usermanagement">
+            <Button
               sx={{
-                width: "100%",
-                minHeight: "500px",
+                backgroundColor: "transparent",
+                color: "black",
+                width: "92px",
+                height: "39px",
+                borderRadius: "13px",
+                border: "1px solid black",
+                fontSize: "13px",
+                fontWeight: "400",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                  boxShadow: "none",
+                },
               }}
             >
-              {isFetching ? (
-                ""
-              ) : (
-                <form
-                  onSubmit={handleSubmit}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    minHeight: "640px",
-                  }}
-                >
-                  <Grid
-                    sx={{
+              back
+            </Button>
+          </Link>
+        </Grid>
+        <Grid
+          sx={{
+            minHeight: "581px",
+            borderRadius: "29px",
+            boxShadow: " 0px 6px 32px 0px rgba(0, 0, 0, 0.15)",
+            border: "1px solid #9E9E9E",
+            width: "100%",
+          }}
+        >
+          <Grid
+            sx={{
+              height: "59px",
+              backgroundColor: "black",
+              color: "white",
+              borderRadius: "29px 29px 0px 0px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{ fontSize: "18px", fontWeight: "600", padding: "20px" }}
+            >
+              Edit User
+            </Typography>
+          </Grid>
+          {isFetching ? (
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                height: "80vh",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Grid
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Grid
+                sx={{
+                  width: "100%",
+                  minHeight: "500px",
+                }}
+              >
+                {isFetching ? (
+                  ""
+                ) : (
+                  <form
+                    onSubmit={handleSubmit}
+                    style={{
                       display: "flex",
+                      flexDirection: "column",
                       alignItems: "center",
-                      justifyContent: "space-around",
-                      flexWrap: "wrap",
-                      marginBottom: "40px",
-                      width: "80%",
+                      justifyContent: "center",
+                      minHeight: "640px",
                     }}
                   >
-                    <TextField
-                      label="Username"
-                      name="username"
-                      type="text"
-                      value={formData.username}
-                      onChange={handleInputChange}
+                    <Grid
                       sx={{
-                        width: "397px",
-                        color: "black",
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderRadius: "19px",
-                          },
-                      }}
-                    />
-                    <TextField
-                      label="Email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      sx={{
-                        width: "397px",
-                        color: "black",
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderRadius: "19px",
-                          },
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-around",
-                      flexWrap: "wrap",
-                      marginBottom: "40px",
-                      width: "80%",
-                    }}
-                  >
-                    <TextField
-                      label="Phone"
-                      name="phone"
-                      type="text"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      sx={{
-                        width: "397px",
-                        color: "black",
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderRadius: "19px",
-                          },
-                      }}
-                    />
-                    <TextField
-                      label="Password"
-                      name="password"
-                      type="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      sx={{
-                        width: "397px",
-                        color: "black",
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderRadius: "19px",
-                          },
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-around",
-                      flexWrap: "wrap",
-                      width: "80%",
-                      // marginBottom: "40px",
-                    }}
-                  />
-
-                  <Grid
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-around",
-                      flexWrap: "wrap",
-                      width: "80%",
-                      marginBottom: "40px",
-                    }}
-                  >
-                    <FormControl
-                      sx={{
-                        minWidth: "397px",
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderRadius: "19px",
-                          },
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        flexWrap: "wrap",
+                        marginBottom: "40px",
+                        width: "80%",
                       }}
                     >
-                      <InputLabel
-                        id="parent-label"
-                        sx={{ color: "#757575", fontSize: "14px" }}
-                      >
-                        Choose one role
-                      </InputLabel>
-                      <Select
-                        labelId="parent-label"
-                        id="parent"
-                        name="role"
-                        displayEmpty
-                        value={selectedValues.role}
-                        label="Choose one role"
-                        onChange={(e) => handleChange("role", e.target.value)}
-                        MenuProps={{ disableScrollLock: true }}
-                      >
-                        {userData?.subordinateRoles?.map((option, index) => (
-                          <MenuItem key={index} value={option}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    {priorUser ? (
-                      ""
-                    ) : (
-                      <FormControl
+                      <TextField
+                        label="Username"
+                        name="name"
+                        type="text"
+                        value={formData.name}
+                        onChange={handleInputChange}
                         sx={{
                           width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      />
+                      <TextField
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        sx={{
+                          width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        flexWrap: "wrap",
+                        marginBottom: "40px",
+                        width: "80%",
+                      }}
+                    >
+                      <TextField
+                        label="Phone"
+                        name="phone"
+                        type="text"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        sx={{
+                          width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      />
+                      <TextField
+                        label="Password"
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        sx={{
+                          width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        flexWrap: "wrap",
+                        width: "80%",
+                        // marginBottom: "40px",
+                      }}
+                    />
+
+                    <Grid
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        flexWrap: "wrap",
+                        width: "80%",
+                        marginBottom: "40px",
+                      }}
+                    >
+                      <FormControl
+                        sx={{
+                          minWidth: "397px",
                           "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
                             {
                               borderRadius: "19px",
                             },
                         }}
                       >
-                        <InputLabel id="demo-projects-label">
-                          project
+                        <InputLabel
+                          id="parent-label"
+                          sx={{ color: "#757575", fontSize: "14px" }}
+                        >
+                          Choose one role
                         </InputLabel>
-
                         <Select
-                          labelId="demo-multiple-chip-label"
-                          id="demo-multiple-chip"
-                          name="projects"
-                          multiple
-                          value={selectedValues.projects}
-                          onChange={(e) =>
-                            handleChange("projects", e.target.value)
-                          }
-                          input={
-                            <OutlinedInput
-                              id="select-multiple-chip"
-                              label="project"
-                            />
-                          }
-                          renderValue={(selected) => (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 0.5,
-                              }}
-                            >
-                              {selected?.map((value) => (
-                                <Chip
-                                  sx={{
-                                    backgroundColor: "rgba(250, 185, 0, 0.28)",
-                                    borderRadius: "10px",
-                                  }}
-                                  key={value}
-                                  label={value}
-                                />
-                              ))}
-                            </Box>
-                          )}
+                          labelId="parent-label"
+                          id="parent"
+                          name="role"
+                          displayEmpty
+                          value={selectedValues.role}
+                          label="Choose one role"
+                          onChange={(e) => handleChange("role", e.target.value)}
                           MenuProps={{ disableScrollLock: true }}
                         >
-                          {userData?.projects?.map((p) => (
-                            <MenuItem
-                              key={p}
-                              value={p}
-                              sx={{
-                                "&.Mui-selected": {
-                                  backgroundColor: "white",
-                                  color: "orange",
-                                  fontWeight: "800",
-                                },
-                              }}
-                            >
-                              {p}
+                          {userData?.subordinateRoles?.map((option, index) => (
+                            <MenuItem key={index} value={option}>
+                              {option}
                             </MenuItem>
                           ))}
                         </Select>
                       </FormControl>
-                    )}
-                  </Grid>
-                  {priorUser ? (
-                    ""
-                  ) : (
-                    <FormControl
-                      sx={{
-                        minWidth: "397px",
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderRadius: "19px",
-                          },
-                      }}
-                    >
-                      <InputLabel
-                        id="parent-label"
-                        sx={{ color: "#757575", fontSize: "14px" }}
-                      >
-                        Choose one parent
-                      </InputLabel>
-                      <Select
-                        labelId="parent-label"
-                        id="parent"
-                        name="parent"
-                        displayEmpty
-                        value={selectedValues.parent}
-                        label="Choose one parent"
-                        onChange={(e) => handleChange("parent", e.target.value)}
-                        MenuProps={{ disableScrollLock: true }}
-                      >
-                        {parentResult?.data?.result.map((parent, index) => (
-                          <MenuItem key={index} value={parent.name}>
-                            {parent.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
+                      {priorUser ? (
+                        ""
+                      ) : (
+                        <FormControl
+                          sx={{
+                            width: "397px",
+                            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderRadius: "19px",
+                              },
+                          }}
+                        >
+                          <InputLabel id="demo-projects-label">
+                            project
+                          </InputLabel>
 
-                  <Grid sx={{ marginTop: "40px" }}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      sx={{
-                        marginLeft: "20px",
-                        width: "145px",
-                        backgroundColor: "#F9B800",
-                        color: "black",
-                        height: "43px",
-                        borderRadius: "12px",
-                        boxShadow: "none",
-                        border: "none",
-                        "&:hover": {
+                          <Select
+                            labelId="demo-multiple-chip-label"
+                            id="demo-multiple-chip"
+                            name="projects"
+                            multiple
+                            value={selectedValues.projects}
+                            onChange={(e) =>
+                              handleChange("projects", e.target.value)
+                            }
+                            input={
+                              <OutlinedInput
+                                id="select-multiple-chip"
+                                label="project"
+                              />
+                            }
+                            renderValue={(selected) => (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  gap: 0.5,
+                                }}
+                              >
+                                {selected?.map((value) => (
+                                  <Chip
+                                    sx={{
+                                      backgroundColor:
+                                        "rgba(250, 185, 0, 0.28)",
+                                      borderRadius: "10px",
+                                    }}
+                                    key={value}
+                                    label={value}
+                                  />
+                                ))}
+                              </Box>
+                            )}
+                            MenuProps={{ disableScrollLock: true }}
+                          >
+                            {userData?.projects?.map((p) => (
+                              <MenuItem
+                                key={p}
+                                value={p}
+                                sx={{
+                                  "&.Mui-selected": {
+                                    backgroundColor: "white",
+                                    color: "orange",
+                                    fontWeight: "800",
+                                  },
+                                }}
+                              >
+                                {p}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    </Grid>
+                    {priorUser ? (
+                      ""
+                    ) : (
+                      // <FormControl
+                      //   sx={{
+                      //     minWidth: "397px",
+                      //     "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      //       {
+                      //         borderRadius: "19px",
+                      //       },
+                      //   }}
+                      // >
+                      //   <InputLabel
+                      //     id="parent-label"
+                      //     sx={{ color: "#757575", fontSize: "14px" }}
+                      //   >
+                      //     Choose one parent
+                      //   </InputLabel>
+                      //   <Select
+                      //     labelId="parent-label"
+                      //     id="parent"
+                      //     name="parent"
+                      //     displayEmpty
+                      //     value={selectedValues.parent}
+                      //     label="Choose one parent"
+                      //     onChange={(e) => handleChange("parent", e.target.value)}
+                      //     MenuProps={{ disableScrollLock: true }}
+                      //   >
+                      //     {parentResult?.data?.result.map((parent, index) => (
+                      //       <MenuItem key={index} value={parent.name}>
+                      //         {parent.name}
+                      //       </MenuItem>
+                      //     ))}
+                      //   </Select>
+                      // </FormControl>
+                      <FormControl
+                        sx={{
+                          minWidth: "397px",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      >
+                        {parentResult?.isSuccess &&
+                          parentResult?.data?.result?.length > 0 && (
+                            <InputLabel
+                              id="parent-label"
+                              sx={{ color: "#757575", fontSize: "14px" }}
+                            >
+                              Select Parent
+                            </InputLabel>
+                          )}
+                        {parentResult?.isSuccess ? (
+                          parentResult?.data?.result?.length > 0 ? (
+                            <Select
+                              labelId="parent-label"
+                              id="parentId"
+                              name="parentId"
+                              displayEmpty
+                              value={selectedValues?.parentId}
+                              label="select parent"
+                              onChange={(e) =>
+                                handleChange("parentId", e.target.value)
+                              }
+                              MenuProps={{ disableScrollLock: true }}
+                            >
+                              {parentResult?.data?.result?.map(
+                                (option, index) => (
+                                  <MenuItem key={index} value={option.name}>
+                                    {option?.name}
+                                  </MenuItem>
+                                ),
+                              )}
+                            </Select>
+                          ) : (
+                            <FormControl
+                              disabled
+                              sx={{
+                                width: "100%",
+                                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                                  {
+                                    borderRadius: "19px",
+                                  },
+                              }}
+                            >
+                              <InputLabel
+                                id="parent-label"
+                                sx={{
+                                  color: "#757575",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                No options available for parents
+                              </InputLabel>
+                              <Select
+                                labelId="parent-label"
+                                id="parentId"
+                                value=""
+                                displayEmpty
+                                disabled
+                                MenuProps={{ disableScrollLock: true }}
+                              />
+                            </FormControl>
+                          )
+                        ) : (
+                          <FormControl
+                            disabled
+                            sx={{
+                              width: "100%",
+                              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                                {
+                                  borderRadius: "19px",
+                                },
+                            }}
+                          >
+                            <InputLabel
+                              id="parent-label"
+                              sx={{
+                                color: "red",
+                                fontSize: "14px",
+                                textAlign: "center",
+                                letterSpacing: "1px",
+                              }}
+                              style={{ color: "red" }}
+                            >
+                              No Parent User Found!
+                            </InputLabel>
+                            <Select
+                              labelId="parent-label"
+                              id="parentId"
+                              value=""
+                              displayEmpty
+                              disabled
+                              MenuProps={{ disableScrollLock: true }}
+                            />
+                          </FormControl>
+                        )}
+                      </FormControl>
+                    )}
+
+                    <Grid sx={{ marginTop: "40px" }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        sx={{
+                          marginLeft: "20px",
+                          width: "145px",
                           backgroundColor: "#F9B800",
+                          color: "black",
+                          height: "43px",
+                          borderRadius: "12px",
                           boxShadow: "none",
-                        },
-                      }}
-                    >
-                      Update
-                    </Button>
-                  </Grid>
-                </form>
-              )}
+                          border: "none",
+                          "&:hover": {
+                            backgroundColor: "#F9B800",
+                            boxShadow: "none",
+                          },
+                        }}
+                      >
+                        Update
+                      </Button>
+                    </Grid>
+                  </form>
+                )}
+              </Grid>
             </Grid>
-          </Grid>
-        )}
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 }

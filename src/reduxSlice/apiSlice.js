@@ -126,6 +126,13 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    editUser: builder.mutation({
+      query: (data) => ({
+        url: `/user`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -148,4 +155,5 @@ export const {
   useGetProjectWithPermissionQuery,
   useGetCPSQuery,
   useGetLeadByPhoneQuery,
+  useEditUserMutation,
 } = apiSlice;

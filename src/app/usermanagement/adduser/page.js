@@ -539,20 +539,67 @@ export default function Page() {
                             )}
                           </Select>
                         ) : (
-                          <Typography sx={{ textAlign: "center" }}>
-                            No options available for parents
-                          </Typography>
+                          <FormControl
+                            disabled
+                            sx={{
+                              width: "100%",
+                              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                                {
+                                  borderRadius: "19px",
+                                },
+                            }}
+                          >
+                            <InputLabel
+                              id="parent-label"
+                              sx={{
+                                color: "#757575",
+                                fontSize: "14px",
+                              }}
+                            >
+                              No options available for parents
+                            </InputLabel>
+                            <Select
+                              labelId="parent-label"
+                              id="parentId"
+                              value=""
+                              displayEmpty
+                              disabled
+                              MenuProps={{ disableScrollLock: true }}
+                            />
+                          </FormControl>
                         )
                       ) : (
-                        <Typography
+                        <FormControl
+                          disabled
                           sx={{
-                            textAlign: "center",
-                            color: "red",
-                            letterSpacing: "1px",
+                            width: "100%",
+                            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderRadius: "19px",
+                              },
                           }}
                         >
-                          No Parent User Found!
-                        </Typography>
+                          <InputLabel
+                            id="parent-label"
+                            sx={{
+                              fontSize: "14px",
+                              textAlign: "center",
+                              letterSpacing: "1px",
+                            }}
+                            style={{ color: "red" }} 
+                          >
+                            No Parent User Found!
+                          </InputLabel>
+
+                          <Select
+                            labelId="parent-label"
+                            id="parentId"
+                            value=""
+                            displayEmpty
+                            disabled
+                            MenuProps={{ disableScrollLock: true }}
+                          />
+                        </FormControl>
                       )}
                     </FormControl>
                   )}

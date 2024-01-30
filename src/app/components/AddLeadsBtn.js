@@ -33,7 +33,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-function AddLeadsBtn() {
+function AddLeadsBtn({ refetch }) {
   const [open, setOpen] = useState(false);
   const [permissionproject, setPermissionProject] = useState([]);
   const [userId, setUserId] = useState("");
@@ -75,12 +75,11 @@ function AddLeadsBtn() {
   };
 
   useEffect(() => {
-    const projectsWithLeadAddPermission = resultProject.data.result.filter(
+    const projectsWithLeadAddPermission = resultProject?.data?.result?.filter(
       (project) => project?.permission === "leadAddAndView",
     );
     setPermissionProject(projectsWithLeadAddPermission);
-    // console.log(projectsWithLeadAddPermission);
-  }, []);
+  }, [resultProject]);
 
   useEffect(() => {
     const selectedCp = resultCps?.data?.result?.find(
@@ -94,7 +93,6 @@ function AddLeadsBtn() {
         id: selectedCp?.id,
       }));
     } else {
-      // console.error(`Company with name  not found in resultCps.`);
       setFormData((prevData) => ({
         ...prevData,
         companyCode: userCpCode,
@@ -154,8 +152,9 @@ function AddLeadsBtn() {
       id: "",
     });
     console.log(formData);
-    // leadData(formData);
+    leadData(formData);
     setOpen(false);
+    refetch();
   };
 
   // console.log(role);

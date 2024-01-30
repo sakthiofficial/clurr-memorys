@@ -47,7 +47,7 @@ export default function Page() {
       },
     ],
   });
-  
+
   const router = useRouter();
 
   // get relational manager query
@@ -220,7 +220,7 @@ export default function Page() {
     }
   };
 
-  //login user get 
+  // login user get
   useEffect(() => {
     const storedData = localStorage.getItem("user");
 

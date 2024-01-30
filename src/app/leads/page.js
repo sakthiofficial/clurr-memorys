@@ -243,11 +243,15 @@ export default function Page() {
     }
   };
 
-  const { data, isFetching, isLoading } = useGetLeadsByDateQuery({
+  const { data, isFetching, isLoading, refetch } = useGetLeadsByDateQuery({
     selectedProject,
     selectedStartDate,
     selectedEndDate,
   });
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   // useEffect(() => {
   //   if (
@@ -385,21 +389,25 @@ export default function Page() {
             minWidth: "300px",
             display: "flex",
             justifyContent: "end",
+            alignItems: "end",
             paddingLeft: "20px",
             // border: "1px solid black",
           }}
         >
-          {/* {permissions &&
-            permissions.includes(permissionKeyNames.leadManagement) && (
-              <AddLeadsBtn />
-            )} */}
           {permissions &&
-            permissions.includes(permissionKeyNames.leadManagement) && (
+            permissions.includes(permissionKeyNames.leadManagement) &&
+            selectedProject === "All" && <AddLeadsBtn />}
+
+          {permissions &&
+            permissions.includes(permissionKeyNames.leadManagement) &&
+            selectedProject !== "All" && (
               <>
                 {resultProject?.data?.result?.map((permission) => (
                   <Grid key={permission.id}>
                     {permission.permission === "leadAddAndView" &&
-                      permission._id === selectedProjectId && <AddLeadsBtn />}
+                      permission._id === selectedProjectId && (
+                        <AddLeadsBtn refetch={refetch} />
+                      )}
                   </Grid>
                 ))}
               </>
@@ -515,7 +523,7 @@ export default function Page() {
                                 <Link
                                   href={{
                                     pathname: "/leads/view",
-                                    search: `?phone=${row?.Phone}&project=${selectedProject}`,
+                                    search: `?phone=${row?.Phone}&project=${row?.Project}`,
                                   }}
                                 >
                                   <Button

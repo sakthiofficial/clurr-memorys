@@ -43,7 +43,7 @@ export default function Page() {
 
   // get cp data query
   const { data, refetch, isFetching } = useGetCpQuery();
-
+  console.log(data);
   // set pagination
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -254,22 +254,29 @@ export default function Page() {
                             alignItems: "center",
                           }}
                         >
-                          <Button
-                            sx={{
-                              borderRadius: "10px",
-                              color: "black",
-                              width: "58px",
-                              height: "28px",
-                              fontSize: "10px",
-                              backgroundColor: "rgba(249, 184, 0, 1)",
-                              "&:hover": {
-                                backgroundColor: "rgba(249, 184, 0, 1)",
-                                boxShadow: "none",
-                              },
+                          <Link
+                            href={{
+                              pathname: "cpmanagement/view",
+                              search: `?id=${row?.company?._id}`,
                             }}
                           >
-                            edit
-                          </Button>
+                            <Button
+                              sx={{
+                                borderRadius: "10px",
+                                color: "black",
+                                width: "58px",
+                                height: "28px",
+                                fontSize: "10px",
+                                backgroundColor: "rgba(249, 184, 0, 1)",
+                                "&:hover": {
+                                  backgroundColor: "rgba(249, 184, 0, 1)",
+                                  boxShadow: "none",
+                                },
+                              }}
+                            >
+                              view
+                            </Button>
+                          </Link>
                           <Button
                             onClick={handleOpen}
                             sx={{

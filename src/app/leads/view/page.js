@@ -51,7 +51,7 @@ export default function Page({ searchParams }) {
           <CircularProgress />
         </Box>
       )}
-      {data?.result.map((leads) => (
+      {data?.result?.map((leads) => (
         <Grid
           sx={{
             minHeight: "100vh",
