@@ -18,23 +18,23 @@ import {
 import Link from "next/link";
 import { defaultConfig } from "next/dist/server/config-shared";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import {
   useEditUserMutation,
   useGetParentsQuery,
   useGetUserByIdQuery,
 } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
-import { useRouter } from "next/navigation";
 
 export default function Page({ searchParams }) {
   const { id } = searchParams;
   // console.log(id);
   const [userData, setUserData] = useState(null);
 
-  const { data, isFetching } = useGetUserByIdQuery(id);
+  const { data, isFetching, refetch } = useGetUserByIdQuery(id);
   // console.log(data?.result?.parentId);
   const [editUserData] = useEditUserMutation();
-  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedRole, setSelectedRole] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState(
     data?.result?.projects || [],
   );
@@ -42,6 +42,8 @@ export default function Page({ searchParams }) {
   const [selectedParentId, setSelectedParentId] = useState(null);
   // const priorUser = true;
   const router = useRouter();
+
+  console.log(typeof selectedRole);
 
   useEffect(() => {
     if (data?.result?.role) {
@@ -53,7 +55,7 @@ export default function Page({ searchParams }) {
   }, [data]);
 
   const ParentDetails = {
-    role: selectedRole,
+    role: typeof selectedRole === "string" ? selectedRole : selectedRole[0],
     projects: [...selectedProjects] || [],
   };
   const parentResult = useGetParentsQuery(ParentDetails);
@@ -150,7 +152,7 @@ export default function Page({ searchParams }) {
       [name]: value,
     }));
     if (name === "role") {
-      setSelectedRole(value);
+      setSelectedRole([value]);
     }
     if (name === "projects") {
       setSelectedProjects(value);
@@ -185,6 +187,7 @@ export default function Page({ searchParams }) {
     const updatedParentValues = {
       ...selectedValues,
       parentId: selectedParentId,
+      role: selectedRole,
       id,
     };
 
@@ -204,6 +207,7 @@ export default function Page({ searchParams }) {
         toast.success("User edit successfully!");
         setTimeout(() => {
           router.push("/usermanagement");
+          refetch();
         }, 1500);
       }
     });

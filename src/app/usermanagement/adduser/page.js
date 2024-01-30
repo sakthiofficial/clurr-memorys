@@ -586,7 +586,7 @@ export default function Page() {
                               textAlign: "center",
                               letterSpacing: "1px",
                             }}
-                            style={{ color: "red" }} 
+                            style={{ color: "red" }}
                           >
                             No Parent User Found!
                           </InputLabel>

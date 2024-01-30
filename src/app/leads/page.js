@@ -378,7 +378,10 @@ export default function Page() {
               onChange={handleChangeProject}
               MenuProps={{ disableScrollLock: true }}
             >
-              <MenuItem value="All">All</MenuItem>
+              {resultProject.data?.result.length > 1 ? (
+                <MenuItem value="All">All</MenuItem>
+              ) : null}
+
               {resultProject?.data?.result?.map((proj) => (
                 <MenuItem key={proj.name} value={proj.name}>
                   {proj.name}

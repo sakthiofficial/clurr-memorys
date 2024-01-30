@@ -87,7 +87,7 @@ export default function Page() {
       await deleteUser(id);
       toast.success("User deleted successfully ");
       setTimeout(() => {
-        refetch();
+      refetch();
       }, 2000);
     } catch (er) {
       console.error("Error during user deletion:", er);

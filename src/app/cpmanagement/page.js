@@ -44,7 +44,7 @@ export default function Page() {
 
   // get cp data query
   const { data, refetch, isFetching } = useGetCpQuery();
-  console.log(data);
+  // console.log(data);
   // set pagination
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -62,22 +62,25 @@ export default function Page() {
 
   // delete mutation
   const [deleteCp] = useCpDeleteMutation();
+  const [selectedRow, setSelectedRow] = useState(null);
 
-  const handleOpen = () => {
+  const handleOpen = (row) => {
+    setSelectedRow(row);
     setOpen(true);
-    // console.log(row);
   };
 
   const handleClose = () => {
+    setSelectedRow(null);
     setOpen(false);
   };
 
   // handle delete function
-  const handleDelete = async (company) => {
+  const handleDelete = async (selectedcp) => {
+    console.log(selectedcp);
     try {
-      handleClose();
-      await deleteCp(company.cpCode);
+      await deleteCp(selectedcp?.company?.cpCode);
       toast.success("User deleted successfully ");
+      handleClose();
       setTimeout(() => {
         refetch();
       }, 2000);
@@ -279,7 +282,7 @@ export default function Page() {
                             </Button>
                           </Link>
                           <Button
-                            onClick={handleOpen}
+                            onClick={() => handleOpen(row)}
                             sx={{
                               border: "1px solid red",
                               borderRadius: "10px",
@@ -340,6 +343,7 @@ export default function Page() {
                                   height={39}
                                   src={Trash}
                                   sx={{ color: "red" }}
+                                  alt="delete"
                                 />
                               </Grid>
                               <Grid
@@ -392,7 +396,10 @@ export default function Page() {
                                 No Keep
                               </Button>
                               <Button
-                                onClick={() => handleDelete(row.company)}
+                                onClick={() => handleDelete(selectedRow)}
+                                // onClick={() =>
+                                //   console.log(selectedRow.company.cpCode)
+                                // }
                                 color="primary"
                                 sx={{
                                   border: "none",
