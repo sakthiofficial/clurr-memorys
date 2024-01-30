@@ -301,12 +301,14 @@ function AddLeadsBtn({ refetch }) {
                   },
                 }}
               >
-                <InputLabel id="demo-simple-select-label">Company</InputLabel>
+                <InputLabel id="demo-simple-select-label">
+                  Chanel Partner
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={formData?.cp}
-                  label="Company"
+                  label="Chanel Partner"
                   onChange={handleCpChange}
                   name="cp"
                 >
