@@ -11,10 +11,11 @@ export default function Page({ searchParams }) {
   // console.log(phone);
   const { project } = searchParams;
 
-  const [phonenumber, setPhoneNumber] = useState("");
+  const [phonenumber, setPhoneNumber] = useState(phone);
   useEffect(() => {
-    console.log(phone, project);
+    console.log("Data check", phone, project);
     if (phone) {
+      console.log("updating phone number");
       setPhoneNumber(phone.split("-").length > 1 ? phone.split("-")[1] : phone);
     }
   }, [searchParams]);
