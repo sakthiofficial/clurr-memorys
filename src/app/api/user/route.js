@@ -46,15 +46,15 @@ export async function PUT(request) {
     const bodyData = await request.json();
     const validateQuery = Joi.object({
       id: Joi.string().required(),
-      name: Joi.string().required(),
-      email: Joi.string().required(),
-      password: Joi.string(),
+      name: Joi.string(),
+      email: Joi.string(),
+      password: Joi.string().allow(""),
 
-      role: Joi.array().required(),
+      role: Joi.array(),
       projects: checkProjectValidation(bodyData?.role)
         ? Joi.array().length(1)
         : Joi.array(),
-      phone: Joi.string().required(),
+      phone: Joi.string(),
       parentId:
         roleNames?.superAdmin === bodyData?.role
           ? Joi.string().allow("")
