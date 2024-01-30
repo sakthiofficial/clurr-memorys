@@ -10,16 +10,18 @@ export default function Page({ searchParams }) {
   const { phone } = searchParams;
   console.log(phone);
   const { project } = searchParams;
-  const [phonenumber, setPhoneNumber] = useState("");
-  useEffect(() => {
-    setPhoneNumber(phone.split("-").length > 1 ? phone.split("-")[1] : phone);
-  }, [phone]);
-  console.log(phonenumber);
+  // const [phonenumber, setPhoneNumber] = useState("");
+  // useEffect(() => {
+  //   setPhoneNumber(phone.split("-").length > 1 ? phone.split("-")[1] : phone);
+  // }, [phone]);
+  // const result = phone.split("-");
+  // console.log(result);
+  // console.log(phonenumber);
   // console.log(phonenumber);
   // console.log(project);
 
   // get leads by phone
-  const { data, isFetching } = useGetLeadByPhoneQuery({ project, phonenumber });
+  const { data, isFetching } = useGetLeadByPhoneQuery({ project, phone });
   // console.log(data);
 
   // handle back function
