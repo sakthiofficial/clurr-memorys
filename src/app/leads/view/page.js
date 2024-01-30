@@ -1,25 +1,20 @@
 "use client";
 
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useGetLeadByPhoneQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page({ searchParams }) {
   const router = useRouter();
-  const { phone } = searchParams;
-  // console.log(phone);
-  const { project } = searchParams;
+  const params = useSearchParams();
 
+  const phone = params.get("phone");
+  const project = params.get("project");
   const [phonenumber, setPhoneNumber] = useState(phone);
-  useEffect(() => {
-    console.log("Data check", phone, project);
-    if (phone) {
-      console.log("updating phone number");
-      setPhoneNumber(phone.split("-").length > 1 ? phone.split("-")[1] : phone);
-    }
-  }, [searchParams]);
-  console.log(phonenumber, project);
+
+  console.log("phone number check", phonenumber);
+  console.log(project);
 
   // get leads by phone
   const { data, isFetching } = useGetLeadByPhoneQuery({ project, phonenumber });
