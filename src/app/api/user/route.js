@@ -53,7 +53,7 @@ export async function PUT(request) {
       role: Joi.array(),
       projects: isPriorityUser(bodyData?.role)
         ? Joi.array()
-        : Joi.array().length(1),
+        : Joi.array().min(1),
       phone: Joi.string(),
       parentId:
         roleNames?.superAdmin === bodyData?.role

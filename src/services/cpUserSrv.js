@@ -74,6 +74,7 @@ class CPUserSrv {
               parentRole(newUser[userDataObj?.role][0]),
             )
           ) {
+            console.log(parentData, parentRole(newUser[userDataObj?.role][0]));
             throw userValidationErrors?.ParentRoleLimitation;
           }
         }
@@ -630,7 +631,8 @@ class CPUserSrv {
         updateUser?.role !== roleNames?.mis
       ) {
         const updateUserParentData = await this.getUserById(
-          updateUserDbData[userDataObj?.parentId],
+          updateUser[userDataObj?.parentId] ||
+            updateUserDbData[userDataObj?.parentId],
         );
 
         if (!updateUserParentData) {

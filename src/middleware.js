@@ -21,15 +21,14 @@ export function middleware(request) {
       }
       return NextResponse.next();
     }
-    if (!cookie) {
-      const storedData = localStorage.getItem("user");
 
-      console.log("came here", storedData);
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (!cookie) {
+      // return NextResponse.redirect(new URL("/login", request.url));
     }
     return NextResponse.next();
   } catch (error) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    console.log(error);
+    // return NextResponse.redirect(new URL("/login", request.url));
   }
 }
 export const config = {
