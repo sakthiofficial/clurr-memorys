@@ -23,6 +23,7 @@ import {
   superAdminMailOptions,
   userMailOption,
 } from "@/helper/email/mailOptions";
+import { CpAppCompany } from "../../models/AppCompany";
 
 const { default: initDb } = require("../lib/db");
 const { CpAppUser } = require("../../models/AppUser");
@@ -321,8 +322,8 @@ class CPUserSrv {
       user[userDataObj?.subordinateRoles] = userSubordinateRoles;
       user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
       let { projects } = user;
-      const { permissions, subordinateRoles, _id, role, cpCode } = user;
-
+      const { permissions, subordinateRoles, _id, role } = user;
+      let cpCode = null;
       const sessionToken = this.genrateTokan();
       const sessionData = new Session({
         token: sessionToken,
@@ -330,12 +331,20 @@ class CPUserSrv {
       });
       await sessionData.save();
       const isPriorityProvider = isPriorityUser(role);
-
       // // fetching projects details
       if (isPriorityProvider) {
         projects = await CpAppProject.find({});
       }
       projects = projects.map((project) => project.name);
+      if (
+        role.includes(roleNames?.cpBranchHead) ||
+        role.includes(roleNames?.cpExecute)
+      ) {
+        const companyData = await CpAppCompany.findOne({
+          $or: [{ branchHeadId: _id }, { executeIds: { $in: [_id] } }],
+        });
+        cpCode = companyData ? companyData?.cpCode : null;
+      }
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
         token: sessionToken,
 

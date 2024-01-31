@@ -238,6 +238,7 @@ class CpManagementSrv {
           const projects = cpBranchHead[userDataObj?.projects].join("/n");
           const cpCode = cpBranchHead[userDataObj?.cpCode] || cpGenratedCode;
           const validateCpCom = this.validateCp(parentUser, cpBranchHead);
+          console.log("came here", validateCpCom);
 
           if (!validateCpCom) {
             return new ApiResponse(
