@@ -133,6 +133,12 @@ export const apiSlice = createApi({
         body: data,
       }),
     }),
+    retriveCpByCompany: builder.query({
+      query: (id) => ({
+        url: `/cpManagenent/retriveCpByCompany/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -156,4 +162,5 @@ export const {
   useGetCPSQuery,
   useGetLeadByPhoneQuery,
   useEditUserMutation,
+  useRetriveCpByCompanyQuery,
 } = apiSlice;
