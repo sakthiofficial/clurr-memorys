@@ -51,7 +51,7 @@ export const genrateUnixTimestamp = (date) => {
 };
 
 export const projectNames = {
-  woj: "The World oj joy - miyapur",
+  woj: "The World of joy - miyapur",
   oncloud: "OnCloud33 - Bachupally",
   balanagar: "Galleria Gardens - Balanagar",
 };
