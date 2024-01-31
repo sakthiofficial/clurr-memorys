@@ -418,16 +418,20 @@ export default function RootLayout({ children }) {
       setPermissions(jsonData.permissions || []);
     } else {
       setUser(null);
-      console.error('No data found in local storage for key "user".');
       // router.push("/login");
+      console.error('No data found in local storage for key "user".');
     }
     setLoading(false);
   }, []);
-  // useEffect(() => {
-  //   if (user === null && pathname === "/*") {
-  //     router.push("/login");
-  //   }
-  // }, [user, pathname, router]);
+
+  useEffect(() => {
+    // if (user === null) {
+    //   router.push("/login");
+    // }
+    if (pathname === "/") {
+      router.push("/leads");
+    }
+  }, []);
 
   // console.log(user.role[0])
   // console.log(user.name)
