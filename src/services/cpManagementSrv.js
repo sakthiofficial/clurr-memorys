@@ -96,7 +96,7 @@ class CpManagementSrv {
       const lastNumber = parseInt(lastCode.replace(/\D/g, ""), 10);
       const newNumber = lastNumber + 1;
 
-      return `URBCHP${String(newNumber).padStart(5, "0")}`;
+      return `URHCP${String(newNumber).padStart(5, "0")}`;
     };
     this.retriveBranchHead = async (providedUser) => {
       if (
@@ -238,6 +238,7 @@ class CpManagementSrv {
           const projects = cpBranchHead[userDataObj?.projects].join("/n");
           const cpCode = cpBranchHead[userDataObj?.cpCode] || cpGenratedCode;
           const validateCpCom = this.validateCp(parentUser, cpBranchHead);
+          console.log("came here", validateCpCom);
 
           if (!validateCpCom) {
             return new ApiResponse(

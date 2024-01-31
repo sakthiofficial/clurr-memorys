@@ -62,11 +62,7 @@ const CpAppUserSchema = new Schema({
       },
     ],
   },
-  cpCode: {
-    type: String,
-    default: null,
-    ref: "CpAppCompany",
-  },
+
   createdBy: { type: Number, default: genrateUnixTimestamp() },
 });
 
