@@ -29,7 +29,7 @@ const CpAppCompanySchema = new Schema({
     required: true,
     ref: "CpAppUser",
   },
-  cpExecutes: [
+  executeIds: [
     {
       type: Schema.Types.ObjectId,
       required: true,

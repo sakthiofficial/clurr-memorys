@@ -4,7 +4,6 @@ import {
   RESPONSE_MESSAGE,
   RESPONSE_STATUS,
 } from "../appConstants";
-
 import { CpAppProject } from "../../models/AppProject";
 import {
   basicRolePermission,
@@ -187,7 +186,14 @@ class CpManagementSrv {
 
   createCpAccount = async (
     providedUser,
-    { cpCompany, cpBranchHead, cpExecute, parentId, cpEnteredCode },
+    {
+      cpCompany,
+      cpBranchHead,
+      cpExecute,
+      parentId,
+      cpEnteredCode,
+      cpCompanyId,
+    },
   ) => {
     // add parent account count validation // check cp ececute act count
 
@@ -213,6 +219,7 @@ class CpManagementSrv {
     const userSrv = new CPUserSrv();
     let parentUser = await userSrv.getUserById(parentId);
     let branchHeadId = null;
+    let companyId = cpCompanyId;
     if (!parentUser) {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
@@ -230,7 +237,6 @@ class CpManagementSrv {
           const role = cpBranchHead[userDataObj?.role];
           const projects = cpBranchHead[userDataObj?.projects].join("/n");
           const cpCode = cpBranchHead[userDataObj?.cpCode] || cpGenratedCode;
-          cpBranchHead[userDataObj?.cpCode] = cpCode;
           const validateCpCom = this.validateCp(parentUser, cpBranchHead);
 
           if (!validateCpCom) {
@@ -282,7 +288,7 @@ class CpManagementSrv {
           cpCompany[userDataObj?.parentId] =
             cpCompany[userDataObj?.parentId] || parentId;
 
-          await this.createCpCompany(cpCompany);
+          companyId = await this.createCpCompany(cpCompany);
         }
         if (!cpExecute) {
           return new ApiResponse(
@@ -299,7 +305,6 @@ class CpManagementSrv {
         const permission = basicRolePermission(cpExecute[userDataObj?.role]);
         cpExecute[userDataObj?.parentId] =
           cpExecute[userDataObj?.parentId] || branchHeadId;
-        cpExecute[userDataObj?.cpCode] = cpGenratedCode;
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(
           cpExecute[userDataObj?.password],
@@ -310,8 +315,14 @@ class CpManagementSrv {
         cpExecute[userDataObj?.permissions] = permission;
         const cpExecuteUser = await userSrv.createSaveUser(cpExecute);
         const userSch = new CpAppUser(cpExecuteUser);
-        await userSch.save();
 
+        const userResult = await userSch.save();
+        if (userResult._id && companyId) {
+          await CpAppCompany.updateOne(
+            { _id: companyId },
+            { $addToSet: { executeIds: userSch._id } },
+          );
+        }
         const mailOptions = cpMailOption(
           userName,
           parentName,
@@ -369,57 +380,23 @@ class CpManagementSrv {
 
     const companiesWithUsers = await Promise.all(
       cpCompanys.map(async (company) => {
-        const parentUser = await userSrv.getUserById(company.parentId);
+        const appUserData = await userSrv.getUserById([
+          company.parentId,
+          company.branchHeadId,
+          ...company.executeIds,
+        ]);
 
-        let allCompanyUsers = await CpAppUser.find({
-          cpCode: company.cpCode,
-        })
-          .populate({
-            path: "role",
-            populate: [
-              { path: "permissions", model: "CpAppPermission" },
-              { path: "subordinateRoles", model: "CpAppRole" },
-            ],
-          })
-
-          .populate({
-            path: "projects",
-            model: "CpAppProject",
-          })
-
-          .lean();
-        allCompanyUsers = allCompanyUsers.map((user) => {
-          const userPermissions = [
-            ...new Set(
-              user.role.flatMap((role) =>
-                role.permissions.map((permission) => permission.name),
-              ),
-            ),
-          ];
-          const userSubordinateRoles = [
-            ...new Set(
-              user.role.flatMap((role) =>
-                role.subordinateRoles.map((subordinate) => subordinate.name),
-              ),
-            ),
-          ];
-          user[userDataObj?.permissions] = userPermissions;
-          user[userDataObj?.subordinateRoles] = userSubordinateRoles;
-          user[userDataObj?.role] = (user?.role || []).map(
-            (role) => role?.name,
-          );
-          user[userDataObj?.projects] = (user[userDataObj?.projects] || []).map(
-            (project) => project.name,
-          );
-          return user;
-        });
         const cpBranchHead =
-          allCompanyUsers.find((user) =>
+          appUserData.find((user) =>
             user[userDataObj?.role].includes(roleNames?.cpBranchHead),
           ) || null;
-        const cpExecutes = allCompanyUsers.filter((user) =>
+        const cpExecutes = appUserData.filter((user) =>
           user[userDataObj?.role].includes(roleNames?.cpExecute),
         );
+        const parentUser = appUserData.find((user) =>
+          company.parentId.equals(user._id),
+        );
+
         company = company.toObject();
         const companyProjects = company[userDataObj?.projects].map(
           (project) => project?.name,
@@ -505,7 +482,9 @@ class CpManagementSrv {
       );
     }
     const companyResult = await CpAppCompany.deleteOne({ _id: company._id });
-    const cpsResult = await CpAppUser.deleteMany({ cpCode: CpCompanyCode });
+    const cpsResult = await CpAppUser.deleteMany({
+      _id: [company.branchHeadId, ...company.executeIds],
+    });
 
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
       cpsDeleteResult: cpsResult,
@@ -513,6 +492,59 @@ class CpManagementSrv {
     });
   };
 
-  retriveCpByCompany = async (providedUser, id) => {};
+  retriveCpByCompanyId = async (providedUser, id) => {
+    if (
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.cpManagement,
+      )
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
+        null,
+      );
+    }
+    const companyData = await CpAppCompany.findOne({ _id: id }).populate(
+      "projects",
+    );
+    if (!companyData) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.NOTFOUND,
+        null,
+      );
+    }
+    let company = companyData;
+    const userSrv = new CPUserSrv();
+
+    const appUserData = await userSrv.getUserById([
+      company.parentId,
+      company.branchHeadId,
+      ...company.executeIds,
+    ]);
+    const cpBranchHead =
+      appUserData.find((user) =>
+        user[userDataObj?.role].includes(roleNames?.cpBranchHead),
+      ) || null;
+    const cpExecutes = appUserData.filter((user) =>
+      user[userDataObj?.role].includes(roleNames?.cpExecute),
+    );
+    const parentUser = appUserData.find((user) =>
+      company.parentId.equals(user._id),
+    );
+
+    company = company.toObject();
+    const companyProjects = company[userDataObj?.projects].map(
+      (project) => project?.name,
+    );
+    company.projects = companyProjects;
+
+    return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+      company,
+      cpRm: parentUser,
+      cpBranchHead,
+      cpExecutes,
+    });
+  };
 }
 export default CpManagementSrv;

@@ -54,8 +54,9 @@ class CPUserSrv {
       if (!subordinateValidation) {
         console.log(
           "parent or provider does not have permission to the user",
-          parentData,
-          providedUser,
+          providedUser?.subordinateRoles,
+          parentData?.subordinateRoles,
+          newUser?.role[0],
         );
         throw userValidationErrors?.HighLevelAccess;
       }
@@ -74,7 +75,10 @@ class CPUserSrv {
               parentRole(newUser[userDataObj?.role][0]),
             )
           ) {
-            console.log(parentData, parentRole(newUser[userDataObj?.role][0]));
+            console.log(
+              parentData[userDataObj?.role],
+              parentRole(newUser[userDataObj?.role][0]),
+            );
             throw userValidationErrors?.ParentRoleLimitation;
           }
         }
@@ -173,10 +177,21 @@ class CPUserSrv {
         );
       }
     };
-    this.getUserById = async (id) => {
-      const user = await CpAppUser.findOne({
-        _id: id,
-      })
+    this.getUserById = async (ids) => {
+      let query;
+
+      if (Array.isArray(ids)) {
+        // If an array of IDs is provided, query for multiple users
+        query = CpAppUser.find({
+          _id: { $in: ids },
+        });
+      } else {
+        // If a single ID is provided, query for a single user
+        query = CpAppUser.find({
+          _id: ids,
+        });
+      }
+      const users = await query
         .populate({
           path: "role",
           populate: [
@@ -189,31 +204,41 @@ class CPUserSrv {
           model: "CpAppProject",
         })
         .lean();
-      if (!user) {
-        return null;
+      const structuredUsers = users.map((user) => {
+        if (!user) {
+          return null;
+        }
+        const userPermissions = [
+          ...new Set(
+            user.role.flatMap((role) =>
+              role.permissions.map((permission) => permission.name),
+            ),
+          ),
+        ];
+        const userSubordinateRoles = [
+          ...new Set(
+            user.role.flatMap((role) =>
+              role.subordinateRoles.map((subordinate) => subordinate.name),
+            ),
+          ),
+        ];
+        user[userDataObj?.projects] = user[userDataObj?.projects].map(
+          (project) => project.name,
+        );
+        user[userDataObj?.permissions] = userPermissions;
+        user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+        user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
+        return user;
+      });
+
+      if (Array.isArray(ids)) {
+        // If an array of IDs is provided, return an array of users
+        return structuredUsers;
       }
-      const userPermissions = [
-        ...new Set(
-          user.role.flatMap((role) =>
-            role.permissions.map((permission) => permission.name),
-          ),
-        ),
-      ];
-      const userSubordinateRoles = [
-        ...new Set(
-          user.role.flatMap((role) =>
-            role.subordinateRoles.map((subordinate) => subordinate.name),
-          ),
-        ),
-      ];
-      user[userDataObj?.projects] = user[userDataObj?.projects].map(
-        (project) => project.name,
-      );
-      user[userDataObj?.permissions] = userPermissions;
-      user[userDataObj?.subordinateRoles] = userSubordinateRoles;
-      user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
-      return user;
+      // If a single ID is provided, return a single user or null
+      return structuredUsers[0] || null;
     };
+
     this.createSaveUser = async (createUser) => {
       const user = { ...createUser };
       let roleIds = await CpAppRole.find({ name: user[userDataObj?.role] });
@@ -354,6 +379,7 @@ class CPUserSrv {
       const parentUserData =
         (await this.getUserById(newUser[userDataObj?.parentId] || null)) ||
         providedUser;
+      console.log(parentUserData);
       await this.checkValidUserToAdd(providedUser, newUser, parentUserData);
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(newUser?.password, saltRounds);
@@ -644,11 +670,7 @@ class CPUserSrv {
         }
         parentUser = updateUserParentData;
       }
-      await this.checkValidUserToAdd(
-        providedUser,
-        updateUserDbData,
-        parentUser,
-      );
+      await this.checkValidUserToAdd(providedUser, updateUser, parentUser);
 
       if (updateUser[userDataObj?.password]) {
         const saltRounds = 10;
