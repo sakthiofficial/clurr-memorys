@@ -33,6 +33,7 @@ export default function Page() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  // dialog box setup
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
       padding: theme.spacing(2),
@@ -45,6 +46,7 @@ export default function Page() {
   // get cp data query
   const { data, refetch, isFetching } = useGetCpQuery();
   // console.log(data);
+
   // set pagination
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -62,6 +64,8 @@ export default function Page() {
 
   // delete mutation
   const [deleteCp] = useCpDeleteMutation();
+
+  // select data what user click handle open dialog functions
   const [selectedRow, setSelectedRow] = useState(null);
 
   const handleOpen = (row) => {
@@ -79,8 +83,9 @@ export default function Page() {
     console.log(selectedcp);
     try {
       await deleteCp(selectedcp?.company?.cpCode);
-      toast.success("User deleted successfully ");
       handleClose();
+
+      toast.success("User deleted successfully ");
       setTimeout(() => {
         refetch();
       }, 2000);

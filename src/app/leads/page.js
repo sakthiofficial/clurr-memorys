@@ -32,7 +32,7 @@ import {
   subDays,
 } from "date-fns";
 import AddLeadsBtn from "../components/AddLeadsBtn";
-import ExportLeadsBtn from "../components/ExportLeadsBtn";
+// import ExportLeadsBtn from "../components/ExportLeadsBtn";
 // import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
 // import RegisterLeads from "../../../public/LeadsCard/registerLeads.svg";
 // import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
@@ -150,7 +150,7 @@ export default function Page() {
   const resultProject = useGetProjectWithPermissionQuery();
   const [selectedProject, setSelectedProject] = useState("All");
 
-  const projectloader = resultProject.isFetching;
+  // const projectloader = resultProject.isFetching;
   // project change and set intial project functions
 
   const handleChangeProject = async (event) => {
@@ -173,6 +173,8 @@ export default function Page() {
   //   }
   // }, [projects]);
 
+  // setting default project
+
   useEffect(() => {
     if (resultProject?.data?.result && resultProject.data.result.length > 0) {
       const initialSelectedProject = resultProject.data.result[0];
@@ -185,7 +187,7 @@ export default function Page() {
     }
   }, [resultProject]);
 
-  // permissions and project set for login user
+  // permissions and project set for  user
   useEffect(() => {
     const storedData = localStorage.getItem("user");
     if (storedData) {
@@ -200,7 +202,6 @@ export default function Page() {
   // console.log(resultProject?.data?.result);
 
   // date range functions
-
   const { combine, before, afterToday } = DateRangePicker;
   const today = new Date();
   const last7Days = new Date(today);
@@ -247,34 +248,19 @@ export default function Page() {
       SetSelectedEndDate(endSelectDate);
     }
   };
-
+  // getting leads details
   const { data, isFetching, isLoading, refetch } = useGetLeadsByDateQuery({
     selectedProject,
     selectedStartDate,
     selectedEndDate,
   });
 
+  /// refetch the data
   useEffect(() => {
     refetch();
   }, []);
 
-  // useEffect(() => {
-  //   if (
-  //     selectedDateRangeFilter[0] === null &&
-  //     selectedDateRangeFilter[1] === null
-  //   ) {
-  //     SetSelectedStartDate(predefinedRanges[0].value[0]);
-  //     SetSelectedEndDate(predefinedRanges[0].value[1]);
-  //   } else {
-  //     const [startDate, endDate] = selectedDateRangeFilter;
-
-  //     SetSelectedStartDate(startDate);
-  //     SetSelectedEndDate(endDate);
-  //   }
-  // }, [selectedDateRangeFilter]);
-
   // table functions
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -292,8 +278,6 @@ export default function Page() {
       ? leadsDatas.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
-  // const rowlength = slicedRows.length;
-  // console.log(rowlength);
   // card details
   // const getBackgroundColor = (name) => {
   //   switch (name) {
@@ -308,6 +292,7 @@ export default function Page() {
   //   }
   // };
   // console.log(data.result);
+
   return (
     <Grid style={{ minHeight: "100vh" }}>
       <Grid

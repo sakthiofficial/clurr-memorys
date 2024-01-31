@@ -32,8 +32,10 @@ export default function Page() {
   const id = params.get("id");
   const [userData, setUserData] = useState(null);
 
+  // get user by id
   const { data, isFetching, refetch } = useGetUserByIdQuery(id);
   // console.log(data?.result?.parentId);
+  // edit user query
   const [editUserData] = useEditUserMutation();
   const [selectedRole, setSelectedRole] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState(
@@ -46,6 +48,7 @@ export default function Page() {
 
   // console.log(typeof selectedRole);
 
+  // set default project
   useEffect(() => {
     if (data?.result?.role) {
       setSelectedRole(data?.result?.role[0]);
@@ -55,16 +58,16 @@ export default function Page() {
     }
   }, [data]);
 
+  // get parent and set
   const ParentDetails = {
     role: typeof selectedRole === "string" ? selectedRole : selectedRole[0],
     projects: [...selectedProjects] || [],
   };
   const parentResult = useGetParentsQuery(ParentDetails);
 
+  // check prior user
   const priorUser = isPriorityUser(selectedRole || []);
-  // console.log(selectedProjects);GET
-  // console.log()
-  // console.log(priorUser);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -78,6 +81,7 @@ export default function Page() {
     parentId: "",
   });
 
+  // get and data and set particular name
   useEffect(() => {
     if (data?.result?.parentId) {
       const filterParent = (parentResult?.data?.result || [])?.filter(
@@ -91,24 +95,7 @@ export default function Page() {
     }
   }, [parentResult, data]);
 
-  // useEffect(() => {
-  //   if (data?.result) {
-  //     setFormData({
-  //       username: data.result.name || "",
-  //       email: data.result.email || "",
-  //       phone: data.result.phone || "",
-  //       password: "",
-  //     });
-
-  //     setSelectedValues({
-  //       projects: data?.result?.projects || [],
-  //       role: data?.result?.role || [],
-  //       parentId: defaultParent || "",
-  //     });
-  //   }
-  //   console.log("set parent set working");
-  // }, [parentResult, data, defaultParent]);
-
+  // set default data of all text fields
   useEffect(() => {
     if (data?.result) {
       setFormData({
@@ -133,10 +120,11 @@ export default function Page() {
     }));
   }, [defaultParent]);
 
-  console.log(defaultParent);
-  console.log(selectedValues.parentId);
+  // console.log(defaultParent);
+  // console.log(selectedValues.parentId);
 
   // console.log(selectedValues.parentId, "parentid");
+  // handleinput change functions
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -145,6 +133,7 @@ export default function Page() {
     }));
   };
 
+  // gandle project chnage functions
   const handleChange = (name, value) => {
     if (name === "projects" && value.length === 0) {
       toast.error("Please select at least one project.");
@@ -176,6 +165,8 @@ export default function Page() {
   // console.log(ParentDetails);
   // console.log(parentResult?.data?.result);
   // console.log(selectedProjects);
+
+  // handle submit functions
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedValues.parentId && !priorUser) {
@@ -217,6 +208,7 @@ export default function Page() {
     // console.log(updatedValue);
   };
 
+  // get user datas
   useEffect(() => {
     const storedData = localStorage.getItem("user");
 
@@ -232,6 +224,8 @@ export default function Page() {
   // console.log(data);
 
   // console.log(defaultParent);
+
+  // get parent id with parent name
   useEffect(() => {
     if (selectedValues.parentId && parentResult?.data?.result) {
       const selectedParent = parentResult?.data?.result.find(
