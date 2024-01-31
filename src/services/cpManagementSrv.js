@@ -96,7 +96,7 @@ class CpManagementSrv {
       const lastNumber = parseInt(lastCode.replace(/\D/g, ""), 10);
       const newNumber = lastNumber + 1;
 
-      return `URBCHP${String(newNumber).padStart(5, "0")}`;
+      return `URHCP${String(newNumber).padStart(5, "0")}`;
     };
     this.retriveBranchHead = async (providedUser) => {
       if (
