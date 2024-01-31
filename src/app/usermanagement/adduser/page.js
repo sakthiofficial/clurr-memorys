@@ -53,7 +53,8 @@ export default function Page() {
       [name]: value,
     }));
   };
-  // select project
+
+  // select project for parent
   const ParentDetails = {
     role: selectedRolesListP[0],
     projects: [...selectedProjectsListP],
@@ -96,6 +97,7 @@ export default function Page() {
   };
   // user add mutation
   const [sendUsers] = useAddUsersMutation();
+
   // check prior user
   const priorUser = isPriorityUser(selectedRolesListP);
   // console.log(priorUser);

@@ -2,7 +2,7 @@
 
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useGetLeadByPhoneQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page() {
@@ -12,10 +12,10 @@ export default function Page() {
   const phone = params.get("phone");
   const project = params.get("project");
   const [phonenumber, setPhoneNumber] = useState(phone);
-  console.log("phone number check", phone);
+  // console.log("phone number check", phone);
   // console.log(project);
 
-  // get leads by phone
+  // get leads by phone and project
   const { data, isFetching } = useGetLeadByPhoneQuery({ project, phonenumber });
   // console.log(data);
 

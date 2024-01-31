@@ -235,7 +235,8 @@ export default function Page() {
     }
   };
   // console.log(cpEnteredCode);
-  // login user get
+
+  // get user details
   useEffect(() => {
     const storedData = localStorage.getItem("user");
 
@@ -247,6 +248,7 @@ export default function Page() {
     }
   }, []);
 
+  // handle dialog functions
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -255,6 +257,8 @@ export default function Page() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  // handle clear
   const handleClear = () => {
     setCpEnteredCode("");
   };

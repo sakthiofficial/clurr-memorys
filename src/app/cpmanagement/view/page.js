@@ -40,13 +40,14 @@ export default function Page() {
 
   const id = params.get("id");
 
+  // get data query
   const { data, isFetching } = useRetriveCpByCompanyQuery(id);
 
-  console.log(data?.result);
-
-  const [open, setOpen] = useState(false);
+  // console.log(data?.result);
 
   /// dialog open functions
+
+  const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };

@@ -19,7 +19,6 @@ import {
   Dialog,
 } from "@mui/material";
 import Link from "next/link";
-// icons
 import { ToastContainer, toast } from "react-toastify";
 import { Add } from "@mui/icons-material";
 import styled from "@emotion/styled";
@@ -48,9 +47,11 @@ const users = [
 
 export default function Page() {
   const [open, setOpen] = useState(false);
-  // table details
+
+  // get user data
   const { data, refetch, isFetching } = useGetUsersQuery();
 
+  // table functions
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const handleChangePage = (event, newPage) => {
@@ -67,8 +68,10 @@ export default function Page() {
       ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 
+  // delete user
   const [deleteUser] = useDeleteUsersMutation();
 
+  // dialog open and close functions
   const handleOpen = () => {
     setOpen(true);
   };
@@ -77,22 +80,26 @@ export default function Page() {
     setOpen(false);
   };
 
+  // refetch the user data
   useEffect(() => {
     refetch();
   }, []);
 
+  // handle delete function
   const handleDelete = async (id) => {
     try {
       handleClose();
       await deleteUser(id);
       toast.success("User deleted successfully ");
       setTimeout(() => {
-      refetch();
+        refetch();
       }, 2000);
     } catch (er) {
       console.error("Error during user deletion:", er);
     }
   };
+
+  // for dialog box
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
       padding: theme.spacing(2),
