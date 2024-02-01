@@ -130,7 +130,9 @@ function AddLeadsBtn({ refetch }) {
   //   }
   // };
 
-  const handleSubmit = (e) => {
+  const handleSubmitAdd = (e) => {
+    e.preventDefault();
+
     if (
       !formData.userName ||
       !formData.email ||
@@ -142,7 +144,34 @@ function AddLeadsBtn({ refetch }) {
       toast.error("Please fill in all required fields");
       return;
     }
+    setFormData({
+      userName: "",
+      email: "",
+      phone: "+91",
+      project: "",
+      companyCode: "",
+      id: "",
+    });
+    console.log(formData);
+    leadData(formData);
+    // setOpen(false);
+    refetch();
+  };
+
+  const handleSubmitSave = (e) => {
     e.preventDefault();
+
+    if (
+      !formData.userName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.project ||
+      !formData.companyCode ||
+      !formData.id
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
     setFormData({
       userName: "",
       email: "",
@@ -368,26 +397,52 @@ function AddLeadsBtn({ refetch }) {
               }}
             />
           </Grid>
-          <Button
-            onClick={handleSubmit}
+          <Grid
             sx={{
-              border: "none",
-              height: "55px",
+              // border: "1px solid black",
               width: "100%",
-              borderRadius: "19px",
-              backgroundColor: "black",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "black",
-                boxShadow: "none",
-                border: "none",
-              },
+              display: "flex",
+              justifyContent: "space-around",
             }}
           >
-            Save Lead &nbsp;
-            <Add sx={{ fontSize: "18px" }} />
-            &nbsp; ADD Another Lead
-          </Button>
+            <Button
+              onClick={handleSubmitSave}
+              sx={{
+                border: "none",
+                height: "55px",
+                width: "40%",
+                borderRadius: "19px",
+                backgroundColor: "black",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "black",
+                  boxShadow: "none",
+                  border: "none",
+                },
+              }}
+            >
+              Save Lead
+              {/* <Add sx={{ fontSize: "18px" }} /> */}
+            </Button>
+            <Button
+              onClick={handleSubmitAdd}
+              sx={{
+                border: "none",
+                height: "55px",
+                width: "40%",
+                borderRadius: "19px",
+                backgroundColor: "black",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "black",
+                  boxShadow: "none",
+                  border: "none",
+                },
+              }}
+            >
+              ADD <Add sx={{ fontSize: "18px" }} /> Another Lead
+            </Button>
+          </Grid>
         </BootstrapDialog>
       </Grid>
     </>

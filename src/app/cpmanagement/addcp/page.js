@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Button,
   Grid,
@@ -16,9 +16,14 @@ import {
   Box,
   IconButton,
   Dialog,
+  InputAdornment,
 } from "@mui/material";
 import Link from "next/link";
-import { DeleteOutlineOutlined } from "@mui/icons-material";
+import {
+  DeleteOutlineOutlined,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { styled } from "@mui/material/styles";
@@ -44,6 +49,11 @@ export default function Page() {
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [cpEnteredCode, setCpEnteredCode] = useState(null);
   const [showAddAccountButton, setShowAddAccountButton] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   const [formData, setFormData] = useState({
     cpCompany: {
       name: "",
@@ -54,7 +64,7 @@ export default function Page() {
         name: "",
         phone: "",
         email: "",
-        password: "",
+        password: "P@ssword",
         projects: [],
         role: "",
         isPrimary: true,
@@ -77,7 +87,7 @@ export default function Page() {
     setSelectedCategory(selectedCategoryValue);
 
     // Find the selected category data
-    const selectedCategoryData = result?.data?.result.find(
+    const selectedCategoryData = (result?.data?.result || []).find(
       (rm) => rm.name === selectedCategoryValue,
     );
 
@@ -92,13 +102,13 @@ export default function Page() {
 
   // validate from before submit
   const validateForm = () => {
-    if (!formData.cpCompany.name) {
+    if (!formData?.cpCompany?.name) {
       console.error("Company name is required.");
       return false;
     }
 
     if (
-      formData.cpExecutes.some(
+      (formData?.cpExecutes || []).some(
         (exec) => !exec.name || !exec.phone || !exec.email || !exec.password,
       )
     ) {
@@ -109,9 +119,9 @@ export default function Page() {
     return true;
   };
   // handle add function
-  const handleAddAccount = () => {
+  const handleAddAccount = useCallback(() => {
     const updatedCpExecutes = [
-      ...formData.cpExecutes,
+      ...(formData?.cpExecutes || {}),
       {
         projects: [],
         role: "CP Executive",
@@ -120,7 +130,7 @@ export default function Page() {
     ];
 
     setFormData({
-      ...formData,
+      ...(formData || {}),
       cpExecutes: updatedCpExecutes,
     });
 
@@ -129,7 +139,7 @@ export default function Page() {
     } else {
       setShowAddAccountButton(false);
     }
-  };
+  }, []);
 
   // handle delete function
   const handleDeleteAccount = (index) => {
@@ -203,11 +213,8 @@ export default function Page() {
       try {
         const resultRes = await cpsAdd(cpData);
 
-        if (resultRes.data.status === 400) {
-          toast.error(resultRes.data.result);
-        }
-        if (resultRes.data.status === 400) {
-          toast.error("something went wrong");
+        if (resultRes?.error?.data?.status === 400) {
+          toast.error(resultRes?.error?.data?.result);
         }
 
         if (resultRes.data.status === 200) {
@@ -217,21 +224,8 @@ export default function Page() {
           }, 1500);
         }
       } catch (error) {
-        console.error("CP submission failed", error);
-
-        if (error?.response && error?.response?.status === 400) {
-          const errorMessage = error?.response?.data?.message;
-          const resultMessage = error?.response.data?.result;
-
-          toast.error(
-            `CP submission failed: ${errorMessage}. ${resultMessage}`,
-          );
-        } else {
-          toast.error("CP submission failed. Please try again.");
-        }
+        toast.error("CP submission failed", error);
       }
-    } else {
-      toast.error("Form is not valid. Please fill in all required fields.");
     }
   };
   // console.log(cpEnteredCode);
@@ -676,7 +670,7 @@ export default function Page() {
                         <TextField
                           label={`Password ${index + 1}`}
                           name={`cpExecutes[${index}].password`}
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           size="small"
                           sx={{ width: "18%" }}
                           value={cpExecute?.password}
@@ -690,6 +684,22 @@ export default function Page() {
                               ),
                             }))
                           }
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={toggleShowPassword}
+                                  edge="end"
+                                >
+                                  {showPassword ? (
+                                    <Visibility />
+                                  ) : (
+                                    <VisibilityOff />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                         />
                         <Grid sx={{ display: "flex", alignItems: "center" }}>
                           <Switch

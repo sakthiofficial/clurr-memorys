@@ -14,6 +14,8 @@ import {
   OutlinedInput,
   Box,
   Chip,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
@@ -21,6 +23,7 @@ import { useAddUsersMutation, useGetParentsQuery } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function Page() {
   const [selectParentId, setSelectParentId] = useState("");
@@ -30,7 +33,7 @@ export default function Page() {
     name: "",
     email: "",
     phone: "",
-    password: "",
+    password: "P@ssword",
   });
 
   const [selectedValues, setSelectedValues] = useState({
@@ -42,7 +45,10 @@ export default function Page() {
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [selectedProjectsListP, setSelectedProjectsListP] = useState([]);
   const [selectedRolesListP, setSelectedRolesListP] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
   const router = useRouter();
 
   // handle input data function
@@ -361,9 +367,18 @@ export default function Page() {
                   <TextField
                     label="Password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={formData?.password}
                     onChange={handleInputChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={toggleShowPassword} edge="end">
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                     sx={{
                       width: "397px",
                       color: "black",
@@ -409,8 +424,8 @@ export default function Page() {
                       onChange={(e) => handleChange("role", e.target.value)}
                       MenuProps={{ disableScrollLock: true }}
                     >
-                      {(SubordinateRoles || []).map((option, index) => (
-                        <MenuItem key={index} value={option}>
+                      {(SubordinateRoles || []).map((option) => (
+                        <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
                       ))}

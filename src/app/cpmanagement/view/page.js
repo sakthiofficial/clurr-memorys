@@ -24,7 +24,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useSearchParams } from "next/navigation";
 import { useRetriveCpByCompanyQuery } from "@/reduxSlice/apiSlice";
 import { unixToDate } from "../../../../shared/dateCalc";
-
+import CpDialogBox from "../../components/CpDialogBox";
 /// dialog box setup
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -128,7 +128,7 @@ export default function Page() {
               >
                 Channel Parnter Details
               </Typography>
-              <Button
+              {/* <Button
                 variant="outlined"
                 onClick={handleClickOpen}
                 sx={{
@@ -193,7 +193,8 @@ export default function Page() {
                     Save changes
                   </Button>
                 </DialogActions>
-              </BootstrapDialog>
+              </BootstrapDialog> */}
+              <CpDialogBox data={data} />
             </Grid>
             <Grid
               sx={{
@@ -357,21 +358,18 @@ export default function Page() {
                   <TableCell>N/A</TableCell>
                   <TableCell>N/A</TableCell>
                 </TableRow>
-                {data?.result?.cpExecutes?.length === 0 ? null : (
-                  <>
-                    {data?.result?.cpExecutes.map((cpExecute, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{cpExecute.name}</TableCell>
-                        <TableCell>{cpExecute.phone}</TableCell>
-                        <TableCell>{cpExecute.name}</TableCell>
-                        <TableCell>no</TableCell>
-                        <TableCell>{unixToDate(cpExecute.createdBy)}</TableCell>
-                        <TableCell>N/A</TableCell>
-                        <TableCell>N/A</TableCell>
-                      </TableRow>
-                    ))}
-                  </>
-                )}
+
+                {(data?.result?.cpExecutes || []).map((cpExecute, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{cpExecute.name}</TableCell>
+                    <TableCell>{cpExecute.phone}</TableCell>
+                    <TableCell>{cpExecute.name}</TableCell>
+                    <TableCell>no</TableCell>
+                    <TableCell>{unixToDate(cpExecute.createdBy)}</TableCell>
+                    <TableCell>N/A</TableCell>
+                    <TableCell>N/A</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </Grid>

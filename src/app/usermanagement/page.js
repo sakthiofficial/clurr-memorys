@@ -63,10 +63,10 @@ export default function Page() {
     setPage(0);
   };
 
-  const slicedRows =
-    data && data?.result
-      ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      : [];
+  const slicedRows = (data?.result || []).slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
 
   // delete user
   const [deleteUser] = useDeleteUsersMutation();

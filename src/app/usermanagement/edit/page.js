@@ -31,20 +31,21 @@ export default function Page() {
   const params = useSearchParams();
   const id = params.get("id");
   const [userData, setUserData] = useState(null);
+  const router = useRouter();
 
   // get user by id
   const { data, isFetching, refetch } = useGetUserByIdQuery(id);
   // console.log(data?.result?.parentId);
   // edit user query
   const [editUserData] = useEditUserMutation();
+  // selected roles and projects
   const [selectedRole, setSelectedRole] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState(
     data?.result?.projects || [],
   );
+  // default user datas
   const [defaultParent, setDefaultParent] = useState();
   const [selectedParentId, setSelectedParentId] = useState(null);
-  // const priorUser = true;
-  const router = useRouter();
 
   // console.log(typeof selectedRole);
 
@@ -63,6 +64,8 @@ export default function Page() {
     role: typeof selectedRole === "string" ? selectedRole : selectedRole[0],
     projects: [...selectedProjects] || [],
   };
+
+  // parent query
   const parentResult = useGetParentsQuery(ParentDetails);
 
   // check prior user
