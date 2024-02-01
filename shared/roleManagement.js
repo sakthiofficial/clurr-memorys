@@ -166,6 +166,17 @@ function isPriorityUser(userRole) {
     roleArr.includes(roleNames?.cpBusinessHead);
   return isPriorityRole;
 }
+export function isCpUser(userRole) {
+  let roleArr = userRole;
+  if (typeof userRole === "string") {
+    roleArr = [userRole];
+  }
+  const isCpRole =
+    roleArr.includes(roleNames?.cpExecute) ||
+    roleArr.includes(roleNames?.cpBranchHead);
+  console.log(isCpRole);
+  return isCpRole;
+}
 function checkValidRoleToAddLead(userRole) {
   let roleArr = userRole;
   if (typeof userRole === "string") {

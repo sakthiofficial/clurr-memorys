@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { Session } from "../../models/session";
 import {
   basicRolePermission,
+  isCpUser,
   isPriorityUser,
   parentRole,
   userDataObj,
@@ -356,6 +357,7 @@ class CPUserSrv {
 
           userData: {
             [userDataObj.isFirstSignIn]: user[userDataObj.isFirstSignIn],
+            id: user?._id,
           },
         });
       }
@@ -397,6 +399,40 @@ class CPUserSrv {
           RESPONSE_STATUS?.NOTFOUND,
           RESPONSE_MESSAGE?.INVALID,
           null,
+        );
+      }
+      const { name, email, phone } = newUser;
+      const existingUser = await CpAppUser.findOne({
+        $or: [
+          { phone },
+          { email },
+          { name: { $regex: new RegExp(`^${name}$`, "i") } },
+        ],
+      });
+
+      const usedFields = {};
+
+      if (existingUser) {
+        if (existingUser.phone === phone) {
+          usedFields.phone = true;
+        }
+
+        if (existingUser.email === email) {
+          usedFields.email = true;
+        }
+
+        if (existingUser.name.toLowerCase() === name.toLowerCase()) {
+          usedFields.name = true;
+        }
+      }
+      const isNotUniqUser = Object.values(usedFields).some(
+        (value) => value === true,
+      );
+      if (isNotUniqUser) {
+        return new ApiResponse(
+          RESPONSE_STATUS?.ERROR,
+          RESPONSE_MESSAGE?.INVALID,
+          usedFields,
         );
       }
       // Role Acess Validation
@@ -755,7 +791,13 @@ class CPUserSrv {
       userDbData[userDataObj?.password],
       password,
     );
-    if (passwordCheck) {
+
+    const passwordValidationNeeded = !(
+      isPriorityUser(providedUser[userDataObj?.role]) &&
+      isCpUser(userDbData[userDataObj?.role])
+    );
+    if (passwordCheck && passwordValidationNeeded) {
+      console.log("comming here0", passwordValidationNeeded);
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.UNAUTHORIZED,
