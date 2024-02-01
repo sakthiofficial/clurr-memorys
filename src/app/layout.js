@@ -77,17 +77,24 @@ const sidebarlist = [
   },
 ];
 // login function
-function Login() {
+function Login({ user }) {
   const theme = useTheme();
-
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
-
+  // console.log(user);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     password: "",
   });
+  console.log(formData);
+  const [userData, setUserData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
 
   const [loginInProgress, setLoginInProgress] = useState(false);
+  const [isPasswordMismatch, setIsPasswordMismatch] = useState(false);
+  const [loginPassword, setLoginPassword] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -97,9 +104,18 @@ function Login() {
     }));
   };
 
+  const handleInputChangeUser = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const [loginUserData] = useLoginUserDataMutation();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       setLoginInProgress(true);
       const result = await loginUserData(formData);
@@ -109,6 +125,7 @@ function Login() {
           JSON.stringify(result.data.result.userData),
         );
         toast.success("Login successful!");
+        setLoginPassword(formData.password);
         window.location.href = "/leads";
       } else {
         toast.error("Login failed. Please check your credentials.");
@@ -120,6 +137,20 @@ function Login() {
       setLoginInProgress(false);
     }
   };
+  console.log(loginPassword);
+  const handleSubmitPassword = () => {
+    if (userData.newPassword !== userData.confirmPassword) {
+      setIsPasswordMismatch(true);
+      console.log("Passwords do not match!");
+      return;
+    }
+    const result = {
+      newPassword: userData.confirmPassword,
+      password: loginPassword,
+      id: user.isFirstSignIn,
+    };
+    console.log(result);
+  };
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
@@ -128,154 +159,178 @@ function Login() {
   return (
     <>
       <ToastContainer />
-      <Box
-        sx={{
-          minHeight: "100vh",
-          display: "flex",
-          // border: "1px solid black",
-          backgroundColor: "white",
-        }}
-      >
-        <Grid sx={{ width: "60%", position: "relative" }}>
-          <Image
-            style={{ backgroundColor: "white" }}
-            src={LoginBanner}
-            // width="100%"
-            layout="fill"
-            objectFit="cover"
-          />
-        </Grid>
-        <Grid sx={{ width: "40%" }}>
+      {user === null ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+            flexDirection: "column",
+          }}
+        >
+          <Typography>SIGN IN TO CONTINUE</Typography>
           <Box
-            sx={{
+            width={{
               width: "100%",
-              height: "100%",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              gap: "20px",
-              // border: "1px solid black",
-              backgroundColor: "white",
             }}
           >
-            <Box
+            <TextField
               sx={{
-                height: "15%",
-                width: "250px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Image
-                src="/Logo.svg"
-                width={300}
-                height={100}
-                style={{ objectFit: "contain" }}
-                alt="logo"
-              />
-            </Box>
-            <Box
-              sx={{
-                height: "50%",
                 width: "90%",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "19px",
+                },
               }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  width: "100%",
-                  height: "100%",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography>SIGN IN TO CONTINUE</Typography>
-                <Box
-                  width={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TextField
-                    sx={{
-                      width: "90%",
-                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                        {
-                          borderRadius: "19px",
-                        },
-                    }}
-                    name="name"
-                    label="Username / Email / Phone"
-                    variant="outlined"
-                    onChange={handleInputChange}
-                  />
-                </Box>
-                <Box
-                  width={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TextField
-                    sx={{
-                      width: "90%",
-                      // padding: "5px",
-                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                        {
-                          borderRadius: "19px",
-                        },
-                    }}
-                    name="password"
-                    label="Password"
-                    type={showPassword ? "text" : "password"}
-                    variant="outlined"
-                    onChange={handleInputChange}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={toggleShowPassword} edge="end">
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
-                <Button
-                  sx={{
-                    // border: "1px solid black",
-                    width: "90%",
-                    backgroundColor: "black",
-                    color: "white",
-                    height: "45px",
-                    borderRadius: "20px",
-                    "&:hover": {
-                      backgroundColor: "black",
-                      boxShadow: "none",
-                      border: "none",
-                    },
-                  }}
-                  onClick={handleSubmit}
-                  disabled={loginInProgress}
-                >
-                  {loginInProgress ? (
-                    <Typography sx={{ color: "gray" }}>
-                      Logging in...
-                    </Typography>
-                  ) : (
-                    <Typography sx={{ color: "white" }}>Login</Typography>
-                  )}
-                </Button>
-              </Box>
-            </Box>
+              name="name"
+              label="Username / Email / Phone"
+              variant="outlined"
+              onChange={handleInputChange}
+            />
           </Box>
-        </Grid>
-      </Box>
+          <Box
+            width={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <TextField
+              sx={{
+                width: "90%",
+                // padding: "5px",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "19px",
+                },
+              }}
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              variant="outlined"
+              onChange={handleInputChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleShowPassword} edge="end">
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+          <Button
+            sx={{
+              // border: "1px solid black",
+              width: "90%",
+              backgroundColor: "black",
+              color: "white",
+              height: "45px",
+              borderRadius: "20px",
+              "&:hover": {
+                backgroundColor: "black",
+                boxShadow: "none",
+                border: "none",
+              },
+            }}
+            onClick={handleSubmit}
+            disabled={loginInProgress}
+          >
+            {loginInProgress ? (
+              <Typography sx={{ color: "gray" }}>Logging in...</Typography>
+            ) : (
+              <Typography sx={{ color: "white" }}>Login</Typography>
+            )}
+          </Button>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+            flexDirection: "column",
+          }}
+        >
+          <Typography>Reset password</Typography>
+          <Box
+            width={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <TextField
+              sx={{
+                width: "90%",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "19px",
+                },
+              }}
+              name="newPassword"
+              type="password"
+              label="password"
+              variant="outlined"
+              onChange={handleInputChangeUser}
+            />
+          </Box>
+          <Box
+            width={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <TextField
+              sx={{
+                width: "90%",
+                // padding: "5px",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "19px",
+                },
+              }}
+              name="confirmPassword"
+              label="confirm password"
+              type={showPassword ? "text" : "password"}
+              variant="outlined"
+              onChange={handleInputChangeUser}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleShowPassword} edge="end">
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+          <Button
+            sx={{
+              // border: "1px solid black",
+              width: "90%",
+              backgroundColor: "black",
+              color: "white",
+              height: "45px",
+              borderRadius: "20px",
+              "&:hover": {
+                backgroundColor: "black",
+                boxShadow: "none",
+                border: "none",
+              },
+            }}
+            onClick={handleSubmitPassword}
+            disabled={loginInProgress}
+          >
+            <Typography sx={{ color: "white" }}>Confirm</Typography>
+          </Button>
+        </Box>
+      )}
     </>
   );
 }
@@ -410,42 +465,22 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
-    // console.log("cookie", document.cookie);
-
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
       setPermissions(jsonData.permissions || []);
     } else {
       setUser(null);
-      // router.push("/login");
       console.error('No data found in local storage for key "user".');
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    // if (user === null) {
-    //   router.push("/login");
-    // }
-    if (pathname === "/") {
-      router.push("/leads");
+    if (!user && pathname === "*") {
+      router.push("/login");
     }
   }, []);
-
-  // console.log(user.role[0])
-  // console.log(user.name)
-
-  // console.log(permissions);
-
-  // const handleMenuClick = (setting) => {
-  //   if (setting === "Logout") {
-  //     localStorage.removeItem("user");
-  //     window.location.href = "/login";
-  //   }
-
-  //   handleCloseUserMenu();
-  // };
 
   return (
     <Provider store={store}>
@@ -465,8 +500,66 @@ export default function RootLayout({ children }) {
                 >
                   <CircularProgress />
                 </Box>
-              ) : user === null ? (
-                <Login />
+              ) : user === null || user.isFirstSignIn === true ? (
+                <Box
+                  sx={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    // border: "1px solid black",
+                    backgroundColor: "white",
+                  }}
+                >
+                  <Grid sx={{ width: "60%", position: "relative" }}>
+                    <Image
+                      style={{ backgroundColor: "white" }}
+                      src={LoginBanner}
+                      // width="100%"
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </Grid>
+                  <Grid sx={{ width: "40%" }}>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        gap: "20px",
+                        // border: "1px solid black",
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          height: "15%",
+                          width: "250px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Image
+                          src="/Logo.svg"
+                          width={300}
+                          height={100}
+                          style={{ objectFit: "contain" }}
+                          alt="logo"
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          height: "50%",
+                          width: "90%",
+                        }}
+                      >
+                        <Login user={user} />
+                      </Box>
+                    </Box>
+                  </Grid>
+                </Box>
               ) : (
                 <Box sx={{ display: "flex" }}>
                   <AppBar
