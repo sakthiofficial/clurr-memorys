@@ -204,7 +204,7 @@ class CPUserSrv {
           model: "CpAppProject",
         })
         .lean();
-      const structuredUsers = users.map((user) => {
+      const structuredUsers = users.map(async (user) => {
         if (!user) {
           return null;
         }
@@ -222,12 +222,18 @@ class CPUserSrv {
             ),
           ),
         ];
+        user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
+        if (isPriorityUser(user[userDataObj?.role])) {
+          const projectDbData = await CpAppProject.find({}).select(
+            "name permission",
+          );
+          user[userDataObj?.projects] = projectDbData;
+        }
         user[userDataObj?.projects] = user[userDataObj?.projects].map(
           (project) => project.name,
         );
         user[userDataObj?.permissions] = userPermissions;
         user[userDataObj?.subordinateRoles] = userSubordinateRoles;
-        user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
         return user;
       });
 
@@ -344,6 +350,15 @@ class CPUserSrv {
         });
         cpCode = companyData ? companyData?.cpCode : null;
       }
+      if (user[userDataObj.isFirstSignIn]) {
+        return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+          token: sessionToken,
+
+          userData: {
+            [userDataObj.isFirstSignIn]: user[userDataObj.isFirstSignIn],
+          },
+        });
+      }
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
         token: sessionToken,
 
@@ -355,6 +370,7 @@ class CPUserSrv {
           name: user[userDataObj?.name],
           role,
           cpCode,
+          [userDataObj.isFirstSignIn]: false,
         },
       });
     } catch (error) {
@@ -387,7 +403,6 @@ class CPUserSrv {
       const parentUserData =
         (await this.getUserById(newUser[userDataObj?.parentId] || null)) ||
         providedUser;
-      console.log(parentUserData);
       await this.checkValidUserToAdd(providedUser, newUser, parentUserData);
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(newUser?.password, saltRounds);
@@ -720,6 +735,61 @@ class CPUserSrv {
         error,
       );
     }
+  };
+
+  resetPassword = async (providedUser, resetUser) => {
+    if (
+      providedUser?._id !== resetUser?.id &&
+      !isPriorityUser(providedUser[userDataObj?.role])
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
+        null,
+      );
+    }
+    const { id, password, newPassword } = resetUser;
+    const userDbData = await this.getUserById({ _id: id });
+
+    const passwordCheck = await bcrypt.compare(
+      userDbData[userDataObj?.password],
+      password,
+    );
+    if (passwordCheck) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
+        null,
+      );
+    }
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    userDbData[userDataObj?.password] = hashedPassword;
+    userDbData[userDataObj?.isFirstSignIn] = false;
+
+    const updateResult = await CpAppUser.updateOne(
+      { _id: id },
+      {
+        $set: {
+          password: userDbData[userDataObj?.password],
+          isFirstSignIn: false,
+        },
+      },
+    );
+
+    delete userDbData.password;
+    if (updateResult.modifiedCount === 1) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.OK,
+        RESPONSE_MESSAGE?.OK,
+        userDbData,
+      );
+    }
+    return new ApiResponse(
+      RESPONSE_STATUS?.NOTFOUND,
+      RESPONSE_MESSAGE?.INVALID,
+      updateResult,
+    );
   };
 }
 export default CPUserSrv;

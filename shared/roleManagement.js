@@ -227,6 +227,7 @@ const userDataObj = {
   name: "name",
   email: "email",
   phone: "phone",
+  isFirstSignIn: "isFirstSignIn",
 };
 export {
   basicRolePermission,

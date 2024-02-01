@@ -1,5 +1,6 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
+const { boolean } = require("joi");
 const { genrateUnixTimestamp } = require("../src/appConstants");
 
 const { Schema } = mongoose;
@@ -62,7 +63,7 @@ const CpAppUserSchema = new Schema({
       },
     ],
   },
-
+  isFirstSignIn: { type: Boolean, default: true },
   createdBy: { type: Number, default: genrateUnixTimestamp() },
 });
 
