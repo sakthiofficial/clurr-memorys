@@ -797,7 +797,6 @@ class CPUserSrv {
       isCpUser(userDbData[userDataObj?.role])
     );
     if (passwordCheck && passwordValidationNeeded) {
-      console.log("comming here0", passwordValidationNeeded);
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.UNAUTHORIZED,
