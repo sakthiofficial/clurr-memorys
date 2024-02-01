@@ -57,10 +57,10 @@ export default function Page() {
     setPage(0);
   };
 
-  const slicedRows =
-    data && data?.result
-      ? data?.result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      : [];
+  const slicedRows = (data?.result || []).slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
 
   // delete mutation
   const [deleteCp] = useCpDeleteMutation();
@@ -74,16 +74,16 @@ export default function Page() {
   };
 
   const handleClose = () => {
-    setSelectedRow(null);
     setOpen(false);
+    // setSelectedRow(null);
   };
 
   // handle delete function
   const handleDelete = async (selectedcp) => {
     console.log(selectedcp);
     try {
-      await deleteCp(selectedcp?.company?.cpCode);
       handleClose();
+      await deleteCp(selectedcp?.company?.cpCode);
 
       toast.success("User deleted successfully ");
       setTimeout(() => {
