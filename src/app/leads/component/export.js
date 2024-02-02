@@ -18,10 +18,15 @@ const exportToExcel = async (
 
   // Add data rows
   data.forEach((row) => {
-    const rowValues = excelHeadersMappings
+    const values = excelHeadersMappings
       ? (Object.values(excelHeadersMappings) || []).map((key) => row[key])
       : Object.values(row);
-
+    const rowValues = (values || []).map((value) => {
+      if (Array.isArray(value)) {
+        return value.join(" ");
+      }
+      return value;
+    });
     worksheet.addRow(rowValues);
   });
   // Generate a Blob containing the Excel file
@@ -37,7 +42,7 @@ const exportToExcel = async (
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
 };
-function ExportLead({ data, excelHeaders, excelHeadersMappings }) {
+function ExportLead({ data, excelHeaders, excelHeadersMappings, filename }) {
   const [excelData, setExcelData] = useState(data);
   useEffect(() => {
     setExcelData(data);
@@ -47,7 +52,7 @@ function ExportLead({ data, excelHeaders, excelHeadersMappings }) {
       excelData,
       excelHeaders,
       excelHeadersMappings,
-      "exported_data.xlsx",
+      filename || "exported_data.xlsx",
     );
   });
 
@@ -56,7 +61,26 @@ function ExportLead({ data, excelHeaders, excelHeadersMappings }) {
       {/* Your Material-UI table or other UI elements here */}
 
       {/* Button to trigger the export */}
-      <Button variant="contained" color="primary" onClick={handleExportExcel}>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          backgroundColor: "rgba(249, 184, 0, 1)",
+          color: "black",
+          width: "154px",
+          height: "43px",
+          borderRadius: "13px",
+          border: "none",
+          fontSize: "13px",
+          fontWeight: "400",
+          "&:hover": {
+            backgroundColor: "rgba(249, 184, 0, 1)",
+            boxShadow: "none",
+            border: "none",
+          },
+        }}
+        onClick={handleExportExcel}
+      >
         Export to Excel
       </Button>
     </div>
