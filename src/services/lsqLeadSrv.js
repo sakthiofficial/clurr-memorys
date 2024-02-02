@@ -327,8 +327,13 @@ class LSQLeadSrv {
         null,
       );
     }
-    const leadData = await this.leadFromLsqByPhone(phone, project);
-    console.log(leadData);
+    let leadData = await this.leadFromLsqByPhone(phone, project);
+    leadData = (leadData || []).map((lead) => {
+      lead[customLsqField?.leadRegistration] = this.getRegistrationStatus(
+        lead[lsqLeadFieldNames?.stage],
+      );
+      return lead;
+    });
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, leadData);
   };
 }

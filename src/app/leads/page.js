@@ -411,12 +411,13 @@ export default function Page() {
             )}
           <ExportLead
             data={data?.result}
-            excelHeaders={["a", "b", "c", "d"]}
+            excelHeaders={["Name", "CreatedOn", "Email", "Source", "Phone"]}
             excelHeadersMappings={{
               a: lsqLeadFieldNames?.firstName,
-              b: lsqLeadFieldNames?.createdTime,
+              b: lsqLeadFieldNames?.createdOn,
               c: lsqLeadFieldNames?.email,
               d: lsqLeadFieldNames?.source,
+              e: lsqLeadFieldNames?.phone,
             }}
           />
         </Grid>

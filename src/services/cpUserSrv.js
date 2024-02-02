@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import { ObjectId } from "mongoose";
 import { Session } from "../../models/session";
 import {
   basicRolePermission,
@@ -294,7 +295,6 @@ class CPUserSrv {
         })
 
         .lean();
-
       if (authenticteToken) {
         await Session.deleteOne({
           token: authenticteToken,
@@ -785,10 +785,10 @@ class CPUserSrv {
   };
 
   resetPassword = async (providedUser, resetUser) => {
-    if (
-      providedUser?._id !== resetUser?.id &&
-      !isPriorityUser(providedUser[userDataObj?.role])
-    ) {
+    const isInCorrectProvider =
+      providedUser?._id.toString() !== resetUser?.id &&
+      !isPriorityUser(providedUser[userDataObj?.role]);
+    if (providedUser?._id.toString() !== resetUser?.id && isInCorrectProvider) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.UNAUTHORIZED,

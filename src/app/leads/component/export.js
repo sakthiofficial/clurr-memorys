@@ -12,9 +12,15 @@ const exportToExcel = async (
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet 1");
 
-  // Add header row
-  const headers = excelHeaders || Object.keys(data[0]);
-  worksheet.addRow(headers);
+  // Set header formatting
+  const headerRow = worksheet.addRow(excelHeaders || Object.keys(data[0]));
+  headerRow.eachCell((cell) => {
+    cell.font = { color: { argb: "000000" }, size: 12 };
+    cell.alignment = {
+      horizontal: "center",
+      vertical: "center",
+    };
+  });
 
   // Add data rows
   data.forEach((row) => {
@@ -23,12 +29,23 @@ const exportToExcel = async (
       : Object.values(row);
     const rowValues = (values || []).map((value) => {
       if (Array.isArray(value)) {
-        return value.join(" ");
+        return value.join(",");
       }
       return value;
     });
-    worksheet.addRow(rowValues);
+
+    // Add the row and set text wrapping
+    const dataRow = worksheet.addRow(rowValues);
+    dataRow.eachCell((cell) => {
+      cell.alignment = {
+        wrapText: cell.value.length > 10,
+        height: 2,
+        horizontal: "center",
+        vertical: "top",
+      };
+    });
   });
+
   // Generate a Blob containing the Excel file
   const blob = await workbook.xlsx.writeBuffer();
 
@@ -42,6 +59,7 @@ const exportToExcel = async (
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
 };
+
 function ExportLead({ data, excelHeaders, excelHeadersMappings, filename }) {
   const [excelData, setExcelData] = useState(data);
   useEffect(() => {
