@@ -135,8 +135,12 @@ function Login() {
             "user",
             JSON.stringify(result.data.result.userData),
           );
-          if (result?.data?.isFirstSignIn === true) {
+          console.log(result?.data?.isFirstSignIn);
+          if (result?.data?.result?.userData?.isFirstSignIn === true) {
             toast.success("Reset Your Password!");
+          }
+          if (result?.data?.result?.userData?.isFirstSignIn === false) {
+            toast.success("Login Success!");
           }
           const userResult = localStorage.getItem("user");
           setUser(JSON.parse(userResult));
@@ -177,18 +181,23 @@ function Login() {
     const finalResult = await resetPassword(result);
     if (finalResult?.data?.status === 200) {
       localStorage.setItem("user", JSON.stringify(finalResult?.data?.result));
+      toast.success("Login Success!");
       router.push("/leads");
       setTimeout(() => {
         window.location.reload();
       }, 1800);
     }
-    toast.success("Login Successfuly!");
     console.log(finalResult);
   }, [userData]);
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleBackLogin = () => {
+    localStorage.removeItem("user");
+    window.location.reload()
   };
   return (
     <>
@@ -308,7 +317,7 @@ function Login() {
               }}
               name="newPassword"
               type="password"
-              label="password"
+              label="Password"
               value={userData.newPassword}
               variant="outlined"
               onChange={handleInputChangeUser}
@@ -330,7 +339,7 @@ function Login() {
                 },
               }}
               name="confirmPassword"
-              label="confirm password"
+              label="Confirm Password"
               type={showPassword ? "text" : "password"}
               variant="outlined"
               value={userData.confirmPassword}
@@ -346,6 +355,16 @@ function Login() {
               }}
             />
           </Box>
+          <Typography
+            sx={{
+              // border: "1px solid black",
+              width: "90%",
+              textAlign: "end",
+              fontSize: "14px",
+            }}
+          >
+            <Button onClick={handleBackLogin}>Back to Login ?</Button>
+          </Typography>
           <Button
             sx={{
               // border: "1px solid black",

@@ -64,7 +64,7 @@ export default function Page() {
         name: "",
         phone: "",
         email: "",
-        password: "P@ssword",
+        password: "Pass@123",
         projects: [],
         role: "",
         isPrimary: true,
