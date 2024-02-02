@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ExcelJS from "exceljs";
 import { Button } from "@mui/material";
 
-const exportToExcel = async (data, filename) => {
-  console.log(data);
+const exportToExcel = async (
+  data,
+  excelHeaders,
+  excelHeadersMappings,
+  filename,
+) => {
   // Create a new workbook and add a worksheet
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet 1");
 
   // Add header row
-  const headers = Object.keys(data[0]);
+  const headers = excelHeaders || Object.keys(data[0]);
   worksheet.addRow(headers);
 
   // Add data rows
   data.forEach((row) => {
-    worksheet.addRow(Object.values(row));
-  });
+    const rowValues = excelHeadersMappings
+      ? (Object.values(excelHeadersMappings) || []).map((key) => row[key])
+      : Object.values(row);
 
+    worksheet.addRow(rowValues);
+  });
   // Generate a Blob containing the Excel file
   const blob = await workbook.xlsx.writeBuffer();
 
@@ -30,12 +37,19 @@ const exportToExcel = async (data, filename) => {
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
 };
-function ExportLead({ data }) {
-  const [excelData] = useState(data || []);
-
-  const handleExportExcel = () => {
-    exportToExcel(excelData, "exported_data.xlsx");
-  };
+function ExportLead({ data, excelHeaders, excelHeadersMappings }) {
+  const [excelData, setExcelData] = useState(data);
+  useEffect(() => {
+    setExcelData(data);
+  }, [data]);
+  const handleExportExcel = useCallback(() => {
+    exportToExcel(
+      excelData,
+      excelHeaders,
+      excelHeadersMappings,
+      "exported_data.xlsx",
+    );
+  });
 
   return (
     <div>

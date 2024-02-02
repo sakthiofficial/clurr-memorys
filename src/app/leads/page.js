@@ -47,6 +47,9 @@ import {
   useGetLeadsByDateQuery,
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
+import ExportsLeadsBtn from "../components/ExportLeadsBtn";
+import ExportLead from "./component/export";
+import { lsqLeadFieldNames } from "../../../shared/lsqConstants";
 
 // card details
 // const users = [
@@ -406,7 +409,16 @@ export default function Page() {
                 ))}
               </>
             )}
-          {/* <ExportLeadsBtn /> */}
+          <ExportLead
+            data={data?.result}
+            excelHeaders={["a", "b", "c", "d"]}
+            excelHeadersMappings={{
+              a: lsqLeadFieldNames?.firstName,
+              b: lsqLeadFieldNames?.createdTime,
+              c: lsqLeadFieldNames?.email,
+              d: lsqLeadFieldNames?.source,
+            }}
+          />
         </Grid>
       </Grid>
       <Grid
