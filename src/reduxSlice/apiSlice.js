@@ -139,6 +139,13 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: `/user/resetPassword`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -163,4 +170,5 @@ export const {
   useGetLeadByPhoneQuery,
   useEditUserMutation,
   useRetriveCpByCompanyQuery,
+  useResetPasswordMutation,
 } = apiSlice;
