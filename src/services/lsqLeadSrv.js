@@ -74,8 +74,10 @@ class LSQLeadSrv {
   ) => {
     if (
       !providedUser[userDataObj?.permissions].includes(
-        permissionKeyNames?.leadViewWithNumber ||
-          permissionKeyNames?.leadViewWithoutNumber,
+        permissionKeyNames?.leadViewWithNumber,
+      ) &&
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithoutNumber,
       )
     ) {
       return new ApiResponse(
@@ -119,7 +121,6 @@ class LSQLeadSrv {
       : providedUser[userDataObj?.projects];
     const projectKeys = project !== "All" ? [project] : projectArr;
 
-    console.log("projectkey", project, projectKeys);
     const data = [];
 
     await Promise.all(
