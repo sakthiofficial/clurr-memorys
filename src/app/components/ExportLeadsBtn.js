@@ -91,6 +91,7 @@ export default function ExportsLeadsBtn() {
           border: "none",
           fontSize: "13px",
           fontWeight: "400",
+          boxShadow: "none",
           "&:hover": {
             backgroundColor: "rgba(249, 184, 0, 1)",
             boxShadow: "none",

@@ -16,6 +16,7 @@ import {
   Chip,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
@@ -149,12 +150,19 @@ export default function Page() {
           .then((result) => {
             console.log(result.data);
 
-            if (result.data.status === 400) {
-              result.data.result.details.map((res) => toast.error(res.message));
-              toast.error("something went wrong");
+            if (result?.data?.result?.name === true) {
+              toast.error("name already exist");
             }
 
-            if (result.data.status === 200) {
+            if (result?.data?.result?.email === true) {
+              toast.error("email already exist");
+            }
+
+            if (result?.data?.result?.phone === true) {
+              toast.error("phone number already exist");
+            }
+
+            if (result?.data?.status === 200) {
               toast.success("User submitted successfully!");
               setTimeout(() => {
                 router.push("/usermanagement");
@@ -199,7 +207,19 @@ export default function Page() {
   }, []);
 
   if (!userData) {
-    return <Grid sx={{ height: "100vh" }}>Loading...</Grid>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          height: "80vh",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   const SubordinateRoles = userData?.subordinateRoles;

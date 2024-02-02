@@ -119,9 +119,30 @@ export default function Page() {
     return true;
   };
   // handle add function
-  const handleAddAccount = useCallback(() => {
+  // const handleAddAccount = useCallback(() => {
+  //   const updatedCpExecutes = [
+  //     ...(formData?.cpExecutes || []),
+  //     {
+  //       projects: [],
+  //       role: "CP Executive",
+  //       isPrimary: false,
+  //     },
+  //   ];
+
+  //   setFormData({
+  //     ...formData,
+  //     cpExecutes: updatedCpExecutes,
+  //   });
+
+  //   if (updatedCpExecutes.length < 2) {
+  //     setShowAddAccountButton(true);
+  //   } else {
+  //     setShowAddAccountButton(false);
+  //   }
+  // }, []);
+  const handleAddAccount = () => {
     const updatedCpExecutes = [
-      ...(formData?.cpExecutes || {}),
+      ...(formData?.cpExecutes || []),
       {
         projects: [],
         role: "CP Executive",
@@ -130,7 +151,7 @@ export default function Page() {
     ];
 
     setFormData({
-      ...(formData || {}),
+      ...formData,
       cpExecutes: updatedCpExecutes,
     });
 
@@ -139,7 +160,7 @@ export default function Page() {
     } else {
       setShowAddAccountButton(false);
     }
-  }, []);
+  };
 
   // handle delete function
   const handleDeleteAccount = (index) => {

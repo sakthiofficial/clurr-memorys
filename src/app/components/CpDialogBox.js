@@ -14,10 +14,14 @@ import {
   Select,
   Typography,
 } from "@mui/material";
+import {
+  useCpManagenentQuery,
+  useGetRealtionshipManagerQuery,
+} from "@/reduxSlice/apiSlice";
 
 const emails = ["username@gmail.com", "user02@gmail.com"];
 
-function CpDialogBox(props) {
+function CpDialogBox(props, getRmQuery) {
   const { onClose, selectedValue, open } = props;
   // const {data}=data
   // console.log(cpName);
@@ -51,6 +55,10 @@ function CpDialogBox(props) {
   const handleProjectsChange = (event) => {
     setSelectedProjects(event.target.value);
   };
+  console.log(getRmQuery?.data?.result);
+  //   usEffect(()=>{
+  // sle
+  //   },[data])
 
   return (
     <Dialog
@@ -101,9 +109,9 @@ function CpDialogBox(props) {
                 <OutlinedInput id="select-category" label="Category (RM)" />
               }
             >
-              {names?.map((rm) => (
-                <MenuItem key={rm} value={rm}>
-                  {rm}
+              {(getRmQuery?.data?.result || []).map((rm) => (
+                <MenuItem key={rm.name} value={rm.name}>
+                  {rm.name}
                 </MenuItem>
               ))}
             </Select>
@@ -175,8 +183,20 @@ CpDialogBox.propTypes = {
 export default function SimpleDialogDemo({ data }) {
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(emails[1]);
-  console.log(data);
 
+  const getRmQuery = useGetRealtionshipManagerQuery();
+  console.log(getRmQuery?.data?.result);
+
+  // console.log(data);
+
+  const cprmValues = {
+    parentId: data?.result?.cpRm?.parentId,
+    id: data?.result?.company?._id,
+    projects: data?.result?.cpRm?.projects,
+  };
+  // console.log(cprmValues?.data?.result);
+  // const resultApi = useCpManagenentQuery(cprmValues);
+  // console.log(resultApi);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -196,7 +216,7 @@ export default function SimpleDialogDemo({ data }) {
           color: "black",
           minWidth: "154px",
           height: "35px",
-          borderRadius: "13px",
+          borderRadius: "8px",
           border: "none",
           fontSize: "13px",
           fontWeight: "400",
@@ -213,6 +233,7 @@ export default function SimpleDialogDemo({ data }) {
         selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
+        getRmQuery={getRmQuery}
       />
     </Grid>
   );

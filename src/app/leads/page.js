@@ -31,7 +31,9 @@ import {
   startOfWeek,
   subDays,
 } from "date-fns";
-import { Check, Close, Dangerous } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 import AddLeadsBtn from "../components/AddLeadsBtn";
 // import ExportLeadsBtn from "../components/ExportLeadsBtn";
 // import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
@@ -49,7 +51,10 @@ import {
 } from "@/reduxSlice/apiSlice";
 import ExportsLeadsBtn from "../components/ExportLeadsBtn";
 import ExportLead from "./component/export";
-import { lsqLeadFieldNames } from "../../../shared/lsqConstants";
+import {
+  leadRegistrationStatus,
+  lsqLeadFieldNames,
+} from "../../../shared/lsqConstants";
 
 // card details
 // const users = [
@@ -297,6 +302,19 @@ export default function Page() {
   // };
   // console.log(data.result);
 
+  const getStatusColor = (status) => {
+    if (status === leadRegistrationStatus.sucess) {
+      return "green";
+    }
+    if (status === leadRegistrationStatus.duplicate) {
+      return "red";
+    }
+    if (status === leadRegistrationStatus.exist) {
+      return "red";
+    }
+    return "black";
+  };
+
   return (
     <Grid style={{ minHeight: "100vh" }}>
       <Grid
@@ -442,11 +460,11 @@ export default function Page() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "50px",
+              width: "80px",
               backgroundColor: "#ffb52f",
             }}
           >
-            <Dangerous sx={{ fontSize: "20px" }} />
+            <ReportProblemIcon sx={{ fontSize: "20px" }} />
           </Grid>
           <Grid
             sx={{
@@ -458,22 +476,28 @@ export default function Page() {
           >
             <Typography
               sx={{
-                fontSize: "12px",
+                fontSize: "13px",
                 alignItems: "center",
-                paddingLeft: "3px",
-                paddingRight: "3px",
+                paddingLeft: "15px",
+                paddingRight: "15px",
+                display: "flex",
+                flexWrap: "wrap",
               }}
             >
-              <Check sx={{ fontSize: "11px", color: "green" }} />
+              <DoneAllIcon sx={{ fontSize: "18px", color: "green" }} />
+              &nbsp;
               <strong>Success</strong> (Bring the Customer to the initial Site
-              Visit) |
-              <Check sx={{ fontSize: "11px", color: "red" }} />
+              Visit)&nbsp;|&nbsp;
+              <DoneAllIcon sx={{ fontSize: "18px", color: "red" }} />
+              &nbsp;
               <strong>Duplicate</strong> (Bring the Customer to the initial Site
-              Visit) |
-              <Check sx={{ fontSize: "11px", color: "grey" }} />
+              Visit)&nbsp;|&nbsp;
+              <DoneAllIcon sx={{ fontSize: "18px", color: "grey" }} />
+              &nbsp;
               <strong>Duplicate</strong> (Customer Already Visited the Site. You
-              Can Bring Him/Her Again. You may get the Credit.) |
-              <Close sx={{ fontSize: "11px", color: "red" }} />
+              Can Bring Him/Her Again. You may get the Credit.) &nbsp;|&nbsp;
+              <Close sx={{ fontSize: "18px", color: "red" }} />
+              &nbsp;
               <strong>Lead Exists</strong>
             </Typography>
           </Grid>
@@ -571,16 +595,28 @@ export default function Page() {
                         })
                       : slicedRows?.map((row) => (
                           <TableRow key={row?.id}>
-                            <TableCell>{row?.FirstName || "N/A"}</TableCell>
-                            <TableCell>{row?.Phone || "N/A"}</TableCell>
-                            <TableCell>{row?.EmailAddress || "N/A"}</TableCell>
-                            <TableCell>
-                              <Check />
+                            <TableCell sx={{ fontSize: "11px" }}>
+                              {row?.FirstName || "N/A"}
                             </TableCell>
-                            <TableCell>{row?.mx_Sub_Source || "N/A"}</TableCell>
-                            <TableCell>{row?.ProspectStage || "N/A"}</TableCell>
-                            <TableCell>{row?.CreatedOn || "N/A"}</TableCell>
-                            <TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>{row?.Phone || "**********"}</TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>{row?.EmailAddress || "N/A"}</TableCell>
+                            <TableCell
+                              style={{
+                                color: getStatusColor(row.LeadRegistration),
+                              }}
+                            >
+                              {row.LeadRegistration ===
+                              leadRegistrationStatus.exist ? (
+                                <Close />
+                              ) : (
+                                <DoneAllIcon />
+                              )}
+                            </TableCell>
+
+                            <TableCell sx={{ fontSize: "11px" }}>{row?.mx_Sub_Source || "N/A"}</TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>{row?.ProspectStage || "N/A"}</TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>{row?.CreatedOn || "N/A"}</TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>
                               <Grid
                                 sx={{
                                   display: "flex",

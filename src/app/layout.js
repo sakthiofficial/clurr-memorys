@@ -36,14 +36,8 @@ import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import {
-  VerifiedUser,
-  Visibility,
-  VisibilityOff,
-  WindowSharp,
-} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { ToastContainer, toast } from "react-toastify";
 import store from "../store";
 import {
@@ -56,6 +50,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { permissionKeyNames } from "../../shared/cpNamings";
 import LoginBanner from "../../public/loginBanner2.png";
 import { ProfileInfo } from "./components/ProfileBtn";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import PeopleIcon from "@mui/icons-material/People";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -73,14 +70,14 @@ const sidebarlist = [
     title: "User Management",
     url: "usermanagement",
     insideUrl: "adduser",
-    icon: PeopleAltIcon,
+    icon: PeopleIcon,
     shortName: permissionKeyNames?.userManagement,
   },
   {
     title: "CP Management",
     url: "cpmanagement",
     insideUrl: "addcp",
-    icon: VerifiedUser,
+    icon: PersonAddAlt1Icon,
     shortName: permissionKeyNames?.cpManagement,
   },
 ];
@@ -197,7 +194,7 @@ function Login() {
 
   const handleBackLogin = () => {
     localStorage.removeItem("user");
-    window.location.reload()
+    window.location.reload();
   };
   return (
     <>
@@ -463,7 +460,9 @@ export default function RootLayout({ children }) {
             }}
           >
             <ListItemButton>
-              <ListItemIcon>{React.createElement(AssignmentIcon)}</ListItemIcon>
+              <ListItemIcon>
+                {React.createElement(TextSnippetIcon)}
+              </ListItemIcon>
               <ListItemText primary="Leads list" />
             </ListItemButton>
           </ListItem>

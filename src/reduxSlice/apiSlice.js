@@ -146,6 +146,13 @@ export const apiSlice = createApi({
         body: data,
       }),
     }),
+    cpManagenent: builder.query({
+      query: (data) => ({
+        url: `/cpManagenent`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -171,4 +178,5 @@ export const {
   useEditUserMutation,
   useRetriveCpByCompanyQuery,
   useResetPasswordMutation,
+  useCpManagenentQuery,
 } = apiSlice;
