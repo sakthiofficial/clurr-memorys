@@ -457,7 +457,7 @@ export default function Page() {
         >
           <Grid
             sx={{
-              height: "6vh",
+              minHeight: "6vh",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -469,7 +469,7 @@ export default function Page() {
           </Grid>
           <Grid
             sx={{
-              height: "6vh",
+              minHeight: "6vh",
               display: "flex",
               alignItems: "center",
               backgroundColor: "rgba(250, 185, 0, 0.1)",
@@ -482,24 +482,79 @@ export default function Page() {
                 paddingLeft: "15px",
                 paddingRight: "15px",
                 display: "flex",
-                flexWrap: "wrap",
               }}
             >
-              <DoneAllIcon sx={{ fontSize: "18px", color: "green" }} />
-              &nbsp;
-              <strong>Success</strong> (Bring the Customer to the initial Site
-              Visit)&nbsp;|&nbsp;
-              <DoneAllIcon sx={{ fontSize: "18px", color: "red" }} />
-              &nbsp;
-              <strong>Duplicate</strong> (Bring the Customer to the initial Site
-              Visit)&nbsp;|&nbsp;
-              <DoneAllIcon sx={{ fontSize: "18px", color: "grey" }} />
-              &nbsp;
-              <strong>Duplicate</strong> (Customer Already Visited the Site. You
-              Can Bring Him/Her Again. You may get the Credit.) &nbsp;|&nbsp;
-              <Close sx={{ fontSize: "18px", color: "red" }} />
-              &nbsp;
-              <strong>Lead Exists</strong>
+              <Typography
+                component="span"
+                sx={{
+                  fontSize: "11px",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  borderRight: "1px solid",
+                  textAlign: "center",
+                }}
+              >
+                {" "}
+                <DoneAllIcon sx={{ fontSize: "18px", color: "green" }} />
+                &nbsp;
+                <strong>Success</strong> (Bring the Customer to the initial Site
+                Visit)
+              </Typography>
+              <Typography
+                component="span"
+                sx={{
+                  fontSize: "11px",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  borderRight: "1px solid",
+                }}
+              >
+                {" "}
+                <DoneAllIcon sx={{ fontSize: "18px", color: "red" }} />
+                &nbsp;
+                <strong>Duplicate</strong> (Bring the Customer to the initial
+                Site Visit)
+              </Typography>
+              <Typography
+                component="span"
+                sx={{
+                  fontSize: "11px",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  borderRight: "1px solid",
+                }}
+              >
+                {" "}
+                <DoneAllIcon sx={{ fontSize: "18px", color: "grey" }} />
+                &nbsp;
+                <strong>Duplicate</strong> (Customer Already Visited the Site.
+                You Can Bring Him/Her Again. You may get the Credit.)
+              </Typography>
+              <Typography
+                component="span"
+                sx={{
+                  fontSize: "11px",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                }}
+              >
+                {" "}
+                <Close sx={{ fontSize: "18px", color: "red" }} />
+                &nbsp;
+                <strong>Lead Exists</strong>
+              </Typography>
             </Typography>
           </Grid>
         </Grid>
@@ -572,7 +627,7 @@ export default function Page() {
                       <TableCell>Name</TableCell>
                       <TableCell>Contact</TableCell>
                       <TableCell>Email</TableCell>
-                      <TableCell>STATUS</TableCell>
+                      <TableCell>Registration Status</TableCell>
                       <TableCell>CP Name</TableCell>
                       <TableCell>Stage</TableCell>
                       <TableCell>Created Date</TableCell>
@@ -599,8 +654,12 @@ export default function Page() {
                             <TableCell sx={{ fontSize: "11px" }}>
                               {row?.FirstName || "N/A"}
                             </TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>{row?.Phone || "**********"}</TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>{row?.EmailAddress || "N/A"}</TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>
+                              {row?.Phone || "**********"}
+                            </TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>
+                              {row?.EmailAddress || "N/A"}
+                            </TableCell>
                             <TableCell
                               style={{
                                 color: getStatusColor(row.LeadRegistration),
@@ -614,9 +673,15 @@ export default function Page() {
                               )}
                             </TableCell>
 
-                            <TableCell sx={{ fontSize: "11px" }}>{row?.mx_Sub_Source || "N/A"}</TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>{row?.ProspectStage || "N/A"}</TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>{row?.CreatedOn || "N/A"}</TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>
+                              {row?.mx_Sub_Source || "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>
+                              {row?.ProspectStage || "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ fontSize: "11px" }}>
+                              {row?.CreatedOn || "N/A"}
+                            </TableCell>
                             <TableCell sx={{ fontSize: "11px" }}>
                               <Grid
                                 sx={{

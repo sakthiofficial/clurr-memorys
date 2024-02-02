@@ -21,6 +21,16 @@ const exportToExcel = async (
       vertical: "center",
     };
   });
+  (excelHeaders || Object.keys(data[0])).forEach((header, index) => {
+    const column = worksheet.getColumn(index + 1); // Excel columns are 1-indexed
+    const maxWidth = 20; // Set your desired maximum width
+    const columnWidth =
+      Math.max(
+        maxWidth,
+        ...data.map((row) => (row[header] || "").toString().length),
+      ) + 2; // Add padding
+    column.width = columnWidth;
+  });
 
   // Add data rows
   data.forEach((row) => {
@@ -40,7 +50,7 @@ const exportToExcel = async (
       cell.alignment = {
         wrapText: cell.value.length > 10,
         height: 2,
-        horizontal: "center",
+        horizontal: "left",
         vertical: "top",
       };
     });
