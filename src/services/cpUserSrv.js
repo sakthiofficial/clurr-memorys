@@ -48,6 +48,7 @@ class CPUserSrv {
       ) {
         throw userValidationErrors?.IvalidPermission;
       }
+
       // Subordinate Validation+
       const subordinateValidation =
         (providedUser?.subordinateRoles || []).includes(newUser?.role[0]) &&
@@ -69,6 +70,7 @@ class CPUserSrv {
         !newUser?.role.includes(roleNames?.mis) &&
         !newUser?.role.includes(roleNames?.admin);
       const checkProject = !isPriorityUser(newUser?.role);
+
       if (checkParentValidation) {
         for (let i = 0; i < newUser[userDataObj?.role].length; i += 1) {
           if (
@@ -84,8 +86,9 @@ class CPUserSrv {
           }
         }
       }
+
       if (checkParentProject) {
-        for (let i = 0; i < newUser?.projects.length; i = 1 + i) {
+        for (let i = 0; i < (newUser?.projects || []).length; i = 1 + i) {
           if (!parentData?.projects.includes(newUser?.projects[i])) {
             console.log(
               parentData?.projects,
@@ -95,7 +98,6 @@ class CPUserSrv {
           }
         }
       }
-
       if (checkProject) {
         const projectNames = newUser?.projects || [];
 
@@ -103,9 +105,10 @@ class CPUserSrv {
         const existingProjects = await CpAppProject.find({
           name: { $in: projectNames },
         }).lean();
+
         if (
-          existingProjects.length !== newUser?.projects.length ||
-          newUser?.projects.length < 1
+          existingProjects.length !== (newUser?.projects || []).length ||
+          (newUser?.projects || []).length < 1
         ) {
           throw userValidationErrors?.InvalidProject;
         }
@@ -205,45 +208,50 @@ class CPUserSrv {
           model: "CpAppProject",
         })
         .lean();
-      const structuredUsers = users.map(async (user) => {
-        if (!user) {
-          return null;
-        }
-        const userPermissions = [
-          ...new Set(
-            user.role.flatMap((role) =>
-              role.permissions.map((permission) => permission.name),
+      const structuredUsers = Promise.all(
+        users.map(async (user) => {
+          if (!user) {
+            return null;
+          }
+          const userPermissions = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.permissions.map((permission) => permission.name),
+              ),
             ),
-          ),
-        ];
-        const userSubordinateRoles = [
-          ...new Set(
-            user.role.flatMap((role) =>
-              role.subordinateRoles.map((subordinate) => subordinate.name),
+          ];
+          const userSubordinateRoles = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.subordinateRoles.map((subordinate) => subordinate.name),
+              ),
             ),
-          ),
-        ];
-        user[userDataObj?.role] = (user?.role || []).map((role) => role?.name);
-        if (isPriorityUser(user[userDataObj?.role])) {
-          const projectDbData = await CpAppProject.find({}).select(
-            "name permission",
+          ];
+          user[userDataObj?.role] = (user?.role || []).map(
+            (role) => role?.name,
           );
-          user[userDataObj?.projects] = projectDbData;
-        }
-        user[userDataObj?.projects] = user[userDataObj?.projects].map(
-          (project) => project.name,
-        );
-        user[userDataObj?.permissions] = userPermissions;
-        user[userDataObj?.subordinateRoles] = userSubordinateRoles;
-        return user;
-      });
+          if (isPriorityUser(user[userDataObj?.role])) {
+            const projectDbData = await CpAppProject.find({}).select(
+              "name permission",
+            );
+            user[userDataObj?.projects] = projectDbData;
+          }
+          user[userDataObj?.projects] = user[userDataObj?.projects].map(
+            (project) => project.name,
+          );
+          user[userDataObj?.permissions] = userPermissions;
+          user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+          return user;
+        }),
+      );
 
       if (Array.isArray(ids)) {
         // If an array of IDs is provided, return an array of users
         return structuredUsers;
       }
       // If a single ID is provided, return a single user or null
-      return structuredUsers[0] || null;
+      const singleUserIdResult = await structuredUsers;
+      return singleUserIdResult[0] || null;
     };
 
     this.createSaveUser = async (createUser) => {
@@ -410,7 +418,11 @@ class CPUserSrv {
         ],
       });
 
-      const usedFields = {};
+      const usedFields = {
+        phone: false,
+        email: false,
+        name: false,
+      };
 
       if (existingUser) {
         if (existingUser.phone === phone) {
@@ -476,12 +488,12 @@ class CPUserSrv {
         permission,
         projects,
       );
-      sendMail(mailOptions)
-        .then(async () => {
-          await sendMail(adminMaliOption);
-          console.log("Emails as been successfully");
-        })
-        .catch((error) => console.log(error.message));
+      // sendMail(mailOptions)
+      //   .then(async () => {
+      //     await sendMail(adminMaliOption);
+      //     console.log("Emails as been successfully");
+      //   })
+      //   .catch((error) => console.log(error.message));
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (err) {
       console.log("Error While Adding User", err);
@@ -704,7 +716,7 @@ class CPUserSrv {
       if (!updateUserDbData) {
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
-          RESPONSE_MESSAGE?.INVALID,
+          RESPONSE_MESSAGE?.NOTFOUND,
           null,
         );
       }
@@ -723,14 +735,13 @@ class CPUserSrv {
         if (!updateUserParentData) {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
-            RESPONSE_MESSAGE?.INVALID,
+            RESPONSE_MESSAGE?.NOTFOUND,
             null,
           );
         }
         parentUser = updateUserParentData;
       }
       await this.checkValidUserToAdd(providedUser, updateUser, parentUser);
-
       if (updateUser[userDataObj?.password]) {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(

@@ -67,7 +67,7 @@ export async function PUT(request) {
         JSON.stringify(
           new ApiResponse(
             RESPONSE_STATUS?.ERROR,
-            RESPONSE_MESSAGE?.INVALID,
+            RESPONSE_MESSAGE?.ERROR,
             error,
           ),
         ),
@@ -121,7 +121,7 @@ export async function POST(req) {
         JSON.stringify(
           new ApiResponse(
             RESPONSE_STATUS?.ERROR,
-            RESPONSE_MESSAGE?.INVALID,
+            RESPONSE_MESSAGE?.ERROR,
             error,
           ),
         ),

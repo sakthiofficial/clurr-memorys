@@ -60,7 +60,9 @@ class CpManagementSrv {
     };
     this.validateCp = (parent, newUser) => {
       const result = (newUser[userDataObj?.projects] || []).filter(
-        (userProject) => parent[userDataObj?.projects].includes(userProject),
+        (userProject) => {
+          return parent[userDataObj?.projects].includes(userProject);
+        },
       );
       return result.length === newUser[userDataObj?.projects].length;
     };
@@ -79,7 +81,13 @@ class CpManagementSrv {
         code = String(code);
         const companyCode = "URHCP";
 
-        const cpCode = `${companyCode}${code.padStart(5, "0")}`;
+        let cpCode = `${companyCode}${code.padStart(5, "0")}`;
+        const codeCheck = await CpAppCompany.findOne({ cpCode });
+        if (codeCheck) {
+          cpCode = await this.genrateCompanyCode(
+            typeof code === "number" ? code + 1 : +code + 1,
+          );
+        }
         return cpCode;
       }
       let lastCode = await CpAppCompany.findOne(
@@ -165,6 +173,7 @@ class CpManagementSrv {
             { phone: cpExecute ? cpExecute[userDataObj?.phone] : null },
           ],
         });
+        console.log(cpCompany, cpBranchHeadData, cpExecuteData);
 
         if (cpCompany) {
           return errormsg?.companyFound;
@@ -175,7 +184,6 @@ class CpManagementSrv {
         if (cpExecuteData) {
           return errormsg?.cpExecuteFound;
         }
-        console.log(cpCompany, cpBranchHeadData, cpExecuteData);
         return null;
       } catch (error) {
         console.error("Error checking data existence:", error);
@@ -196,7 +204,6 @@ class CpManagementSrv {
     },
   ) => {
     // add parent account count validation // check cp ececute act count
-
     await initDb();
     if ((cpCompany, cpBranchHead)) {
       const validateResult = await this.validateCpAccounts(
@@ -223,7 +230,7 @@ class CpManagementSrv {
     if (!parentUser) {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.NOTFOUND,
         null,
       );
     }
@@ -238,8 +245,6 @@ class CpManagementSrv {
           const projects = cpBranchHead[userDataObj?.projects].join("/n");
           const cpCode = cpBranchHead[userDataObj?.cpCode] || cpGenratedCode;
           const validateCpCom = this.validateCp(parentUser, cpBranchHead);
-          console.log("came here", validateCpCom);
-
           if (!validateCpCom) {
             return new ApiResponse(
               RESPONSE_STATUS?.NOTFOUND,
@@ -305,7 +310,7 @@ class CpManagementSrv {
         const projects = cpExecute[userDataObj?.projects].join("/n");
         const permission = basicRolePermission(cpExecute[userDataObj?.role]);
         cpExecute[userDataObj?.parentId] =
-          cpExecute[userDataObj?.parentId] || branchHeadId;
+          cpExecute[userDataObj?.parentId] || parentId;
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(
           cpExecute[userDataObj?.password],
@@ -374,7 +379,7 @@ class CpManagementSrv {
     if (!checkRole) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
       );
     }
     const cpCompanys = await CpAppCompany.find().populate("projects");
@@ -546,6 +551,75 @@ class CpManagementSrv {
       cpBranchHead,
       cpExecutes,
     });
+  };
+
+  updateCpCompanyAndUsers = async (providedUser, cpDetails) => {
+    if (
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.cpManagement,
+      )
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
+        null,
+      );
+    }
+    const { id, parentId, projects } = cpDetails;
+
+    const companyDbData = await CpAppCompany.findOne({ _id: id }).populate({
+      path: "parentId",
+      populate: { path: "projects" },
+    });
+    const { projects: parentProjects } = companyDbData.parentId;
+    const parentProjectNames = parentProjects.map((project) => project.name);
+    const isNotValidParent = (projects || []).some((project) => {
+      if (!parentProjectNames.includes(project)) {
+        return true;
+      }
+      return false;
+    });
+    if (isNotValidParent) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
+    }
+    // Here we want to update cpcompany parent and project for user need to update projects
+    const projectDbData = await CpAppProject.find({ name: projects });
+    const projectIds = projectDbData.map((project) => project?._id);
+    const companyUpdateResult = await CpAppCompany.updateOne(
+      {
+        _id: companyDbData?._id,
+      },
+      { $set: { parentId, projects: projectIds } },
+    );
+    const cpUserUpdateResult = await CpAppUser.updateMany(
+      {
+        _id: [companyDbData?.branchHeadId, ...companyDbData.executeIds],
+      },
+      { $set: { projects: projectIds } },
+    );
+
+    if (companyUpdateResult?.acknowledged && cpUserUpdateResult?.acknowledged) {
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+        acknowledged:
+          companyUpdateResult?.acknowledged && cpUserUpdateResult?.acknowledged,
+        modifiedCount:
+          companyUpdateResult.modifiedCount + cpUserUpdateResult.modifiedCount,
+        upsertedId: null,
+        upsertedCount:
+          companyUpdateResult.upsertedCount + cpUserUpdateResult.upsertedCount,
+        matchedCount:
+          companyUpdateResult.matchedCount + cpUserUpdateResult.matchedCount,
+      });
+    }
+    return new ApiResponse(
+      RESPONSE_STATUS?.NOTFOUND,
+      RESPONSE_MESSAGE?.INVALID,
+      null,
+    );
   };
 }
 export default CpManagementSrv;
