@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -26,6 +26,8 @@ import styled from "@emotion/styled";
 import { useCpDeleteMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
 import { unixToDate } from "../../../shared/dateCalc";
+import ExportLead from "../leads/component/export";
+import { convertTimestampToDateTime } from "@/appConstants";
 
 export default function Page() {
   const [open, setOpen] = useState(false);
@@ -100,6 +102,23 @@ export default function Page() {
   }, []);
 
   // console.log(data);
+  const covertCpDataToExcel = useCallback((cpData) => {
+    cpData = (cpData || []).map((singleCpData) => {
+      const executes = (singleCpData?.cpExecutes || []).map(
+        (execute) => execute?.name,
+      );
+      return {
+        Company: singleCpData?.company?.name,
+        CpCode: singleCpData?.company?.cpCode,
+        CreateOn: convertTimestampToDateTime(singleCpData?.company?.createdBy),
+        Projects: singleCpData?.company?.projects,
+        BranchHead: singleCpData?.cpBranchHead?.name,
+        RelationManager: singleCpData?.cpRm?.name,
+        Execute: executes,
+      };
+    });
+    return cpData;
+  });
   return (
     <>
       <ToastContainer />
@@ -156,6 +175,7 @@ export default function Page() {
                 Add CP
               </Button>
             </Link>
+            <ExportLead data={covertCpDataToExcel(data?.result)} />
           </Grid>
         </Grid>
         <Grid>
