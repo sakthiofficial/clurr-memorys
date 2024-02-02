@@ -33,7 +33,7 @@ export default function Page() {
     name: "",
     email: "",
     phone: "",
-    password: "P@ssword",
+    password: "Pass@123",
   });
 
   const [selectedValues, setSelectedValues] = useState({

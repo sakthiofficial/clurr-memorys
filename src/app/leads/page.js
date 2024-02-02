@@ -430,11 +430,11 @@ export default function Page() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "30px",
+              width: "50px",
               backgroundColor: "#ffb52f",
             }}
           >
-            <Dangerous sx={{ fontSize: "13px" }} />
+            <Dangerous sx={{ fontSize: "20px" }} />
           </Grid>
           <Grid
             sx={{
@@ -449,29 +449,21 @@ export default function Page() {
                 fontSize: "12px",
                 alignItems: "center",
                 paddingLeft: "3px",
+                paddingRight: "3px",
               }}
             >
-              <Check sx={{ fontSize: "10px" }} />
-              Success (Bring the Customer to the initial Site Visit) |
-              <Check sx={{ fontSize: "10px" }} />
-              Success (Bring the Customer to the initial Site Visit) |
-              <Check sx={{ fontSize: "10px" }} />
-              Success (Bring the Customer to the initial Site Visit) |
-              <Check sx={{ fontSize: "10px" }} />
-              Success (Bring the Customer to the initial Site Visit)
+              <Check sx={{ fontSize: "11px", color: "green" }} />
+              <strong>Success</strong> (Bring the Customer to the initial Site
+              Visit) |
+              <Check sx={{ fontSize: "11px", color: "red" }} />
+              <strong>Duplicate</strong> (Bring the Customer to the initial Site
+              Visit) |
+              <Check sx={{ fontSize: "11px", color: "grey" }} />
+              <strong>Duplicate</strong> (Customer Already Visited the Site. You
+              Can Bring Him/Her Again. You may get the Credit.) |
+              <Close sx={{ fontSize: "11px", color: "red" }} />
+              <strong>Lead Exists</strong>
             </Typography>
-            {/* <Typography sx={{ fontSize: "12px" }}>
-            <Check />
-            Success (Bring the Customer to the initial Site Visit) |
-          </Typography>
-          <Typography sx={{ fontSize: "12px" }}>
-            <Check />
-            Success (Bring the Customer to the initial Site Visit) |
-          </Typography>
-          <Typography sx={{ fontSize: "12px" }}>
-            <Check />
-            Success (Bring the Customer to the initial Site Visit) |
-          </Typography> */}
           </Grid>
         </Grid>
       </Grid>
@@ -543,6 +535,7 @@ export default function Page() {
                       <TableCell>Name</TableCell>
                       <TableCell>Contact</TableCell>
                       <TableCell>Email</TableCell>
+                      <TableCell>STATUS</TableCell>
                       <TableCell>CP Name</TableCell>
                       <TableCell>Stage</TableCell>
                       <TableCell>Created Date</TableCell>
@@ -569,6 +562,9 @@ export default function Page() {
                             <TableCell>{row?.FirstName || "N/A"}</TableCell>
                             <TableCell>{row?.Phone || "N/A"}</TableCell>
                             <TableCell>{row?.EmailAddress || "N/A"}</TableCell>
+                            <TableCell>
+                              <Check />
+                            </TableCell>
                             <TableCell>{row?.mx_Sub_Source || "N/A"}</TableCell>
                             <TableCell>{row?.ProspectStage || "N/A"}</TableCell>
                             <TableCell>{row?.CreatedOn || "N/A"}</TableCell>
