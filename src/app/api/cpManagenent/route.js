@@ -101,9 +101,10 @@ export async function GET(request) {
 
     return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
+    console.log("Error while performing cp management", error);
     const response = new ApiResponse(
       RESPONSE_STATUS?.ERROR,
-      RESPONSE_MESSAGE?.INVALID,
+      RESPONSE_MESSAGE?.ERROR,
       error,
     );
     return NextResponse.json(response, { status: response?.status });
@@ -145,5 +146,56 @@ export async function DELETE(request) {
         new ApiResponse(RESPONSE_STATUS?.ERROR, RESPONSE_MESSAGE?.ERROR, error),
       ),
     );
+  }
+}
+export async function PUT(request) {
+  try {
+    const providedUser = await getUserByToken(request);
+
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
+    const bodyData = await request.json();
+
+    const validateQuery = Joi.object({
+      id: Joi.string().required(),
+
+      parentId: Joi.string().required(),
+      projects: Joi.array().min(1).required(),
+    });
+    const { error, value } = validateQuery.validate(bodyData);
+
+    if (error) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.ERROR,
+            RESPONSE_MESSAGE?.INVALID,
+            error,
+          ),
+        ),
+      );
+    }
+    const cpManagementSrv = new CpManagementSrv();
+    const serviceRes = await cpManagementSrv.updateCpCompanyAndUsers(
+      providedUser,
+      value,
+    );
+    return NextResponse.json(serviceRes, { status: serviceRes?.status });
+  } catch (error) {
+    const response = new ApiResponse(
+      RESPONSE_STATUS?.ERROR,
+      RESPONSE_MESSAGE?.INVALID,
+      error,
+    );
+    return NextResponse.json(response, { status: response?.status });
   }
 }

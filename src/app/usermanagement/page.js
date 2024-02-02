@@ -34,6 +34,8 @@ import {
   useGetUsersQuery,
 } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
+import ExportLead from "../leads/component/export";
+import { lsqLeadFieldNames } from "../../../shared/lsqConstants";
 
 // card details
 const users = [
@@ -163,6 +165,7 @@ export default function Page() {
                 Add User
               </Button>
             </Link>
+            <ExportLead data={data?.result} />
           </Grid>
         </Grid>
         <Grid>

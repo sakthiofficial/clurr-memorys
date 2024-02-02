@@ -1,5 +1,12 @@
 import config from "../lib/config";
-import { lsqFieldValues, lsqLeadFieldNames } from "../../shared/lsqConstants";
+import {
+  customLsqField,
+  leadRegistrationMapping,
+  leadRegistrationStatus,
+  leadStage,
+  lsqFieldValues,
+  lsqLeadFieldNames,
+} from "../../shared/lsqConstants";
 import {
   ApiResponse,
   RESPONSE_MESSAGE,
@@ -39,17 +46,38 @@ class LSQLeadSrv {
       );
       return lsqData.data;
     };
+    this.getRegistrationStatus = (stage) => {
+      if (
+        leadRegistrationMapping[leadRegistrationStatus?.sucess].includes(stage)
+      ) {
+        return leadRegistrationStatus?.sucess;
+      }
+      if (
+        leadRegistrationMapping[leadRegistrationStatus?.exist].includes(stage)
+      ) {
+        return leadRegistrationStatus?.exist;
+      }
+      if (
+        leadRegistrationMapping[leadRegistrationStatus?.duplicate].includes(
+          stage,
+        )
+      ) {
+        return leadRegistrationStatus?.duplicate;
+      }
+      return leadRegistrationStatus?.sucess;
+    };
   }
 
   retriveLead = async (
     providedUser,
     { leadStartDate, leadEndDate, project },
   ) => {
-    console.log(project);
     if (
       !providedUser[userDataObj?.permissions].includes(
-        permissionKeyNames?.leadViewWithNumber ||
-          permissionKeyNames?.leadViewWithoutNumber,
+        permissionKeyNames?.leadViewWithNumber,
+      ) &&
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithoutNumber,
       )
     ) {
       return new ApiResponse(
@@ -93,7 +121,6 @@ class LSQLeadSrv {
       : providedUser[userDataObj?.projects];
     const projectKeys = project !== "All" ? [project] : projectArr;
 
-    console.log("projectkey", project, projectKeys);
     const data = [];
 
     await Promise.all(
@@ -173,11 +200,17 @@ class LSQLeadSrv {
               push = cpCode === lsqCpCode;
             }
             structuredApiData.Project = projectName;
+
+            structuredApiData[customLsqField?.leadRegistration] =
+              this.getRegistrationStatus(
+                structuredApiData[lsqLeadFieldNames?.stage],
+              );
+
             if (push) {
               data.push(structuredApiData);
             }
           }
-          if (i + 1 === apiData.data.length && apiData.data.length > 0) {
+          if (i === apiData.data.length && apiData.data.length > 0) {
             apiPageIndex += 1;
 
             apiData = await fetchLeadData(apiPageIndex);
@@ -269,7 +302,6 @@ class LSQLeadSrv {
           secretKey,
         },
       });
-      console.log(promise);
       return new ApiResponse(
         promise?.status,
         promise?.statusText,

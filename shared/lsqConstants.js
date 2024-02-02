@@ -27,3 +27,34 @@ export const lsqLeadFieldNames = {
 export const lsqFieldValues = {
   source: "Channel Partner",
 };
+export const leadStage = {
+  new: "New",
+  reengaged: "Reengaged",
+  progressReenged: "Progressing Reengaged",
+  svd: "Site Visit Done",
+  svdCold: "SVD Cold",
+  svdWarm: "SVD Warm",
+  svdDroped: "Site Visit Done & Dropped",
+};
+export const leadRegistrationStatus = {
+  sucess: "Sucess",
+  duplicate: "Duplicate",
+  exist: "Exist",
+};
+
+export const leadRegistrationMapping = {
+  [leadRegistrationStatus.sucess]: [leadStage.new],
+  [leadRegistrationStatus.duplicate]: [
+    leadStage.reengaged,
+    leadStage.progressReenged,
+    leadStage?.svdDroped,
+  ],
+  [leadRegistrationStatus.exist]: [
+    leadStage?.svd,
+    leadStage?.svdCold,
+    leadStage?.svdWarm,
+  ],
+};
+export const customLsqField = {
+  leadRegistration: "LeadRegistration",
+};
