@@ -31,6 +31,7 @@ import {
   startOfWeek,
   subDays,
 } from "date-fns";
+import { Check, Close, Dangerous } from "@mui/icons-material";
 import AddLeadsBtn from "../components/AddLeadsBtn";
 // import ExportLeadsBtn from "../components/ExportLeadsBtn";
 // import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
@@ -408,7 +409,72 @@ export default function Page() {
           {/* <ExportLeadsBtn /> */}
         </Grid>
       </Grid>
-
+      <Grid
+        sx={{
+          // border: "1px solid black",
+          display: "flex",
+          alignItems: "center",
+          height: "10vh",
+        }}
+      >
+        <Grid
+          sx={{
+            display: "flex",
+            border: "1px solid #ffb52f",
+            borderRadius: "4px",
+          }}
+        >
+          <Grid
+            sx={{
+              height: "6vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30px",
+              backgroundColor: "#ffb52f",
+            }}
+          >
+            <Dangerous sx={{ fontSize: "13px" }} />
+          </Grid>
+          <Grid
+            sx={{
+              height: "6vh",
+              display: "flex",
+              alignItems: "center",
+              backgroundColor: "rgba(250, 185, 0, 0.1)",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "12px",
+                alignItems: "center",
+                paddingLeft: "3px",
+              }}
+            >
+              <Check sx={{ fontSize: "10px" }} />
+              Success (Bring the Customer to the initial Site Visit) |
+              <Check sx={{ fontSize: "10px" }} />
+              Success (Bring the Customer to the initial Site Visit) |
+              <Check sx={{ fontSize: "10px" }} />
+              Success (Bring the Customer to the initial Site Visit) |
+              <Check sx={{ fontSize: "10px" }} />
+              Success (Bring the Customer to the initial Site Visit)
+            </Typography>
+            {/* <Typography sx={{ fontSize: "12px" }}>
+            <Check />
+            Success (Bring the Customer to the initial Site Visit) |
+          </Typography>
+          <Typography sx={{ fontSize: "12px" }}>
+            <Check />
+            Success (Bring the Customer to the initial Site Visit) |
+          </Typography>
+          <Typography sx={{ fontSize: "12px" }}>
+            <Check />
+            Success (Bring the Customer to the initial Site Visit) |
+          </Typography> */}
+          </Grid>
+        </Grid>
+      </Grid>
       <Grid>
         <TableContainer
           component={Paper}

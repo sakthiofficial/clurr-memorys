@@ -5,7 +5,7 @@ import { SnackbarProvider } from "notistack";
 import { ThemeProvider } from "@mui/material/styles";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -36,12 +36,20 @@ import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import { VerifiedUser, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  VerifiedUser,
+  Visibility,
+  VisibilityOff,
+  WindowSharp,
+} from "@mui/icons-material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { ToastContainer, toast } from "react-toastify";
 import store from "../store";
-import { useLoginUserDataMutation } from "@/reduxSlice/apiSlice";
+import {
+  useLoginUserDataMutation,
+  useResetPasswordMutation,
+} from "@/reduxSlice/apiSlice";
 import themeFont from "../theme";
 import "react-toastify/dist/ReactToastify.css";
 import { usePathname, useRouter } from "next/navigation";
@@ -77,21 +85,21 @@ const sidebarlist = [
   },
 ];
 // login function
-function Login({ user }) {
+function Login() {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
-  // console.log(user);
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     password: "",
   });
-  console.log(formData);
   const [userData, setUserData] = useState({
     newPassword: "",
     confirmPassword: "",
   });
+  const [user, setUser] = useState(null);
 
+  // console.log(user);
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [isPasswordMismatch, setIsPasswordMismatch] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
@@ -113,44 +121,70 @@ function Login({ user }) {
   };
 
   const [loginUserData] = useLoginUserDataMutation();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setLoginInProgress(true);
-      const result = await loginUserData(formData);
-      if (result?.data?.status === 200) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify(result.data.result.userData),
-        );
-        toast.success("Login successful!");
-        setLoginPassword(formData.password);
-        window.location.href = "/leads";
-      } else {
-        toast.error("Login failed. Please check your credentials.");
+      try {
+        setLoginInProgress(true);
+        const result = await loginUserData(formData);
+        console.log(result?.data?.result?.userData?.isFirstSignIn);
+
+        if (result?.data?.status === 200) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(result.data.result.userData),
+          );
+          if (result?.data?.isFirstSignIn === true) {
+            toast.success("Reset Your Password!");
+          }
+          const userResult = localStorage.getItem("user");
+          setUser(JSON.parse(userResult));
+          setLoginPassword(formData.password);
+        } else {
+          toast.error("Login failed. Please check your credentials.");
+        }
+      } catch (error) {
+        console.error("Form submission failed", error);
+        toast.error("Form submission failed. Please try again.");
+      } finally {
+        setLoginInProgress(false);
       }
-    } catch (error) {
-      console.error("Form submission failed", error);
-      toast.error("Form submission failed. Please try again.");
-    } finally {
-      setLoginInProgress(false);
+    },
+    [formData, setLoginPassword, setLoginInProgress],
+  );
+
+  useEffect(() => {
+    console.log(user);
+    if (user?.isFirstSignIn === false) {
+      window.location.href = "leads";
     }
-  };
-  console.log(loginPassword);
-  const handleSubmitPassword = () => {
+  }, [user, userData]);
+
+  // console.log(user);
+  const [resetPassword] = useResetPasswordMutation();
+  const handleSubmitPassword = useCallback(async () => {
     if (userData.newPassword !== userData.confirmPassword) {
       setIsPasswordMismatch(true);
-      console.log("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
     const result = {
       newPassword: userData.confirmPassword,
       password: loginPassword,
-      id: user.isFirstSignIn,
+      id: user?.id,
     };
-    console.log(result);
-  };
+    const finalResult = await resetPassword(result);
+    if (finalResult?.data?.status === 200) {
+      localStorage.setItem("user", JSON.stringify(finalResult?.data?.result));
+      router.push("/leads");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1800);
+    }
+    toast.success("Login Successfuly!");
+    console.log(finalResult);
+  }, [userData]);
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
@@ -159,7 +193,7 @@ function Login({ user }) {
   return (
     <>
       <ToastContainer />
-      {user === null ? (
+      {user?.isFirstSignIn === false || user === null ? (
         <Box
           sx={{
             display: "flex",
@@ -275,6 +309,7 @@ function Login({ user }) {
               name="newPassword"
               type="password"
               label="password"
+              value={userData.newPassword}
               variant="outlined"
               onChange={handleInputChangeUser}
             />
@@ -298,6 +333,7 @@ function Login({ user }) {
               label="confirm password"
               type={showPassword ? "text" : "password"}
               variant="outlined"
+              value={userData.confirmPassword}
               onChange={handleInputChangeUser}
               InputProps={{
                 endAdornment: (
@@ -474,12 +510,6 @@ export default function RootLayout({ children }) {
       console.error('No data found in local storage for key "user".');
     }
     setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!user && pathname === "*") {
-      router.push("/login");
-    }
   }, []);
 
   return (
