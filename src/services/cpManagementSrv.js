@@ -58,12 +58,12 @@ class CpManagementSrv {
       }
       const cpCompanySch = new CpAppCompany(cpCampanyData);
       const cpCompanyResult = await cpCompanySch.save();
-      const activitySrv = new ActivitySrv();
-      await activitySrv.createActivity(
-        activityActionTypes?.cpAdded,
-        cpCompanyResult._id,
-        providedUser?._id,
-      );
+      // const activitySrv = new ActivitySrv();
+      // await activitySrv.createActivity(
+      //   activityActionTypes?.cpAdded,
+      //   cpCompanyResult._id,
+      //   providedUser?._id,
+      // );
       return cpCompanyResult._id;
     };
     this.validateCp = (parent, newUser) => {
@@ -82,12 +82,12 @@ class CpManagementSrv {
       }
       const userSch = new CpAppUser(user);
       const result = await userSch.save();
-      const activitySrv = new ActivitySrv();
-      await activitySrv.createActivity(
-        activityActionTypes?.cpAdded,
-        result._id,
-        providedUser?._id,
-      );
+      // const activitySrv = new ActivitySrv();
+      // await activitySrv.createActivity(
+      //   activityActionTypes?.cpAdded,
+      //   result._id,
+      //   providedUser?._id,
+      // );
       return result;
     };
     this.genrateCompanyCode = async (code) => {
@@ -337,12 +337,12 @@ class CpManagementSrv {
         const userSch = new CpAppUser(cpExecuteUser);
 
         const userResult = await userSch.save();
-        const activitySrv = new ActivitySrv();
-        await activitySrv.createActivity(
-          activityActionTypes?.cpAdded,
-          userResult._id,
-          cpExecute[userDataObj?.parentId],
-        );
+        // const activitySrv = new ActivitySrv();
+        // await activitySrv.createActivity(
+        //   activityActionTypes?.cpAdded,
+        //   userResult._id,
+        //   cpExecute[userDataObj?.parentId],
+        // );
         if (userResult._id && companyId) {
           await CpAppCompany.updateOne(
             { _id: companyId },
