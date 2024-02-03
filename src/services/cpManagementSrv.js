@@ -22,10 +22,12 @@ import {
   cpMailOption,
   superAdminMailOptions,
 } from "../helper/email/mailOptions";
+import ActivitySrv from "./activitySrv";
+import { activityActionTypes } from "@/helper/serviceConstants";
 
 class CpManagementSrv {
   constructor() {
-    this.createCpCompany = async (cpCampanyData) => {
+    this.createCpCompany = async (cpCampanyData, providedUser) => {
       //   validation project & parentInd
       const errorMsg = {
         userExist: "user already exist",
@@ -56,6 +58,12 @@ class CpManagementSrv {
       }
       const cpCompanySch = new CpAppCompany(cpCampanyData);
       const cpCompanyResult = await cpCompanySch.save();
+      const activitySrv = new ActivitySrv();
+      await activitySrv.createActivity(
+        activityActionTypes?.cpAdded,
+        cpCompanyResult._id,
+        providedUser?._id,
+      );
       return cpCompanyResult._id;
     };
     this.validateCp = (parent, newUser) => {
@@ -66,7 +74,7 @@ class CpManagementSrv {
       );
       return result.length === newUser[userDataObj?.projects].length;
     };
-    this.createCpBranchHead = async (user, parentId) => {
+    this.createCpBranchHead = async (user, parentId, providedUser) => {
       const userSrv = new CPUserSrv();
       const parentUser = await userSrv.getUserById(parentId);
       if (!parentUser) {
@@ -74,6 +82,12 @@ class CpManagementSrv {
       }
       const userSch = new CpAppUser(user);
       const result = await userSch.save();
+      const activitySrv = new ActivitySrv();
+      await activitySrv.createActivity(
+        activityActionTypes?.cpAdded,
+        result._id,
+        providedUser?._id,
+      );
       return result;
     };
     this.genrateCompanyCode = async (code) => {
@@ -211,7 +225,6 @@ class CpManagementSrv {
         cpBranchHead,
         cpExecute,
       );
-
       if (validateResult) {
         return new ApiResponse(
           RESPONSE_STATUS?.ERROR,
@@ -267,6 +280,7 @@ class CpManagementSrv {
           const cpBranchResult = await this.createCpBranchHead(
             branchUser,
             parentId,
+            providedUser,
           );
           parentUser = cpBranchResult;
           branchHeadId = cpBranchResult._id;
@@ -294,7 +308,7 @@ class CpManagementSrv {
           cpCompany[userDataObj?.parentId] =
             cpCompany[userDataObj?.parentId] || parentId;
 
-          companyId = await this.createCpCompany(cpCompany);
+          companyId = await this.createCpCompany(cpCompany, providedUser);
         }
         if (!cpExecute) {
           return new ApiResponse(
@@ -323,6 +337,12 @@ class CpManagementSrv {
         const userSch = new CpAppUser(cpExecuteUser);
 
         const userResult = await userSch.save();
+        const activitySrv = new ActivitySrv();
+        await activitySrv.createActivity(
+          activityActionTypes?.cpAdded,
+          userResult._id,
+          cpExecute[userDataObj?.parentId],
+        );
         if (userResult._id && companyId) {
           await CpAppCompany.updateOne(
             { _id: companyId },

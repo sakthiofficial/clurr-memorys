@@ -42,7 +42,7 @@ const CpAppCompanySchema = new Schema({
     required: true,
   },
 
-  createdBy: { type: Number, default: () => Math.floor(Date.now() / 1000) },
+  createdDate: { type: Number, default: () => Math.floor(Date.now() / 1000) },
 });
 
 module.exports.CpAppCompany =

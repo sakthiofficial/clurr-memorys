@@ -1,19 +1,19 @@
-import mongoose from "mongoose";
-import { genrateUnixTimestamp } from "../src/appConstants";
+const mongoose = require("mongoose");
+const { genrateUnixTimestamp } = require("../src/appConstants");
 
 const { Schema } = mongoose;
 const CpAppActivitySchema = new Schema({
-  entity: {
+  actionCategory: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "CpAppPermission",
   }, // e.g., 'role', 'project', 'cpItem', 'user', 'lead'
-  entityId: {
+  performedTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "CpAppUser",
   }, // Reference to the entity
   actionType: { type: String, required: true }, // e.g., 'add', 'delete', 'edit'
-  timestamp: { type: Number, default: () => genrateUnixTimestamp() },
+  createdDate: { type: Number, default: () => genrateUnixTimestamp() },
   performedBy: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -26,6 +26,6 @@ const CpAppActivitySchema = new Schema({
   }, // Username or user ID who performed the action
 });
 
-export const CpAppActivity =
-  mongoose.model.CpAppActivity ||
+module.exports.CpAppActivity =
+  mongoose.models.CpAppActivity ||
   mongoose.model("CpAppActivity", CpAppActivitySchema);

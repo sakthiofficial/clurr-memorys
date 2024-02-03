@@ -61,6 +61,17 @@ export async function POST(req) {
 export async function GET(request) {
   try {
     const providedUser = await getUserByToken(request);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
     const { searchParams } = new URL(request.url);
     const project = searchParams.get("project");
     const leadStartDate = searchParams.get("leadStartDate");

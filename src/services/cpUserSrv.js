@@ -699,6 +699,10 @@ class CPUserSrv {
     const { deletedCount } = await CpAppUser.deleteOne({
       _id: removeUserData._id,
     }).lean();
+    const sessionDeleteResult = await Session.deleteOne({
+      userId: removeUserData._id,
+    });
+    console.log(sessionDeleteResult);
     if (deletedCount > 0) {
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     }

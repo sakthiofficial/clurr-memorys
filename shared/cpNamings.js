@@ -18,4 +18,10 @@ const permissionKeyNames = {
   activityHistory: "Activity History",
   leadManagement: "Lead Management",
 };
-export { roleNames, permissionKeyNames };
+const activityOperationTypes = {
+  add: "add",
+  edit: "edit",
+  delete: "delete",
+  other: "other",
+};
+export { roleNames, permissionKeyNames, activityOperationTypes };

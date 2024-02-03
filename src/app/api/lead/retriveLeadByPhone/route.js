@@ -12,6 +12,16 @@ import LSQLeadSrv from "../../../../services/lsqLeadSrv";
 export async function GET(request) {
   try {
     const providedUser = await getUserByToken(request);
+    if (!providedUser) {
+      const errorResponse = new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
+        null,
+      );
+      return NextResponse.json(errorResponse, {
+        status: errorResponse?.status,
+      });
+    }
     const { searchParams } = new URL(request.url);
     const phone = searchParams.get("phone");
     const project = searchParams.get("project");

@@ -9,12 +9,12 @@ export default async function getUserByToken(request) {
   const { value: token } = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
   const providedUserSessionData = await Session.findOne({
     token,
-  })
-    .populate("userId")
-    .lean();
-
+  });
+  if (!providedUserSessionData) {
+    return null;
+  }
   const user = await CpAppUser.findOne({
-    _id: providedUserSessionData?.userId?._id,
+    _id: providedUserSessionData?.userId,
   })
     .populate({
       path: "role",
