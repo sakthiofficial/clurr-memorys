@@ -15,7 +15,11 @@ import {
   RESPONSE_STATUS,
   userValidationErrors,
 } from "../appConstants";
-import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
+import {
+  activityOperationTypes,
+  permissionKeyNames,
+  roleNames,
+} from "../../shared/cpNamings";
 import { CpAppProject } from "../../models/AppProject";
 import sendMail from "../helper/emailSender";
 import { CpAppRole } from "../../models/AppRole";
@@ -25,6 +29,7 @@ import {
   userMailOption,
 } from "@/helper/email/mailOptions";
 import { CpAppCompany } from "../../models/AppCompany";
+import ActivitySrv from "./activitySrv";
 
 const { default: initDb } = require("../lib/db");
 const { CpAppUser } = require("../../models/AppUser");
@@ -465,8 +470,13 @@ class CPUserSrv {
       newUser.parentId = parentId;
       newUser.password = hashedPassword;
       const userSch = new CpAppUser(newUser);
-      await userSch.save();
-
+      const userResult = await userSch.save();
+      // const activityService = new ActivitySrv();
+      // await activityService.createActivity(
+      //   activityOperationTypes?.add,
+      //   userResult?._id,
+      //   providedUser?._id,
+      // );
       // Trigering email to user and admin
       const userName = newUser[userDataObj?.name];
       const parentName = "Urbanrise Team";
@@ -699,10 +709,9 @@ class CPUserSrv {
     const { deletedCount } = await CpAppUser.deleteOne({
       _id: removeUserData._id,
     }).lean();
-    const sessionDeleteResult = await Session.deleteOne({
+    await Session.deleteOne({
       userId: removeUserData._id,
     });
-    console.log(sessionDeleteResult);
     if (deletedCount > 0) {
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     }

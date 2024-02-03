@@ -9,16 +9,24 @@ const CpAppActivitySchema = new Schema({
     ref: "CpAppPermission",
   }, // e.g., 'role', 'project', 'cpItem', 'user', 'lead'
   performedTo: {
+    type: String,
+    required: true,
+  },
+  performedToId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "CpAppUser",
   }, // Reference to the entity
   actionType: { type: String, required: true }, // e.g., 'add', 'delete', 'edit'
   createdDate: { type: Number, default: () => genrateUnixTimestamp() },
-  performedBy: {
+  performedById: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "CpAppUser",
   }, // Username or user ID who performed the action
+  performedBy: {
+    type: String,
+    required: true,
+  },
   performedRole: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

@@ -676,7 +676,7 @@ export default function Page() {
                             </TableRow>
                           );
                         })
-                      : slicedRows?.map((row) => (
+                      : slicedRows.map((row) => (
                           <TableRow key={row?.id}>
                             <TableCell sx={{ fontSize: "11px" }}>
                               {row?.FirstName || "N/A"}

@@ -62,12 +62,17 @@ class ActivitySrv {
     };
   }
 
-  createActivity = async (activityType, performedTo, performedBy) => {
+  createActivity = async (
+    activityType,
+    performedUserData,
+    performedBy,
+    performedTo,
+  ) => {
     // add //edit //delete //permission
 
     const userSrv = new CPUserSrv();
     const activityEntity = this.getActivityEntitys(activityType);
-    const performedUserData = await userSrv.getUserById(performedBy);
+    const userData = await userSrv.getUserById([performedTo, performedBy]);
     const roleData = await CpAppRole.find({
       name: performedUserData[userDataObj?.role],
     });
@@ -83,6 +88,7 @@ class ActivitySrv {
       performedBy,
       performedRole: roleId,
     };
+    console.log(activity);
     const actitySchema = new CpAppActivity(activity);
     const actityResult = await actitySchema.save();
     return new ApiResponse(
@@ -98,6 +104,7 @@ class ActivitySrv {
       .populate("performedTo")
       .populate("performedBy")
       .populate("performedRole");
+    return activitys;
   };
 }
 export default ActivitySrv;

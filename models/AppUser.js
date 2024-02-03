@@ -1,6 +1,5 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
-const { boolean } = require("joi");
 const { genrateUnixTimestamp } = require("../src/appConstants");
 
 const { Schema } = mongoose;

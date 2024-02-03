@@ -12,6 +12,17 @@ import { CpAppProject } from "../../../../models/AppProject";
 export async function POST(req) {
   try {
     const providedUser = await getUserByToken(req);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
     const validateQuery = Joi.object({
       name: Joi.string().required(),
       permission: Joi.string().required(),
