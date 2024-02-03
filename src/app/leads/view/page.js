@@ -113,7 +113,25 @@ export default function Page() {
                 </Typography>
                 &nbsp;-&nbsp;
                 <Typography sx={{ fontSize: "14px" }}>
-                  {leads?.EmailAddress || "N/A"}
+                  {leads?.EmailAddress || (
+                    <Typography
+                      sx={{
+                        display: "inline-block",
+                        minWidth: "80px",
+                        // height: "20px",
+                        borderRadius: "10px",
+                        backgroundColor: "rgba(250, 185, 0, 1)",
+                        color: "white",
+                        paddingLeft: "10px",
+                        paddingRight: "10px",
+                        alignItems: "center",
+                        textAlign: "center",
+                        fontSize: "14px",
+                      }}
+                    >
+                      not provided
+                    </Typography>
+                  )}
                 </Typography>
               </Grid>
               <Grid sx={{ display: "flex" }}>
@@ -124,7 +142,7 @@ export default function Page() {
                 </Typography>
                 &nbsp;-&nbsp;
                 <Typography sx={{ fontSize: "14px" }}>
-                  {leads?.Phone || "N/A"}
+                  {leads?.Phone || "**********"}
                 </Typography>
               </Grid>
             </Grid>

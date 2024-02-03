@@ -111,10 +111,6 @@ a:hover{
   }
 }
 
-.rs-picker-toggle-icon-close {
-  display: none !important;
-}
-
 @font-face {
   font-family: "IBM Plex Sans";
   src: url(../../public/assets/IBMPlexSans-Medium.ttf);
