@@ -393,6 +393,7 @@ export default function RootLayout({ children }) {
   const [permissions, setPermissions] = useState([]);
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const [loading, setLoading] = useState(true);
+  const [unauthorised, setUnauthorized] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   // handle drawer functions
@@ -527,6 +528,7 @@ export default function RootLayout({ children }) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
       setPermissions(jsonData.permissions || []);
+      console.log(user);
     } else {
       setUser(null);
       console.error('No data found in local storage for key "user".');

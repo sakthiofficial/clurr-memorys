@@ -89,6 +89,26 @@ export default function Page() {
     refetch();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (data) {
+          if (data?.message === "UNAUTHORIZED") {
+            console.log("logouted");
+            localStorage.removeItem("user");
+            window.location.href = "login";
+          }
+        } else {
+          console.log("Data is undefined");
+        }
+      } catch (error) {
+        console.error("Error during CP data fetch:", error);
+      }
+    };
+
+    fetchData();
+  }, [data]);
+
   // handle delete function
   const handleDelete = async (selectedCp) => {
     // console.log(selectedCp);
