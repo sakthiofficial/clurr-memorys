@@ -463,7 +463,8 @@ export default function RootLayout({ children }) {
               <ListItemIcon>
                 {React.createElement(TextSnippetIcon)}
               </ListItemIcon>
-              <ListItemText style={{ fontSize: "14px" }} primary="Leads list" />
+              {/* <ListItemText  primary="Leads list" /> */}
+              <Typography sx={{ fontSize: "15px" }}>Leads List</Typography>
             </ListItemButton>
           </ListItem>
         </Link>
@@ -508,7 +509,10 @@ export default function RootLayout({ children }) {
                   <ListItemIcon alt={item.title}>
                     {React.createElement(item.icon)}
                   </ListItemIcon>
-                  <ListItemText primary={item.title} />
+                  {/* <ListItemText primary={item.title} /> */}
+                  <Typography sx={{ fontSize: "15px" }}>
+                    {item.title}
+                  </Typography>
                 </ListItemButton>
               </ListItem>
             </Link>

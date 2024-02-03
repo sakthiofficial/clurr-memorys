@@ -73,8 +73,10 @@ export default function Page() {
   // delete user
   const [deleteUser] = useDeleteUsersMutation();
 
+  const [selectedRow, setSelectedRow] = useState(null);
   // dialog open and close functions
-  const handleOpen = () => {
+  const handleOpen = (row) => {
+    setSelectedRow(row);
     setOpen(true);
   };
 
@@ -88,10 +90,11 @@ export default function Page() {
   }, []);
 
   // handle delete function
-  const handleDelete = async (id) => {
+  const handleDelete = async (selectedCp) => {
+    // console.log(selectedCp);
     try {
       handleClose();
-      await deleteUser(id);
+      await deleteUser(selectedCp?._id);
       toast.success("User deleted successfully ");
       setTimeout(() => {
         refetch();
@@ -227,15 +230,23 @@ export default function Page() {
                 <TableBody>
                   {slicedRows?.map((row) => (
                     <TableRow key={row?.name || "N/A"}>
-                      <TableCell sx={{ fontSize: "11px" }}>{row?.name || "N/A"}</TableCell>
-                      <TableCell sx={{ fontSize: "11px" }}>{row?.phone || "N/A"}</TableCell>
-                      <TableCell sx={{ fontSize: "11px" }}>{row?.email || "N/A"}</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>
+                        {row?.name || "N/A"}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>
+                        {row?.phone || "N/A"}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>
+                        {row?.email || "N/A"}
+                      </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
                         {row?.projects && row?.projects?.length > 0
                           ? row?.projects.join(",")
                           : "N/A"}
-                      </TableCell >
-                      <TableCell sx={{ fontSize: "11px" }}>{row?.role || "N/A"}</TableCell>
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>
+                        {row?.role || "N/A"}
+                      </TableCell>
                       <TableCell>
                         <Grid
                           sx={{
@@ -268,7 +279,7 @@ export default function Page() {
                             </Button>
                           </Link>
                           <Button
-                            onClick={handleOpen}
+                            onClick={() => handleOpen(row)}
                             sx={{
                               border: "1px solid red",
                               borderRadius: "10px",
@@ -381,7 +392,7 @@ export default function Page() {
                                 No Keep
                               </Button>
                               <Button
-                                onClick={() => handleDelete(row._id)}
+                                onClick={() => handleDelete(selectedRow)}
                                 color="primary"
                                 sx={{
                                   border: "none",

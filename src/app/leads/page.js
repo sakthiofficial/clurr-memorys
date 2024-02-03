@@ -349,6 +349,7 @@ export default function Page() {
           <FormControl
             sx={{
               width: "300px",
+              height: "10px",
               "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
                 borderRadius: "13px",
               },
@@ -364,17 +365,18 @@ export default function Page() {
               style={{ width: 250 }}
               onOk={(value) => handleDateRangeFilter(value)}
               onChange={(value) => handleDateRangeFilter(value)}
+              size="md"
             />
           </FormControl>
           <FormControl
             sx={{
               width: "300px",
-              // height:"100px",
+              // height:"10px",
               "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderRadius: "13px",
+                borderRadius: "10px",
               },
             }}
-            size="small"
+            // size="small"
           >
             <InputLabel id="project-label">Project</InputLabel>
             <Select
@@ -382,6 +384,7 @@ export default function Page() {
               id="project"
               name="project"
               label="project"
+              sx={{ height: "40px" }}
               value={selectedProject}
               onChange={handleChangeProject}
               MenuProps={{ disableScrollLock: true }}
@@ -478,7 +481,7 @@ export default function Page() {
           >
             <Typography
               sx={{
-                fontSize: "13px",
+                fontSize: "12px",
                 alignItems: "center",
                 paddingLeft: "15px",
                 paddingRight: "15px",
@@ -488,7 +491,7 @@ export default function Page() {
               <Typography
                 component="span"
                 sx={{
-                  fontSize: "11px",
+                  fontSize: "12px",
                   display: "flex",
                   alignItems: "center",
                   flexDirection: "row",
@@ -507,7 +510,7 @@ export default function Page() {
               <Typography
                 component="span"
                 sx={{
-                  fontSize: "11px",
+                  fontSize: "12px",
                   display: "flex",
                   alignItems: "center",
                   flexDirection: "row",
@@ -525,7 +528,7 @@ export default function Page() {
               <Typography
                 component="span"
                 sx={{
-                  fontSize: "11px",
+                  fontSize: "12px",
                   display: "flex",
                   alignItems: "center",
                   flexDirection: "row",
@@ -543,7 +546,7 @@ export default function Page() {
               <Typography
                 component="span"
                 sx={{
-                  fontSize: "11px",
+                  fontSize: "12px",
                   display: "flex",
                   alignItems: "center",
                   flexDirection: "row",
