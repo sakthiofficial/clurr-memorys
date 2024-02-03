@@ -83,10 +83,6 @@ function AddLeadsBtn({ refetch }) {
   // console.log(resultProject);
 
   useEffect(() => {
-    if (resultProject?.isSuccess === false) {
-      return;
-    }
-
     if (resultProject?.data?.status === 200) {
       console.log("200");
       const projectsWithLeadAddPermission = resultProject?.data?.result?.filter(
@@ -94,6 +90,7 @@ function AddLeadsBtn({ refetch }) {
       );
 
       setPermissionProject(projectsWithLeadAddPermission);
+      console.log(resultProject);
     }
   }, [resultProject]);
 

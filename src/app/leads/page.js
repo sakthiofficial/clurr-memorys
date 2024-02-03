@@ -412,7 +412,7 @@ export default function Page() {
                 <MenuItem value="All">All</MenuItem>
               ) : null}
 
-              {(resultProject?.result || [])?.map((proj) => (
+              {(resultProject?.data?.result || [])?.map((proj) => (
                 <MenuItem key={proj?.name} value={proj?.name}>
                   {proj?.name}
                 </MenuItem>
