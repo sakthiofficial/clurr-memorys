@@ -47,7 +47,32 @@ export default function Page() {
 
   // get cp data query
   const { data, refetch, isFetching } = useGetCpQuery();
-  // console.log(data);
+  console.log(data);
+  const handleUnauthorizedUser = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (data) {
+          if (data?.message === "UNAUTHORIZED") {
+            console.log("logouted");
+            localStorage.removeItem("user");
+            window.location.href = "login";
+          }
+          // console.log(data);
+        } else {
+          console.log("Data is undefined");
+        }
+      } catch (error) {
+        console.error("Error during CP data fetch:", error);
+      }
+    };
+
+    fetchData();
+  }, [data]);
 
   // set pagination
   const handleChangePage = (event, newPage) => {

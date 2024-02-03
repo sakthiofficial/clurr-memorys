@@ -314,6 +314,25 @@ export default function Page() {
     }
     return "black";
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (data) {
+          if (data?.message === "UNAUTHORIZED") {
+            console.log("logouted");
+            localStorage.removeItem("user");
+            window.location.href = "login";
+          }
+        } else {
+          console.log("Data is undefined");
+        }
+      } catch (error) {
+        console.error("Error during CP data fetch:", error);
+      }
+    };
+
+    fetchData();
+  }, [data]);
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -389,13 +408,13 @@ export default function Page() {
               onChange={handleChangeProject}
               MenuProps={{ disableScrollLock: true }}
             >
-              {resultProject.data?.result.length > 1 ? (
+              {resultProject?.data?.result?.length > 1 ? (
                 <MenuItem value="All">All</MenuItem>
               ) : null}
 
-              {resultProject?.data?.result?.map((proj) => (
-                <MenuItem key={proj.name} value={proj.name}>
-                  {proj.name}
+              {(resultProject?.result || [])?.map((proj) => (
+                <MenuItem key={proj?.name} value={proj?.name}>
+                  {proj?.name}
                 </MenuItem>
               ))}
             </Select>
@@ -414,17 +433,17 @@ export default function Page() {
           }}
         >
           {permissions &&
-            permissions.includes(permissionKeyNames.leadManagement) &&
+            permissions.includes(permissionKeyNames?.leadManagement) &&
             selectedProject === "All" && <AddLeadsBtn refetch={refetch} />}
 
           {permissions &&
-            permissions.includes(permissionKeyNames.leadManagement) &&
+            permissions.includes(permissionKeyNames?.leadManagement) &&
             selectedProject !== "All" && (
               <>
                 {resultProject?.data?.result?.map((permission) => (
-                  <Grid key={permission.id}>
-                    {permission.permission === "leadAddAndView" &&
-                      permission._id === selectedProjectId && (
+                  <Grid key={permission?.id}>
+                    {permission?.permission === "leadAddAndView" &&
+                      permission?._id === selectedProjectId && (
                         <AddLeadsBtn refetch={refetch} />
                       )}
                   </Grid>
@@ -688,11 +707,11 @@ export default function Page() {
                             </TableCell>
                             <TableCell
                               style={{
-                                color: getStatusColor(row.LeadRegistration),
+                                color: getStatusColor(row?.LeadRegistration),
                               }}
                             >
                               {row.LeadRegistration ===
-                              leadRegistrationStatus.exist ? (
+                              leadRegistrationStatus?.exist ? (
                                 <Close sx={{ fontSize: "20px" }} />
                               ) : (
                                 <DoneAllIcon sx={{ fontSize: "20px" }} />
