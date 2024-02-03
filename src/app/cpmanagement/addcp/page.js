@@ -635,7 +635,7 @@ export default function Page() {
                         }}
                       >
                         <TextField
-                          label={`Name ${index + 1}`}
+                          label="Name"
                           name={`cpExecutes[${index}].name`}
                           type="text"
                           size="small"
@@ -653,7 +653,7 @@ export default function Page() {
                           }
                         />
                         <TextField
-                          label={`Number ${index + 1}`}
+                          label="Number"
                           name={`cpExecutes[${index}].phone`}
                           type="text"
                           size="small"
@@ -671,7 +671,7 @@ export default function Page() {
                           }
                         />
                         <TextField
-                          label={`Email ${index + 1}`}
+                          label="Email"
                           name={`cpExecutes[${index}].email`}
                           type="email"
                           size="small"
@@ -688,13 +688,13 @@ export default function Page() {
                             }))
                           }
                         />
-                        <TextField
+                        {/* <TextField
                           label={`Password ${index + 1}`}
                           name={`cpExecutes[${index}].password`}
                           type={showPassword ? "text" : "password"}
                           size="small"
                           sx={{ width: "18%" }}
-                          value={cpExecute?.password}
+                          value={formData.cpExecutes[0]?.password || ""}
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
@@ -721,7 +721,41 @@ export default function Page() {
                               </InputAdornment>
                             ),
                           }}
+                        /> */}
+                        <TextField
+                          label="Password"
+                          name={`cpExecutes[${index}].password`}
+                          type={showPassword ? "text" : "password"}
+                          size="small"
+                          sx={{ width: "18%" }}
+                          value={formData.cpExecutes[0]?.password || ""}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              cpExecutes: prev?.cpExecutes?.map((item) => ({
+                                ...item,
+                                password: e.target.value,
+                              })),
+                            }))
+                          }
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={toggleShowPassword}
+                                  edge="end"
+                                >
+                                  {showPassword ? (
+                                    <Visibility />
+                                  ) : (
+                                    <VisibilityOff />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                         />
+
                         <Grid sx={{ display: "flex", alignItems: "center" }}>
                           <Switch
                             checked={cpExecute.isPrimary}

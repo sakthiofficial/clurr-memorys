@@ -5,6 +5,7 @@ import {
   Button,
   CircularProgress,
   Grid,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -54,6 +55,8 @@ export default function Page() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const label = { inputProps: { "aria-label": "Switch demo" } };
 
   return (
     <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
@@ -208,25 +211,37 @@ export default function Page() {
               }}
             >
               <Grid sx={{ display: "flex" }}>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                <Typography
+                  sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "12px" }}
+                >
                   Company -
                 </Typography>
                 &nbsp;&nbsp;&nbsp;
-                <Typography>{data?.result?.company?.name}</Typography>
+                <Typography sx={{ fontSize: "12px" }}>
+                  {data?.result?.company?.name}
+                </Typography>
               </Grid>
               <Grid sx={{ display: "flex" }}>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                <Typography
+                  sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "12px" }}
+                >
                   CP Code -
                 </Typography>
                 &nbsp;&nbsp;&nbsp;
-                <Typography>{data?.result?.company?.cpCode}</Typography>
+                <Typography sx={{ fontSize: "12px" }}>
+                  {data?.result?.company?.cpCode}
+                </Typography>
               </Grid>
               <Grid sx={{ display: "flex" }}>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                <Typography
+                  sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "12px" }}
+                >
                   Assigned Under -
                 </Typography>
                 &nbsp;&nbsp;&nbsp;
-                <Typography>{data?.result?.cpRm?.name}</Typography>
+                <Typography sx={{ fontSize: "12px" }}>
+                  {data?.result?.cpRm?.name}
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -261,14 +276,14 @@ export default function Page() {
               {data?.result?.cpExecutes?.length === 0 && (
                 <Button
                   variant="outlined"
-                  onClick={handleClickOpen}
+                  // onClick={handleClickOpen}
                   sx={{
                     backgroundColor: "rgba(249, 184, 0, 1)",
                     color: "black",
                     minWidth: "125px",
                     height: "35px",
                     borderRadius: "8px",
-                    fontSize: "13px",
+                    fontSize: "12px",
                     fontWeight: "400",
                     border: "none",
                     "&:hover": {
@@ -337,37 +352,127 @@ export default function Page() {
                     color: "black",
                   }}
                 >
-                  <TableCell>NAME</TableCell>
-                  <TableCell>CONTACT</TableCell>
-                  <TableCell>USERNAME </TableCell>
-                  <TableCell>IS PRIMARY ACCOUNT</TableCell>
-                  <TableCell>JOINED DATE</TableCell>
-                  <TableCell>EDIT</TableCell>
-                  <TableCell>RESET PASSWORD</TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>NAME</TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>CONTACT</TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>USERNAME </TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    IS PRIMARY ACCOUNT
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>JOINED DATE</TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>EDIT</TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    RESET PASSWORD
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell>{data?.result?.cpBranchHead?.name}</TableCell>
-                  <TableCell>{data?.result?.cpBranchHead?.phone}</TableCell>
-                  <TableCell>{data?.result?.cpBranchHead?.name}</TableCell>
-                  <TableCell>yes</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    {data?.result?.cpBranchHead?.name}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    {data?.result?.cpBranchHead?.phone}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    {data?.result?.cpBranchHead?.name}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    <Switch {...label} checked />
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
                     {unixToDate(data?.result?.cpBranchHead?.createdBy)}
                   </TableCell>
-                  <TableCell>N/A</TableCell>
-                  <TableCell>N/A</TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    <Button
+                      sx={{
+                        borderRadius: "10px",
+                        color: "black",
+                        width: "48px",
+                        height: "25px",
+                        fontSize: "12px",
+                        backgroundColor: "rgba(249, 184, 0, 1)",
+                        "&:hover": {
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      edit
+                    </Button>
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "12px" }}>
+                    <Button
+                      sx={{
+                        borderRadius: "10px",
+                        color: "black",
+                        width: "48px",
+                        height: "25px",
+                        fontSize: "12px",
+                        backgroundColor: "rgba(249, 184, 0, 1)",
+                        "&:hover": {
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      reset
+                    </Button>
+                  </TableCell>
                 </TableRow>
 
                 {(data?.result?.cpExecutes || []).map((cpExecute, index) => (
                   <TableRow key={index}>
-                    <TableCell>{cpExecute.name}</TableCell>
-                    <TableCell>{cpExecute.phone}</TableCell>
-                    <TableCell>{cpExecute.name}</TableCell>
-                    <TableCell>no</TableCell>
-                    <TableCell>{unixToDate(cpExecute.createdBy)}</TableCell>
-                    <TableCell>N/A</TableCell>
-                    <TableCell>N/A</TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      {cpExecute.name}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      {cpExecute.phone}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      {cpExecute.name}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      <Switch {...label} checked={false} />
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      {unixToDate(cpExecute.createdBy)}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      <Button
+                        sx={{
+                          borderRadius: "10px",
+                          color: "black",
+                          width: "48px",
+                          height: "25px",
+                          fontSize: "12px",
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(249, 184, 0, 1)",
+                            boxShadow: "none",
+                          },
+                        }}
+                      >
+                        edit
+                      </Button>
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      <Button
+                        sx={{
+                          borderRadius: "10px",
+                          color: "black",
+                          width: "48px",
+                          height: "25px",
+                          fontSize: "12px",
+                          backgroundColor: "rgba(249, 184, 0, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(249, 184, 0, 1)",
+                            boxShadow: "none",
+                          },
+                        }}
+                      >
+                        reset
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

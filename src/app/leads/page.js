@@ -353,7 +353,7 @@ export default function Page() {
                 borderRadius: "13px",
               },
             }}
-            size="small"
+            // size="small"
           >
             <DateRangePicker
               defaultValue={defaultFilterValue}
@@ -369,6 +369,7 @@ export default function Page() {
           <FormControl
             sx={{
               width: "300px",
+              // height:"100px",
               "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
                 borderRadius: "13px",
               },
@@ -624,14 +625,18 @@ export default function Page() {
                         color: "black",
                       }}
                     >
-                      <TableCell>Name</TableCell>
-                      <TableCell>Contact</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Registration Status</TableCell>
-                      <TableCell>CP Name</TableCell>
-                      <TableCell>Stage</TableCell>
-                      <TableCell>Created Date</TableCell>
-                      <TableCell>Action</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>Name</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>Contact</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>Email</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>
+                        Registration Status
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>CP Name</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>Stage</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>
+                        Created Date
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>Action</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -658,7 +663,25 @@ export default function Page() {
                               {row?.Phone || "**********"}
                             </TableCell>
                             <TableCell sx={{ fontSize: "11px" }}>
-                              {row?.EmailAddress || "N/A"}
+                              {row?.EmailAddress || (
+                                <Typography
+                                  sx={{
+                                    display: "inline-block",
+                                    minWidth: "80px",
+                                    // height: "20px",
+                                    borderRadius: "10px",
+                                    backgroundColor: "rgba(250, 185, 0, 1)",
+                                    color: "white",
+                                    paddingLeft: "10px",
+                                    paddingRight: "10px",
+                                    alignItems: "center",
+                                    textAlign: "center",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  not provided
+                                </Typography>
+                              )}
                             </TableCell>
                             <TableCell
                               style={{
@@ -667,9 +690,9 @@ export default function Page() {
                             >
                               {row.LeadRegistration ===
                               leadRegistrationStatus.exist ? (
-                                <Close />
+                                <Close sx={{ fontSize: "20px" }} />
                               ) : (
-                                <DoneAllIcon />
+                                <DoneAllIcon sx={{ fontSize: "20px" }} />
                               )}
                             </TableCell>
 
@@ -700,9 +723,10 @@ export default function Page() {
                                     sx={{
                                       borderRadius: "10px",
                                       color: "black",
-                                      width: "58px",
-                                      height: "28px",
+                                      width: "48px",
+                                      height: "25px",
                                       border: "none",
+                                      fontSize: "12px",
                                       backgroundColor: "rgba(249, 184, 0, 1)",
                                       "&:hover": {
                                         backgroundColor: "rgba(249, 184, 0, 1)",

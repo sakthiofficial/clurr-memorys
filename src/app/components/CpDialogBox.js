@@ -210,7 +210,7 @@ export default function SimpleDialogDemo({ data }) {
     <Grid sx={{ border: "1px solid black" }}>
       <Button
         variant="outlined"
-        onClick={handleClickOpen}
+        // onClick={handleClickOpen}
         sx={{
           backgroundColor: "rgba(249, 184, 0, 1)",
           color: "black",

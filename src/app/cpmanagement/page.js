@@ -252,31 +252,45 @@ export default function Page() {
                       color: "black",
                     }}
                   >
-                    <TableCell>COMPANY NAME</TableCell>
-                    <TableCell>CP CODE</TableCell>
-                    <TableCell>BRANCH HEAD</TableCell>
-                    <TableCell>NO. OF ACCOUNTS</TableCell>
-                    <TableCell>RELATIONSHIP MANAGER</TableCell>
-                    <TableCell>JOINED DATE</TableCell>
-                    <TableCell>ACTION</TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      COMPANY NAME
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>CP CODE</TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>BRANCH HEAD</TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      NO. OF ACCOUNTS
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>
+                      RELATIONSHIP MANAGER
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>JOINED DATE</TableCell>
+                    <TableCell sx={{ fontSize: "12px" }}>ACTION</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {slicedRows?.map((row) => (
                     <TableRow key={row?.cpCode}>
-                      <TableCell>{row?.company?.name || "N/A"}</TableCell>
-                      <TableCell>{row?.company?.cpCode || "N/A"}</TableCell>
-                      <TableCell>{row?.cpBranchHead?.name || "N/A"}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ fontSize: "12px" }}>
+                        {row?.company?.name || "N/A"}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "12px" }}>
+                        {row?.company?.cpCode || "N/A"}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "12px" }}>
+                        {row?.cpBranchHead?.name || "N/A"}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "12px" }}>
                         {row?.cpBranchHead
                           ? 1 + row?.cpExecutes.length
                           : row?.cpExecutes.length || "N/A"}
                       </TableCell>
-                      <TableCell>{row?.cpRm?.name || "N/A"}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ fontSize: "12px" }}>
+                        {row?.cpRm?.name || "N/A"}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: "12px" }}>
                         {unixToDate(row?.company?.createdBy) || "N/A"}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ fontSize: "12px" }}>
                         <Grid
                           sx={{
                             display: "flex",
@@ -293,9 +307,9 @@ export default function Page() {
                               sx={{
                                 borderRadius: "10px",
                                 color: "black",
-                                width: "58px",
-                                height: "28px",
-                                fontSize: "10px",
+                                width: "48px",
+                                height: "25px",
+                                fontSize: "12px",
                                 backgroundColor: "rgba(249, 184, 0, 1)",
                                 "&:hover": {
                                   backgroundColor: "rgba(249, 184, 0, 1)",
@@ -313,9 +327,9 @@ export default function Page() {
                               borderRadius: "10px",
                               color: "red",
                               marginLeft: "5px",
-                              width: "58px",
-                              height: "28px",
-                              fontSize: "10px",
+                              width: "48px",
+                              height: "25px",
+                              fontSize: "12px",
                               "&:hover": {
                                 backgroundColor: "transparent",
                                 boxShadow: "none",

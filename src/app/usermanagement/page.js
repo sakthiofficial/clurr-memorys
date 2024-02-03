@@ -216,26 +216,26 @@ export default function Page() {
                       color: "black",
                     }}
                   >
-                    <TableCell>Name</TableCell>
-                    <TableCell>Contact</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Project</TableCell>
-                    <TableCell>Role</TableCell>
-                    <TableCell>Action</TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>Name</TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>Contact</TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>Email</TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>Project</TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>Role</TableCell>
+                    <TableCell sx={{ fontSize: "11px" }}>Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {slicedRows?.map((row) => (
                     <TableRow key={row?.name || "N/A"}>
-                      <TableCell>{row?.name || "N/A"}</TableCell>
-                      <TableCell>{row?.phone || "N/A"}</TableCell>
-                      <TableCell>{row?.email || "N/A"}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>{row?.name || "N/A"}</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>{row?.phone || "N/A"}</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>{row?.email || "N/A"}</TableCell>
+                      <TableCell sx={{ fontSize: "11px" }}>
                         {row?.projects && row?.projects?.length > 0
                           ? row?.projects.join(",")
                           : "N/A"}
-                      </TableCell>
-                      <TableCell>{row?.role || "N/A"}</TableCell>
+                      </TableCell >
+                      <TableCell sx={{ fontSize: "11px" }}>{row?.role || "N/A"}</TableCell>
                       <TableCell>
                         <Grid
                           sx={{
@@ -254,9 +254,9 @@ export default function Page() {
                               sx={{
                                 borderRadius: "10px",
                                 color: "black",
-                                width: "58px",
-                                height: "28px",
-                                fontSize: "10px",
+                                width: "48px",
+                                height: "25px",
+                                fontSize: "11px",
                                 backgroundColor: "rgba(249, 184, 0, 1)",
                                 "&:hover": {
                                   backgroundColor: "rgba(249, 184, 0, 1)",
@@ -274,9 +274,9 @@ export default function Page() {
                               borderRadius: "10px",
                               color: "red",
                               marginLeft: "5px",
-                              width: "58px",
-                              height: "28px",
-                              fontSize: "10px",
+                              width: "48px",
+                              height: "25px",
+                              fontSize: "11px",
                               "&:hover": {
                                 backgroundColor: "transparent",
                                 boxShadow: "none",

@@ -62,7 +62,7 @@ const inter = Inter({ subsets: ["latin"] });
 // };
 
 // drawer-size
-const drawerWidth = 280;
+const drawerWidth = 250;
 
 // sidebar datas
 const sidebarlist = [
@@ -463,7 +463,7 @@ export default function RootLayout({ children }) {
               <ListItemIcon>
                 {React.createElement(TextSnippetIcon)}
               </ListItemIcon>
-              <ListItemText primary="Leads list" />
+              <ListItemText style={{ fontSize: "14px" }} primary="Leads list" />
             </ListItemButton>
           </ListItem>
         </Link>

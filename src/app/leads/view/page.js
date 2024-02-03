@@ -95,25 +95,37 @@ export default function Page() {
               }}
             >
               <Grid sx={{ display: "flex" }}>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                <Typography
+                  sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                >
                   Name
                 </Typography>
-                &nbsp;:&nbsp;&nbsp;
-                <Typography>{leads?.FirstName || "N/A"}</Typography>
+                &nbsp;-&nbsp;
+                <Typography sx={{ fontSize: "14px" }}>
+                  {leads?.FirstName || "N/A"}
+                </Typography>
               </Grid>
               <Grid sx={{ display: "flex" }}>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                <Typography
+                  sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                >
                   Email
                 </Typography>
-                &nbsp;:&nbsp;&nbsp;
-                <Typography>{leads?.EmailAddress || "N/A"}</Typography>
+                &nbsp;-&nbsp;
+                <Typography sx={{ fontSize: "14px" }}>
+                  {leads?.EmailAddress || "N/A"}
+                </Typography>
               </Grid>
               <Grid sx={{ display: "flex" }}>
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                <Typography
+                  sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                >
                   Phone
                 </Typography>
-                &nbsp;:&nbsp;&nbsp;
-                <Typography>{leads?.Phone || "N/A"}</Typography>
+                &nbsp;-&nbsp;
+                <Typography sx={{ fontSize: "14px" }}>
+                  {leads?.Phone || "N/A"}
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -149,16 +161,24 @@ export default function Page() {
                     paddingRight: "40px",
                   }}
                 >
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Project
                   </Typography>
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Lead Sourse
                   </Typography>
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Cp Name
                   </Typography>
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Is Primary
                   </Typography>
                 </Grid>
@@ -172,10 +192,16 @@ export default function Page() {
                     // padding: "40px",
                   }}
                 >
-                  <Typography>{project || "N/A"}</Typography>
-                  <Typography>{leads?.Source || "N/A"}</Typography>
-                  <Typography>{leads?.mx_Sub_Source || "N/A"}</Typography>
-                  <Typography>N/A</Typography>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {project || "N/A"}
+                  </Typography>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {leads?.Source || "N/A"}
+                  </Typography>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {leads?.mx_Sub_Source || "N/A"}
+                  </Typography>
+                  <Typography sx={{ fontSize: "14px" }}>N/A</Typography>
                 </Grid>
               </Grid>
               <Grid
@@ -200,16 +226,24 @@ export default function Page() {
                     paddingRight: "40px",
                   }}
                 >
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Lead Status
                   </Typography>
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Registration Status
                   </Typography>
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Created Date & Time
                   </Typography>
-                  <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                  <Typography
+                    sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                  >
                     Created By
                   </Typography>
                 </Grid>
@@ -236,14 +270,21 @@ export default function Page() {
                         paddingRight: "10px",
                         alignItems: "center",
                         textAlign: "center",
+                        fontSize: "14px",
                       }}
                     >
                       {leads?.ProspectStage}
                     </Typography>
                   </Grid>
-                  <Typography>N/A</Typography>
-                  <Typography>{leads?.CreatedOn || "N/A"}</Typography>
-                  <Typography>{leads?.CreatedByName || "N/A"}</Typography>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {leads?.LeadRegistration || "N/A"}
+                  </Typography>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {leads?.CreatedOn || "N/A"}
+                  </Typography>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {leads?.CreatedByName || "N/A"}
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -266,13 +307,15 @@ export default function Page() {
               <Grid
                 sx={{ fontSize: "15px", padding: " 0px 30px", display: "flex" }}
               >
-                <Typography sx={{ color: "rgba(58, 53, 65, 0.68)" }}>
+                <Typography
+                  sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "14px" }}
+                >
                   Notes By Cp
                 </Typography>
-                &nbsp;&nbsp;:&nbsp;&nbsp;
+                &nbsp;&nbsp;-&nbsp;&nbsp;
                 <Typography
                   sx={{
-                    fontSize: "15px",
+                    fontSize: "14px",
                     display: "flex",
                     alignItems: "center",
                   }}
