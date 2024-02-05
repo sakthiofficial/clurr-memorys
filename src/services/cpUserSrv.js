@@ -502,15 +502,14 @@ class CPUserSrv {
         permission,
         projects,
       );
-      let emailResult;
-      sendMail(mailOptions)
-        .then(async () => {
-          emailResult = await sendMail(adminMaliOption);
-          console.log("Emails as been successfully");
-        })
-        .catch((error) => console.log(error.message));
+      const userEmailResult = await sendMail(mailOptions);
+
+      const emailResult = await sendMail(adminMaliOption);
+
+      console.log(emailResult);
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
-        email: JSON.stringify(emailResult),
+        adminEmail: JSON.stringify(emailResult),
+        userEmail: JSON.stringify(userEmailResult),
       });
     } catch (err) {
       console.log("Error While Adding User", err);

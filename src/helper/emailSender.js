@@ -31,6 +31,7 @@ export default async function sendMail(mailOptions) {
     });
 
     const result = await transport.sendMail(mailOptions);
+    console.log(result);
     return result;
   } catch (error) {
     return error;

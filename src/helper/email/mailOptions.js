@@ -7,7 +7,7 @@ export function superAdminMailOptions(
 ) {
   return {
     from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
-    to: "mohammedidris@alliancein.com",
+    to: "sakthiroky123@alliancein.com",
     subject: "New User Added in CP Portal",
     html: `
         <html>
