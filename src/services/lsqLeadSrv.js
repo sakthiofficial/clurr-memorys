@@ -250,7 +250,7 @@ class LSQLeadSrv {
           null,
         );
       }
-      const subSource = `${companyCode} - ${cpUser[userDataObj?.name]} `;
+      const subSource = `${cpUser[userDataObj?.name]} - ${companyCode} `;
 
       const { lsqConfig } = config;
       const { projectCredential } = lsqConfig;
