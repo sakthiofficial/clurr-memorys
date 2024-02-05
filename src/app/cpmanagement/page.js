@@ -313,7 +313,7 @@ export default function Page() {
                         {row?.cpRm?.name || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
-                        {unixToDate(row?.company?.createdBy) || "N/A"}
+                        {unixToDate(row?.company?.createdDate) || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
                         <Grid

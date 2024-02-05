@@ -197,7 +197,7 @@ export default function Page() {
     });
   };
 
-  const selectedCategoryData = result?.data?.result.find(
+  const selectedCategoryData = result?.data?.result?.find(
     (rm) => rm.name === selectedCategory,
   );
 
