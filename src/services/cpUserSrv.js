@@ -510,6 +510,7 @@ class CPUserSrv {
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
         adminEmail: JSON.stringify(emailResult),
         userEmail: JSON.stringify(userEmailResult),
+        check: "deploed",
       });
     } catch (err) {
       console.log("Error While Adding User", err);
