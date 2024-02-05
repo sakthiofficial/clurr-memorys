@@ -528,6 +528,9 @@ export default function RootLayout({ children }) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
       setPermissions(jsonData.permissions || []);
+      if (pathname === "/") {
+        router.push("/leads");
+      }
       console.log(user);
     } else {
       setUser(null);
@@ -535,6 +538,15 @@ export default function RootLayout({ children }) {
     }
     setLoading(false);
   }, []);
+
+  // useEffect(() => {
+  //   if (user === null) {
+  //     router.push("/login");
+  //   }
+  //   console.log("working router push");
+  // }, []);`
+
+
 
   return (
     <Provider store={store}>
