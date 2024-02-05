@@ -64,38 +64,48 @@ class ActivitySrv {
 
   createActivity = async (
     activityType,
-    performedUserData,
     performedBy,
+    performedById,
     performedTo,
+    performedToId,
   ) => {
     // add //edit //delete //permission
+    try {
+      const userSrv = new CPUserSrv();
+      const activityEntity = this.getActivityEntitys(activityType);
 
-    const userSrv = new CPUserSrv();
-    const activityEntity = this.getActivityEntitys(activityType);
-    const userData = await userSrv.getUserById([performedTo, performedBy]);
-    const roleData = await CpAppRole.find({
-      name: performedUserData[userDataObj?.role],
-    });
-    const permissionData = await CpAppPermission.findOne({
-      name: activityEntity?.category,
-    });
-    const roleId = roleData[0]?._id;
-    const permissionId = permissionData?._id;
-    const activity = {
-      actionCategory: permissionId,
-      performedTo,
-      actionType: activityEntity?.actionType,
-      performedBy,
-      performedRole: roleId,
-    };
-    console.log(activity);
-    const actitySchema = new CpAppActivity(activity);
-    const actityResult = await actitySchema.save();
-    return new ApiResponse(
-      RESPONSE_STATUS?.OK,
-      RESPONSE_MESSAGE?.OK,
-      actityResult,
-    );
+      const userData = await userSrv.getUserById([
+        performedById,
+        performedToId,
+      ]);
+      const roleData = await CpAppRole.find({
+        name: userData[1][userDataObj?.role],
+      });
+      const permissionData = await CpAppPermission.findOne({
+        name: activityEntity?.category,
+      });
+      const roleId = roleData[0]?._id;
+      const permissionId = permissionData?._id;
+      const activity = {
+        actionCategory: permissionId,
+        performedToId,
+        performedTo,
+        actionType: activityEntity?.actionType,
+        performedBy,
+        performedById,
+        performedRole: roleId,
+      };
+      const actitySchema = new CpAppActivity(activity);
+      const actityResult = await actitySchema.save();
+
+      return new ApiResponse(
+        RESPONSE_STATUS?.OK,
+        RESPONSE_MESSAGE?.OK,
+        actityResult,
+      );
+    } catch (error) {
+      console.log("Error while adding Activity", error);
+    }
   };
 
   retriveActivitys = async (providedUser) => {

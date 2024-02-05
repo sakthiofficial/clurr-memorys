@@ -10,7 +10,6 @@ export default async function getUserByToken(request) {
   const providedUserSessionData = await Session.findOne({
     token,
   });
-  console.log(providedUserSessionData);
   if (!providedUserSessionData) {
     return null;
   }

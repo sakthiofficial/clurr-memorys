@@ -11,7 +11,6 @@ import { roleNames } from "../../../../shared/cpNamings";
 
 export async function GET(req) {
   const providedUser = await getUserByToken(req);
-  console.log("comming here", providedUser);
 
   if (!providedUser) {
     return new Response(
