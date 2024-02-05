@@ -509,11 +509,9 @@ class CPUserSrv {
           console.log("Emails as been successfully");
         })
         .catch((error) => console.log(error.message));
-      return new ApiResponse(
-        RESPONSE_STATUS?.OK,
-        RESPONSE_MESSAGE?.OK,
-        emailResult,
-      );
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+        email: JSON.stringify(emailResult),
+      });
     } catch (err) {
       console.log("Error While Adding User", err);
       return new ApiResponse(
