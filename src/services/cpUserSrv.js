@@ -502,12 +502,12 @@ class CPUserSrv {
         permission,
         projects,
       );
-      // sendMail(mailOptions)
-      //   .then(async () => {
-      //     await sendMail(adminMaliOption);
-      //     console.log("Emails as been successfully");
-      //   })
-      //   .catch((error) => console.log(error.message));
+      sendMail(mailOptions)
+        .then(async () => {
+          await sendMail(adminMaliOption);
+          console.log("Emails as been successfully");
+        })
+        .catch((error) => console.log(error.message));
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (err) {
       console.log("Error While Adding User", err);
