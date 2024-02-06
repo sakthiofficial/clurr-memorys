@@ -6,10 +6,12 @@ import { Grid, TextField, Typography } from "@mui/material";
 export default function CpEditDialog({ data, refetch }) {
   const [open, setOpen] = useState(false);
   const [editedData, setEditedData] = useState({
-    name: data?.name,
-    email: data?.email,
-    phone: data?.phone,
+    name: data[0]?.name,
+    email: data[0]?.email,
+    phone: data[0]?.phone,
   });
+
+  console.log(data[0]._id);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -38,6 +40,7 @@ export default function CpEditDialog({ data, refetch }) {
   return (
     <Grid>
       <Button
+        onClick={handleClickOpen}
         sx={{
           borderRadius: "10px",
           color: "black",

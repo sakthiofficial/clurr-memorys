@@ -257,7 +257,10 @@ export default function Page() {
                     {unixToDate(data?.result?.cpBranchHead?.createdBy)}
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
-                    <CpEditDialog data={data?.result?.cpBranchHead} />
+                    <CpEditDialog
+                      data={data?.result?.cpBranchHead}
+                      refetch={refetch}
+                    />
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
                     <Button

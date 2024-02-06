@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import { Grid, TextField, Typography } from "@mui/material";
 import { useEditUserMutation } from "@/reduxSlice/apiSlice";
 
-export default function CpEditDialog({ data }) {
+export default function CpEditDialog({ data, refetch }) {
   const [open, setOpen] = useState(false);
   const [editedData, setEditedData] = useState({
     name: data?.name,
@@ -31,11 +31,12 @@ export default function CpEditDialog({ data }) {
     }));
   };
   const [cpBranchEdit] = useEditUserMutation();
+
   const handleSubmit = async () => {
     console.log("Submitting changes:", editedData);
     await cpBranchEdit(editedData);
-    await refetch();
     setOpen(false);
+    await refetch();
   };
 
   return (
