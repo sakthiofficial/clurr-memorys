@@ -10,7 +10,6 @@ import {
 export function middleware(request) {
   const apiUrlPath = request.nextUrl.pathname.startsWith("/api");
   try {
-    console.log(apiUrlPath);
     const cookie = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
     if (apiUrlPath) {
       if (!cookie) {
