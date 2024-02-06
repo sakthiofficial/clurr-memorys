@@ -8,9 +8,11 @@ import {
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request) {
+  const apiUrlPath = request.nextUrl.pathname.startsWith("/api");
   try {
+    console.log(apiUrlPath);
     const cookie = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
-    if (request.nextUrl.pathname.startsWith("/api")) {
+    if (apiUrlPath) {
       if (!cookie) {
         return NextResponse.json(
           new ApiResponse(
@@ -22,8 +24,11 @@ export function middleware(request) {
       return NextResponse.next();
     }
 
-    if (!cookie) {
-      // return NextResponse.redirect(new URL("/login", request.url));
+    if (!apiUrlPath) {
+      if (!cookie) {
+        console.log("Redirecting This frontend");
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
     }
     return NextResponse.next();
   } catch (error) {

@@ -1,6 +1,7 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
-const { genrateUnixTimestamp } = require("../src/appConstants");
+
+const { addCreatedHook } = require("./hooks/addCreated");
 
 const { Schema } = mongoose;
 const CpAppUserSchema = new Schema({
@@ -63,8 +64,9 @@ const CpAppUserSchema = new Schema({
     ],
   },
   isFirstSignIn: { type: Boolean, default: true },
-  createdBy: { type: Number, default: genrateUnixTimestamp() },
+  createdBy: { type: Number },
 });
+addCreatedHook(CpAppUserSchema);
 
 module.exports.CpAppUser =
   mongoose.models.CpAppUser || mongoose.model("CpAppUser", CpAppUserSchema);
