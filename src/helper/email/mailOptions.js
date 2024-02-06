@@ -6,8 +6,9 @@ export function superAdminMailOptions(
   projects,
 ) {
   return {
-    from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
     to: "sakthiroky123@alliancein.com",
+
+    from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
     subject: "New User Added in CP Portal",
     html: `
         <html>
@@ -64,8 +65,9 @@ export function userMailOption(
   projects,
 ) {
   return {
-    from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
     to: userEmail,
+
+    from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
     subject: "Message from Urbanrise",
     html: `
       <html>

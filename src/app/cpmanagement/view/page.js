@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -25,7 +25,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useSearchParams } from "next/navigation";
 import { useRetriveCpByCompanyQuery } from "@/reduxSlice/apiSlice";
 import { unixToDate } from "../../../../shared/dateCalc";
-import CpDialogBox from "../../components/CpDialogBox";
+import CpEditRmDialogBox from "../../components/CpEditRmDialog";
+import CpEditDialog from "../../components/CpEditDialog";
+import CpEditExecuteDialog from "../../components/CpEditExecuteDialog";
+
 /// dialog box setup
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -40,19 +43,22 @@ export default function Page() {
   const params = useSearchParams();
 
   const id = params.get("id");
-
   // get data query
-  const { data, isFetching } = useRetriveCpByCompanyQuery(id);
+  const { data, isFetching, refetch } = useRetriveCpByCompanyQuery(id, {
+    refetchOnMountOrArgChange: true,
+  });
 
   // console.log(data?.result);
 
   /// dialog open functions
 
   const [open, setOpen] = useState(false);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
-  const handleClose = () => {
+
+  const handleClose = async () => {
     setOpen(false);
   };
 
@@ -131,73 +137,7 @@ export default function Page() {
               >
                 Channel Parnter Details
               </Typography>
-              {/* <Button
-                variant="outlined"
-                onClick={handleClickOpen}
-                sx={{
-                  backgroundColor: "rgba(249, 184, 0, 1)",
-                  color: "black",
-                  minWidth: "125px",
-                  height: "35px",
-                  borderRadius: "8px",
-                  fontSize: "13px",
-                  fontWeight: "400",
-                  border: "none",
-                  "&:hover": {
-                    backgroundColor: "rgba(249, 184, 0, 1)",
-                    boxShadow: "none",
-                    border: "none",
-                  },
-                }}
-              >
-                Change RM
-              </Button>
-              <BootstrapDialog
-                onClose={handleClose}
-                aria-labelledby="customized-dialog-title"
-                open={open}
-                disableScrollLock
-              >
-                <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                  Modal title
-                </DialogTitle>
-                <IconButton
-                  aria-label="close"
-                  onClick={handleClose}
-                  sx={{
-                    position: "absolute",
-                    right: 8,
-                    top: 8,
-                    color: (theme) => theme.palette.grey[500],
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-                <DialogContent dividers>
-                  <Typography gutterBottom>
-                    Cras mattis consectetur purus sit amet fermentum. Cras justo
-                    odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
-                    risus, porta ac consectetur ac, vestibulum at eros.
-                  </Typography>
-                  <Typography gutterBottom>
-                    Praesent commodo cursus magna, vel scelerisque nisl
-                    consectetur et. Vivamus sagittis lacus vel augue laoreet
-                    rutrum faucibus dolor auctor.
-                  </Typography>
-                  <Typography gutterBottom>
-                    Aenean lacinia bibendum nulla sed consectetur. Praesent
-                    commodo cursus magna, vel scelerisque nisl consectetur et.
-                    Donec sed odio dui. Donec ullamcorper nulla non metus auctor
-                    fringilla.
-                  </Typography>
-                </DialogContent>
-                <DialogActions>
-                  <Button autoFocus onClick={handleClose}>
-                    Save changes
-                  </Button>
-                </DialogActions>
-              </BootstrapDialog> */}
-              <CpDialogBox data={data} />
+              <CpEditRmDialogBox data={data} id={id} refetch={refetch} />
             </Grid>
             <Grid
               sx={{
@@ -273,75 +213,9 @@ export default function Page() {
               >
                 Number of Accounts Created
               </Typography>
-              {data?.result?.cpExecutes?.length === 0 && (
-                <Button
-                  variant="outlined"
-                  // onClick={handleClickOpen}
-                  sx={{
-                    backgroundColor: "rgba(249, 184, 0, 1)",
-                    color: "black",
-                    minWidth: "125px",
-                    height: "35px",
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    fontWeight: "400",
-                    border: "none",
-                    "&:hover": {
-                      backgroundColor: "rgba(249, 184, 0, 1)",
-                      boxShadow: "none",
-                      border: "none",
-                    },
-                  }}
-                >
-                  Add Chanel Partner
-                </Button>
-              )}
-
-              <BootstrapDialog
-                onClose={handleClose}
-                aria-labelledby="customized-dialog-title"
-                open={open}
-                disableScrollLock
-              >
-                <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                  Modal title
-                </DialogTitle>
-                <IconButton
-                  aria-label="close"
-                  onClick={handleClose}
-                  sx={{
-                    position: "absolute",
-                    right: 8,
-                    top: 8,
-                    color: (theme) => theme.palette.grey[500],
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-                <DialogContent dividers>
-                  <Typography gutterBottom>
-                    Cras mattis consectetur purus sit amet fermentum. Cras justo
-                    odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
-                    risus, porta ac consectetur ac, vestibulum at eros.
-                  </Typography>
-                  <Typography gutterBottom>
-                    Praesent commodo cursus magna, vel scelerisque nisl
-                    consectetur et. Vivamus sagittis lacus vel augue laoreet
-                    rutrum faucibus dolor auctor.
-                  </Typography>
-                  <Typography gutterBottom>
-                    Aenean lacinia bibendum nulla sed consectetur. Praesent
-                    commodo cursus magna, vel scelerisque nisl consectetur et.
-                    Donec sed odio dui. Donec ullamcorper nulla non metus auctor
-                    fringilla.
-                  </Typography>
-                </DialogContent>
-                <DialogActions>
-                  <Button autoFocus onClick={handleClose}>
-                    Save changes
-                  </Button>
-                </DialogActions>
-              </BootstrapDialog>
+              {/* {data?.result?.cpExecutes?.length === 0 && (
+                <CpEditDialog data={data} />
+              )} */}
             </Grid>
             <Table>
               <TableHead>
@@ -383,22 +257,10 @@ export default function Page() {
                     {unixToDate(data?.result?.cpBranchHead?.createdBy)}
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
-                    <Button
-                      sx={{
-                        borderRadius: "10px",
-                        color: "black",
-                        width: "48px",
-                        height: "25px",
-                        fontSize: "12px",
-                        backgroundColor: "rgba(249, 184, 0, 1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          boxShadow: "none",
-                        },
-                      }}
-                    >
-                      edit
-                    </Button>
+                    <CpEditDialog
+                      data={data?.result?.cpBranchHead}
+                      refetch={refetch}
+                    />
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
                     <Button
@@ -420,8 +282,8 @@ export default function Page() {
                   </TableCell>
                 </TableRow>
 
-                {(data?.result?.cpExecutes || []).map((cpExecute, index) => (
-                  <TableRow key={index}>
+                {(data?.result?.cpExecutes || []).map((cpExecute) => (
+                  <TableRow key={cpExecute.name}>
                     <TableCell sx={{ fontSize: "12px" }}>
                       {cpExecute.name}
                     </TableCell>
@@ -438,22 +300,10 @@ export default function Page() {
                       {unixToDate(cpExecute.createdBy)}
                     </TableCell>
                     <TableCell sx={{ fontSize: "12px" }}>
-                      <Button
-                        sx={{
-                          borderRadius: "10px",
-                          color: "black",
-                          width: "48px",
-                          height: "25px",
-                          fontSize: "12px",
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        edit
-                      </Button>
+                      <CpEditExecuteDialog
+                        data={data?.result?.cpExecutes}
+                        refetch={refetch}
+                      />
                     </TableCell>
                     <TableCell sx={{ fontSize: "12px" }}>
                       <Button

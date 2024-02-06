@@ -147,6 +147,7 @@ export default function Page() {
         projects: [],
         role: "CP Executive",
         isPrimary: false,
+        password: "Pass@123",
       },
     ];
 
@@ -233,7 +234,7 @@ export default function Page() {
 
       try {
         const resultRes = await cpsAdd(cpData);
-
+        console.log(resultRes);
         if (resultRes?.error?.data?.status === 400) {
           toast.error(resultRes?.error?.data?.result);
         }

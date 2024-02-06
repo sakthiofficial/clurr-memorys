@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import {
@@ -14,16 +14,38 @@ import {
 } from "@mui/material";
 import {
   useCpManagenentQuery,
+  useEditCpRmMutation,
   useGetRealtionshipManagerQuery,
 } from "@/reduxSlice/apiSlice";
 
-export default function SimpleDialogDemo({ data }) {
+export default function CpEditRmDialog({ data, id, refetch }) {
   const [open, setOpen] = useState(false);
-
-  const getRmQuery = useGetRealtionshipManagerQuery();
-
-  const [selectedRm, setSelectedRm] = useState([]);
+  const [selectedRm, setSelectedRm] = useState([data?.result?.cpRm?.name]);
   const [selectedProjects, setSelectedProjects] = useState([]);
+  const [selectedRmProjects, setSelectedRmProjects] = useState([]);
+
+  const {
+    data: rmQueryData,
+    error: rmQueryError,
+    loading: rmQueryLoading,
+    isFetching: rmQueryIsFetching,
+  } = useGetRealtionshipManagerQuery();
+
+  useEffect(() => {
+    const filteredData = rmQueryData?.result.filter((item) =>
+      selectedRm.includes(item.name),
+    );
+    setSelectedRmProjects(filteredData);
+  }, [rmQueryData, selectedRm]);
+
+  useEffect(() => {
+    if (selectedRmProjects?.length >= 1) {
+      const setRmProject = selectedRmProjects[0]?.projects;
+      setSelectedProjects(setRmProject);
+    }
+  }, [selectedRmProjects, selectedRm]);
+
+  // console.log(selectedRmProjects);
 
   const handleRmChange = (event) => {
     setSelectedRm([event.target.value]);
@@ -31,12 +53,6 @@ export default function SimpleDialogDemo({ data }) {
 
   const handleProjectsChange = (event) => {
     setSelectedProjects(event.target.value);
-  };
-
-  const cprmValues = {
-    parentId: data?.result?.cpRm?.parentId,
-    id: data?.result?.company?._id,
-    projects: data?.result?.cpRm?.projects,
   };
 
   const handleClickOpen = () => {
@@ -47,21 +63,29 @@ export default function SimpleDialogDemo({ data }) {
     setOpen(false);
   };
 
-  const handleSubmit = () => {
+  const handleCancel = () => {
+    setSelectedRm([data?.result?.cpRm?.name]);
+    setOpen(false);
+  };
+
+  const [cpRmEdit] = useEditCpRmMutation();
+
+  const handleSubmit = async () => {
     const updatedValues = {
       projects: selectedProjects,
-      role: selectedRm,
+      id,
+      parentId: selectedRmProjects[0]._id,
     };
-    console.log(updatedValues);
+    await cpRmEdit(updatedValues);
+    handleClose();
+    const result = await refetch();
   };
-  console.log(data?.result?.cpRm?.name);
-  console.log(data?.result?.cpRm?.projects);
 
   return (
     <Grid sx={{ border: "1px solid black" }}>
       <Button
         variant="outlined"
-        // onClick={handleClickOpen}
+        onClick={handleClickOpen}
         sx={{
           backgroundColor: "rgba(249, 184, 0, 1)",
           color: "black",
@@ -123,7 +147,7 @@ export default function SimpleDialogDemo({ data }) {
                   <OutlinedInput id="select-category" label="Category (RM)" />
                 }
               >
-                {(getRmQuery?.data?.result || []).map((rm) => (
+                {(rmQueryData?.result || []).map((rm) => (
                   <MenuItem key={rm.name} value={rm.name}>
                     {rm.name}
                   </MenuItem>
@@ -142,7 +166,7 @@ export default function SimpleDialogDemo({ data }) {
                 input={<OutlinedInput id="select-projects" label="Projects" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {(selected || []).map((value) => (
+                    {selected?.map((value) => (
                       <Chip
                         key={value}
                         label={value}
@@ -154,7 +178,7 @@ export default function SimpleDialogDemo({ data }) {
                   </Box>
                 )}
               >
-                {(getRmQuery?.data?.result || []).map((pro) => (
+                {(selectedRmProjects || []).map((pro) => (
                   <MenuItem
                     key={pro.projects}
                     value={pro.projects}
@@ -180,7 +204,7 @@ export default function SimpleDialogDemo({ data }) {
               gap: "20px",
             }}
           >
-            <Button sx={{ border: "1px solid black" }} onClick={handleClose}>
+            <Button sx={{ border: "1px solid black" }} onClick={handleCancel}>
               cancel
             </Button>
             <Button sx={{ border: "1px solid black" }} onClick={handleSubmit}>

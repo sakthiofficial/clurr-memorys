@@ -143,7 +143,7 @@ function AddLeadsBtn({ refetch }) {
   //   }
   // };
 
-  const handleSubmitAdd = (e) => {
+  const handleSubmitAdd = async (e) => {
     e.preventDefault();
 
     if (
@@ -166,12 +166,12 @@ function AddLeadsBtn({ refetch }) {
       id: "",
     });
     console.log(formData);
-    leadData(formData);
+    await leadData(formData);
     // setOpen(false);
-    refetch();
+    await refetch();
   };
 
-  const handleSubmitSave = (e) => {
+  const handleSubmitSave = async (e) => {
     e.preventDefault();
 
     if (
@@ -193,10 +193,10 @@ function AddLeadsBtn({ refetch }) {
       companyCode: "",
       id: "",
     });
-    console.log(formData);
-    leadData(formData);
+    // console.log(formData);
+    await leadData(formData);
     setOpen(false);
-    refetch();
+    await refetch();
   };
 
   // console.log(role);
