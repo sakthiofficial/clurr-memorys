@@ -266,6 +266,7 @@ class LSQLeadSrv {
         }
       }),
     );
+    console.log(data.length);
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, data);
   };
 
