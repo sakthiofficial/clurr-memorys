@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import { Grid, TextField, Typography } from "@mui/material";
+import { useEditUserMutation } from "@/reduxSlice/apiSlice";
 
 export default function CpEditDialog({ data, refetch }) {
   const [open, setOpen] = useState(false);
@@ -9,9 +10,10 @@ export default function CpEditDialog({ data, refetch }) {
     name: data[0]?.name,
     email: data[0]?.email,
     phone: data[0]?.phone,
+    id: data[0]?._id,
   });
 
-  console.log(data[0]._id);
+  // console.log(data[0]._id);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -23,6 +25,11 @@ export default function CpEditDialog({ data, refetch }) {
 
   const handleCancel = () => {
     setOpen(false);
+    setEditedData({
+      name: data[0]?.name,
+      email: data[0]?.email,
+      phone: data[0]?.phone,
+    });
   };
 
   const handleInputChange = (fieldName, value) => {
@@ -31,10 +38,13 @@ export default function CpEditDialog({ data, refetch }) {
       [fieldName]: value,
     }));
   };
+  const [cpBranchEdit] = useEditUserMutation();
 
   const handleSubmit = async () => {
     console.log("Submitting changes:", editedData);
+    await cpBranchEdit(editedData);
     setOpen(false);
+    await refetch();
   };
 
   return (
@@ -90,20 +100,32 @@ export default function CpEditDialog({ data, refetch }) {
                 fontSize: "16px",
               }}
             >
-              Change Branch Head Details
+              Change Execute Details
             </Typography>
             <Grid
               sx={{ display: "flex", flexDirection: "column", gap: "20px" }}
             >
               <TextField
                 value={editedData?.name}
+                name="name"
+                id="outlined-required"
+                label="Name"
                 onChange={(e) => handleInputChange("name", e.target.value)}
               />
               <TextField
                 value={editedData?.email}
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                name="email"
+                id="outlined-required"
+                label="Email"
+                onChange={(e) => handleInputChange("email", e.target.value)}
               />
-              <TextField value={editedData?.phone} disabled />
+              <TextField
+                name="phone"
+                id="outlined-required"
+                label="Phone"
+                value={editedData?.phone}
+                disabled
+              />
             </Grid>
           </Grid>
           <Grid
@@ -114,10 +136,16 @@ export default function CpEditDialog({ data, refetch }) {
               gap: "20px",
             }}
           >
-            <Button sx={{ border: "1px solid black" }} onClick={handleCancel}>
+            <Button
+              sx={{ border: "1px solid black", color: "black" }}
+              onClick={handleCancel}
+            >
               cancel
             </Button>
-            <Button sx={{ border: "1px solid black" }} onClick={handleSubmit}>
+            <Button
+              sx={{ border: "1px solid black", color: "black" }}
+              onClick={handleSubmit}
+            >
               Save
             </Button>
           </Grid>

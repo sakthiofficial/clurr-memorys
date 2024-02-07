@@ -74,17 +74,10 @@ function AddLeadsBtn({ refetch }) {
     setSelectedCompanyName(selectedCpName);
   };
 
-  // useEffect(() => {
-  //   const projectsWithLeadAddPermission = resultProject?.data?.result?.filter(
-  //     (project) => project?.permission === "leadAddAndView",
-  //   );
-  //   setPermissionProject(projectsWithLeadAddPermission);
-  // }, [resultProject]);
-  // console.log(resultProject);
+
 
   useEffect(() => {
     if (resultProject?.data?.status === 200) {
-      console.log("200");
       const projectsWithLeadAddPermission = resultProject?.data?.result?.filter(
         (project) => project?.permission === "leadAddAndView",
       );
@@ -157,6 +150,7 @@ function AddLeadsBtn({ refetch }) {
       toast.error("Please fill in all required fields");
       return;
     }
+    await leadData(formData);
     setFormData({
       userName: "",
       email: "",
@@ -165,9 +159,7 @@ function AddLeadsBtn({ refetch }) {
       companyCode: "",
       id: "",
     });
-    console.log(formData);
-    await leadData(formData);
-    // setOpen(false);
+    // console.log(formData);
     await refetch();
   };
 
@@ -185,6 +177,11 @@ function AddLeadsBtn({ refetch }) {
       toast.error("Please fill in all required fields");
       return;
     }
+    setOpen(false);
+    const result = await leadData(formData);
+
+    await refetch();
+
     setFormData({
       userName: "",
       email: "",
@@ -194,9 +191,6 @@ function AddLeadsBtn({ refetch }) {
       id: "",
     });
     // console.log(formData);
-    await leadData(formData);
-    setOpen(false);
-    await refetch();
   };
 
   // console.log(role);

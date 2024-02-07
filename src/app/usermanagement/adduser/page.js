@@ -29,7 +29,6 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 export default function Page() {
   const [selectParentId, setSelectParentId] = useState("");
   const [userData, setUserData] = useState(null);
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -50,6 +49,11 @@ export default function Page() {
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
+
+  const [errorNameExists, setErrorNameExists] = useState(false);
+  const [errorEmailExists, setErrorEmailExists] = useState(false);
+  const [errorPhoneExists, setErrorPhoneExists] = useState(false);
+
   const router = useRouter();
 
   // handle input data function
@@ -122,16 +126,8 @@ export default function Page() {
       })
       .map(([key]) => key);
 
-    if (emptyFields.length > 0) {
-      emptyFields.forEach((field) => {
-        if (field === "phone") {
-          toast.error(`Phone number must be at least 10 characters.`);
-        } else {
-          toast.error(`Please fill in ${field} before submitting.`);
-        }
-      });
-    } else if (!selectedValues.role) {
-      toast.error(`Please select a role before submitting.`);
+    if (emptyFields?.length > 0 || selectedValues?.role?.length === 0) {
+      toast.error(`Please fill all fields before submitting.`);
     } else {
       try {
         const updatedValues = {
@@ -151,15 +147,21 @@ export default function Page() {
             console.log(result.data);
 
             if (result?.data?.result?.name === true) {
-              toast.error("name already exist");
+              setErrorNameExists(true);
+            } else {
+              setErrorNameExists(false);
             }
 
             if (result?.data?.result?.email === true) {
-              toast.error("email already exist");
+              setErrorEmailExists(true);
+            } else {
+              setErrorEmailExists(false);
             }
 
             if (result?.data?.result?.phone === true) {
-              toast.error("phone number already exist");
+              setErrorPhoneExists(true);
+            } else {
+              setErrorPhoneExists(false);
             }
 
             if (result?.data?.status === 200) {
@@ -184,7 +186,7 @@ export default function Page() {
       name: "",
       email: "",
       phone: "",
-      password: "",
+      password: "Pass@123",
     });
     setSelectedValues({
       projects: [],
@@ -333,6 +335,8 @@ export default function Page() {
                     type="text"
                     value={formData?.name}
                     onChange={handleInputChange}
+                    error={errorNameExists}
+                    helperText={errorNameExists && "name already exists"}
                     sx={{
                       width: "397px",
                       color: "black",
@@ -348,6 +352,8 @@ export default function Page() {
                     type="email"
                     value={formData?.email}
                     onChange={handleInputChange}
+                    error={errorEmailExists}
+                    helperText={errorEmailExists && "email already exists"}
                     sx={{
                       width: "397px",
                       color: "black",
@@ -375,6 +381,8 @@ export default function Page() {
                     type="text"
                     value={formData?.phone}
                     onChange={handleInputChange}
+                    error={errorPhoneExists}
+                    helperText={errorPhoneExists && "number already exists"}
                     sx={{
                       width: "397px",
                       color: "black",
