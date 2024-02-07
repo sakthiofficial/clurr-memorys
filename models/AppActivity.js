@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { genrateUnixTimestamp } = require("../src/appConstants");
+const { addCreatedHook } = require("./hooks/addCreated");
 
 const { Schema } = mongoose;
 const CpAppActivitySchema = new Schema({
@@ -17,7 +17,7 @@ const CpAppActivitySchema = new Schema({
     ref: "CpAppUser",
   }, // Reference to the entity
   actionType: { type: String, required: true }, // e.g., 'add', 'delete', 'edit'
-  createdDate: { type: Number, default: () => genrateUnixTimestamp() },
+  createdDate: { type: Number },
   performedById: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -33,7 +33,7 @@ const CpAppActivitySchema = new Schema({
     ref: "CpAppRole",
   }, // Username or user ID who performed the action
 });
-
+addCreatedHook(CpAppActivitySchema);
 module.exports.CpAppActivity =
   mongoose.models.CpAppActivity ||
   mongoose.model("CpAppActivity", CpAppActivitySchema);

@@ -3,6 +3,7 @@ import {
   ApiResponse,
   RESPONSE_MESSAGE,
   RESPONSE_STATUS,
+  projectNames,
 } from "../appConstants";
 import { CpAppProject } from "../../models/AppProject";
 import {
@@ -74,7 +75,7 @@ class CpManagementSrv {
       );
       return result.length === newUser[userDataObj?.projects].length;
     };
-    this.createCpBranchHead = async (user, parentId, providedUser) => {
+    this.createCpBranchHead = async (user, parentId, providedUser, cpCode) => {
       const userSrv = new CPUserSrv();
       const parentUser = await userSrv.getUserById(parentId);
       if (!parentUser) {
@@ -82,12 +83,40 @@ class CpManagementSrv {
       }
       const userSch = new CpAppUser(user);
       const result = await userSch.save();
-      // const activitySrv = new ActivitySrv();
-      // await activitySrv.createActivity(
-      //   activityActionTypes?.cpAdded,
-      //   result._id,
-      //   providedUser?._id,
-      // );
+      const activityService = new ActivitySrv();
+
+      await activityService.createActivity(
+        activityActionTypes?.cpAdded,
+
+        providedUser[userDataObj?.name],
+
+        providedUser?._id,
+        user[userDataObj?.name],
+        result._id,
+      );
+      const mailOptions = cpMailOption(
+        user[userDataObj?.name],
+        providedUser[userDataObj?.name],
+        user[userDataObj?.email],
+        roleNames?.cpBranchHead,
+        projectNames?.balanagar,
+        cpCode,
+      );
+      const adminMaliOption = superAdminMailOptions(
+        providedUser[userDataObj?.name],
+        user[userDataObj?.name],
+
+        roleNames?.cpBranchHead,
+
+        basicRolePermission(roleNames?.cpBranchHead),
+        projectNames?.balanagar,
+      );
+      sendMail(mailOptions)
+        .then(async () => {
+          await sendMail(adminMaliOption);
+          console.log("Emails as been successfully");
+        })
+        .catch((error) => console.log(error.message));
       return result;
     };
     this.genrateCompanyCode = async (code) => {
@@ -281,6 +310,7 @@ class CpManagementSrv {
             branchUser,
             parentId,
             providedUser,
+            cpGenratedCode,
           );
           parentUser = cpBranchResult;
           branchHeadId = cpBranchResult._id;
@@ -297,7 +327,7 @@ class CpManagementSrv {
 
           sendMail(mailOptions)
             .then(async () => {
-              console.log("Emails as been successfully");
+              console.log("Cpbranch Emails as been successfully");
             })
             .catch((error) => console.log(error.message));
         }
@@ -337,12 +367,18 @@ class CpManagementSrv {
         const userSch = new CpAppUser(cpExecuteUser);
 
         const userResult = await userSch.save();
-        // const activitySrv = new ActivitySrv();
-        // await activitySrv.createActivity(
-        //   activityActionTypes?.cpAdded,
-        //   userResult._id,
-        //   cpExecute[userDataObj?.parentId],
-        // );
+        const activityService = new ActivitySrv();
+
+        await activityService.createActivity(
+          activityActionTypes?.cpAdded,
+
+          providedUser[userDataObj?.name],
+
+          providedUser?._id,
+          cpExecute[userDataObj?.name],
+
+          userResult._id,
+        );
         if (userResult._id && companyId) {
           await CpAppCompany.updateOne(
             { _id: companyId },
@@ -367,7 +403,7 @@ class CpManagementSrv {
         sendMail(mailOptions)
           .then(async () => {
             await sendMail(adminMaliOption);
-            console.log("Emails as been successfully");
+            console.log("cpExecute Emails as been successfully");
           })
           .catch((error) => console.log(error.message));
         return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);

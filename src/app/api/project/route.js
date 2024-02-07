@@ -55,6 +55,17 @@ export async function POST(req) {
 export async function GET(request) {
   try {
     const providedUser = await getUserByToken(request);
+    if (!providedUser) {
+      return new Response(
+        JSON.stringify(
+          new ApiResponse(
+            RESPONSE_STATUS?.UNAUTHORIZED,
+            RESPONSE_MESSAGE?.UNAUTHORIZED,
+            null,
+          ),
+        ),
+      );
+    }
     let projects = providedUser[userDataObj?.projects];
     const projectData = await CpAppProject.find(
       isPriorityUser(providedUser[userDataObj?.role]) ? {} : { name: projects },

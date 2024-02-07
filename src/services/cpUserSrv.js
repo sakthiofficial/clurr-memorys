@@ -30,6 +30,7 @@ import {
 } from "@/helper/email/mailOptions";
 import { CpAppCompany } from "../../models/AppCompany";
 import ActivitySrv from "./activitySrv";
+import { activityActionTypes } from "@/helper/serviceConstants";
 
 const { default: initDb } = require("../lib/db");
 const { CpAppUser } = require("../../models/AppUser");
@@ -471,12 +472,15 @@ class CPUserSrv {
       newUser.password = hashedPassword;
       const userSch = new CpAppUser(newUser);
       const userResult = await userSch.save();
-      // const activityService = new ActivitySrv();
-      // await activityService.createActivity(
-      //   activityOperationTypes?.add,
-      //   userResult?._id,
-      //   providedUser?._id,
-      // );
+      const activityService = new ActivitySrv();
+      await activityService.createActivity(
+        activityActionTypes?.userAdd,
+        providedUser[userDataObj?.name],
+
+        providedUser?._id,
+        newUser[userDataObj?.name],
+        userResult?._id,
+      );
       // Trigering email to user and admin
       const userName = newUser[userDataObj?.name];
       const parentName = "Urbanrise Team";
@@ -498,13 +502,16 @@ class CPUserSrv {
         permission,
         projects,
       );
-      // sendMail(mailOptions)
-      //   .then(async () => {
-      //     await sendMail(adminMaliOption);
-      //     console.log("Emails as been successfully");
-      //   })
-      //   .catch((error) => console.log(error.message));
-      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
+      const userEmailResult = await sendMail(mailOptions);
+
+      const emailResult = await sendMail(adminMaliOption);
+
+      console.log(emailResult);
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+        adminEmail: JSON.stringify(emailResult),
+        userEmail: JSON.stringify(userEmailResult),
+        check: "deploed",
+      });
     } catch (err) {
       console.log("Error While Adding User", err);
       return new ApiResponse(
@@ -713,6 +720,15 @@ class CPUserSrv {
       userId: removeUserData._id,
     });
     if (deletedCount > 0) {
+      const activityService = new ActivitySrv();
+      await activityService.createActivity(
+        activityActionTypes?.userDelete,
+        providedUser[userDataObj?.name],
+
+        providedUser?._id,
+        removeUserData[userDataObj?.name],
+        removeUserData?.id,
+      );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     }
     return new ApiResponse(
@@ -786,6 +802,15 @@ class CPUserSrv {
       const update = { $set: userData };
       const options = { new: true, useFindAndModify: false };
       await CpAppUser.findOneAndUpdate(filter, update, options);
+      const activityService = new ActivitySrv();
+      await activityService.createActivity(
+        activityActionTypes?.cpEdit,
+        providedUser[userDataObj?.name],
+
+        providedUser?._id,
+        updateUser[userDataObj?.name],
+        updateUser?.id,
+      );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (error) {
       console.log("Error while updating user", error);

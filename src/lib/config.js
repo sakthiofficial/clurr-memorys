@@ -21,7 +21,7 @@ export default {
         secretKey: "021b006097b48fefe3f6815241d178d3de53fece",
       },
       [projectNames?.oncloud]: {
-        accessKey: " u$rd8c2f7aadd8dd7609e08abc230990943",
+        accessKey: "u$rd8c2f7aadd8dd7609e08abc230990943",
         secretKey: "ae3805268bdd7c3ece47e97188f05394bb509246",
       },
       [projectNames?.balanagar]: {
