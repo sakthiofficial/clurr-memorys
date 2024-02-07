@@ -135,9 +135,11 @@ export default function Page() {
       return {
         Company: singleCpData?.company?.name,
         CpCode: singleCpData?.company?.cpCode,
-        CreateOn: convertTimestampToDateTime(singleCpData?.company?.createdBy),
+        CreateOn: convertTimestampToDateTime(singleCpData?.company?.created),
         Projects: singleCpData?.company?.projects,
         BranchHead: singleCpData?.cpBranchHead?.name,
+        BranchHeadEmail: singleCpData?.cpBranchHead?.email,
+
         RelationManager: singleCpData?.cpRm?.name,
         Execute: executes,
       };
@@ -313,7 +315,7 @@ export default function Page() {
                         {row?.cpRm?.name || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
-                        {unixToDate(row?.company?.createdDate) || "N/A"}
+                        {unixToDate(row?.company?.created) || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
                         <Grid

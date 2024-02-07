@@ -539,8 +539,9 @@ class CPUserSrv {
       const roleData = await CpAppRole.find({
         name: providedUser[userDataObj?.subordinateRoles],
       });
-      const roleIds = roleData.map((val) => val._id);
-
+      const roleIds = roleData.map((val) =>
+        isCpUser(val.name) ? null : val._id,
+      );
       let users = await CpAppUser.find(
         { role: { $in: roleIds } },
         { password: 0 },
