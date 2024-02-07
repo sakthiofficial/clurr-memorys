@@ -328,7 +328,7 @@ export default function Page() {
                         displayEmpty
                         renderValue={(selected) =>
                           selected || (
-                            <Typography sx={{ color: "black" }}>
+                            <Typography sx={{ color: "gray" }}>
                               Select a partner
                             </Typography>
                           )
