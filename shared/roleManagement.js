@@ -188,6 +188,7 @@ function checkValidRoleToAddLead(userRole) {
 
   return isCpRole;
 }
+
 function isNonPriorityUser(userRole) {
   let roleArr = userRole;
   if (typeof userRole === "string") {

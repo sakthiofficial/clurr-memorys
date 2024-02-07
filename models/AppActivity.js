@@ -17,7 +17,7 @@ const CpAppActivitySchema = new Schema({
     ref: "CpAppUser",
   }, // Reference to the entity
   actionType: { type: String, required: true }, // e.g., 'add', 'delete', 'edit'
-  createdDate: { type: Number },
+  created: { type: Number },
   performedById: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
