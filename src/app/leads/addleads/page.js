@@ -37,6 +37,7 @@ export default function Page() {
     phone: "+91",
     project: "",
     companyCode: "",
+    notes: "",
     id: "",
   });
   // console.log(formData.id);
@@ -60,6 +61,7 @@ export default function Page() {
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
     setSelectedCompanyName(selectedCpName);
+    console.log(selectedCpName);
   };
 
   useEffect(() => {
@@ -113,8 +115,12 @@ export default function Page() {
       phone: "+91",
       project: "",
       companyCode: "",
+      notes: "",
       id: "",
     });
+    if (selectedCompanyName) {
+      setSelectedCompanyName("");
+    }
     await leadData(formData);
   };
 
@@ -320,9 +326,8 @@ export default function Page() {
                           },
                       }}
                     >
-                      {/* <InputLabel>Selecte one partner</InputLabel> */}
                       <Select
-                        value={formData?.cp}
+                        value={selectedCompanyName}
                         onChange={handleCpChange}
                         name="cp"
                         displayEmpty
