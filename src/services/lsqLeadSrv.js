@@ -4,6 +4,7 @@ import {
   leadRegistrationMapping,
   leadRegistrationStatus,
   leadStage,
+  lsqActivityCode,
   lsqFieldValues,
   lsqLeadFieldNames,
 } from "../../shared/lsqConstants";
@@ -31,8 +32,19 @@ const { default: axios } = require("axios");
 
 class LSQLeadSrv {
   constructor() {
-    this.lsqApiUrlToCaptureLead =
-      "https://api-in21.leadsquared.com/v2/LeadManagement.svc/Lead.Capture";
+    this.lsqHostUrl = "https://api-in21.leadsquared.com";
+    this.lsqApiUrlToCaptureLead = `${this.lsqHostUrl}/v2/LeadManagement.svc/Lead.Capture`;
+    this.retriveActivityOfLeadId = `${this.lsqHostUrl}/v2/ProspectActivity.svc/Retrieve`;
+    this.lsqConfig = config.lsqConfig;
+    this.calculateDaysDifference = (startDateStr, endDateStr = new Date()) => {
+      const startDate = new Date(startDateStr);
+      const endDate = new Date(endDateStr);
+
+      const timeDifference = endDate - startDate;
+
+      const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      return daysDifference;
+    };
     this.leadFromLsqByPhone = async (phone, project) => {
       const { lsqConfig } = config;
       const { projectCredential } = lsqConfig;
@@ -46,25 +58,84 @@ class LSQLeadSrv {
       );
       return lsqData.data;
     };
-    this.getRegistrationStatus = (stage) => {
-      if (
-        leadRegistrationMapping[leadRegistrationStatus?.sucess].includes(stage)
-      ) {
+    this.getRegistrationStatus = async (leadData, project) => {
+      if (leadData[lsqLeadFieldNames?.stage] === leadStage?.new) {
         return leadRegistrationStatus?.sucess;
       }
-      if (
-        leadRegistrationMapping[leadRegistrationStatus?.exist].includes(stage)
-      ) {
-        return leadRegistrationStatus?.exist;
+
+      const { projectCredential } = this.lsqConfig;
+      if (!projectCredential[project]) {
+        return null;
       }
-      if (
-        leadRegistrationMapping[leadRegistrationStatus?.duplicate].includes(
-          stage,
-        )
-      ) {
-        return leadRegistrationStatus?.duplicate;
+      const { accessKey, secretKey } = projectCredential[project];
+
+      const leadId = leadData[lsqLeadFieldNames?.leadId];
+
+      const lsqData = await axios.post(
+        `${this.retriveActivityOfLeadId}?accessKey=${accessKey}&secretKey=${secretKey}&leadId=${leadId}`,
+        {
+          Parameter: {
+            ActivityEvent: 3002,
+          },
+          Paging: {
+            Offset: "0",
+            RowCount: "10",
+          },
+        },
+      );
+      let leadActivity = lsqData?.data;
+      if (leadActivity) {
+        leadActivity = leadActivity?.ProspectActivities;
       }
-      return leadRegistrationStatus?.sucess;
+
+      const svdActivity = (leadActivity || []).filter((activity) => {
+        const isSvdAcitivity = activity?.Data.filter(
+          (dt) => dt?.Value === leadStage?.svd,
+        );
+        if (isSvdAcitivity.length > 0) {
+          return activity;
+        }
+        return null;
+      });
+      if (svdActivity[0]) {
+        const activityDate = svdActivity[0][lsqLeadFieldNames?.createdOn];
+        const activityDateDiffrence =
+          this.calculateDaysDifference(activityDate);
+
+        return activityDateDiffrence < 15
+          ? leadRegistrationStatus?.exist
+          : leadRegistrationStatus?.duplicate;
+      }
+
+      return leadRegistrationStatus?.duplicateMax;
+    };
+    this.handleApiData = async (providedUser, leadData, projectName) => {
+      const source = leadData[lsqLeadFieldNames?.source];
+      if (source === lsqFieldValues?.source) {
+        let push = true;
+        if (
+          providedUser[userDataObj?.permissions].includes(
+            permissionKeyNames?.leadViewWithoutNumber,
+          )
+        ) {
+          leadData[lsqLeadFieldNames?.phone] = null;
+        }
+        if (
+          providedUser[userDataObj?.role] === roleNames?.cpExecute ||
+          providedUser[userDataObj?.role] === roleNames?.cpBranchHead
+        ) {
+          const lsqCpCode =
+            leadData[lsqLeadFieldNames?.subSource].split(" ")[0];
+          const cpCode = providedUser[userDataObj?.cpCode];
+          push = cpCode === lsqCpCode;
+        }
+        leadData.Project = projectName;
+
+        leadData[customLsqField?.leadRegistration] =
+          await this.getRegistrationStatus(leadData, projectName);
+        return push ? leadData : null;
+      }
+      return null;
     };
   }
 
@@ -114,15 +185,13 @@ class LSQLeadSrv {
       convertTimestampToDateTime(leadStartDate),
     );
     const endDate = convertISTtoUTC(convertTimestampToDateTime(leadEndDate));
-    const { lsqConfig } = config;
-    const { projectCredential } = lsqConfig;
+    const apiUrl = this.lsqConfig?.apiUrl;
+    const { projectCredential } = this.lsqConfig;
     const projectArr = isPriorityUser(providedUser[userDataObj?.role])
       ? Object.keys(projectCredential)
       : providedUser[userDataObj?.projects];
     const projectKeys = project !== "All" ? [project] : projectArr;
-
     const data = [];
-
     await Promise.all(
       projectKeys.map(async (projectName) => {
         const { accessKey, secretKey } = projectCredential[projectName];
@@ -132,7 +201,7 @@ class LSQLeadSrv {
           console.log(`Fetching in${projectName} and in ${pageIndex}`);
           try {
             const apiData = await axios.post(
-              `${lsqConfig?.apiUrl}LeadManagement.svc/Leads.Get?accessKey=${accessKey}&secretKey=${secretKey}`,
+              `${apiUrl}LeadManagement.svc/Leads.Get?accessKey=${accessKey}&secretKey=${secretKey}`,
               {
                 Parameter: {
                   LookupName: "CreatedOn",
@@ -161,7 +230,7 @@ class LSQLeadSrv {
         }
         let apiData = await fetchLeadData(apiPageIndex);
 
-        for (let i = 0; i < apiData?.data.length; i += 1) {
+        for (let i = 0; i <= apiData?.data.length; i += 1) {
           const dateIst = convertUTCtoIST(
             apiData.data[i][lsqLeadFieldNames?.createdOn],
           );
@@ -178,39 +247,17 @@ class LSQLeadSrv {
             return data;
           }
           apiData.data[i][lsqLeadFieldNames?.createdOn] = dateIst;
-          const source = apiData.data[i][lsqLeadFieldNames?.source];
 
-          const structuredApiData = apiData.data[i];
-          if (source === lsqFieldValues?.source) {
-            let push = true;
-            if (
-              providedUser[userDataObj?.permissions].includes(
-                permissionKeyNames?.leadViewWithoutNumber,
-              )
-            ) {
-              structuredApiData[lsqLeadFieldNames?.phone] = null;
-            }
-            if (
-              providedUser[userDataObj?.role] === roleNames?.cpExecute ||
-              providedUser[userDataObj?.role] === roleNames?.cpBranchHead
-            ) {
-              const lsqCpCode =
-                apiData.data[i][lsqLeadFieldNames?.subSource].split(" ")[0];
-              const cpCode = providedUser[userDataObj?.cpCode];
-              push = cpCode === lsqCpCode;
-            }
-            structuredApiData.Project = projectName;
-
-            structuredApiData[customLsqField?.leadRegistration] =
-              this.getRegistrationStatus(
-                structuredApiData[lsqLeadFieldNames?.stage],
-              );
-
-            if (push) {
-              data.push(structuredApiData);
-            }
+          const structuredApiData = await this.handleApiData(
+            providedUser,
+            apiData.data[i],
+            projectName,
+          );
+          if (structuredApiData) {
+            data.push(structuredApiData);
           }
-          if (i === apiData.data.length && apiData.data.length > 0) {
+
+          if (i === apiData.data.length - 1 && apiData.data.length > 0) {
             apiPageIndex += 1;
 
             apiData = await fetchLeadData(apiPageIndex);
@@ -328,13 +375,19 @@ class LSQLeadSrv {
       );
     }
     let leadData = await this.leadFromLsqByPhone(phone, project);
-    leadData = (leadData || []).map((lead) => {
-      lead[customLsqField?.leadRegistration] = this.getRegistrationStatus(
-        lead[lsqLeadFieldNames?.stage],
-      );
-      return lead;
-    });
-    return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, leadData);
+    leadData = Promise.all(
+      (leadData || []).map(async (lead) => {
+        lead[customLsqField?.leadRegistration] =
+          await this.getRegistrationStatus(lead, project);
+        return lead;
+      }),
+    );
+    const leadResult = await leadData;
+    return new ApiResponse(
+      RESPONSE_STATUS?.OK,
+      RESPONSE_MESSAGE?.OK,
+      await leadResult,
+    );
   };
 }
 export default LSQLeadSrv;

@@ -1,4 +1,5 @@
 export const lsqLeadFieldNames = {
+  leadId: "ProspectID",
   project: "mx_Origin_Project",
   leadNumber: "ProspectAutoId",
   source: "Source",
@@ -38,23 +39,16 @@ export const leadStage = {
 };
 export const leadRegistrationStatus = {
   sucess: "Sucess",
+  duplicateMax: "Duplicate Max",
   duplicate: "Duplicate",
   exist: "Exist",
 };
 
-export const leadRegistrationMapping = {
-  [leadRegistrationStatus.sucess]: [leadStage.new],
-  [leadRegistrationStatus.duplicate]: [
-    leadStage.reengaged,
-    leadStage.progressReenged,
-    leadStage?.svdDroped,
-  ],
-  [leadRegistrationStatus.exist]: [
-    leadStage?.svd,
-    leadStage?.svdCold,
-    leadStage?.svdWarm,
-  ],
+const lsqActivityCode = {
+  svd: 30002,
 };
-export const customLsqField = {
+
+const customLsqField = {
   leadRegistration: "LeadRegistration",
 };
+export { lsqActivityCode, customLsqField };

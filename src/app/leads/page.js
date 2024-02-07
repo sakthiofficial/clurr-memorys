@@ -312,6 +312,9 @@ export default function Page() {
     if (status === leadRegistrationStatus.exist) {
       return "red";
     }
+    if (status === leadRegistrationStatus.duplicateMax) {
+      return "red";
+    }
     return "black";
   };
   useEffect(() => {
