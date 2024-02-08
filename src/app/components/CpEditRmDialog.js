@@ -78,7 +78,7 @@ export default function CpEditRmDialog({ data, id, refetch }) {
     };
     await cpRmEdit(updatedValues);
     handleClose();
-    const result = await refetch();
+    await refetch();
   };
 
   return (
@@ -91,7 +91,7 @@ export default function CpEditRmDialog({ data, id, refetch }) {
           color: "black",
           minWidth: "154px",
           height: "35px",
-          borderRadius: "8px",
+          borderRadius: "5px",
           border: "none",
           fontSize: "13px",
           fontWeight: "400",
@@ -204,10 +204,16 @@ export default function CpEditRmDialog({ data, id, refetch }) {
               gap: "20px",
             }}
           >
-            <Button sx={{ border: "1px solid black" }} onClick={handleCancel}>
+            <Button
+              sx={{ border: "1px solid black", color: "black" }}
+              onClick={handleCancel}
+            >
               cancel
             </Button>
-            <Button sx={{ border: "1px solid black" }} onClick={handleSubmit}>
+            <Button
+              sx={{ border: "1px solid black", color: "black" }}
+              onClick={handleSubmit}
+            >
               Save
             </Button>
           </Grid>

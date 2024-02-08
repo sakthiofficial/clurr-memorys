@@ -28,6 +28,7 @@ import { unixToDate } from "../../../../shared/dateCalc";
 import CpEditRmDialogBox from "../../components/CpEditRmDialog";
 import CpEditDialog from "../../components/CpEditDialog";
 import CpEditExecuteDialog from "../../components/CpEditExecuteDialog";
+import AddExecuteAccount from "@/app/components/AddExecuteAccount";
 
 /// dialog box setup
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -60,6 +61,24 @@ export default function Page() {
 
   const handleClose = async () => {
     setOpen(false);
+  };
+
+  const handleExecuteReset = (executeData) => {
+    const updatedReset = {
+      id: executeData[0]._id,
+      password: "Pass@123",
+    };
+    console.log(updatedReset);
+    // console.log("cpexecute reset");
+  };
+
+  const handleBranchHeadReset = (branchHeadData) => {
+    const updatedReset = {
+      id: branchHeadData?._id,
+      password: "Pass@123",
+    };
+    console.log(updatedReset);
+    // console.log("cpexecute reset");
   };
 
   const label = { inputProps: { "aria-label": "Switch demo" } };
@@ -213,9 +232,9 @@ export default function Page() {
               >
                 Number of Accounts Created
               </Typography>
-              {/* {data?.result?.cpExecutes?.length === 0 && (
-                <CpEditDialog data={data} />
-              )} */}
+              {data?.result?.cpExecutes?.length === 0 && (
+                <AddExecuteAccount data={data} />
+              )}
             </Grid>
             <Table>
               <TableHead>
@@ -242,28 +261,29 @@ export default function Page() {
               <TableBody>
                 <TableRow>
                   <TableCell sx={{ fontSize: "12px" }}>
-                    {data?.result?.cpBranchHead?.name}
+                    {data?.result?.cpBranchHead?.name || "N/A"}
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
-                    {data?.result?.cpBranchHead?.phone}
+                    {data?.result?.cpBranchHead?.phone || "N/A"}
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
-                    {data?.result?.cpBranchHead?.name}
+                    {data?.result?.cpBranchHead?.name || "N/A"}
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
                     <Switch {...label} checked />
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
-                    {unixToDate(data?.result?.cpBranchHead?.createdBy)}
+                    {unixToDate(data?.result?.cpBranchHead?.createdBy || "N/A")}
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
                     <CpEditDialog
-                      data={data?.result?.cpBranchHead}
+                      data={data?.result?.cpBranchHead || "N/A"}
                       refetch={refetch}
                     />
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
                     <Button
+                      onClick={() => handleBranchHeadReset()}
                       sx={{
                         borderRadius: "10px",
                         color: "black",
@@ -307,6 +327,9 @@ export default function Page() {
                     </TableCell>
                     <TableCell sx={{ fontSize: "12px" }}>
                       <Button
+                        onClick={() =>
+                          handleExecuteReset(data?.result?.cpExecutes)
+                        }
                         sx={{
                           borderRadius: "10px",
                           color: "black",

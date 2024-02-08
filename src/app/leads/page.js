@@ -31,7 +31,7 @@ import {
   startOfWeek,
   subDays,
 } from "date-fns";
-import { Close } from "@mui/icons-material";
+import { Add, Close } from "@mui/icons-material";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import AddLeadsBtn from "../components/AddLeadsBtn";
@@ -157,7 +157,7 @@ export default function Page() {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const resultProject = useGetProjectWithPermissionQuery();
-  const [selectedProject, setSelectedProject] = useState("All");
+  const [selectedProject, setSelectedProject] = useState("");
 
   // const projectloader = resultProject.isFetching;
   // project change and set intial project functions
@@ -367,16 +367,24 @@ export default function Page() {
             Lead List
           </Typography>
         </Grid>
-        <Grid sx={{ minWidth: "600px", display: "flex" }}>
+        <Grid
+          sx={{
+            minWidth: "600px",
+            display: "flex",
+            // border: "1px solid black",
+            alignItems: "center",
+            height: "50px",
+          }}
+        >
           <FormControl
             sx={{
               width: "300px",
-              height: "10px",
+              // height: "0px",
               "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderRadius: "13px",
+                borderRadius: "5px",
               },
             }}
-            // size="small"
+            // size="md"
           >
             <DateRangePicker
               defaultValue={defaultFilterValue}
@@ -384,21 +392,21 @@ export default function Page() {
               placeholder="Fitler By Date"
               disabledDate={combine(before("08/10/2023"), afterToday())}
               locale={locale}
-              style={{ width: 250 }}
+              style={{ width: 280 }}
               onOk={(value) => handleDateRangeFilter(value)}
               onChange={(value) => handleDateRangeFilter(value)}
-              size="md"
+              size="lg"
             />
           </FormControl>
           <FormControl
             sx={{
               width: "300px",
-              // height:"10px",
+              height: "40px",
               "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderRadius: "10px",
+                borderRadius: "5px",
               },
             }}
-            // size="small"
+            size="large"
           >
             <InputLabel id="project-label">Project</InputLabel>
             <Select
@@ -437,7 +445,30 @@ export default function Page() {
         >
           {permissions &&
             permissions.includes(permissionKeyNames?.leadManagement) &&
-            selectedProject === "All" && <AddLeadsBtn refetch={refetch} />}
+            selectedProject === "All" && (
+              <Link href="/leads/addleads">
+                <Button
+                  variant="outlined"
+                  sx={{
+                    backgroundColor: "rgba(0, 0, 0, 1)",
+                    color: "rgba(255, 255, 255, 1)",
+                    width: "125px",
+                    height: "43px",
+                    borderRadius: "13px",
+                    fontSize: "13px",
+                    fontWeight: "400",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 1)",
+                      boxShadow: "none",
+                      border: "none",
+                    },
+                  }}
+                >
+                  <Add sx={{ fontSize: "18px" }} />
+                  Add Lead
+                </Button>
+              </Link>
+            )}
 
           {permissions &&
             permissions.includes(permissionKeyNames?.leadManagement) &&
@@ -447,7 +478,28 @@ export default function Page() {
                   <Grid key={permission?.id}>
                     {permission?.permission === "leadAddAndView" &&
                       permission?._id === selectedProjectId && (
-                        <AddLeadsBtn refetch={refetch} />
+                        <Link href="/leads/addleads">
+                          <Button
+                            variant="outlined"
+                            sx={{
+                              backgroundColor: "rgba(0, 0, 0, 1)",
+                              color: "rgba(255, 255, 255, 1)",
+                              width: "125px",
+                              height: "43px",
+                              borderRadius: "13px",
+                              fontSize: "13px",
+                              fontWeight: "400",
+                              "&:hover": {
+                                backgroundColor: "rgba(0, 0, 0, 1)",
+                                boxShadow: "none",
+                                border: "none",
+                              },
+                            }}
+                          >
+                            <Add sx={{ fontSize: "18px" }} />
+                            Add Lead
+                          </Button>
+                        </Link>
                       )}
                   </Grid>
                 ))}
@@ -466,9 +518,8 @@ export default function Page() {
           />
         </Grid>
       </Grid>
-      <Grid
+      {/* <Grid
         sx={{
-          // border: "1px solid black",
           display: "flex",
           alignItems: "center",
           height: "10vh",
@@ -498,7 +549,7 @@ export default function Page() {
               minHeight: "6vh",
               display: "flex",
               alignItems: "center",
-              backgroundColor: "rgba(250, 185, 0, 0.1)",
+              backgroundColor: "#fff9e7",
             }}
           >
             <Typography
@@ -523,7 +574,6 @@ export default function Page() {
                   textAlign: "center",
                 }}
               >
-                {" "}
                 <DoneAllIcon sx={{ fontSize: "18px", color: "green" }} />
                 &nbsp;
                 <strong>Success</strong> (Bring the Customer to the initial Site
@@ -541,7 +591,6 @@ export default function Page() {
                   borderRight: "1px solid",
                 }}
               >
-                {" "}
                 <DoneAllIcon sx={{ fontSize: "18px", color: "red" }} />
                 &nbsp;
                 <strong>Duplicate</strong> (Bring the Customer to the initial
@@ -559,7 +608,6 @@ export default function Page() {
                   borderRight: "1px solid",
                 }}
               >
-                {" "}
                 <DoneAllIcon sx={{ fontSize: "18px", color: "grey" }} />
                 &nbsp;
                 <strong>Duplicate</strong> (Customer Already Visited the Site.
@@ -576,13 +624,72 @@ export default function Page() {
                   justifyContent: "center",
                 }}
               >
-                {" "}
                 <Close sx={{ fontSize: "18px", color: "red" }} />
                 &nbsp;
                 <strong>Lead Exists</strong>
               </Typography>
             </Typography>
           </Grid>
+        </Grid>
+      </Grid> */}
+      <Grid
+        sx={{
+          background: "#fff9e7",
+          margin: "15px 0px",
+          fontSize: "12px",
+          borderRadius: "5px",
+          color: "#000",
+          border: "1px solid #ffb52f",
+          display: "flex",
+        }}
+      >
+        <Grid
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            padding: "10px",
+          }}
+        >
+          <Typography
+            component="span"
+            sx={{
+              fontSize: "12px",
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              letterSpacing: ".5px",
+              wordSpacing: "1px",
+            }}
+          >
+            <DoneAllIcon style={{ color: "green", fontSize: "15px" }} />
+            &nbsp;
+            <strong>Success</strong>&nbsp;(Bring the Customer to the initial
+            Site Visit) |&nbsp;
+            <Close style={{ color: "red", fontSize: "15px" }} />
+            &nbsp;
+            <strong>Lead Exists</strong>
+          </Typography>
+          <Typography
+            component="span"
+            sx={{
+              fontSize: "12px",
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              letterSpacing: ".5px",
+              wordSpacing: "1px",
+            }}
+          >
+            <DoneAllIcon style={{ color: "red", fontSize: "15px" }} />
+            &nbsp;
+            <strong>Duplicate</strong>&nbsp;(Bring the Customer to the initial
+            Site Visit) |&nbsp;
+            <DoneAllIcon style={{ color: "#000", fontSize: "15px" }} />
+            &nbsp;
+            <strong>Duplicate</strong>&nbsp;(Customer Already Visited the Site.
+            You Can Bring Him/Her Again. You may get the Credit)
+          </Typography>
         </Grid>
       </Grid>
       <Grid>
@@ -596,7 +703,6 @@ export default function Page() {
           <Grid
             sx={{
               padding: "20px",
-              // border: "1px solid black",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -669,6 +775,7 @@ export default function Page() {
                       ? [0, 1, 2, 3, 4, 5, 6].map(() => {
                           return (
                             <TableRow>
+                              <TableCell>*******</TableCell>
                               <TableCell>*******</TableCell>
                               <TableCell>*******</TableCell>
                               <TableCell>*******</TableCell>
