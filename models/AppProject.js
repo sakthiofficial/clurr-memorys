@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { addCreatedHook } = require("./hooks/addCreated");
 
 const { Schema } = mongoose;
 const CpAppProjectSchema = new Schema({
@@ -21,7 +22,9 @@ const CpAppProjectSchema = new Schema({
     type: String,
     required: true,
   },
+  created: { type: Number },
 });
+addCreatedHook(CpAppProjectSchema);
 
 module.exports.CpAppProject =
   mongoose.models.CpAppProject ||

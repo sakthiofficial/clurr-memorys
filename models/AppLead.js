@@ -9,7 +9,7 @@ const CpAppLeadSchema = new Schema({
   email: { type: String, trim: true },
   phone: { type: String, trim: true },
   project: { type: String },
-  createdDate: { type: Number },
+  created: { type: Number },
   createdBy: { type: Schema.Types.ObjectId, ref: "CpAppUser", required: true },
 });
 // have a refrence old project to add created hook

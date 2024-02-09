@@ -133,12 +133,24 @@ function roleSubordinates(userRole) {
   }
   return roleHierarchyArr;
 }
-function parentRole(userRole) {
+function parentRole(role) {
+  let userRole = role;
+  if (Array.isArray(role)) {
+    const [arrayRole] = role;
+    userRole = arrayRole;
+  }
+  console.log(userRole);
   if (userRole === roleNames?.admin || userRole === roleNames?.mis) {
     return roleNames?.superAdmin;
   }
   if (userRole === roleNames?.superAdmin) {
     return roleNames?.superAdmin;
+  }
+  if (
+    userRole === roleNames?.cpBranchHead ||
+    userRole === roleNames?.cpExecute
+  ) {
+    return roleNames?.cpRm;
   }
   const roleHierarchyArr = [
     roleNames?.superAdmin,
@@ -188,6 +200,7 @@ function checkValidRoleToAddLead(userRole) {
 
   return isCpRole;
 }
+
 function isNonPriorityUser(userRole) {
   let roleArr = userRole;
   if (typeof userRole === "string") {

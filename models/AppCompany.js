@@ -1,5 +1,6 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
+const { addCreatedHook } = require("./hooks/addCreated");
 
 const { Schema } = mongoose;
 const CpAppCompanySchema = new Schema({
@@ -42,8 +43,9 @@ const CpAppCompanySchema = new Schema({
     required: true,
   },
 
-  createdDate: { type: Number, default: () => Math.floor(Date.now() / 1000) },
+  created: { type: Number },
 });
+addCreatedHook(CpAppCompanySchema);
 
 module.exports.CpAppCompany =
   mongoose.models.CpAppCompany ||

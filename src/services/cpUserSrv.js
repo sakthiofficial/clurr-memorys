@@ -76,18 +76,20 @@ class CPUserSrv {
       const checkParentValidation =
         !newUser?.role.includes(roleNames?.mis) &&
         !newUser?.role.includes(roleNames?.admin);
-      const checkProject = !isPriorityUser(newUser?.role);
+      const checkProject =
+        !isPriorityUser(newUser?.role) &&
+        !newUser[userDataObj?.projects].length < 1;
 
       if (checkParentValidation) {
         for (let i = 0; i < newUser[userDataObj?.role].length; i += 1) {
           if (
             !parentData[userDataObj?.role].includes(
-              parentRole(newUser[userDataObj?.role][0]),
+              parentRole(newUser[userDataObj?.role]),
             )
           ) {
             console.log(
               parentData[userDataObj?.role],
-              parentRole(newUser[userDataObj?.role][0]),
+              parentRole(newUser[userDataObj?.role]),
             );
             throw userValidationErrors?.ParentRoleLimitation;
           }
@@ -539,8 +541,9 @@ class CPUserSrv {
       const roleData = await CpAppRole.find({
         name: providedUser[userDataObj?.subordinateRoles],
       });
-      const roleIds = roleData.map((val) => val._id);
-
+      const roleIds = roleData.map((val) =>
+        isCpUser(val.name) ? null : val._id,
+      );
       let users = await CpAppUser.find(
         { role: { $in: roleIds } },
         { password: 0 },
@@ -781,7 +784,9 @@ class CPUserSrv {
       } else {
         delete updateUser.password;
       }
-
+      if (!updateUser[userDataObj?.parentId]) {
+        delete updateUser.parentId;
+      }
       const userData = await this.createSaveUser(updateUser);
       const updateUserObjKeys = Object.keys(updateUser);
       const createdUserKeys = Object.keys(userData);
