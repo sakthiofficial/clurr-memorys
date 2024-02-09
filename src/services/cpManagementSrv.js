@@ -126,6 +126,7 @@ class CpManagementSrv {
 
         let cpCode = `${companyCode}${code.padStart(5, "0")}`;
         const codeCheck = await CpAppCompany.findOne({ cpCode });
+        console.log("codeCheck", codeCheck);
         if (codeCheck) {
           cpCode = await this.genrateCompanyCode(
             typeof code === "number" ? code + 1 : +code + 1,
@@ -145,9 +146,8 @@ class CpManagementSrv {
       lastCode = lastCode.cpCode;
 
       const lastNumber = parseInt(lastCode.replace(/\D/g, ""), 10);
-      const newNumber = lastNumber + 1;
-
-      return `URHCP${String(newNumber).padStart(5, "0")}`;
+      const result = await this.genrateCompanyCode(lastNumber);
+      return result;
     };
     this.retriveBranchHead = async (providedUser) => {
       if (
