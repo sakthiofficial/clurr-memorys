@@ -17,7 +17,10 @@ import Link from "next/link";
 import React from "react";
 import { useSearchParams } from "next/navigation";
 import ReplayIcon from "@mui/icons-material/Replay";
-import { useEditUserMutation, useRetriveCpByCompanyQuery } from "@/reduxSlice/apiSlice";
+import {
+  useEditUserMutation,
+  useRetriveCpByCompanyQuery,
+} from "@/reduxSlice/apiSlice";
 import { unixToDate } from "../../../../shared/dateCalc";
 import CpEditRmDialogBox from "../../components/CpEditRmDialog";
 import CpEditDialog from "../../components/CpEditDialog";
@@ -34,24 +37,25 @@ export default function Page() {
   });
 
   // console.log(data?.result);
-const [resetPassword]=useEditUserMutation()
-  const handleExecuteReset = (executeData) => {
+  const [resetPassword] = useEditUserMutation();
+  const handleExecuteReset = async (executeData) => {
     const updatedReset = {
       id: executeData[0]._id,
       password: "Pass@123",
-      name: executeData[0].name,
     };
     console.log(updatedReset);
+    await resetPassword(updatedReset);
     // console.log("cpexecute reset");
   };
 
-  const handleBranchHeadReset = (branchHeadData) => {
+  const handleBranchHeadReset = async (branchHeadData) => {
     const updatedReset = {
       id: branchHeadData?._id,
       password: "Pass@123",
-      name: branchHeadData.name,
     };
     console.log(updatedReset);
+    await resetPassword(updatedReset);
+
     // console.log("cpexecute reset");
   };
 
