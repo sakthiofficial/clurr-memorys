@@ -677,5 +677,15 @@ class CpManagementSrv {
       null,
     );
   };
+
+  createCpExecute = async (providedUser, cpDetails) => {
+    const test = {
+      companyId: "",
+      name: "",
+      phone: "",
+      password: "",
+      email: "",
+    };
+  };
 }
 export default CpManagementSrv;

@@ -820,7 +820,11 @@ class CPUserSrv {
       await CpAppUser.findOneAndUpdate(filter, update, options);
       const activityService = new ActivitySrv();
       await activityService.createActivity(
-        activityActionTypes?.cpEdit,
+        isCpUser(
+          updateUser[userDataObj?.role] || updateUserDbData[userDataObj?.role],
+        )
+          ? activityActionTypes?.cpEdit
+          : activityActionTypes?.userEdit,
         providedUser[userDataObj?.name],
 
         providedUser?._id,
