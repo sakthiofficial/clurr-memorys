@@ -42,6 +42,11 @@ export async function PUT(request) {
       );
     }
     const bodyData = await request.json();
+    const isProjectValidationNeeded =
+      (bodyData?.projects || []).length < 1 || isPriorityUser(bodyData?.role);
+    const isParentValidationNeeded =
+      (bodyData?.projects || []).length < 1 ||
+      roleNames?.superAdmin === bodyData?.role;
     const validateQuery = Joi.object({
       id: Joi.string().required(),
       name: Joi.string(),
@@ -49,14 +54,11 @@ export async function PUT(request) {
       password: Joi.string().allow(""),
 
       role: Joi.array(),
-      projects: isPriorityUser(bodyData?.role)
-        ? Joi.array()
-        : Joi.array().min(1),
+      projects: isProjectValidationNeeded ? Joi.array() : Joi.array().min(1),
       phone: Joi.string(),
-      parentId:
-        roleNames?.superAdmin === bodyData?.role
-          ? Joi.string().allow("")
-          : Joi.string().required(),
+      parentId: isParentValidationNeeded
+        ? Joi.string().allow("")
+        : Joi.string().required(),
     });
     const { error, value } = validateQuery.validate(bodyData);
 
