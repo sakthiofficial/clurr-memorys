@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import { Grid, TextField, Typography } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { useEditUserMutation } from "@/reduxSlice/apiSlice";
 
 export default function CpEditDialog({ data, refetch }) {
@@ -47,23 +48,10 @@ export default function CpEditDialog({ data, refetch }) {
 
   return (
     <Grid>
-      <Button
+      <EditIcon
+        sx={{ fontSize: "20px", cursor: "pointer" }}
         onClick={handleClickOpen}
-        sx={{
-          borderRadius: "10px",
-          color: "black",
-          width: "48px",
-          height: "25px",
-          fontSize: "12px",
-          backgroundColor: "rgba(249, 184, 0, 1)",
-          "&:hover": {
-            backgroundColor: "rgba(249, 184, 0, 1)",
-            boxShadow: "none",
-          },
-        }}
-      >
-        edit
-      </Button>
+      />
       <Dialog
         onClose={handleClose}
         open={open}

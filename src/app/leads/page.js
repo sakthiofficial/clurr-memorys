@@ -307,7 +307,7 @@ export default function Page() {
       return "green";
     }
     if (status === leadRegistrationStatus.duplicate) {
-      return "red";
+      return "black";
     }
     if (status === leadRegistrationStatus.exist) {
       return "red";
@@ -771,109 +771,100 @@ export default function Page() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {slicedRows?.length === 0
-                      ? [0, 1, 2, 3, 4, 5, 6].map(() => {
-                          return (
-                            <TableRow>
-                              <TableCell>*******</TableCell>
-                              <TableCell>*******</TableCell>
-                              <TableCell>*******</TableCell>
-                              <TableCell>*******</TableCell>
-                              <TableCell>*******</TableCell>
-                              <TableCell>*******</TableCell>
-                              <TableCell>*******</TableCell>
-                              <TableCell>*******</TableCell>
-                            </TableRow>
-                          );
-                        })
-                      : slicedRows.map((row) => (
-                          <TableRow key={row?.id}>
-                            <TableCell sx={{ fontSize: "11px" }}>
-                              {row?.FirstName || "N/A"}
-                            </TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>
-                              {row?.Phone || "**********"}
-                            </TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>
-                              {row?.EmailAddress || (
-                                <Typography
-                                  sx={{
-                                    display: "inline-block",
-                                    minWidth: "80px",
-                                    // height: "20px",
-                                    borderRadius: "10px",
-                                    backgroundColor: "rgba(250, 185, 0, 1)",
-                                    color: "white",
-                                    paddingLeft: "10px",
-                                    paddingRight: "10px",
-                                    alignItems: "center",
-                                    textAlign: "center",
-                                    fontSize: "14px",
-                                  }}
-                                >
-                                  not provided
-                                </Typography>
-                              )}
-                            </TableCell>
-                            <TableCell
-                              style={{
-                                color: getStatusColor(row?.LeadRegistration),
-                              }}
-                            >
-                              {row.LeadRegistration ===
-                              leadRegistrationStatus?.exist ? (
-                                <Close sx={{ fontSize: "20px" }} />
-                              ) : (
-                                <DoneAllIcon sx={{ fontSize: "20px" }} />
-                              )}
-                            </TableCell>
-
-                            <TableCell sx={{ fontSize: "11px" }}>
-                              {row?.mx_Sub_Source || "N/A"}
-                            </TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>
-                              {row?.ProspectStage || "N/A"}
-                            </TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>
-                              {row?.CreatedOn || "N/A"}
-                            </TableCell>
-                            <TableCell sx={{ fontSize: "11px" }}>
-                              <Grid
+                    {slicedRows?.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7}>No Leads</TableCell>
+                      </TableRow>
+                    ) : (
+                      slicedRows.map((row) => (
+                        <TableRow key={row?.id}>
+                          <TableCell sx={{ fontSize: "11px" }}>
+                            {row?.FirstName || "N/A"}
+                          </TableCell>
+                          <TableCell sx={{ fontSize: "11px" }}>
+                            {row?.Phone || "**********"}
+                          </TableCell>
+                          <TableCell sx={{ fontSize: "11px" }}>
+                            {row?.EmailAddress || (
+                              <Typography
                                 sx={{
-                                  display: "flex",
+                                  display: "inline-block",
+                                  minWidth: "80px",
+                                  // height: "20px",
+                                  borderRadius: "10px",
+                                  backgroundColor: "rgba(250, 185, 0, 1)",
+                                  color: "white",
+                                  paddingLeft: "10px",
+                                  paddingRight: "10px",
                                   alignItems: "center",
+                                  textAlign: "center",
+                                  fontSize: "14px",
                                 }}
                               >
-                                <Link
-                                  href={{
-                                    pathname: "/leads/view",
-                                    search: `?phone=${row?.Phone}&project=${row?.Project}`,
+                                not provided
+                              </Typography>
+                            )}
+                          </TableCell>
+                          <TableCell
+                            style={{
+                              color: getStatusColor(row?.LeadRegistration),
+                            }}
+                          >
+                            {row.LeadRegistration ===
+                            leadRegistrationStatus?.exist ? (
+                              <Close sx={{ fontSize: "20px" }} />
+                            ) : (
+                              <DoneAllIcon sx={{ fontSize: "20px" }} />
+                            )}
+                          </TableCell>
+
+                          <TableCell sx={{ fontSize: "11px" }}>
+                            {row?.mx_Sub_Source || "N/A"}
+                          </TableCell>
+                          <TableCell sx={{ fontSize: "11px" }}>
+                            {row?.ProspectStage || "N/A"}
+                          </TableCell>
+                          <TableCell sx={{ fontSize: "11px" }}>
+                            {row?.CreatedOn || "N/A"}
+                          </TableCell>
+                          <TableCell sx={{ fontSize: "11px" }}>
+                            <Grid
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Link
+                                href={{
+                                  pathname: "/leads/view",
+                                  search: `?phone=${row?.Phone}&project=${row?.Project}`,
+                                }}
+                              >
+                                <Button
+                                  variant="outlined"
+                                  sx={{
+                                    borderRadius: "10px",
+                                    color: "black",
+                                    width: "48px",
+                                    height: "25px",
+                                    border: "none",
+                                    fontSize: "12px",
+                                    backgroundColor: "rgba(249, 184, 0, 1)",
+                                    "&:hover": {
+                                      backgroundColor: "rgba(249, 184, 0, 1)",
+                                      boxShadow: "none",
+                                      border: "none",
+                                    },
                                   }}
                                 >
-                                  <Button
-                                    variant="outlined"
-                                    sx={{
-                                      borderRadius: "10px",
-                                      color: "black",
-                                      width: "48px",
-                                      height: "25px",
-                                      border: "none",
-                                      fontSize: "12px",
-                                      backgroundColor: "rgba(249, 184, 0, 1)",
-                                      "&:hover": {
-                                        backgroundColor: "rgba(249, 184, 0, 1)",
-                                        boxShadow: "none",
-                                        border: "none",
-                                      },
-                                    }}
-                                  >
-                                    view
-                                  </Button>
-                                </Link>
-                              </Grid>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                                  view
+                                </Button>
+                              </Link>
+                            </Grid>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               )}

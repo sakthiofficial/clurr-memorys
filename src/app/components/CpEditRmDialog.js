@@ -20,9 +20,10 @@ import {
 
 export default function CpEditRmDialog({ data, id, refetch }) {
   const [open, setOpen] = useState(false);
+  const [selectedRmProjects, setSelectedRmProjects] = useState([]);
+
   const [selectedRm, setSelectedRm] = useState([data?.result?.cpRm?.name]);
   const [selectedProjects, setSelectedProjects] = useState([]);
-  const [selectedRmProjects, setSelectedRmProjects] = useState([]);
 
   const {
     data: rmQueryData,
@@ -33,22 +34,23 @@ export default function CpEditRmDialog({ data, id, refetch }) {
 
   useEffect(() => {
     const filteredData = rmQueryData?.result.filter((item) =>
-      selectedRm.includes(item.name),
+      selectedRm?.includes(item?.name),
     );
     setSelectedRmProjects(filteredData);
   }, [rmQueryData, selectedRm]);
 
   useEffect(() => {
-    if (selectedRmProjects?.length >= 1) {
-      const setRmProject = selectedRmProjects[0]?.projects;
-      setSelectedProjects(setRmProject);
+    if (selectedRmProjects) {
+      setSelectedProjects(selectedRmProjects[0]?.projects);
+      console.log("inside effect", selectedRmProjects[0]);
     }
-  }, [selectedRmProjects, selectedRm]);
+  }, [selectedRmProjects]);
 
-  // console.log(selectedRmProjects);
+  // console.log(selectedProjects);
 
   const handleRmChange = (event) => {
-    setSelectedRm([event.target.value]);
+    const selectedRmName = event.target.value;
+    setSelectedRm([selectedRmName]);
   };
 
   const handleProjectsChange = (event) => {
@@ -74,9 +76,10 @@ export default function CpEditRmDialog({ data, id, refetch }) {
     const updatedValues = {
       projects: selectedProjects,
       id,
-      parentId: selectedRmProjects[0]._id,
+      parentId: selectedRmProjects[0]?._id,
     };
     await cpRmEdit(updatedValues);
+    // console.log(updatedValues);
     handleClose();
     await refetch();
   };
@@ -148,8 +151,8 @@ export default function CpEditRmDialog({ data, id, refetch }) {
                 }
               >
                 {(rmQueryData?.result || []).map((rm) => (
-                  <MenuItem key={rm.name} value={rm.name}>
-                    {rm.name}
+                  <MenuItem key={rm?.name} value={rm?.name}>
+                    {rm?.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -178,10 +181,10 @@ export default function CpEditRmDialog({ data, id, refetch }) {
                   </Box>
                 )}
               >
-                {(selectedRmProjects || []).map((pro) => (
+                {(selectedProjects || []).map((pro) => (
                   <MenuItem
-                    key={pro.projects}
-                    value={pro.projects}
+                    key={pro}
+                    value={pro}
                     sx={{
                       "&.Mui-selected": {
                         backgroundColor: "white",
@@ -190,7 +193,7 @@ export default function CpEditRmDialog({ data, id, refetch }) {
                       },
                     }}
                   >
-                    {pro.projects}
+                    {pro}
                   </MenuItem>
                 ))}
               </Select>

@@ -14,31 +14,15 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import React from "react";
 import { useSearchParams } from "next/navigation";
+import ReplayIcon from "@mui/icons-material/Replay";
 import { useRetriveCpByCompanyQuery } from "@/reduxSlice/apiSlice";
 import { unixToDate } from "../../../../shared/dateCalc";
 import CpEditRmDialogBox from "../../components/CpEditRmDialog";
 import CpEditDialog from "../../components/CpEditDialog";
 import CpEditExecuteDialog from "../../components/CpEditExecuteDialog";
 import AddExecuteAccount from "@/app/components/AddExecuteAccount";
-
-/// dialog box setup
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-}));
 
 export default function Page() {
   const params = useSearchParams();
@@ -51,22 +35,11 @@ export default function Page() {
 
   // console.log(data?.result);
 
-  /// dialog open functions
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = async () => {
-    setOpen(false);
-  };
-
   const handleExecuteReset = (executeData) => {
     const updatedReset = {
       id: executeData[0]._id,
       password: "Pass@123",
+      name: executeData[0].name,
     };
     console.log(updatedReset);
     // console.log("cpexecute reset");
@@ -76,6 +49,7 @@ export default function Page() {
     const updatedReset = {
       id: branchHeadData?._id,
       password: "Pass@123",
+      name: branchHeadData.name,
     };
     console.log(updatedReset);
     // console.log("cpexecute reset");
@@ -282,23 +256,12 @@ export default function Page() {
                     />
                   </TableCell>
                   <TableCell sx={{ fontSize: "12px" }}>
-                    <Button
-                      onClick={() => handleBranchHeadReset()}
-                      sx={{
-                        borderRadius: "10px",
-                        color: "black",
-                        width: "48px",
-                        height: "25px",
-                        fontSize: "12px",
-                        backgroundColor: "rgba(249, 184, 0, 1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          boxShadow: "none",
-                        },
-                      }}
-                    >
-                      reset
-                    </Button>
+                    <ReplayIcon
+                      sx={{ fontSize: "20px", cursor: "pointer" }}
+                      onClick={() =>
+                        handleBranchHeadReset(data?.result?.cpBranchHead)
+                      }
+                    />
                   </TableCell>
                 </TableRow>
 
@@ -326,25 +289,15 @@ export default function Page() {
                       />
                     </TableCell>
                     <TableCell sx={{ fontSize: "12px" }}>
-                      <Button
+                      <ReplayIcon
+                        sx={{
+                          fontSize: "20px",
+                          cursor: "pointer",
+                        }}
                         onClick={() =>
                           handleExecuteReset(data?.result?.cpExecutes)
                         }
-                        sx={{
-                          borderRadius: "10px",
-                          color: "black",
-                          width: "48px",
-                          height: "25px",
-                          fontSize: "12px",
-                          backgroundColor: "rgba(249, 184, 0, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(249, 184, 0, 1)",
-                            boxShadow: "none",
-                          },
-                        }}
-                      >
-                        reset
-                      </Button>
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

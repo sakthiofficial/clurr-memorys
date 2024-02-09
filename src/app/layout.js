@@ -531,7 +531,7 @@ export default function RootLayout({ children }) {
       if (pathname === "/") {
         router.push("/leads");
       }
-      console.log(user);
+      // console.log(user);
     } else {
       setUser(null);
       console.error('No data found in local storage for key "user".');
@@ -545,8 +545,6 @@ export default function RootLayout({ children }) {
   //   }
   //   console.log("working router push");
   // }, []);`
-
-
 
   return (
     <Provider store={store}>

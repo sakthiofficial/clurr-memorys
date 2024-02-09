@@ -4,7 +4,6 @@ import {
   Button,
   FormControl,
   Grid,
-  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -14,12 +13,14 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Add } from "@mui/icons-material";
+import PhoneInput from "react-phone-input-2";
 import { checkValidRoleToAddLead } from "../../../../shared/roleManagement";
 import {
   useAddLeadMutation,
   useGetCPSQuery,
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
+import "react-phone-input-2/lib/style.css";
 
 export default function Page() {
   const [permissionproject, setPermissionProject] = useState([]);
@@ -27,7 +28,7 @@ export default function Page() {
   const [role, setRole] = useState("");
   const [userCpCode, setUserCpCode] = useState("");
   const [selectedCompanyName, setSelectedCompanyName] = useState("");
-  const checkBranchHeadAndExecutes = checkValidRoleToAddLead(role);
+  checkValidRoleToAddLead(role);
 
   const [leadData] = useAddLeadMutation();
   // console.log(checkBranchHeadAndExecutes);
@@ -40,9 +41,7 @@ export default function Page() {
     notes: "",
     id: "",
   });
-  // console.log(formData.id);
-  // get cp data
-  // console.log(data);
+
   const resultProject = useGetProjectWithPermissionQuery();
   const resultCps = useGetCPSQuery();
 
@@ -98,21 +97,21 @@ export default function Page() {
   const handleSubmitAdd = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.userName ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.project ||
-      !formData.companyCode ||
-      !formData.id
-    ) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
+    // if (
+    //   !formData.userName ||
+    //   !formData.email ||
+    //   !formData.phone ||
+    //   !formData.project ||
+    //   !formData.companyCode ||
+    //   !formData.id
+    // ) {
+    //   toast.error("Please fill in all required fields");
+    //   return;
+    // }
     setFormData({
       userName: "",
       email: "",
-      phone: "+91",
+      phone: "91",
       project: "",
       companyCode: "",
       notes: "",
@@ -121,7 +120,20 @@ export default function Page() {
     if (selectedCompanyName) {
       setSelectedCompanyName("");
     }
-    await leadData(formData);
+    // await leadData(formData);
+    console.log(formData);
+  };
+
+  const [valid, setValid] = useState(true);
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const phoneNumberPattern = /^\+?[1-9]\d{1,14}$/;
+    return phoneNumberPattern.test(phoneNumber);
+  };
+
+  const handlePhoneChange = (value) => {
+    setFormData({ ...formData, phone: value });
+    setValid(validatePhoneNumber(value));
   };
 
   return (
@@ -158,7 +170,7 @@ export default function Page() {
             </Button>
           </Link>
         </Grid>
-        <Grid
+        {/* <Grid
           sx={{
             minHeight: "580px",
             borderRadius: "29px",
@@ -195,13 +207,11 @@ export default function Page() {
                 display: "flex",
                 flexDirection: "column",
                 gap: "8px",
-                // border: "1px solid black",
                 width: "60%",
               }}
             >
               <Grid
                 sx={{
-                  // border: "1px solid black",
                   display: "flex",
                   justifyContent: "space-between",
                   flexWrap: "wrap",
@@ -369,7 +379,6 @@ export default function Page() {
                         },
                     }}
                   >
-                    {/* <InputLabel id="project-label">Select one project</InputLabel> */}
                     <Select
                       id="project"
                       name="project"
@@ -439,7 +448,246 @@ export default function Page() {
                   fontSize: "12px",
                   backgroundColor: "transparent",
                   color: "black",
-                  // width: "120px",
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                    boxShadow: "none",
+                    border: "1px solid gray",
+                  },
+                }}
+              >
+                Save&nbsp;
+                <Add sx={{ fontSize: "12px" }} />
+                &nbsp;Add Another Lead
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid> */}
+        <Grid
+          sx={{
+            minHeight: "580px",
+            borderRadius: "29px",
+            boxShadow: " 0px 6px 32px 0px rgba(0, 0, 0, 0.15)",
+            border: "1px solid #9E9E9E",
+            width: "100%",
+          }}
+        >
+          <Grid
+            sx={{
+              height: "59px",
+              backgroundColor: "black",
+              color: "white",
+              borderRadius: "29px 29px 0px 0px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{ fontSize: "18px", fontWeight: "600", padding: "20px" }}
+            >
+              Add New Leads
+            </Typography>
+          </Grid>
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="center"
+            sx={{ minHeight: "550px" }}
+          >
+            <Grid
+              item
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+                width: "60%",
+              }}
+            >
+              <Grid
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                }}
+              >
+                <TextField
+                  name="userName"
+                  placeholder="Enter name"
+                  value={formData?.userName}
+                  sx={{
+                    width: "300px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "5px",
+                      },
+                    "& input::placeholder": {
+                      color: "black",
+                    },
+                  }}
+                  onChange={(e) =>
+                    setFormData({ ...formData, userName: e.target.value })
+                  }
+                />
+
+                {/* <TextField
+                  name="phone"
+                  sx={{
+                    width: "300px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "5px",
+                      },
+                    "& input::placeholder": {
+                      color: "red",
+                    },
+                  }}
+                  value={formData?.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                /> */}
+                <Grid>
+                  <PhoneInput
+                    inputStyle={{
+                      width: "300px",
+                      height: "60px",
+                      backgroundColor: "white",
+                    }}
+                    country="in"
+                    value={formData?.phone}
+                    onChange={handlePhoneChange}
+                    inputProps={{
+                      required: true,
+                    }}
+                  />
+                  {!valid && <p>Please enter a valid phone number.</p>}
+                </Grid>
+              </Grid>
+              <Grid>
+                <TextField
+                  name="email"
+                  placeholder="Enter email"
+                  fullWidth
+                  value={formData.email}
+                  sx={{
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "5px",
+                      },
+                  }}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
+              </Grid>
+              <Grid
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                }}
+              >
+                {role[0] === "CP Branch Head" || role[0] === "CP Executive" ? (
+                  ""
+                ) : (
+                  <FormControl
+                    sx={{
+                      width: "300px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "5px",
+                        },
+                    }}
+                  >
+                    <Select
+                      value={selectedCompanyName}
+                      onChange={handleCpChange}
+                      name="cp"
+                      displayEmpty
+                      renderValue={(selected) =>
+                        selected || (
+                          <Typography sx={{ color: "gray" }}>
+                            Select a partner
+                          </Typography>
+                        )
+                      }
+                      MenuProps={{ disableScrollLock: true }}
+                    >
+                      {resultCps?.data?.result?.map((cp) => (
+                        <MenuItem key={cp?.name} value={cp?.name}>
+                          {cp?.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+                <FormControl
+                  sx={{
+                    width: "300px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "5px",
+                      },
+                  }}
+                >
+                  <Select
+                    id="project"
+                    name="project"
+                    displayEmpty
+                    renderValue={(selected) =>
+                      selected || (
+                        <Typography sx={{ color: "gray" }}>
+                          Select a projects
+                        </Typography>
+                      )
+                    }
+                    value={formData?.project}
+                    onChange={(e) =>
+                      setFormData({ ...formData, project: e.target.value })
+                    }
+                    MenuProps={{ disableScrollLock: true }}
+                  >
+                    {permissionproject?.map((proj) => (
+                      <MenuItem key={proj.name} value={proj.name}>
+                        {proj.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid>
+                <TextField
+                  fullWidth
+                  id="outlined-multiline-static"
+                  multiline
+                  rows={3}
+                  name="notes"
+                  type="text"
+                  placeholder="Enter exclusive notes...."
+                  value={formData?.notes}
+                  sx={{
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "5px",
+                      },
+                  }}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
+                />
+              </Grid>
+              <Button
+                onClick={handleSubmitAdd}
+                fullWidth
+                sx={{
+                  border: "1px solid gray",
+                  height: "40px",
+                  marginTop: "20px",
+                  borderRadius: "5px",
+                  letterSpacing: ".5px",
+                  padding: "0px 20px ",
+                  fontSize: "12px",
+                  backgroundColor: "transparent",
+                  color: "black",
                   "&:hover": {
                     backgroundColor: "transparent",
                     boxShadow: "none",
