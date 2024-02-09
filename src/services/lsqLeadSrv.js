@@ -334,6 +334,7 @@ class LSQLeadSrv {
           Value: notes,
         },
       ];
+      console.log(postBody);
       const cpLeadSchema = new CpAppLead({
         name: userName,
         email,

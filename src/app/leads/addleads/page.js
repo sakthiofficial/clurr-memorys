@@ -56,7 +56,7 @@ export default function Page() {
       console.error("No data found");
     }
   }, []);
-
+  console.log(userCpCode);
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
     setSelectedCompanyName(selectedCpName);
@@ -120,7 +120,7 @@ export default function Page() {
     if (selectedCompanyName) {
       setSelectedCompanyName("");
     }
-    // await leadData(formData);
+    await leadData(formData);
     console.log(formData);
   };
 

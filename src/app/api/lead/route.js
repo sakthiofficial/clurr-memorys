@@ -8,6 +8,7 @@ import {
 import getUserByToken from "../../../helper/getUserByToken";
 import LSQLeadSrv from "../../../services/lsqLeadSrv";
 
+export const dynamic = "force-dynamic";
 export async function POST(req) {
   try {
     const providedUser = await getUserByToken(req);
