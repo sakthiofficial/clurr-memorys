@@ -6,11 +6,15 @@ import { userDataObj } from "../../shared/roleManagement";
 
 export default async function getUserByToken(request) {
   await initDb();
-  const { value: token } = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
+  const cookie = request.cookies.get(TOKEN_VARIABLES?.TOKEN_NAME);
+  if (!cookie) {
+    return null;
+  }
+  const { value: token } = cookie;
   const providedUserSessionData = await Session.findOne({
     token,
   });
-  console.log(providedUserSessionData);
+
   if (!providedUserSessionData) {
     return null;
   }
