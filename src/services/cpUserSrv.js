@@ -72,13 +72,14 @@ class CPUserSrv {
       // Project Validation
       const checkParentProject =
         !isPriorityUser(newUser?.role) &&
-        !newUser?.role.includes(roleNames?.cpTl);
+        !newUser?.role.includes(roleNames?.cpTl) &&
+        newUser[userDataObj?.projects];
       const checkParentValidation =
         !newUser?.role.includes(roleNames?.mis) &&
         !newUser?.role.includes(roleNames?.admin);
       const checkProject =
         !isPriorityUser(newUser?.role) &&
-        !newUser[userDataObj?.projects].length < 1;
+        !(newUser[userDataObj?.projects] || []).length < 1;
 
       if (checkParentValidation) {
         for (let i = 0; i < newUser[userDataObj?.role].length; i += 1) {
@@ -743,6 +744,14 @@ class CPUserSrv {
 
   updateUser = async (providedUser, updateUser) => {
     try {
+      const updateUserObjKeys = Object.keys(updateUser);
+
+      updateUserObjKeys.map((key) => {
+        if (!updateUser[key]) {
+          delete updateUser[key];
+        }
+        return null;
+      });
       const updateUserDbData = await this.getUserById(updateUser?.id);
 
       if (!updateUserDbData) {
@@ -773,7 +782,10 @@ class CPUserSrv {
         }
         parentUser = updateUserParentData;
       }
+      console.log("comming here", providedUser, updateUser, parentUser);
+
       await this.checkValidUserToAdd(providedUser, updateUser, parentUser);
+
       if (updateUser[userDataObj?.password]) {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(
@@ -788,7 +800,6 @@ class CPUserSrv {
         delete updateUser.parentId;
       }
       const userData = await this.createSaveUser(updateUser);
-      const updateUserObjKeys = Object.keys(updateUser);
       const createdUserKeys = Object.keys(userData);
       createdUserKeys.map((key) => {
         if (!updateUserObjKeys.includes(key)) {
@@ -813,7 +824,7 @@ class CPUserSrv {
         providedUser[userDataObj?.name],
 
         providedUser?._id,
-        updateUser[userDataObj?.name],
+        updateUser[userDataObj?.name] || updateUserDbData[userDataObj?.name],
         updateUser?.id,
       );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
