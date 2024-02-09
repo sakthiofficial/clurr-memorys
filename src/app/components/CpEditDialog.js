@@ -12,6 +12,7 @@ export default function CpEditDialog({ data, refetch }) {
     email: data?.email,
     phone: data?.phone,
     id: data?._id,
+    role: data?.role,
   });
 
   const handleClickOpen = () => {
@@ -27,7 +28,6 @@ export default function CpEditDialog({ data, refetch }) {
     setEditedData({
       name: data?.name,
       email: data?.email,
-      phone: data?.phone,
     });
   };
 
@@ -39,7 +39,7 @@ export default function CpEditDialog({ data, refetch }) {
   };
   const [cpBranchEdit] = useEditUserMutation();
 
-  const handleSubmit = async () => {
+  const handleSubmitCpBranchHead = async () => {
     console.log("Submitting changes:", editedData);
     await cpBranchEdit(editedData);
     setOpen(false);
@@ -130,7 +130,7 @@ export default function CpEditDialog({ data, refetch }) {
             </Button>
             <Button
               sx={{ border: "1px solid black", color: "black" }}
-              onClick={handleSubmit}
+              onClick={handleSubmitCpBranchHead}
             >
               Save
             </Button>

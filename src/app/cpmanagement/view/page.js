@@ -17,7 +17,7 @@ import Link from "next/link";
 import React from "react";
 import { useSearchParams } from "next/navigation";
 import ReplayIcon from "@mui/icons-material/Replay";
-import { useRetriveCpByCompanyQuery } from "@/reduxSlice/apiSlice";
+import { useEditUserMutation, useRetriveCpByCompanyQuery } from "@/reduxSlice/apiSlice";
 import { unixToDate } from "../../../../shared/dateCalc";
 import CpEditRmDialogBox from "../../components/CpEditRmDialog";
 import CpEditDialog from "../../components/CpEditDialog";
@@ -34,7 +34,7 @@ export default function Page() {
   });
 
   // console.log(data?.result);
-
+const [resetPassword]=useEditUserMutation()
   const handleExecuteReset = (executeData) => {
     const updatedReset = {
       id: executeData[0]._id,

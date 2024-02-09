@@ -12,6 +12,7 @@ export default function CpEditDialog({ data, refetch }) {
     email: data[0]?.email,
     phone: data[0]?.phone,
     id: data[0]?._id,
+    role: data[0]?.role,
   });
 
   // console.log(data[0]._id);
@@ -29,7 +30,6 @@ export default function CpEditDialog({ data, refetch }) {
     setEditedData({
       name: data[0]?.name,
       email: data[0]?.email,
-      phone: data[0]?.phone,
     });
   };
 
