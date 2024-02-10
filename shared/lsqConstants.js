@@ -58,4 +58,4 @@ const clientAppLsqMsg = {
   newLeadCreated: "Your new lead has been successfully created",
   existLeadCreated: "An existing lead has been created",
 };
-export { lsqActivityCode, customLsqField, lsqErrorMsg };
+export { lsqActivityCode, customLsqField, lsqErrorMsg, clientAppLsqMsg };
