@@ -685,7 +685,24 @@ class CpManagementSrv {
       phone: "",
       password: "",
       email: "",
+      project: [],
     };
+    const companyData = await CpAppCompany.find({ _id: cpDetails?.companyId });
+    if (!companyData) {
+      return null;
+    }
+    const userSrv = new CPUserSrv();
+    const userObj = await userSrv.createSaveUser({
+      ...cpDetails,
+      role: [roleNames?.cpExecute],
+    });
+    const userSchema = new CpAppUser(userObj);
+    const userResult = await userSchema.save();
+    const companyResult = await CpAppCompany.updateOne(
+      { _id: cpDetails?.companyId },
+      { $addToSet: { executeIds: userResult?._id } },
+    );
+    console.log(companyResult);
   };
 }
 export default CpManagementSrv;

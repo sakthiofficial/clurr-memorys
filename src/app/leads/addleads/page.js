@@ -20,7 +20,7 @@ import {
   useGetCPSQuery,
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
-import "react-phone-input-2/lib/style.css";
+// import "react-phone-input-2/lib/style.css";
 
 export default function Page() {
   const [permissionproject, setPermissionProject] = useState([]);
