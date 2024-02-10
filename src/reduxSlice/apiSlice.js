@@ -120,9 +120,9 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
-    getLeadByPhone: builder.query({
+    getLeadById: builder.query({
       query: (data) => ({
-        url: `/lead/retriveLeadByPhone?project=${data.project}&phone=${data.phonenumber}`,
+        url: `/lead/retriveLeadById?project=${data.project}&id=${data.leadId}`,
         method: "GET",
       }),
     }),
@@ -174,7 +174,7 @@ export const {
   useGetUserByIdQuery,
   useGetProjectWithPermissionQuery,
   useGetCPSQuery,
-  useGetLeadByPhoneQuery,
+  useGetLeadByIdQuery,
   useEditUserMutation,
   useRetriveCpByCompanyQuery,
   useResetPasswordMutation,

@@ -837,7 +837,7 @@ export default function Page() {
                               <Link
                                 href={{
                                   pathname: "/leads/view",
-                                  search: `?phone=${row?.Phone}&project=${row?.Project}`,
+                                  search: `?id=${row?.ProspectID}&project=${row?.Project}`,
                                 }}
                               >
                                 <Button

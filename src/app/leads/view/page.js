@@ -3,20 +3,22 @@
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
-import { useGetLeadByPhoneQuery } from "@/reduxSlice/apiSlice";
+import { useGetLeadByIdQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page() {
   const router = useRouter();
   const params = useSearchParams();
 
-  const phone = params.get("phone");
+  const id = params.get("id");
   const project = params.get("project");
-  const [phonenumber, setPhoneNumber] = useState(phone);
+  const [leadId, setleadId] = useState(id);
+  console.log(leadId);
+
   // console.log("phone number check", phone);
   // console.log(project);
 
   // get leads by phone and project
-  const { data, isFetching } = useGetLeadByPhoneQuery({ project, phonenumber });
+  const { data, isFetching } = useGetLeadByIdQuery({ project, leadId });
   // console.log(data);
 
   // handle back function
