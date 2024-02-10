@@ -689,7 +689,11 @@ class CpManagementSrv {
     };
     const companyData = await CpAppCompany.find({ _id: cpDetails?.companyId });
     if (!companyData) {
-      return null;
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
     }
     const userSrv = new CPUserSrv();
     const userObj = await userSrv.createSaveUser({
@@ -702,7 +706,11 @@ class CpManagementSrv {
       { _id: cpDetails?.companyId },
       { $addToSet: { executeIds: userResult?._id } },
     );
-    console.log(companyResult);
+    return new ApiResponse(
+      RESPONSE_STATUS?.OK,
+      RESPONSE_MESSAGE?.OK,
+      companyResult,
+    );
   };
 }
 export default CpManagementSrv;
