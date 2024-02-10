@@ -265,9 +265,9 @@ export default function Page() {
   });
 
   /// refetch the data
-  useEffect(() => {
-    refetch();
-  }, []);
+  // useEffect(() => {
+  //   refetch();
+  // }, []);
 
   // table functions
   const [page, setPage] = useState(0);

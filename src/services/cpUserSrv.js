@@ -359,10 +359,7 @@ class CPUserSrv {
         projects = await CpAppProject.find({});
       }
       projects = projects.map((project) => project.name);
-      if (
-        role.includes(roleNames?.cpBranchHead) ||
-        role.includes(roleNames?.cpExecute)
-      ) {
+      if (isCpUser(role)) {
         const companyData = await CpAppCompany.findOne({
           $or: [{ branchHeadId: _id }, { executeIds: { $in: [_id] } }],
         });
@@ -820,7 +817,11 @@ class CPUserSrv {
       await CpAppUser.findOneAndUpdate(filter, update, options);
       const activityService = new ActivitySrv();
       await activityService.createActivity(
-        activityActionTypes?.cpEdit,
+        isCpUser(
+          updateUser[userDataObj?.role] || updateUserDbData[userDataObj?.role],
+        )
+          ? activityActionTypes?.cpEdit
+          : activityActionTypes?.userEdit,
         providedUser[userDataObj?.name],
 
         providedUser?._id,

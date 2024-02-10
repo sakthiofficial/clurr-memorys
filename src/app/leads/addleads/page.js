@@ -13,19 +13,24 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Add } from "@mui/icons-material";
-import PhoneInput from "react-phone-input-2";
-import { checkValidRoleToAddLead } from "../../../../shared/roleManagement";
+// import PhoneInput from "react-phone-input-2";
+import {
+  checkValidRoleToAddLead,
+  isCpUser,
+} from "../../../../shared/roleManagement";
 import {
   useAddLeadMutation,
   useGetCPSQuery,
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
-import "react-phone-input-2/lib/style.css";
+// import "react-phone-input-2/lib/style.css";
 
 export default function Page() {
   const [permissionproject, setPermissionProject] = useState([]);
   const [userId, setUserId] = useState("");
   const [role, setRole] = useState("");
+  const [isCproleCheck, setIsCproleCheck] = useState();
+  // console.log("usestate", isCproleCheck);
   const [userCpCode, setUserCpCode] = useState("");
   const [selectedCompanyName, setSelectedCompanyName] = useState("");
   checkValidRoleToAddLead(role);
@@ -56,11 +61,20 @@ export default function Page() {
       console.error("No data found");
     }
   }, []);
-  console.log(userCpCode);
+
+  const isCps = isCpUser(role);
+  // console.log(isCps);
+
+  useEffect(() => {
+    setIsCproleCheck(isCps);
+  }, [role, isCps]);
+
+  console.log(isCproleCheck);
+  // console.log(userCpCode);
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
     setSelectedCompanyName(selectedCpName);
-    console.log(selectedCpName);
+    // console.log(selectedCpName);
   };
 
   useEffect(() => {
@@ -70,7 +84,7 @@ export default function Page() {
       );
 
       setPermissionProject(projectsWithLeadAddPermission);
-      console.log(resultProject);
+      // console.log(resultProject);
     }
   }, [resultProject]);
 
@@ -121,19 +135,6 @@ export default function Page() {
     await leadData(formData);
     // console.log(formData);
   };
-
-  const [valid, setValid] = useState(true);
-
-  const validatePhoneNumber = (phoneNumber) => {
-    const phoneNumberPattern = /^\+?[1-9]\d{1,14}$/;
-    return phoneNumberPattern.test(phoneNumber);
-  };
-
-  const handlePhoneChange = (value) => {
-    setFormData({ ...formData, phone: value });
-    setValid(validatePhoneNumber(value));
-  };
-
   return (
     <>
       <ToastContainer />
@@ -525,68 +526,114 @@ export default function Page() {
                     setFormData({ ...formData, userName: e.target.value })
                   }
                 />
-
-                {/* <TextField
-                  name="phone"
-                  sx={{
-                    width: "300px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "5px",
-                      },
-                    "& input::placeholder": {
-                      color: "red",
-                    },
-                  }}
-                  value={formData?.phone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
-                /> */}
                 <Grid>
-                  <PhoneInput
-                    inputStyle={{
+                  <TextField
+                    name="phone"
+                    placeholder="Enter Phone"
+                    value={formData.phone}
+                    sx={{
                       width: "300px",
-                      height: "60px",
-                      backgroundColor: "white",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "5px",
+                        },
+                      "& input::placeholder": {
+                        color: "black",
+                      },
                     }}
-                    country="in"
-                    value={formData?.phone}
-                    onChange={handlePhoneChange}
-                    inputProps={{
-                      required: true,
-                    }}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                   />
-                  {!valid && <p>Please enter a valid phone number.</p>}
                 </Grid>
               </Grid>
-              <Grid>
-                <TextField
-                  name="email"
-                  placeholder="Enter email"
-                  fullWidth
-                  value={formData.email}
+              {isCproleCheck ? null : (
+                <Grid>
+                  <TextField
+                    name="email"
+                    placeholder="Enter email"
+                    fullWidth
+                    value={formData.email}
+                    sx={{
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "5px",
+                        },
+                    }}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                  />
+                </Grid>
+              )}
+              {isCproleCheck ? (
+                <Grid
                   sx={{
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "5px",
-                      },
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
                   }}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                />
-              </Grid>
-              <Grid
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                }}
-              >
-                {role[0] === "CP Branch Head" || role[0] === "CP Executive" ? (
-                  ""
-                ) : (
+                >
+                  <TextField
+                    name="email"
+                    placeholder="Enter email"
+                    value={formData.email}
+                    sx={{
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "5px",
+                          width: "300px",
+                        },
+                    }}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                  />
+                  <Grid>
+                    <FormControl
+                      sx={{
+                        width: "300px",
+                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                          {
+                            borderRadius: "5px",
+                          },
+                      }}
+                    >
+                      <Select
+                        id="project"
+                        name="project"
+                        displayEmpty
+                        renderValue={(selected) =>
+                          selected || (
+                            <Typography sx={{ color: "gray" }}>
+                              Select a projects
+                            </Typography>
+                          )
+                        }
+                        value={formData?.project}
+                        onChange={(e) =>
+                          setFormData({ ...formData, project: e.target.value })
+                        }
+                        MenuProps={{ disableScrollLock: true }}
+                      >
+                        {permissionproject?.map((proj) => (
+                          <MenuItem key={proj.name} value={proj.name}>
+                            {proj.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              ) : null}
+              {isCproleCheck ? null : (
+                <Grid
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                  }}
+                >
                   <FormControl
                     sx={{
                       width: "300px",
@@ -617,41 +664,42 @@ export default function Page() {
                       ))}
                     </Select>
                   </FormControl>
-                )}
-                <FormControl
-                  sx={{
-                    width: "300px",
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        borderRadius: "5px",
-                      },
-                  }}
-                >
-                  <Select
-                    id="project"
-                    name="project"
-                    displayEmpty
-                    renderValue={(selected) =>
-                      selected || (
-                        <Typography sx={{ color: "gray" }}>
-                          Select a projects
-                        </Typography>
-                      )
-                    }
-                    value={formData?.project}
-                    onChange={(e) =>
-                      setFormData({ ...formData, project: e.target.value })
-                    }
-                    MenuProps={{ disableScrollLock: true }}
+
+                  <FormControl
+                    sx={{
+                      width: "300px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "5px",
+                        },
+                    }}
                   >
-                    {permissionproject?.map((proj) => (
-                      <MenuItem key={proj.name} value={proj.name}>
-                        {proj.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
+                    <Select
+                      id="project"
+                      name="project"
+                      displayEmpty
+                      renderValue={(selected) =>
+                        selected || (
+                          <Typography sx={{ color: "gray" }}>
+                            Select a projects
+                          </Typography>
+                        )
+                      }
+                      value={formData?.project}
+                      onChange={(e) =>
+                        setFormData({ ...formData, project: e.target.value })
+                      }
+                      MenuProps={{ disableScrollLock: true }}
+                    >
+                      {permissionproject?.map((proj) => (
+                        <MenuItem key={proj.name} value={proj.name}>
+                          {proj.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              )}
               <Grid>
                 <TextField
                   fullWidth

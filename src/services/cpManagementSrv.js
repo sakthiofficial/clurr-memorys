@@ -126,6 +126,7 @@ class CpManagementSrv {
 
         let cpCode = `${companyCode}${code.padStart(5, "0")}`;
         const codeCheck = await CpAppCompany.findOne({ cpCode });
+        console.log("codeCheck", codeCheck);
         if (codeCheck) {
           cpCode = await this.genrateCompanyCode(
             typeof code === "number" ? code + 1 : +code + 1,
@@ -145,9 +146,8 @@ class CpManagementSrv {
       lastCode = lastCode.cpCode;
 
       const lastNumber = parseInt(lastCode.replace(/\D/g, ""), 10);
-      const newNumber = lastNumber + 1;
-
-      return `URHCP${String(newNumber).padStart(5, "0")}`;
+      const result = await this.genrateCompanyCode(lastNumber);
+      return result;
     };
     this.retriveBranchHead = async (providedUser) => {
       if (
@@ -675,6 +675,41 @@ class CpManagementSrv {
       RESPONSE_STATUS?.NOTFOUND,
       RESPONSE_MESSAGE?.INVALID,
       null,
+    );
+  };
+
+  createCpExecute = async (providedUser, cpDetails) => {
+    const test = {
+      companyId: "",
+      name: "",
+      phone: "",
+      password: "",
+      email: "",
+      project: [],
+    };
+    const companyData = await CpAppCompany.find({ _id: cpDetails?.companyId });
+    if (!companyData) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
+    }
+    const userSrv = new CPUserSrv();
+    const userObj = await userSrv.createSaveUser({
+      ...cpDetails,
+      role: [roleNames?.cpExecute],
+    });
+    const userSchema = new CpAppUser(userObj);
+    const userResult = await userSchema.save();
+    const companyResult = await CpAppCompany.updateOne(
+      { _id: cpDetails?.companyId },
+      { $addToSet: { executeIds: userResult?._id } },
+    );
+    return new ApiResponse(
+      RESPONSE_STATUS?.OK,
+      RESPONSE_MESSAGE?.OK,
+      companyResult,
     );
   };
 }
