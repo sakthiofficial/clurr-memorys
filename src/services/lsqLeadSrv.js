@@ -5,6 +5,7 @@ import {
   leadRegistrationStatus,
   leadStage,
   lsqActivityCode,
+  lsqErrorMsg,
   lsqFieldValues,
   lsqLeadFieldNames,
 } from "../../shared/lsqConstants";
@@ -360,6 +361,24 @@ class LSQLeadSrv {
       );
     } catch (error) {
       console.log("While adding user error", error);
+      if (error.response) {
+        if (error.response.data) {
+          return new ApiResponse(
+            RESPONSE_STATUS?.ERROR,
+            RESPONSE_MESSAGE?.USEREXIST,
+            {
+              email:
+                lsqErrorMsg?.emailError ===
+                error.response.data?.ExceptionMessage,
+            },
+          );
+        }
+      }
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.ERROR,
+        error,
+      );
     }
   };
 
