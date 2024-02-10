@@ -156,7 +156,7 @@ export default function Page() {
       cpExecutes: updatedCpExecutes,
     });
 
-    if (updatedCpExecutes.length < 2) {
+    if (updatedCpExecutes?.length < 2) {
       setShowAddAccountButton(true);
     } else {
       setShowAddAccountButton(false);
@@ -165,7 +165,7 @@ export default function Page() {
 
   // handle delete function
   const handleDeleteAccount = (index) => {
-    const updatedCpExecutes = [...formData.cpExecutes];
+    const updatedCpExecutes = [...(formData?.cpExecutes || [])];
 
     if (index !== 0) {
       updatedCpExecutes.splice(index, 1);
@@ -176,7 +176,7 @@ export default function Page() {
       cpExecutes: updatedCpExecutes,
     });
 
-    if (updatedCpExecutes.length < 2) {
+    if (updatedCpExecutes?.length < 2) {
       setShowAddAccountButton(true);
     } else {
       setShowAddAccountButton(false);
@@ -186,7 +186,7 @@ export default function Page() {
   // handle toggle function
   const handleSwitchChange = (index, checked) => {
     setFormData((prev) => {
-      const updatedExecutes = prev.cpExecutes.map((item, i) => ({
+      const updatedExecutes = prev?.cpExecutes.map((item, i) => ({
         ...item,
         role: i === index && checked ? "cpBranchHead" : "cpExecutes",
         isPrimary: i === index ? checked : !checked,
@@ -210,12 +210,12 @@ export default function Page() {
 
     if (isFormValid) {
       const updatedValues = {
-        ...formData.cpCompany,
+        ...formData?.cpCompany,
         projects: selectedProjects,
       };
 
-      const cpExecutesp = formData.cpExecutes.map((exec) => {
-        const role = exec.isPrimary ? "cpBranchHead" : "cpExecute";
+      const cpExecutesp = formData?.cpExecutes.map((exec) => {
+        const role = exec?.isPrimary ? "cpBranchHead" : "cpExecute";
 
         return {
           ...exec,
@@ -228,8 +228,8 @@ export default function Page() {
         parentId: selectedCategoryData?._id,
         cpCompany: updatedValues,
         cpEnteredCode: parseInt(cpEnteredCode),
-        cpExecute: cpExecutesp.find((exec) => exec.role === "cpExecute"),
-        cpBranchHead: cpExecutesp.find((exec) => exec.role === "cpBranchHead"),
+        cpExecute: cpExecutesp.find((exec) => exec?.role === "cpExecute"),
+        cpBranchHead: cpExecutesp.find((exec) => exec?.role === "cpBranchHead"),
       };
 
       try {
@@ -239,7 +239,7 @@ export default function Page() {
           toast.error(resultRes?.error?.data?.result);
         }
 
-        if (resultRes.data.status === 200) {
+        if (resultRes?.data?.status === 200) {
           toast.success("CP added successfully!");
           setTimeout(() => {
             router.push("/cpmanagement");
@@ -278,7 +278,6 @@ export default function Page() {
   const handleClear = () => {
     setCpEnteredCode("");
   };
-  // console.log(selectedCategoryData);
   return (
     <>
       <ToastContainer />
@@ -471,8 +470,6 @@ export default function Page() {
                     padding: "0px 15px",
                   }}
                 >
-                  {/* {" "} */}
-                  {/* <CodeLeads /> */}
                   <Grid>
                     <Button
                       variant="outlined"
@@ -729,7 +726,7 @@ export default function Page() {
                           type={showPassword ? "text" : "password"}
                           size="small"
                           sx={{ width: "18%" }}
-                          value={formData.cpExecutes[0]?.password || ""}
+                          value={formData?.cpExecutes[0]?.password || ""}
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
@@ -759,7 +756,7 @@ export default function Page() {
 
                         <Grid sx={{ display: "flex", alignItems: "center" }}>
                           <Switch
-                            checked={cpExecute.isPrimary}
+                            checked={cpExecute?.isPrimary}
                             onChange={(e) =>
                               handleSwitchChange(index, e.target.checked)
                             }

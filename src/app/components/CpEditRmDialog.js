@@ -42,7 +42,7 @@ export default function CpEditRmDialog({ data, id, refetch }) {
   useEffect(() => {
     if (selectedRmProjects) {
       setSelectedProjects(selectedRmProjects[0]?.projects);
-      console.log("inside effect", selectedRmProjects[0]);
+      // console.log("inside effect", selectedRmProjects[0]);
     }
   }, [selectedRmProjects]);
 

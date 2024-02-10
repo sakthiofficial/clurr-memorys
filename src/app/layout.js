@@ -527,7 +527,7 @@ export default function RootLayout({ children }) {
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
-      setPermissions(jsonData.permissions || []);
+      setPermissions(jsonData?.permissions || []);
       if (pathname === "/") {
         router.push("/leads");
       }
