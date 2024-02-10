@@ -50,6 +50,15 @@ export default function Page() {
   const [cpEnteredCode, setCpEnteredCode] = useState(null);
   const [showAddAccountButton, setShowAddAccountButton] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+
+  // errors
+  const [cpCompanyError, setCpCompanyError] = useState(false);
+  const [cpBranchHeadName, setCpBranchHeadName] = useState(false);
+  const [cpBranchHeadPhone, setCpBranchHeadPhone] = useState(false);
+  const [cpBranchHeadEmail, setCpBranchHeadEmail] = useState(false);
+  const [cpExecuteName, setCpExecuteName] = useState(false);
+  const [cpExecutePhone, setCpExecutePhone] = useState(false);
+  const [cpExecuteEmail, setCpExecuteEmail] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -80,7 +89,7 @@ export default function Page() {
 
   // add cp query
   const [cpsAdd] = useAddCpMutation();
-
+  // console.log(cpsAdd);
   // handle rm function
   const handleRmChange = (event) => {
     const selectedCategoryValue = event.target.value;
@@ -234,7 +243,50 @@ export default function Page() {
 
       try {
         const resultRes = await cpsAdd(cpData);
-        console.log(resultRes);
+        console.log(resultRes?.error?.data?.result?.cpBranchHead);
+
+        if (resultRes?.error?.data?.result?.cpCompany?.name === true) {
+          setCpCompanyError(true);
+        } else {
+          setCpCompanyError(false);
+        }
+
+        if (resultRes?.error?.data?.result?.cpBranchHead?.name === true) {
+          setCpBranchHeadName(true);
+        } else {
+          setCpBranchHeadName(false);
+        }
+
+        if (resultRes?.error?.data?.result?.cpBranchHead?.email === true) {
+          setCpBranchHeadEmail(true);
+        } else {
+          setCpBranchHeadEmail(false);
+        }
+
+        if (resultRes?.error?.data?.result?.cpBranchHead?.phone === true) {
+          setCpBranchHeadPhone(true);
+        } else {
+          setCpBranchHeadPhone(false);
+        }
+
+        if (resultRes?.error?.data?.result?.cpExecute?.name === true) {
+          setCpExecuteName(true);
+        } else {
+          setCpExecuteName(false);
+        }
+
+        if (resultRes?.error?.data?.result?.cpExecute?.email === true) {
+          setCpExecuteEmail(true);
+        } else {
+          setCpExecuteEmail(false);
+        }
+
+        if (resultRes?.error?.data?.result?.cpExecute?.phone === true) {
+          setCpExecutePhone(true);
+        } else {
+          setCpExecutePhone(false);
+        }
+
         if (resultRes?.error?.data?.status === 400) {
           toast.error(resultRes?.error?.data?.result);
         }
@@ -379,6 +431,8 @@ export default function Page() {
                     }}
                     size="small"
                     value={formData?.cpCompany?.name}
+                    error={cpCompanyError}
+                    helperText={cpCompanyError && "name already exists"}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -639,6 +693,11 @@ export default function Page() {
                           size="small"
                           sx={{ width: "18%" }}
                           value={cpExecute?.name}
+                          error={cpBranchHeadName[1] || cpExecuteName[2]}
+                          helperText={
+                            (cpBranchHeadName[0] || cpExecuteName[1]) &&
+                            "name already exists"
+                          }
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
@@ -657,6 +716,11 @@ export default function Page() {
                           size="small"
                           sx={{ width: "15%" }}
                           value={cpExecute?.phone}
+                          error={cpBranchHeadPhone || cpExecutePhone}
+                          helperText={
+                            (cpBranchHeadPhone || cpExecutePhone) &&
+                            "phone already exists"
+                          }
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
@@ -675,6 +739,11 @@ export default function Page() {
                           size="small"
                           sx={{ width: "18%" }}
                           value={cpExecute?.email}
+                          error={cpBranchHeadEmail || cpExecuteEmail}
+                          helperText={
+                            (cpBranchHeadEmail || cpExecuteEmail) &&
+                            "name already exists"
+                          }
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,

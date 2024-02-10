@@ -132,8 +132,8 @@ export default function Page() {
     if (selectedCompanyName) {
       setSelectedCompanyName("");
     }
-    await leadData(formData);
-    // console.log(formData);
+    const resultLeads = await leadData(formData);
+    console.log(resultLeads);
   };
   return (
     <>
