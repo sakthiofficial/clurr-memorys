@@ -12,8 +12,9 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Add, FemaleSharp } from "@mui/icons-material";
+import { Add, Save, SaveAlt } from "@mui/icons-material";
 // import PhoneInput from "react-phone-input-2";
+import { useRouter } from "next/navigation";
 import {
   checkValidRoleToAddLead,
   isCpUser,
@@ -23,9 +24,11 @@ import {
   useGetCPSQuery,
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
+import { clientAppLsqMsg } from "../../../../shared/lsqConstants";
 // import "react-phone-input-2/lib/style.css";
 
 export default function Page() {
+  const router = useRouter();
   const [permissionproject, setPermissionProject] = useState([]);
   const [userId, setUserId] = useState("");
   const [role, setRole] = useState("");
@@ -90,6 +93,15 @@ export default function Page() {
   }, [resultProject]);
 
   useEffect(() => {
+    if (permissionproject.length >= 1) {
+      setFormData((prevData) => ({
+        ...prevData,
+        project: permissionproject[0]?.name,
+      }));
+    }
+  }, [permissionproject]);
+  console.log(permissionproject.length);
+  useEffect(() => {
     const selectedCp = resultCps?.data?.result?.find(
       (cp) => cp?.name === selectedCompanyName,
     );
@@ -123,14 +135,12 @@ export default function Page() {
     }
 
     const resultLeads = await leadData(formData);
-    // console.log(resultLeads?.data?.status);
-    if (resultLeads?.data?.status === 200) {
-      toast.success("Lead successfully added");
-
+    // console.log(resultLeads?.data?.result?.Status);
+    if (resultLeads?.data?.result?.Status === "Success") {
       setFormData({
         userName: "",
         email: "",
-        phone: "91",
+        phone: "+91",
         project: "",
         companyCode: "",
         notes: "",
@@ -140,13 +150,82 @@ export default function Page() {
         setSelectedCompanyName("");
       }
     }
+    if (resultLeads?.data?.result?.Message?.IsCreated === true) {
+      toast.success(clientAppLsqMsg.newLeadCreated, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    }
+    if (resultLeads?.data?.result?.Message?.IsCreated === false) {
+      toast.info(clientAppLsqMsg.existLeadCreated, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    }
+
+    if (resultLeads?.error?.data?.result?.email) {
+      setIsEmailCheckLeads(true);
+      return;
+    }
+    setIsEmailCheckLeads(false);
+
     if (resultLeads?.error?.status === 400) {
       toast.error("something went wrong");
     }
+  };
+
+  const handleSubmitSave = async (e) => {
+    e.preventDefault();
+
+    if (
+      !formData.userName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.project
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    const resultLeads = await leadData(formData);
+    // console.log(resultLeads?.data?.result?.Status);
+    if (resultLeads?.data?.result?.Status === "Success") {
+      setFormData({
+        userName: "",
+        email: "",
+        phone: "+91",
+        project: "",
+        companyCode: "",
+        notes: "",
+        id: "",
+      });
+      if (selectedCompanyName) {
+        setSelectedCompanyName("");
+      }
+    }
+    if (resultLeads?.data?.result?.Message?.IsCreated === true) {
+      toast.success(clientAppLsqMsg.newLeadCreated, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+      setTimeout(() => {
+        router.push("/leads");
+      }, 2000);
+    }
+    if (resultLeads?.data?.result?.Message?.IsCreated === false) {
+      toast.info(clientAppLsqMsg.existLeadCreated, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+      setTimeout(() => {
+        router.push("/leads");
+      }, 2000);
+    }
+
     if (resultLeads?.error?.data?.result?.email) {
       setIsEmailCheckLeads(true);
-    } else {
-      setIsEmailCheckLeads(false);
+      return;
+    }
+    setIsEmailCheckLeads(false);
+
+    if (resultLeads?.error?.status === 400) {
+      toast.error("something went wrong");
     }
   };
   return (
@@ -710,7 +789,7 @@ export default function Page() {
                       MenuProps={{ disableScrollLock: true }}
                     >
                       {permissionproject?.map((proj) => (
-                        <MenuItem key={proj.name} value={proj.name}>
+                        <MenuItem key={proj.name} value={proj.name} >
                           {proj.name}
                         </MenuItem>
                       ))}
@@ -739,30 +818,61 @@ export default function Page() {
                   }
                 />
               </Grid>
-              <Button
-                onClick={handleSubmitAdd}
-                fullWidth
+              <Grid
                 sx={{
-                  border: "1px solid gray",
-                  height: "40px",
-                  marginTop: "20px",
-                  borderRadius: "5px",
-                  letterSpacing: ".5px",
-                  padding: "0px 20px ",
-                  fontSize: "12px",
-                  backgroundColor: "transparent",
-                  color: "black",
-                  "&:hover": {
-                    backgroundColor: "transparent",
-                    boxShadow: "none",
-                    border: "1px solid gray",
-                  },
+                  // border: "1px solid black",
+                  display: "flex",
+                  justifyContent: "end",
+                  alignItems: "center",
+                  gap: "50px",
                 }}
               >
-                Save&nbsp;
-                <Add sx={{ fontSize: "12px" }} />
-                &nbsp;Add Another Lead
-              </Button>
+                <Button
+                  onClick={handleSubmitSave}
+                  sx={{
+                    border: "1px solid gray",
+                    height: "40px",
+                    marginTop: "20px",
+                    borderRadius: "5px",
+                    letterSpacing: ".5px",
+                    padding: "0px 20px ",
+                    fontSize: "12px",
+                    backgroundColor: "transparent",
+                    color: "black",
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                      boxShadow: "none",
+                      border: "1px solid gray",
+                    },
+                  }}
+                >
+                  <SaveAlt sx={{ fontSize: "12px" }} />
+                  &nbsp;Save Lead
+                </Button>
+                <Button
+                  onClick={handleSubmitAdd}
+                  sx={{
+                    border: "1px solid gray",
+                    height: "40px",
+                    marginTop: "20px",
+                    borderRadius: "5px",
+                    letterSpacing: ".5px",
+                    padding: "0px 20px ",
+                    fontSize: "12px",
+                    backgroundColor: "transparent",
+                    color: "black",
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                      boxShadow: "none",
+                      border: "1px solid gray",
+                    },
+                  }}
+                >
+                  Save&nbsp;
+                  <Add sx={{ fontSize: "12px" }} />
+                  &nbsp;Add Another Lead
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
