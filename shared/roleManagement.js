@@ -139,7 +139,7 @@ function parentRole(role) {
     const [arrayRole] = role;
     userRole = arrayRole;
   }
-  console.log(userRole);
+  // console.log(userRole);
   if (userRole === roleNames?.admin || userRole === roleNames?.mis) {
     return roleNames?.superAdmin;
   }
@@ -186,7 +186,7 @@ export function isCpUser(userRole) {
   const isCpRole =
     roleArr.includes(roleNames?.cpExecute) ||
     roleArr.includes(roleNames?.cpBranchHead);
-  console.log(isCpRole);
+  // console.log(isCpRole);
   return isCpRole;
 }
 function checkValidRoleToAddLead(userRole) {

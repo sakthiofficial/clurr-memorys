@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Add } from "@mui/icons-material";
+import { Add, FemaleSharp } from "@mui/icons-material";
 // import PhoneInput from "react-phone-input-2";
 import {
   checkValidRoleToAddLead,
@@ -30,6 +30,7 @@ export default function Page() {
   const [userId, setUserId] = useState("");
   const [role, setRole] = useState("");
   const [isCproleCheck, setIsCproleCheck] = useState();
+  const [isEmailCheckLeads, setIsEmailCheckLeads] = useState(false);
   // console.log("usestate", isCproleCheck);
   const [userCpCode, setUserCpCode] = useState("");
   const [selectedCompanyName, setSelectedCompanyName] = useState("");
@@ -69,7 +70,7 @@ export default function Page() {
     setIsCproleCheck(isCps);
   }, [role, isCps]);
 
-  console.log(isCproleCheck);
+  // console.log(isCproleCheck);
   // console.log(userCpCode);
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
@@ -120,20 +121,33 @@ export default function Page() {
       toast.error("Please fill in all required fields");
       return;
     }
-    setFormData({
-      userName: "",
-      email: "",
-      phone: "91",
-      project: "",
-      companyCode: "",
-      notes: "",
-      id: "",
-    });
-    if (selectedCompanyName) {
-      setSelectedCompanyName("");
-    }
+
     const resultLeads = await leadData(formData);
-    console.log(resultLeads);
+    // console.log(resultLeads?.data?.status);
+    if (resultLeads?.data?.status === 200) {
+      toast.success("Lead successfully added");
+
+      setFormData({
+        userName: "",
+        email: "",
+        phone: "91",
+        project: "",
+        companyCode: "",
+        notes: "",
+        id: "",
+      });
+      if (selectedCompanyName) {
+        setSelectedCompanyName("");
+      }
+    }
+    if (resultLeads?.error?.status === 400) {
+      toast.error("something went wrong");
+    }
+    if (resultLeads?.error?.data?.result?.email) {
+      setIsEmailCheckLeads(true);
+    } else {
+      setIsEmailCheckLeads(false);
+    }
   };
   return (
     <>
@@ -553,6 +567,8 @@ export default function Page() {
                     name="email"
                     placeholder="Enter email"
                     fullWidth
+                    error={isEmailCheckLeads}
+                    helperText={isEmailCheckLeads && "email already exists"}
                     value={formData.email}
                     sx={{
                       "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
@@ -578,6 +594,8 @@ export default function Page() {
                     name="email"
                     placeholder="Enter email"
                     value={formData.email}
+                    error={isEmailCheckLeads}
+                    helperText={isEmailCheckLeads && "email already exists"}
                     sx={{
                       "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
                         {
