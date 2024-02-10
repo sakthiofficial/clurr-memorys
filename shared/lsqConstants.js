@@ -54,4 +54,8 @@ const customLsqField = {
 const lsqErrorMsg = {
   emailError: "A Lead with same Email already exists.",
 };
+const clientAppLsqMsg = {
+  newLeadCreated: "Your new lead has been successfully created",
+  existLeadCreated: "An existing lead has been created",
+};
 export { lsqActivityCode, customLsqField, lsqErrorMsg };
