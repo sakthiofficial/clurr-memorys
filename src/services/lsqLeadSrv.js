@@ -60,6 +60,19 @@ class LSQLeadSrv {
       );
       return lsqData.data;
     };
+    this.leadFromLsqById = async (id, project) => {
+      const { lsqConfig } = config;
+      const { projectCredential } = lsqConfig;
+      if (!projectCredential[project]) {
+        return null;
+      }
+      const { accessKey, secretKey } = projectCredential[project];
+
+      const lsqData = await axios.get(
+        `${lsqConfig?.apiUrl}LeadManagement.svc/Leads.GetById?accessKey=${accessKey}&secretKey=${secretKey}&id=${id}`,
+      );
+      return lsqData.data;
+    };
     this.getRegistrationStatus = async (leadData, project) => {
       if (leadData[lsqLeadFieldNames?.stage] === leadStage?.new) {
         return leadRegistrationStatus?.sucess;
@@ -388,9 +401,9 @@ class LSQLeadSrv {
     if (
       !providedUser[userDataObj?.permissions].includes(
         permissionKeyNames?.leadViewWithNumber,
-      ) ||
+      ) &&
       !providedUser[userDataObj?.permissions].includes(
-        permissionKeyNames?.leadViewWithNumber,
+        permissionKeyNames?.leadViewWithoutNumber,
       )
     ) {
       return new ApiResponse(
@@ -408,6 +421,45 @@ class LSQLeadSrv {
       }),
     );
     const leadResult = await leadData;
+    return new ApiResponse(
+      RESPONSE_STATUS?.OK,
+      RESPONSE_MESSAGE?.OK,
+      await leadResult,
+    );
+  };
+
+  retriveLeadById = async (providedUser, { id, project }) => {
+    if (
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithNumber,
+      ) &&
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithoutNumber,
+      )
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.INVALID,
+        null,
+      );
+    }
+    let leadData = await this.leadFromLsqById(id, project);
+    leadData = Promise.all(
+      (leadData || []).map(async (lead) => {
+        lead[customLsqField?.leadRegistration] =
+          await this.getRegistrationStatus(lead, project);
+        return lead;
+      }),
+    );
+    const leadResult = await leadData;
+
+    if (
+      providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithoutNumber,
+      )
+    ) {
+      leadResult[0][lsqLeadFieldNames?.phone] = null;
+    }
     return new ApiResponse(
       RESPONSE_STATUS?.OK,
       RESPONSE_MESSAGE?.OK,
