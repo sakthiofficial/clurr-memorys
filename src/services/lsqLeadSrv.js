@@ -51,6 +51,7 @@ class LSQLeadSrv {
       if (!projectCredential[project]) {
         return null;
       }
+      console.log(projectCredential);
       const { accessKey, secretKey } = projectCredential[project];
 
       const lsqData = await axios.get(
@@ -366,8 +367,10 @@ class LSQLeadSrv {
     phone = phoneNumberSplit.length > 1 ? phoneNumberSplit[1] : phone;
     if (
       !providedUser[userDataObj?.permissions].includes(
-        permissionKeyNames?.leadViewWithNumber ||
-          permissionKeyNames?.leadViewWithoutNumber,
+        permissionKeyNames?.leadViewWithNumber,
+      ) ||
+      !providedUser[userDataObj?.permissions].includes(
+        permissionKeyNames?.leadViewWithNumber,
       )
     ) {
       return new ApiResponse(

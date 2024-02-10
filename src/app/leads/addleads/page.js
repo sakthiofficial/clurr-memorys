@@ -13,7 +13,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Add } from "@mui/icons-material";
-import PhoneInput from "react-phone-input-2";
+// import PhoneInput from "react-phone-input-2";
 import { checkValidRoleToAddLead } from "../../../../shared/roleManagement";
 import {
   useAddLeadMutation,
@@ -546,7 +546,7 @@ export default function Page() {
                   }
                 /> */}
                 <Grid>
-                  <PhoneInput
+                  {/* <PhoneInput
                     inputStyle={{
                       width: "300px",
                       height: "60px",
@@ -558,7 +558,7 @@ export default function Page() {
                     inputProps={{
                       required: true,
                     }}
-                  />
+                  /> */}
                   {!valid && <p>Please enter a valid phone number.</p>}
                 </Grid>
               </Grid>
