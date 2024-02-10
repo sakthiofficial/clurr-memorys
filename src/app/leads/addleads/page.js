@@ -49,14 +49,14 @@ export default function Page() {
     const storedData = localStorage.getItem("user");
     if (storedData) {
       const jsonData = JSON.parse(storedData);
-      setRole(jsonData.role || "");
-      setUserId(jsonData._id);
-      setUserCpCode(jsonData.cpCode);
+      setRole(jsonData?.role || "");
+      setUserId(jsonData?._id);
+      setUserCpCode(jsonData?.cpCode);
     } else {
       console.error("No data found");
     }
   }, []);
-
+  console.log(userCpCode);
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
     setSelectedCompanyName(selectedCpName);
@@ -97,17 +97,15 @@ export default function Page() {
   const handleSubmitAdd = async (e) => {
     e.preventDefault();
 
-    // if (
-    //   !formData.userName ||
-    //   !formData.email ||
-    //   !formData.phone ||
-    //   !formData.project ||
-    //   !formData.companyCode ||
-    //   !formData.id
-    // ) {
-    //   toast.error("Please fill in all required fields");
-    //   return;
-    // }
+    if (
+      !formData.userName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.project
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
     setFormData({
       userName: "",
       email: "",
@@ -120,8 +118,8 @@ export default function Page() {
     if (selectedCompanyName) {
       setSelectedCompanyName("");
     }
-    // await leadData(formData);
-    console.log(formData);
+    await leadData(formData);
+    // console.log(formData);
   };
 
   const [valid, setValid] = useState(true);

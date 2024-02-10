@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import { Grid, TextField, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import { ToastContainer } from "react-toastify";
 import { useEditUserMutation } from "@/reduxSlice/apiSlice";
 
 export default function CpEditDialog({ data, refetch }) {
@@ -43,102 +44,106 @@ export default function CpEditDialog({ data, refetch }) {
 
   const handleSubmit = async () => {
     console.log("Submitting changes:", editedData);
-    await cpBranchEdit(editedData);
+    const result = await cpBranchEdit(editedData);
+    console.log(result?.data?.status);
     setOpen(false);
     await refetch();
   };
 
   return (
-    <Grid>
-      <EditIcon
-        sx={{ fontSize: "20px", cursor: "pointer" }}
-        onClick={handleClickOpen}
-      />
-      <Dialog
-        onClose={handleClose}
-        open={open}
-        disableScrollLock
-        maxWidth="100px"
-        PaperProps={{
-          sx: {
-            height: "400px",
-            width: "300px",
-            display: "flex",
-            alignItems: "center",
-            padding: "15px",
-          },
-        }}
-      >
-        <Grid
-          sx={{
-            // border: "1px solid red",
-            height: "inherit",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            // alignItems: "center",
-            width: "100%",
+    <>
+      <ToastContainer />
+      <Grid>
+        <EditIcon
+          sx={{ fontSize: "20px", cursor: "pointer" }}
+          onClick={handleClickOpen}
+        />
+        <Dialog
+          onClose={handleClose}
+          open={open}
+          disableScrollLock
+          maxWidth="100px"
+          PaperProps={{
+            sx: {
+              height: "400px",
+              width: "300px",
+              display: "flex",
+              alignItems: "center",
+              padding: "15px",
+            },
           }}
         >
-          <Grid>
-            <Typography
-              sx={{
-                padding: "5px",
-                paddingBottom: "20px",
-                fontSize: "16px",
-              }}
-            >
-              Change Execute Details
-            </Typography>
-            <Grid
-              sx={{ display: "flex", flexDirection: "column", gap: "20px" }}
-            >
-              <TextField
-                value={editedData?.name}
-                name="name"
-                id="outlined-required"
-                label="Name"
-                onChange={(e) => handleInputChange("name", e.target.value)}
-              />
-              <TextField
-                value={editedData?.email}
-                name="email"
-                id="outlined-required"
-                label="Email"
-                onChange={(e) => handleInputChange("email", e.target.value)}
-              />
-              <TextField
-                name="phone"
-                id="outlined-required"
-                label="Phone"
-                value={editedData?.phone}
-                disabled
-              />
-            </Grid>
-          </Grid>
           <Grid
             sx={{
-              // border: "1px solid black",
+              // border: "1px solid red",
+              height: "inherit",
               display: "flex",
-              justifyContent: "end",
-              gap: "20px",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              // alignItems: "center",
+              width: "100%",
             }}
           >
-            <Button
-              sx={{ border: "1px solid black", color: "black" }}
-              onClick={handleCancel}
+            <Grid>
+              <Typography
+                sx={{
+                  padding: "5px",
+                  paddingBottom: "20px",
+                  fontSize: "16px",
+                }}
+              >
+                Change Execute Details
+              </Typography>
+              <Grid
+                sx={{ display: "flex", flexDirection: "column", gap: "20px" }}
+              >
+                <TextField
+                  value={editedData?.name}
+                  name="name"
+                  id="outlined-required"
+                  label="Name"
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                />
+                <TextField
+                  value={editedData?.email}
+                  name="email"
+                  id="outlined-required"
+                  label="Email"
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                />
+                <TextField
+                  name="phone"
+                  id="outlined-required"
+                  label="Phone"
+                  value={editedData?.phone}
+                  disabled
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              sx={{
+                // border: "1px solid black",
+                display: "flex",
+                justifyContent: "end",
+                gap: "20px",
+              }}
             >
-              cancel
-            </Button>
-            <Button
-              sx={{ border: "1px solid black", color: "black" }}
-              onClick={handleSubmit}
-            >
-              Save
-            </Button>
+              <Button
+                sx={{ border: "1px solid black", color: "black" }}
+                onClick={handleCancel}
+              >
+                cancel
+              </Button>
+              <Button
+                sx={{ border: "1px solid black", color: "black" }}
+                onClick={handleSubmit}
+              >
+                Save
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Dialog>
-    </Grid>
+        </Dialog>
+      </Grid>
+    </>
   );
 }
