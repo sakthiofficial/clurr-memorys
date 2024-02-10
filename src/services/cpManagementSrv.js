@@ -184,22 +184,15 @@ class CpManagementSrv {
     };
     this.validateCpAccounts = async (company, branchHead, cpExecute) => {
       try {
-        const errormsg = {
-          companyFound: "Company  Already Register",
-          cpBranchHeadFound: "Branch Head Already Register",
-          cpExecuteFound: "CP Execute Already Register",
+        const errorDetails = {
+          cpCompany: null,
+          cpBranchHead: null,
+          cpExecute: null,
         };
+
         const cpCompany = await CpAppCompany.findOne({ name: company?.name });
-        let cpBranchRoleId = await CpAppRole.findOne({
-          name: roleNames?.cpBranchHead,
-        });
-        cpBranchRoleId = cpBranchRoleId?._id;
-        let cpExecuteRoleId = await CpAppRole.findOne({
-          name: roleNames?.cpExecute,
-        });
-        cpExecuteRoleId = cpExecuteRoleId?._id;
+
         const cpBranchHeadData = await CpAppUser.findOne({
-          role: { $in: [cpBranchRoleId] },
           $or: [
             { name: branchHead[userDataObj?.name] },
             { email: branchHead[userDataObj?.email] },
@@ -208,29 +201,37 @@ class CpManagementSrv {
         });
 
         const cpExecuteData = await CpAppUser.findOne({
-          role: { $in: [cpExecuteRoleId] },
-
           $or: [
             { name: cpExecute ? cpExecute[userDataObj?.name] : null },
             { email: cpExecute ? cpExecute[userDataObj?.email] : null },
             { phone: cpExecute ? cpExecute[userDataObj?.phone] : null },
           ],
         });
+
         console.log(cpCompany, cpBranchHeadData, cpExecuteData);
 
         if (cpCompany) {
-          return errormsg?.companyFound;
+          errorDetails.cpCompany = { name: !!cpCompany.name };
         }
         if (cpBranchHeadData) {
-          return errormsg?.cpBranchHeadFound;
+          errorDetails.cpBranchHead = {
+            name: cpBranchHeadData.name === branchHead[userDataObj?.name],
+            email: cpBranchHeadData.email === branchHead[userDataObj?.email],
+            phone: cpBranchHeadData.phone === branchHead[userDataObj?.phone],
+          };
         }
         if (cpExecuteData) {
-          return errormsg?.cpExecuteFound;
+          errorDetails.cpExecute = {
+            name: cpExecuteData.name === cpExecute[userDataObj?.name],
+            email: cpExecuteData.email === cpExecute[userDataObj?.email],
+            phone: cpExecuteData.phone === cpExecute[userDataObj?.phone],
+          };
         }
-        return null;
+
+        return errorDetails;
       } catch (error) {
         console.error("Error checking data existence:", error);
-        return false;
+        return { error: true };
       }
     };
   }
@@ -254,7 +255,13 @@ class CpManagementSrv {
         cpBranchHead,
         cpExecute,
       );
-      if (validateResult) {
+      console.log(validateResult);
+
+      if (
+        validateResult?.cpBranchHead ||
+        validateResult?.cpExecute ||
+        validateResult?.cpCompany
+      ) {
         return new ApiResponse(
           RESPONSE_STATUS?.ERROR,
           RESPONSE_MESSAGE?.INVALID,
@@ -679,14 +686,44 @@ class CpManagementSrv {
   };
 
   createCpExecute = async (providedUser, cpDetails) => {
-    const test = {
-      companyId: "",
-      name: "",
-      phone: "",
-      password: "",
-      email: "",
-      project: [],
+    const { name, email, phone } = cpDetails;
+    const existingUser = await CpAppUser.findOne({
+      $or: [
+        { phone },
+        { email },
+        { name: { $regex: new RegExp(`^${name}$`, "i") } },
+      ],
+    });
+
+    const usedFields = {
+      phone: false,
+      email: false,
+      name: false,
     };
+
+    if (existingUser) {
+      if (existingUser.phone === phone) {
+        usedFields.phone = true;
+      }
+
+      if (existingUser.email === email) {
+        usedFields.email = true;
+      }
+
+      if (existingUser.name.toLowerCase() === name.toLowerCase()) {
+        usedFields.name = true;
+      }
+    }
+    const isNotUniqUser = Object.values(usedFields).some(
+      (value) => value === true,
+    );
+    if (isNotUniqUser) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.ERROR,
+        RESPONSE_MESSAGE?.INVALID,
+        usedFields,
+      );
+    }
     const companyData = await CpAppCompany.find({ _id: cpDetails?.companyId });
     if (!companyData) {
       return new ApiResponse(

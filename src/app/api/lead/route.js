@@ -92,7 +92,7 @@ export async function GET(request) {
     if (error || !providedUser) {
       const validationErrorResponse = new ApiResponse(
         RESPONSE_STATUS?.ERROR,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.ERROR,
         error,
       );
       return NextResponse.json(validationErrorResponse, {

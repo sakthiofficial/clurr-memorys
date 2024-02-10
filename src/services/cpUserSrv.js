@@ -873,7 +873,14 @@ class CPUserSrv {
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     userDbData[userDataObj?.password] = hashedPassword;
     userDbData[userDataObj?.isFirstSignIn] = false;
-
+    const { _id, role } = userDbData;
+    let cpCode = null;
+    if (isCpUser(role)) {
+      const companyData = await CpAppCompany.findOne({
+        $or: [{ branchHeadId: _id }, { executeIds: { $in: [_id] } }],
+      });
+      cpCode = companyData ? companyData?.cpCode : null;
+    }
     const updateResult = await CpAppUser.updateOne(
       { _id: id },
       {
@@ -886,11 +893,10 @@ class CPUserSrv {
 
     delete userDbData.password;
     if (updateResult.modifiedCount === 1) {
-      return new ApiResponse(
-        RESPONSE_STATUS?.OK,
-        RESPONSE_MESSAGE?.OK,
-        userDbData,
-      );
+      return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+        ...userDbData,
+        cpCode,
+      });
     }
     return new ApiResponse(
       RESPONSE_STATUS?.NOTFOUND,

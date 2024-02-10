@@ -152,6 +152,7 @@ class LSQLeadSrv {
         permissionKeyNames?.leadViewWithoutNumber,
       )
     ) {
+      console.log("commming here", providedUser[userDataObj?.permissions]);
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.INVALID,
