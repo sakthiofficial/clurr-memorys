@@ -9,6 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  useAddCpExecuteMutation,
+  useAddUsersMutation,
+} from "@/reduxSlice/apiSlice";
 
 export default function AddExecuteAccount({ data, refetch }) {
   const [open, setOpen] = useState(false);
@@ -19,12 +23,11 @@ export default function AddExecuteAccount({ data, refetch }) {
 
   // console.log(data)
 
-  const [editedData, setEditedData] = useState({
+  const [addData, setAddData] = useState({
     name: "",
     email: "",
     phone: "",
     password: "Pass@123",
-    id: data?.result?.cpRm?._id,
   });
 
   // console.log(data[0]._id);
@@ -39,7 +42,7 @@ export default function AddExecuteAccount({ data, refetch }) {
 
   const handleCancel = () => {
     setOpen(false);
-    setEditedData({
+    setAddData({
       name: "",
       email: "",
       phone: "",
@@ -47,17 +50,26 @@ export default function AddExecuteAccount({ data, refetch }) {
     });
   };
 
-  const handleInputChange = (fieldName, value) => {
-    setEditedData((prevData) => [
-      {
-        ...prevData,
-        [fieldName]: value,
-      },
-    ]);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setAddData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
+  const [addExecute] = useAddCpExecuteMutation();
+
   const handleSubmit = async () => {
-    console.log("Submitting changes:", editedData);
+    const updateValue = {
+      ...addData,
+      parentId: data?.result?.cpBranchHead?._id,
+      companyId: data?.result?.company?._id,
+      projects: data?.result?.company?.projects,
+    };
+    await addExecute(updateValue);
+    await refetch();
+    console.log(updateValue);
     setOpen(false);
   };
 
@@ -120,32 +132,32 @@ export default function AddExecuteAccount({ data, refetch }) {
               sx={{ display: "flex", flexDirection: "column", gap: "20px" }}
             >
               <TextField
-                value={editedData?.name}
+                value={addData?.name}
                 name="name"
                 id="outlined-required"
                 label="Name"
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                onChange={handleInputChange}
               />
               <TextField
-                value={editedData?.email}
+                value={addData?.email}
                 name="email"
                 id="outlined-required"
                 label="Email"
-                onChange={(e) => handleInputChange("email", e.target.value)}
+                onChange={handleInputChange}
               />
               <TextField
                 name="phone"
                 id="outlined-required"
                 label="Phone"
-                value={editedData?.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
+                value={addData?.phone}
+                onChange={handleInputChange}
               />
               <TextField
                 name="password"
                 id="outlined-required"
                 label="Password"
                 type={showPassword ? "text" : "password"}
-                value={editedData?.password}
+                value={addData?.password}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -155,7 +167,7 @@ export default function AddExecuteAccount({ data, refetch }) {
                     </InputAdornment>
                   ),
                 }}
-                onChange={(e) => handleInputChange("password", e.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
           </Grid>

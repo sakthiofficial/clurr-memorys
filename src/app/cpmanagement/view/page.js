@@ -225,7 +225,7 @@ export default function Page() {
                   Number of Accounts Created
                 </Typography>
                 {data?.result?.cpExecutes?.length === 0 && (
-                  <AddExecuteAccount data={data} />
+                  <AddExecuteAccount data={data} refetch={refetch} />
                 )}
               </Grid>
               <Table>

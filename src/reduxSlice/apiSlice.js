@@ -153,6 +153,13 @@ export const apiSlice = createApi({
         body: data,
       }),
     }),
+    addCpExecute: builder.mutation({
+      query: (cpData) => ({
+        url: `/cpManagenent/cpUsers`,
+        method: "POST",
+        body: cpData,
+      }),
+    }),
   }),
 });
 
@@ -179,4 +186,5 @@ export const {
   useRetriveCpByCompanyQuery,
   useResetPasswordMutation,
   useEditCpRmMutation,
+  useAddCpExecuteMutation,
 } = apiSlice;
