@@ -32,7 +32,6 @@ import {
   useAddCpMutation,
   useGetRealtionshipManagerQuery,
 } from "@/reduxSlice/apiSlice";
-import CodeLeads from "@/app/components/CodeLeads";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -44,7 +43,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function Page() {
-  const [userData, setUserData] = useState(null);
+  // const [userData, setUserData] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [cpEnteredCode, setCpEnteredCode] = useState(null);
@@ -305,16 +304,16 @@ export default function Page() {
   // console.log(cpEnteredCode);
 
   // get user details
-  useEffect(() => {
-    const storedData = localStorage.getItem("user");
+  // useEffect(() => {
+  //   const storedData = localStorage.getItem("user");
 
-    if (storedData) {
-      const jsonData = JSON.parse(storedData);
-      setUserData(jsonData);
-    } else {
-      console.error('No data found in local storage for key "user".');
-    }
-  }, []);
+  //   if (storedData) {
+  //     const jsonData = JSON.parse(storedData);
+  //     setUserData(jsonData);
+  //   } else {
+  //     console.error('No data found in local storage for key "user".');
+  //   }
+  // }, []);
 
   // handle dialog functions
   const [open, setOpen] = useState(false);

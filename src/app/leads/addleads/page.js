@@ -789,7 +789,7 @@ export default function Page() {
                       MenuProps={{ disableScrollLock: true }}
                     >
                       {permissionproject?.map((proj) => (
-                        <MenuItem key={proj.name} value={proj.name} >
+                        <MenuItem key={proj.name} value={proj.name}>
                           {proj.name}
                         </MenuItem>
                       ))}
