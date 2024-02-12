@@ -47,24 +47,24 @@ export default function Page() {
 
   // get cp data query
   const { data, refetch, isFetching } = useGetCpQuery();
-  console.log(data);
-  const handleUnauthorizedUser = () => {
-    localStorage.removeItem("user");
-    window.location.href = "/login";
-  };
+  // console.log(data);
+  // const handleUnauthorizedUser = () => {
+  //   localStorage.removeItem("user");
+  //   window.location.href = "/login";
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (data) {
           if (data?.message === "UNAUTHORIZED") {
-            console.log("logouted");
+            // console.log("logouted");
             localStorage.removeItem("user");
             window.location.href = "login";
           }
           // console.log(data);
         } else {
-          console.log("Data is undefined");
+          // console.log("Data is undefined");
         }
       } catch (error) {
         console.error("Error during CP data fetch:", error);
@@ -107,7 +107,7 @@ export default function Page() {
 
   // handle delete function
   const handleDelete = async (selectedcp) => {
-    console.log(selectedcp);
+    // console.log(selectedcp);
     try {
       handleClose();
       await deleteCp(selectedcp?.company?.cpCode);
@@ -308,7 +308,7 @@ export default function Page() {
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
                         {row?.cpBranchHead
-                          ? 1 + row?.cpExecutes.length
+                          ? 1 + row?.cpExecutes?.length
                           : row?.cpExecutes.length || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>

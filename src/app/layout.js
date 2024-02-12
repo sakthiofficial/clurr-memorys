@@ -54,7 +54,8 @@ import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import PeopleIcon from "@mui/icons-material/People";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata = {
@@ -454,11 +455,11 @@ export default function RootLayout({ children }) {
               textDecoration: "none",
               color: "black",
               backgroundColor:
-                pathname === "/leads"
+                pathname === "/leads" || pathname === "/leads/addleads"
                   ? "rgba(250, 185, 0, 0.15)"
                   : "transparent",
               borderRight:
-                pathname === "/leads"
+                pathname === "/leads" || pathname === "/leads/addleads"
                   ? "2px solid rgba(250, 185, 0, 1)"
                   : "none",
             }}

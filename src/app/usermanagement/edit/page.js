@@ -16,7 +16,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
-import { defaultConfig } from "next/dist/server/config-shared";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -467,8 +466,8 @@ export default function Page() {
                           onChange={(e) => handleChange("role", e.target.value)}
                           MenuProps={{ disableScrollLock: true }}
                         >
-                          {userData?.subordinateRoles?.map((option, index) => (
-                            <MenuItem key={index} value={option}>
+                          {(userData?.subordinateRoles || []).map((option) => (
+                            <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>
                           ))}

@@ -43,7 +43,7 @@ export default function Page() {
   const [resetPassword] = useEditUserMutation();
   const handleExecuteReset = async (executeData) => {
     const updatedReset = {
-      id: executeData[0]._id,
+      id: executeData[0]?._id,
       password: "Pass@123",
       role: executeData[0]?.role,
     };
@@ -316,19 +316,19 @@ export default function Page() {
                   {(data?.result?.cpExecutes || []).map((cpExecute) => (
                     <TableRow key={cpExecute.name}>
                       <TableCell sx={{ fontSize: "12px" }}>
-                        {cpExecute.name}
+                        {cpExecute?.name}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
-                        {cpExecute.phone}
+                        {cpExecute?.phone}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
-                        {cpExecute.name}
+                        {cpExecute?.name}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
                         <Switch checked={false} />
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
-                        {unixToDate(cpExecute.created)}
+                        {unixToDate(cpExecute?.created)}
                       </TableCell>
                       {loggedInRole[0] === "CP Branch Head" ? null : (
                         <>
