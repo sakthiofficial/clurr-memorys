@@ -54,7 +54,7 @@ import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import PeopleIcon from "@mui/icons-material/People";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata = {
@@ -488,20 +488,20 @@ export default function RootLayout({ children }) {
                 //     : "transparent",
                 backgroundColor:
                   pathname === "/cpmanagement/view"
-                    ? "2px solid rgba(250, 185, 0, 1)"
-                    : "none",
+                    ? "rgba(250, 185, 0, 0.15)"
+                    : "transparent",
                 borderRight:
-                  pathname === `/cpmanagement/view?id=${roleBranchHeadId}`
+                  pathname === `/cpmanagement/view`
                     ? "2px solid rgba(250, 185, 0, 1)"
-                    : "none",
+                    : "white",
               }}
             >
               <ListItemButton>
                 <ListItemIcon>
-                  {React.createElement(RemoveRedEyeIcon)}
+                  {React.createElement(ManageAccountsIcon)}
                 </ListItemIcon>
                 {/* <ListItemText  primary="Leads list" /> */}
-                <Typography sx={{ fontSize: "15px" }}>View Company</Typography>
+                <Typography sx={{ fontSize: "15px" }}>Manage CP</Typography>
               </ListItemButton>
             </ListItem>
           </Link>

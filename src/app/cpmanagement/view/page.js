@@ -256,10 +256,14 @@ export default function Page() {
                       IS PRIMARY ACCOUNT
                     </TableCell>
                     <TableCell sx={{ fontSize: "12px" }}>JOINED DATE</TableCell>
-                    <TableCell sx={{ fontSize: "12px" }}>EDIT</TableCell>
-                    <TableCell sx={{ fontSize: "12px" }}>
-                      RESET PASSWORD
-                    </TableCell>
+                    {loggedInRole[0] === "CP Branch Head" ? null : (
+                      <>
+                        <TableCell sx={{ fontSize: "12px" }}>EDIT</TableCell>
+                        <TableCell sx={{ fontSize: "12px" }}>
+                          RESET PASSWORD
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -279,26 +283,34 @@ export default function Page() {
                     <TableCell sx={{ fontSize: "12px" }}>
                       {unixToDate(data?.result?.cpBranchHead?.created || "N/A")}
                     </TableCell>
-                    <TableCell sx={{ fontSize: "12px" }}>
-                      <CpEditDialog
-                        data={data?.result?.cpBranchHead || "N/A"}
-                        refetch={refetch}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ fontSize: "12px" }}>
-                      {isRestPassword ? (
-                        <Typography sx={{ fontSize: "12px", color: "green" }}>
-                          Reset Done
-                        </Typography>
-                      ) : (
-                        <ReplayIcon
-                          sx={{ fontSize: "20px", cursor: "pointer" }}
-                          onClick={() =>
-                            handleBranchHeadReset(data?.result?.cpBranchHead)
-                          }
-                        />
-                      )}
-                    </TableCell>
+                    {loggedInRole[0] === "CP Branch Head" ? null : (
+                      <>
+                        <TableCell sx={{ fontSize: "12px" }}>
+                          <CpEditDialog
+                            data={data?.result?.cpBranchHead || "N/A"}
+                            refetch={refetch}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "12px" }}>
+                          {isRestPassword ? (
+                            <Typography
+                              sx={{ fontSize: "12px", color: "green" }}
+                            >
+                              Reset Done
+                            </Typography>
+                          ) : (
+                            <ReplayIcon
+                              sx={{ fontSize: "20px", cursor: "pointer" }}
+                              onClick={() =>
+                                handleBranchHeadReset(
+                                  data?.result?.cpBranchHead,
+                                )
+                              }
+                            />
+                          )}
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
 
                   {(data?.result?.cpExecutes || []).map((cpExecute) => (
@@ -318,29 +330,35 @@ export default function Page() {
                       <TableCell sx={{ fontSize: "12px" }}>
                         {unixToDate(cpExecute.created)}
                       </TableCell>
-                      <TableCell sx={{ fontSize: "12px" }}>
-                        <CpEditExecuteDialog
-                          data={data?.result?.cpExecutes}
-                          refetch={refetch}
-                        />
-                      </TableCell>
-                      <TableCell sx={{ fontSize: "12px" }}>
-                        {isRestPasswordExecute ? (
-                          <Typography sx={{ fontSize: "12px", color: "green" }}>
-                            Reset Done
-                          </Typography>
-                        ) : (
-                          <ReplayIcon
-                            sx={{
-                              fontSize: "20px",
-                              cursor: "pointer",
-                            }}
-                            onClick={() =>
-                              handleExecuteReset(data?.result?.cpExecutes)
-                            }
-                          />
-                        )}
-                      </TableCell>
+                      {loggedInRole[0] === "CP Branch Head" ? null : (
+                        <>
+                          <TableCell sx={{ fontSize: "12px" }}>
+                            <CpEditExecuteDialog
+                              data={data?.result?.cpExecutes}
+                              refetch={refetch}
+                            />
+                          </TableCell>
+                          <TableCell sx={{ fontSize: "12px" }}>
+                            {isRestPasswordExecute ? (
+                              <Typography
+                                sx={{ fontSize: "12px", color: "green" }}
+                              >
+                                Reset Done
+                              </Typography>
+                            ) : (
+                              <ReplayIcon
+                                sx={{
+                                  fontSize: "20px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() =>
+                                  handleExecuteReset(data?.result?.cpExecutes)
+                                }
+                              />
+                            )}
+                          </TableCell>
+                        </>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
