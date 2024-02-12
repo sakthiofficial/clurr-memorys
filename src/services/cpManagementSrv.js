@@ -565,7 +565,8 @@ class CpManagementSrv {
     if (
       !providedUser[userDataObj?.permissions].includes(
         permissionKeyNames?.cpManagement,
-      )
+      ) &&
+      !providedUser[userDataObj?.role].includes(roleNames?.cpBranchHead)
     ) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
@@ -620,7 +621,8 @@ class CpManagementSrv {
     if (
       !providedUser[userDataObj?.permissions].includes(
         permissionKeyNames?.cpManagement,
-      )
+      ) &&
+      providedUser[userDataObj?.role].includes(roleNames?.cpBranchHead)
     ) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
