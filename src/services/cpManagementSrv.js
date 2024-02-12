@@ -734,6 +734,11 @@ class CpManagementSrv {
         null,
       );
     }
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(cpDetails?.password, saltRounds);
+
+    cpDetails.password = hashedPassword;
+
     const userSrv = new CPUserSrv();
     const userObj = await userSrv.createSaveUser({
       ...cpDetails,
