@@ -722,7 +722,7 @@ class CpManagementSrv {
     if (isNotUniqUser) {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.USEREXIST,
         usedFields,
       );
     }
