@@ -33,7 +33,7 @@ export default function CpEditRmDialog({ data, id, refetch }) {
   } = useGetRealtionshipManagerQuery();
 
   useEffect(() => {
-    const filteredData = rmQueryData?.result.filter((item) =>
+    const filteredData = rmQueryData?.result?.filter((item) =>
       selectedRm?.includes(item?.name),
     );
     setSelectedRmProjects(filteredData);

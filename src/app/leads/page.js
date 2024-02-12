@@ -327,7 +327,7 @@ export default function Page() {
             window.location.href = "login";
           }
         } else {
-          console.log("Data is undefined");
+          // console.log("Data is undefined");
         }
       } catch (error) {
         console.error("Error during CP data fetch:", error);
@@ -475,7 +475,7 @@ export default function Page() {
             selectedProject !== "All" && (
               <>
                 {resultProject?.data?.result?.map((permission) => (
-                  <Grid key={permission?.id}>
+                  <Grid key={permission?.name}>
                     {permission?.permission === "leadAddAndView" &&
                       permission?._id === selectedProjectId && (
                         <Link href="/leads/addleads">
@@ -772,12 +772,12 @@ export default function Page() {
                   </TableHead>
                   <TableBody>
                     {slicedRows?.length === 0 ? (
-                      <TableRow>
+                      <TableRow key="noleads">
                         <TableCell colSpan={7}>No Leads</TableCell>
                       </TableRow>
                     ) : (
                       slicedRows.map((row) => (
-                        <TableRow key={row?.id}>
+                        <TableRow key={row?.FirstName}>
                           <TableCell sx={{ fontSize: "11px" }}>
                             {row?.FirstName || "N/A"}
                           </TableCell>

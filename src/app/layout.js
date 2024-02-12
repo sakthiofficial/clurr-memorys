@@ -53,6 +53,7 @@ import { ProfileInfo } from "./components/ProfileBtn";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import PeopleIcon from "@mui/icons-material/People";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -125,7 +126,7 @@ function Login() {
       try {
         setLoginInProgress(true);
         const result = await loginUserData(formData);
-        console.log(result?.data?.result?.userData?.isFirstSignIn);
+        // console.log(result?.data?.result?.userData?.isFirstSignIn);
 
         if (result?.data?.status === 200) {
           localStorage.setItem(
@@ -393,7 +394,9 @@ export default function RootLayout({ children }) {
   const [permissions, setPermissions] = useState([]);
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const [loading, setLoading] = useState(true);
-  const [unauthorised, setUnauthorized] = useState(false);
+  const [isRoleBranchHead, setIsRoleBranchHead] = useState([]);
+  const [roleBranchHeadId, setRoleBranchHeadId] = useState([]);
+
   const pathname = usePathname();
   const router = useRouter();
   // handle drawer functions
@@ -469,11 +472,45 @@ export default function RootLayout({ children }) {
             </ListItemButton>
           </ListItem>
         </Link>
+        {isRoleBranchHead[0] === "CP Branch Head" && (
+          <Link
+            href={`/cpmanagement/view?id=${roleBranchHeadId}`}
+            style={{ textDecoration: "none" }}
+          >
+            <ListItem
+              disablePadding
+              style={{
+                textDecoration: "none",
+                color: "black",
+                // backgroundColor:
+                //   pathname === `/cpmanagement/view?id=${roleBranchHeadId}`
+                //     ? "red"
+                //     : "transparent",
+                backgroundColor:
+                  pathname === "/cpmanagement/view"
+                    ? "2px solid rgba(250, 185, 0, 1)"
+                    : "none",
+                borderRight:
+                  pathname === `/cpmanagement/view?id=${roleBranchHeadId}`
+                    ? "2px solid rgba(250, 185, 0, 1)"
+                    : "none",
+              }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  {React.createElement(RemoveRedEyeIcon)}
+                </ListItemIcon>
+                {/* <ListItemText  primary="Leads list" /> */}
+                <Typography sx={{ fontSize: "15px" }}>View Company</Typography>
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        )}
         {sidebarlist
           .filter((item) => permissions.includes(item.shortName))
           .map((item) => (
             <Link
-              key={item.title}
+              key={item.shortName}
               href={`/${item.url}`}
               style={{
                 textDecoration: "none",
@@ -510,7 +547,6 @@ export default function RootLayout({ children }) {
                   <ListItemIcon alt={item.title}>
                     {React.createElement(item.icon)}
                   </ListItemIcon>
-                  {/* <ListItemText primary={item.title} /> */}
                   <Typography sx={{ fontSize: "15px" }}>
                     {item.title}
                   </Typography>
@@ -521,13 +557,15 @@ export default function RootLayout({ children }) {
       </List>
     </Grid>
   );
-
+  // console.log(roleBranchHeadId);
   useEffect(() => {
     const storedData = localStorage.getItem("user");
     if (storedData) {
       const jsonData = JSON.parse(storedData);
       setUser(jsonData);
+      setIsRoleBranchHead(jsonData?.role || []);
       setPermissions(jsonData?.permissions || []);
+      setRoleBranchHeadId(jsonData?.companyId || "");
       if (pathname === "/") {
         router.push("/leads");
       }
@@ -538,7 +576,7 @@ export default function RootLayout({ children }) {
     }
     setLoading(false);
   }, []);
-
+  // console.log(roleBranchHead);
   // useEffect(() => {
   //   if (user === null) {
   //     router.push("/login");

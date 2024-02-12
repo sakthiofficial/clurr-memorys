@@ -30,7 +30,7 @@ import AddExecuteAccount from "@/app/components/AddExecuteAccount";
 
 export default function Page() {
   const params = useSearchParams();
-
+  const [loggedInRole, setLoggedInRole] = useState([]);
   const id = params.get("id");
   // get data query
   const { data, isFetching, refetch } = useRetriveCpByCompanyQuery(id, {
@@ -73,40 +73,18 @@ export default function Page() {
   //   }
   // }, [isRestPassword, isRestPasswordExecute]);
 
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+    if (storedData) {
+      const jsonData = JSON.parse(storedData);
+      setLoggedInRole(jsonData?.role || []);
+    }
+  }, []);
+  // console.log(loggedInRole);
   return (
     <>
       <ToastContainer />
       <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
-        <Grid
-          sx={{
-            height: "5vh",
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <Link href="/cpmanagement">
-            <Button
-              type="button"
-              sx={{
-                backgroundColor: "transparent",
-                color: "black",
-                width: "92px",
-                height: "39px",
-                borderRadius: "13px",
-                border: "1px solid black",
-                fontSize: "13px",
-                fontWeight: "400",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                  boxShadow: "none",
-                },
-              }}
-            >
-              back
-            </Button>
-          </Link>
-        </Grid>
         {isFetching ? (
           <Box
             sx={{
@@ -121,6 +99,38 @@ export default function Page() {
           </Box>
         ) : (
           <>
+            {loggedInRole[0] === "CP Branch Head" ? null : (
+              <Grid
+                sx={{
+                  height: "5vh",
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <Link href="/cpmanagement">
+                  <Button
+                    type="button"
+                    sx={{
+                      backgroundColor: "transparent",
+                      color: "black",
+                      width: "92px",
+                      height: "39px",
+                      borderRadius: "13px",
+                      border: "1px solid black",
+                      fontSize: "13px",
+                      fontWeight: "400",
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                        boxShadow: "none",
+                      },
+                    }}
+                  >
+                    back
+                  </Button>
+                </Link>
+              </Grid>
+            )}
             <Grid
               sx={{
                 border: "1px solid lightgrey",
@@ -148,7 +158,9 @@ export default function Page() {
                 >
                   Channel Parnter Details
                 </Typography>
-                <CpEditRmDialogBox data={data} id={id} refetch={refetch} />
+                {loggedInRole[0] === "CP Branch Head" ? null : (
+                  <CpEditRmDialogBox data={data} id={id} refetch={refetch} />
+                )}
               </Grid>
               <Grid
                 sx={{
