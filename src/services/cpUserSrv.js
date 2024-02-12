@@ -347,6 +347,7 @@ class CPUserSrv {
       let { projects } = user;
       const { permissions, subordinateRoles, _id, role } = user;
       let cpCode = null;
+      let companyId = null;
       const sessionToken = this.genrateTokan();
       const sessionData = new Session({
         token: sessionToken,
@@ -364,6 +365,7 @@ class CPUserSrv {
           $or: [{ branchHeadId: _id }, { executeIds: { $in: [_id] } }],
         });
         cpCode = companyData ? companyData?.cpCode : null;
+        companyId = companyData?._id;
       }
       if (user[userDataObj.isFirstSignIn]) {
         return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
@@ -387,6 +389,7 @@ class CPUserSrv {
           role,
           cpCode,
           [userDataObj.isFirstSignIn]: false,
+          companyId,
         },
       });
     } catch (error) {
@@ -869,6 +872,8 @@ class CPUserSrv {
         null,
       );
     }
+    let companyId = null;
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
     userDbData[userDataObj?.password] = hashedPassword;
@@ -880,6 +885,7 @@ class CPUserSrv {
         $or: [{ branchHeadId: _id }, { executeIds: { $in: [_id] } }],
       });
       cpCode = companyData ? companyData?.cpCode : null;
+      companyId = companyData?._id;
     }
     const updateResult = await CpAppUser.updateOne(
       { _id: id },
@@ -896,6 +902,7 @@ class CPUserSrv {
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
         ...userDbData,
         cpCode,
+        companyId,
       });
     }
     return new ApiResponse(
