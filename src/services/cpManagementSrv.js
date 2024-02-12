@@ -722,7 +722,7 @@ class CpManagementSrv {
     if (isNotUniqUser) {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.USEREXIST,
         usedFields,
       );
     }
@@ -734,6 +734,11 @@ class CpManagementSrv {
         null,
       );
     }
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(cpDetails?.password, saltRounds);
+
+    cpDetails.password = hashedPassword;
+
     const userSrv = new CPUserSrv();
     const userObj = await userSrv.createSaveUser({
       ...cpDetails,
