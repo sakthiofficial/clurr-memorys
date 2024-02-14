@@ -92,7 +92,7 @@ export default function CpEditDialog({ data, refetch }) {
                   fontSize: "16px",
                 }}
               >
-                Change Execute Details
+                Edit Execute Details
               </Typography>
               <Grid
                 sx={{ display: "flex", flexDirection: "column", gap: "20px" }}

@@ -41,7 +41,7 @@ export default function page() {
           height: "15vh",
           display: "flex",
           alignItems: "center",
-          justifyContent: "end",
+          justifyContent: "start",
         }}
       >
         <Grid sx={{ padding: "15px" }}>

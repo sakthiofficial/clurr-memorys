@@ -217,7 +217,7 @@ export default function Page() {
         cpExecute: cpExecutesp.find((exec) => exec?.role === "cpExecute"),
         cpBranchHead: cpExecutesp.find((exec) => exec?.role === "cpBranchHead"),
       };
-
+      console.log(cpData);
       try {
         const resultRes = await cpsAdd(cpData);
         // console.log(resultRes?.error?.data?.result?.cpBranchHead);
