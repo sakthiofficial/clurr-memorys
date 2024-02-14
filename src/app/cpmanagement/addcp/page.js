@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Grid,
@@ -49,8 +49,7 @@ export default function Page() {
   const [cpEnteredCode, setCpEnteredCode] = useState(null);
   const [showAddAccountButton, setShowAddAccountButton] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-
-  // errors
+  // errors states
   const [cpCompanyError, setCpCompanyError] = useState(false);
   const [cpBranchHeadName, setCpBranchHeadName] = useState(false);
   const [cpBranchHeadPhone, setCpBranchHeadPhone] = useState(false);
@@ -127,27 +126,6 @@ export default function Page() {
     return true;
   };
   // handle add function
-  // const handleAddAccount = useCallback(() => {
-  //   const updatedCpExecutes = [
-  //     ...(formData?.cpExecutes || []),
-  //     {
-  //       projects: [],
-  //       role: "CP Executive",
-  //       isPrimary: false,
-  //     },
-  //   ];
-
-  //   setFormData({
-  //     ...formData,
-  //     cpExecutes: updatedCpExecutes,
-  //   });
-
-  //   if (updatedCpExecutes.length < 2) {
-  //     setShowAddAccountButton(true);
-  //   } else {
-  //     setShowAddAccountButton(false);
-  //   }
-  // }, []);
   const handleAddAccount = () => {
     const updatedCpExecutes = [
       ...(formData?.cpExecutes || []),
@@ -176,7 +154,7 @@ export default function Page() {
     const updatedCpExecutes = [...(formData?.cpExecutes || [])];
 
     if (index !== 0) {
-      updatedCpExecutes.splice(index, 1);
+      updatedCpExecutes?.splice(index, 1);
     }
 
     setFormData({
@@ -194,7 +172,7 @@ export default function Page() {
   // handle toggle function
   const handleSwitchChange = (index, checked) => {
     setFormData((prev) => {
-      const updatedExecutes = prev?.cpExecutes.map((item, i) => ({
+      const updatedExecutes = (prev?.cpExecutes || []).map((item, i) => ({
         ...item,
         role: i === index && checked ? "cpBranchHead" : "cpExecutes",
         isPrimary: i === index ? checked : !checked,
@@ -242,7 +220,7 @@ export default function Page() {
 
       try {
         const resultRes = await cpsAdd(cpData);
-        console.log(resultRes?.error?.data?.result?.cpBranchHead);
+        // console.log(resultRes?.error?.data?.result?.cpBranchHead);
 
         if (resultRes?.error?.data?.result?.cpCompany?.name === true) {
           setCpCompanyError(true);
@@ -302,18 +280,6 @@ export default function Page() {
     }
   };
   // console.log(cpEnteredCode);
-
-  // get user details
-  // useEffect(() => {
-  //   const storedData = localStorage.getItem("user");
-
-  //   if (storedData) {
-  //     const jsonData = JSON.parse(storedData);
-  //     setUserData(jsonData);
-  //   } else {
-  //     console.error('No data found in local storage for key "user".');
-  //   }
-  // }, []);
 
   // handle dialog functions
   const [open, setOpen] = useState(false);
@@ -459,7 +425,7 @@ export default function Page() {
                         />
                       }
                     >
-                      {result?.data?.result?.map((rm) => (
+                      {(result?.data?.result || []).map((rm) => (
                         <MenuItem key={rm?.name} value={rm?.name}>
                           {rm?.name}
                         </MenuItem>
@@ -495,7 +461,7 @@ export default function Page() {
                         </Box>
                       )}
                     >
-                      {selectedCategoryData?.projects?.map((project) => (
+                      {(selectedCategoryData?.projects || []).map((project) => (
                         <MenuItem
                           key={project}
                           value={project}
@@ -676,7 +642,7 @@ export default function Page() {
                       alignItems: "center",
                     }}
                   >
-                    {formData?.cpExecutes?.map((cpExecute, index) => (
+                    {(formData?.cpExecutes || []).map((cpExecute, index) => (
                       <Grid
                         sx={{
                           display: "flex",

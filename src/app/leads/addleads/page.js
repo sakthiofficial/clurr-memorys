@@ -12,8 +12,7 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Add, Save, SaveAlt } from "@mui/icons-material";
-// import PhoneInput from "react-phone-input-2";
+import { Add, SaveAlt } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import {
   checkValidRoleToAddLead,
@@ -25,7 +24,6 @@ import {
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
 import { clientAppLsqMsg } from "../../../../shared/lsqConstants";
-// import "react-phone-input-2/lib/style.css";
 
 export default function Page() {
   const router = useRouter();
@@ -100,10 +98,10 @@ export default function Page() {
       }));
     }
   }, [permissionproject]);
-  console.log(permissionproject.length);
+  // console.log(permissionproject.length);
   useEffect(() => {
     const selectedCp = resultCps?.data?.result?.find(
-      (cp) => cp?.name === selectedCompanyName,
+      (cp) => cp.name === selectedCompanyName,
     );
 
     if (selectedCompanyName) {
@@ -672,7 +670,7 @@ export default function Page() {
                   <TextField
                     name="email"
                     placeholder="Enter email"
-                    value={formData.email}
+                    value={formData?.email}
                     error={isEmailCheckLeads}
                     helperText={isEmailCheckLeads && "email already exists"}
                     sx={{
@@ -713,9 +711,9 @@ export default function Page() {
                         }
                         MenuProps={{ disableScrollLock: true }}
                       >
-                        {permissionproject?.map((proj) => (
-                          <MenuItem key={proj.name} value={proj.name}>
-                            {proj.name}
+                        {(permissionproject || []).map((proj) => (
+                          <MenuItem key={proj?.name} value={proj?.name}>
+                            {proj?.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -748,7 +746,7 @@ export default function Page() {
                       renderValue={(selected) =>
                         selected || (
                           <Typography sx={{ color: "gray" }}>
-                            Select a partner
+                            Select a chanel partner
                           </Typography>
                         )
                       }
@@ -788,9 +786,9 @@ export default function Page() {
                       }
                       MenuProps={{ disableScrollLock: true }}
                     >
-                      {permissionproject?.map((proj) => (
-                        <MenuItem key={proj.name} value={proj.name}>
-                          {proj.name}
+                      {(permissionproject || []).map((proj) => (
+                        <MenuItem key={proj?.name} value={proj?.name}>
+                          {proj?.name}
                         </MenuItem>
                       ))}
                     </Select>

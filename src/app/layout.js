@@ -47,14 +47,16 @@ import {
 import themeFont from "../theme";
 import "react-toastify/dist/ReactToastify.css";
 import { usePathname, useRouter } from "next/navigation";
-import { permissionKeyNames } from "../../shared/cpNamings";
-import LoginBanner from "../../public/loginBanner2.png";
-import { ProfileInfo } from "./components/ProfileBtn";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import PeopleIcon from "@mui/icons-material/People";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import HistoryIcon from "@mui/icons-material/History";
+import { ProfileInfo } from "./components/ProfileBtn";
+import LoginBanner from "../../public/loginBanner2.png";
+import { permissionKeyNames } from "../../shared/cpNamings";
+
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata = {
@@ -454,11 +456,11 @@ export default function RootLayout({ children }) {
               textDecoration: "none",
               color: "black",
               backgroundColor:
-                pathname === "/leads"
+                pathname === "/leads" || pathname === "/leads/addleads"
                   ? "rgba(250, 185, 0, 0.15)"
                   : "transparent",
               borderRight:
-                pathname === "/leads"
+                pathname === "/leads" || pathname === "/leads/addleads"
                   ? "2px solid rgba(250, 185, 0, 1)"
                   : "none",
             }}
@@ -506,6 +508,7 @@ export default function RootLayout({ children }) {
             </ListItem>
           </Link>
         )}
+
         {sidebarlist
           .filter((item) => permissions.includes(item.shortName))
           .map((item) => (
@@ -554,6 +557,37 @@ export default function RootLayout({ children }) {
               </ListItem>
             </Link>
           ))}
+        {isRoleBranchHead[0] === "Super Administrator" && (
+          <Link href="/activity" style={{ textDecoration: "none" }}>
+            <ListItem
+              disablePadding
+              style={{
+                textDecoration: "none",
+                color: "black",
+                // backgroundColor:
+                //   pathname === `/cpmanagement/view?id=${roleBranchHeadId}`
+                //     ? "red"
+                //     : "transparent",
+                backgroundColor:
+                  pathname === "/activity"
+                    ? "rgba(250, 185, 0, 0.15)"
+                    : "transparent",
+                borderRight:
+                  pathname === "/activity"
+                    ? "2px solid rgba(250, 185, 0, 1)"
+                    : "white",
+              }}
+            >
+              <ListItemButton>
+                <ListItemIcon>{React.createElement(HistoryIcon)}</ListItemIcon>
+                {/* <ListItemText  primary="Leads list" /> */}
+                <Typography sx={{ fontSize: "15px" }}>
+                  Activity History
+                </Typography>
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        )}
       </List>
     </Grid>
   );
@@ -813,7 +847,7 @@ export default function RootLayout({ children }) {
                       flexShrink: { sm: 0 },
                       backgroundColor: "white",
                     }}
-                    aria-label="mailbox folders"
+                    aria-label="profile folder"
                   >
                     <Drawer
                       variant="temporary"

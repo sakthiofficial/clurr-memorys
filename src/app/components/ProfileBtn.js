@@ -1,7 +1,9 @@
-import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Button, Divider, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PropTypes from "prop-types";
+import Link from "next/link";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 
 export function ProfileInfo({ name, role }) {
   const [profileInfo, setprofileInfo] = useState(false);
@@ -11,6 +13,11 @@ export function ProfileInfo({ name, role }) {
     // handleCloseUserMenu();
   };
   const firstLetter = name.charAt(0).toUpperCase();
+
+  const profileDetails = [
+    { name: "Profile", link: "profile" },
+    { name: "My Activity", link: "myactivity" },
+  ];
 
   return (
     <Grid
@@ -105,12 +112,39 @@ export function ProfileInfo({ name, role }) {
               </Typography>
             </Box>
           </Grid>
+          {profileDetails.map((profile) => (
+            <Link
+              href={`/${profile.link}`}
+              style={{
+                padding: "5px",
+                width: "100%",
+                fontSize: "14px",
+                color: "black",
+                marginBottom: "5px",
+                // border: "1px solid lightgray",
+              }}
+            >
+              <Grid
+                sx={{
+                  // borderTop: "1px solid black",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "5px",
+                }}
+              >
+                <Typography>{profile.name}</Typography>
+                <ArrowRightIcon />
+              </Grid>
+              <Divider />
+            </Link>
+          ))}
           <Grid container xs={12}>
             <Button
               onClick={handleSignOut}
               sx={{
                 width: "100%",
-                height: "40px",
+                height: "35px",
                 flexShrink: "0",
                 borderRadius: "10px",
                 border: "1px solid #CA0000",
@@ -119,7 +153,7 @@ export function ProfileInfo({ name, role }) {
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: "500",
-                lineHeight: "30px",
+                // lineHeight: "30px",
                 textTransform: "capitalize",
               }}
             >

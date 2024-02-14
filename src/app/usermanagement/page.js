@@ -23,29 +23,28 @@ import { ToastContainer, toast } from "react-toastify";
 import { Add } from "@mui/icons-material";
 import styled from "@emotion/styled";
 import Image from "next/image";
-import SuperAdmin from "../../../public/UserCard/SuperAdmin.svg";
-import Admin from "../../../public/UserCard/Admin.svg";
-import CPHead from "../../../public/UserCard/CPHead.svg";
-import CPLead from "../../../public/UserCard/CPLead.svg";
-import CPManager from "../../../public/UserCard/CPManager.svg";
-import ChanelPartner from "../../../public/UserCard/ChanelPartner.svg";
+// import SuperAdmin from "../../../public/UserCard/SuperAdmin.svg";
+// import Admin from "../../../public/UserCard/Admin.svg";
+// import CPHead from "../../../public/UserCard/CPHead.svg";
+// import CPLead from "../../../public/UserCard/CPLead.svg";
+// import CPManager from "../../../public/UserCard/CPManager.svg";
+// import ChanelPartner from "../../../public/UserCard/ChanelPartner.svg";
 import {
   useDeleteUsersMutation,
   useGetUsersQuery,
 } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
 import ExportLead from "../leads/component/export";
-import { lsqLeadFieldNames } from "../../../shared/lsqConstants";
 
 // card details
-const users = [
-  { name: "Super Admin", icon: SuperAdmin, total: "123" },
-  { name: "Admin", icon: Admin, total: "123" },
-  { name: "CP Head", icon: CPHead, total: "123" },
-  { name: "CP Lead", icon: CPLead, total: "123" },
-  { name: "CP Manager", icon: CPManager, total: "123" },
-  { name: "Channel Partner", icon: ChanelPartner, total: "123" },
-];
+// const users = [
+//   { name: "Super Admin", icon: SuperAdmin, total: "123" },
+//   { name: "Admin", icon: Admin, total: "123" },
+//   { name: "CP Head", icon: CPHead, total: "123" },
+//   { name: "CP Lead", icon: CPLead, total: "123" },
+//   { name: "CP Manager", icon: CPManager, total: "123" },
+//   { name: "Channel Partner", icon: ChanelPartner, total: "123" },
+// ];
 
 export default function Page() {
   const [open, setOpen] = useState(false);
@@ -99,7 +98,7 @@ export default function Page() {
             window.location.href = "login";
           }
         } else {
-          console.log("Data is undefined");
+          // console.log("Data is undefined");
         }
       } catch (error) {
         console.error("Error during CP data fetch:", error);

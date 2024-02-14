@@ -474,7 +474,7 @@ export default function Page() {
             permissions.includes(permissionKeyNames?.leadManagement) &&
             selectedProject !== "All" && (
               <>
-                {resultProject?.data?.result?.map((permission) => (
+                {(resultProject?.data?.result || []).map((permission) => (
                   <Grid key={permission?.name}>
                     {permission?.permission === "leadAddAndView" &&
                       permission?._id === selectedProjectId && (

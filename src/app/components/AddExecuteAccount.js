@@ -15,6 +15,10 @@ import {
 } from "@/reduxSlice/apiSlice";
 
 export default function AddExecuteAccount({ data, refetch }) {
+  const [errorName, setErrorName] = useState(false);
+  const [errorEmail, setErrorEmail] = useState(false);
+  const [errorPhone, setErrorPhone] = useState(false);
+
   const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
@@ -67,10 +71,29 @@ export default function AddExecuteAccount({ data, refetch }) {
       companyId: data?.result?.company?._id,
       projects: data?.result?.company?.projects,
     };
-    await addExecute(updateValue);
-    await refetch();
-    console.log(updateValue);
-    setOpen(false);
+    const resultExecute = await addExecute(updateValue);
+    // console.log(resultExecute?.data?.result);
+
+    if (resultExecute?.data?.result?.name === true) {
+      setErrorName(true);
+    } else {
+      setErrorName(false);
+    }
+    if (resultExecute?.data?.result?.email === true) {
+      setErrorEmail(true);
+    } else {
+      setErrorEmail(false);
+    }
+    if (resultExecute?.data?.result?.phone === true) {
+      setErrorPhone(true);
+    } else {
+      setErrorPhone(false);
+    }
+
+    if (resultExecute?.data?.result?.acknowledged === true) {
+      await refetch();
+      setOpen(false);
+    }
   };
 
   return (
@@ -137,6 +160,8 @@ export default function AddExecuteAccount({ data, refetch }) {
                 id="outlined-required"
                 label="Name"
                 onChange={handleInputChange}
+                error={errorName}
+                helperText={errorName && "name already exists"}
               />
               <TextField
                 value={addData?.email}
@@ -144,6 +169,8 @@ export default function AddExecuteAccount({ data, refetch }) {
                 id="outlined-required"
                 label="Email"
                 onChange={handleInputChange}
+                error={errorEmail}
+                helperText={errorEmail && "email already exists"}
               />
               <TextField
                 name="phone"
@@ -151,6 +178,8 @@ export default function AddExecuteAccount({ data, refetch }) {
                 label="Phone"
                 value={addData?.phone}
                 onChange={handleInputChange}
+                error={errorPhone}
+                helperText={errorPhone && "phone already exists"}
               />
               <TextField
                 name="password"
