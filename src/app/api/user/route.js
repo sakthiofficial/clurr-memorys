@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { NextRequest, NextResponse } from "next/server";
 import CPUserSrv from "../../../services/cpUserSrv";
 import {
   RESPONSE_STATUS,
@@ -25,7 +26,7 @@ export async function GET(req) {
   }
   const userSrv = new CPUserSrv();
   const srvResponse = await userSrv.retriveUser(providedUser);
-  return new Response(JSON.stringify(srvResponse));
+  return NextResponse.json(srvResponse, { status: srvResponse?.status });
 }
 export async function PUT(request) {
   try {
@@ -84,6 +85,7 @@ export async function PUT(request) {
     );
   }
 }
+
 export async function POST(req) {
   try {
     const providedUser = await getUserByToken(req);
