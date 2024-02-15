@@ -15,7 +15,7 @@ export function ProfileInfo({ name, role }) {
   const firstLetter = name.charAt(0).toUpperCase();
 
   const profileDetails = [
-    { name: "Profile", link: "profile" },
+    { name: "Profile", link: "" },
     { name: "My Activity", link: "myactivity" },
   ];
 
