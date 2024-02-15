@@ -27,7 +27,7 @@ const CpAppActivitySchema = new Schema({
     type: String,
     required: true,
   },
-  performedRole: {
+  performedByRole: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "CpAppRole",

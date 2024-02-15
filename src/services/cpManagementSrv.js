@@ -668,6 +668,18 @@ class CpManagementSrv {
     );
 
     if (companyUpdateResult?.acknowledged && cpUserUpdateResult?.acknowledged) {
+      const activityService = new ActivitySrv();
+
+      await activityService.createActivity(
+        activityActionTypes?.cpEdit,
+
+        providedUser[userDataObj?.name],
+
+        providedUser?._id,
+        companyDbData?.name,
+
+        companyDbData._id,
+      );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
         acknowledged:
           companyUpdateResult?.acknowledged && cpUserUpdateResult?.acknowledged,
@@ -749,6 +761,18 @@ class CpManagementSrv {
     const companyResult = await CpAppCompany.updateOne(
       { _id: cpDetails?.companyId },
       { $addToSet: { executeIds: userResult?._id } },
+    );
+    const activityService = new ActivitySrv();
+
+    await activityService.createActivity(
+      activityActionTypes?.cpAdded,
+
+      providedUser[userDataObj?.name],
+
+      providedUser?._id,
+      name,
+
+      userResult?._id,
     );
     return new ApiResponse(
       RESPONSE_STATUS?.OK,
