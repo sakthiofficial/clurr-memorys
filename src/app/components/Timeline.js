@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
@@ -9,12 +9,14 @@ import { Avatar, Button, Divider, Grid, Typography } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
-export default function NoOppositeContent() {
+export default function NoOppositeContent({ resultActivityData }) {
   const [isOpen, setIsOpen] = useState({
     timeline1: true,
     timeline2: true,
     timeline3: true,
   });
+
+  console.log(resultActivityData);
 
   const handleToggle = (timelineKey) => {
     setIsOpen((prevState) => ({
@@ -169,7 +171,7 @@ export default function NoOppositeContent() {
                         fontSize: "14px",
                       }}
                     >
-                      {timelineItem.providedBy.charAt(0)}
+                      {timelineItem.providedBy}
                     </Avatar>
                     <Typography>{timelineItem.providedBy}</Typography>
                   </TimelineContent>

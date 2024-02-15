@@ -2,8 +2,11 @@ import { convertTimestampToDateTime } from "@/appConstants";
 import { activityDataFields } from "./entity";
 
 export function structureDataInDateWise(data) {
-  const dateWise = {};
-  for (let i = 0; i < data.length; i += 1) {
+  if (!data) {
+    return null;
+  }
+  const dateWise = {} || null;
+  for (let i = 0; i < data?.length; i += 1) {
     const date = convertTimestampToDateTime(
       data[i][activityDataFields?.created],
     ).split(" ");
@@ -15,5 +18,5 @@ export function structureDataInDateWise(data) {
       dateWise[key] = [data[i]];
     }
   }
-  return dateWise;
+  return [dateWise];
 }

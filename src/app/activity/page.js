@@ -14,14 +14,16 @@ import { DateRangePicker } from "rsuite";
 import Timeline from "../components/Timeline";
 import { dateToUnixTimestamp } from "../../../shared/dateCalc";
 import "rsuite/dist/rsuite.min.css";
+import { useActivityQuery } from "@/reduxSlice/apiSlice";
+import { structureDataInDateWise } from "../../../shared/dataHandler";
 
 export default function Page() {
   const [subOrdinateRole, setSubOrdinateRole] = useState([]);
   const [search, setSearch] = useState("");
-  const [role, setRole] = useState(["All"]);
+  const [role, setRole] = useState("All");
 
   const handleChange = (event) => {
-    setRole([event.target.value]);
+    setRole(event.target.value);
   };
 
   useEffect(() => {
@@ -57,11 +59,17 @@ export default function Page() {
   };
 
   const updatedvalue = {
-    startDate: selectedStartDate,
-    endDate: selectedEndDate,
+    from: selectedStartDate,
+    to: selectedEndDate,
     role,
   };
-  console.log(updatedvalue);
+  const activityData = useActivityQuery(updatedvalue);
+  const resultActivityData = structureDataInDateWise(
+    activityData?.data?.result,
+  );
+
+  // console.log(resultActivityData);
+
   const Calendar = {
     sunday: "Su",
     monday: "Mo",
@@ -193,7 +201,7 @@ export default function Page() {
           // padding: "20px",
         }}
       >
-        <Timeline />
+        <Timeline resultActivityData={resultActivityData} />
       </Grid>
     </Grid>
   );
