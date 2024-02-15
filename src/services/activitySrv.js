@@ -4,7 +4,13 @@ import { CpAppRole } from "../../models/AppRole";
 import { roleSubordinates, userDataObj } from "../../shared/roleManagement";
 import { CpAppPermission } from "../../models/Permission";
 import { CpAppActivity } from "../../models/AppActivity";
-import { ApiResponse, RESPONSE_MESSAGE, RESPONSE_STATUS } from "@/appConstants";
+import {
+  ApiResponse,
+  RESPONSE_MESSAGE,
+  RESPONSE_STATUS,
+  convertTimestampToDateTime,
+} from "@/appConstants";
+import { activityDataFields } from "../../shared/entity";
 
 const {
   permissionKeyNames,
@@ -140,14 +146,31 @@ class ActivitySrv {
       },
       performedRole: { $in: roleIds },
     };
-    console.log("", query);
 
     // Fetch activities based on the query
-    const activities = await CpAppActivity.find(query);
+    const activities =
+      await CpAppActivity.find(query).populate("actionCategory");
+    const structuredData = (activities || []).map((activity) => {
+      const actionCategory = activity?.actionCategory?.name || null;
+      const message = `${activity.performedBy} performed ${activity.actionType} on ${activity.performedTo} in ${actionCategory}`;
+
+      return {
+        performedBy: activity[activityDataFields?.performedBy],
+        [activityDataFields?.performedById]:
+          activity[activityDataFields?.performedById],
+        [activityDataFields?.performedTo]:
+          activity[activityDataFields?.performedTo],
+        [activityDataFields?.created]: activity[activityDataFields?.created],
+        actionCategory,
+        message,
+      };
+    });
+
     return new ApiResponse(
       RESPONSE_STATUS?.OK,
       RESPONSE_MESSAGE?.OK,
-      activities,
+
+      structuredData,
     );
   };
 }
