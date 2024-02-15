@@ -49,7 +49,6 @@ import {
   useGetLeadsByDateQuery,
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
-import ExportsLeadsBtn from "../components/ExportLeadsBtn";
 import ExportLead from "./component/export";
 import {
   leadRegistrationStatus,
@@ -322,7 +321,7 @@ export default function Page() {
       try {
         if (data) {
           if (data?.message === "UNAUTHORIZED") {
-            console.log("logouted");
+            // console.log("logouted");
             localStorage.removeItem("user");
             window.location.href = "login";
           }
@@ -390,7 +389,7 @@ export default function Page() {
               defaultValue={defaultFilterValue}
               ranges={predefinedRanges}
               placeholder="Fitler By Date"
-              disabledDate={combine(before("08/10/2023"), afterToday())}
+              shouldDisableDate={combine(before("08/10/2023"), afterToday())}
               locale={locale}
               style={{ width: 280 }}
               onOk={(value) => handleDateRangeFilter(value)}

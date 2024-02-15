@@ -14,13 +14,6 @@ export default function NoOppositeContent() {
     timeline1: true,
     timeline2: true,
     timeline3: true,
-    timeline4: true,
-    timeline5: true,
-    timeline6: true,
-    timeline7: true,
-    timeline8: true,
-    timeline9: true,
-    timeline10: true,
   });
 
   const handleToggle = (timelineKey) => {
