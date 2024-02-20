@@ -149,7 +149,6 @@ export default function page() {
       <Grid
         sx={{
           minHeight: "100vh",
-          // padding: "20px",
         }}
       >
         <Timeline />

@@ -1,26 +1,39 @@
-import { Avatar, Box, Button, Divider, Grid, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
+import React, { useState, useEffect, useRef } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 
 export function ProfileInfo({ name, role }) {
-  const [profileInfo, setprofileInfo] = useState(false);
+  const [profileInfo, setProfileInfo] = useState(false);
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileInfo(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleSignOut = () => {
     localStorage.removeItem("user");
     window.location.href = "/login";
-    // handleCloseUserMenu();
   };
+
   const firstLetter = name.charAt(0).toUpperCase();
 
-  const profileDetails = [
-    { name: "Profile", link: "" },
-    { name: "My Activity", link: "myactivity" },
-  ];
+  const profileDetails = [{ name: "Profile", link: "profile" }];
 
   return (
     <Grid
+      ref={profileRef}
       sx={{
         display: "flex",
         alignItems: "center",
@@ -29,11 +42,10 @@ export function ProfileInfo({ name, role }) {
         position: "relative",
         border: "1px solid rgba(250, 185, 0, 1)",
         backgroundColor: "rgba(250, 185, 0, 0.2)",
-        // width: "100%",
         padding: "5px",
         borderRadius: "48px",
       }}
-      onClick={() => setprofileInfo(!profileInfo)}
+      onClick={() => setProfileInfo(!profileInfo)}
     >
       <Avatar>{firstLetter}</Avatar>
       <Grid
@@ -41,9 +53,7 @@ export function ProfileInfo({ name, role }) {
           display: { md: "flex", xs: "none" },
           alignItems: "center",
           justifyContent: "center",
-          // border: "1px solid red",
         }}
-        // onClick={() => setprofileInfo(!profileInfo)}
       >
         <Typography
           variant="p"
@@ -52,7 +62,6 @@ export function ProfileInfo({ name, role }) {
             fontWeight: "500",
             fontSize: { lg: "18px", xs: "14px" },
             fontStyle: "normal",
-            // padding: "15px 0px",
             marginBottom: "0px",
             textTransform: "capitalize",
             display: "flex",
@@ -73,19 +82,17 @@ export function ProfileInfo({ name, role }) {
           top="3rem"
           xs={12}
           sx={{
-            // minWidth: "200px",
             width: "280px",
             minHeight: "161px",
             flexShrink: "0",
             borderRadius: "18px",
             backgroundColor: "#FFF",
             boxShadow: "0px 0px 14px 0px rgba(0, 108, 181, 0.49)",
-            padding: "1rem 0.5rem",
+            padding: ".5rem 0.5rem",
           }}
         >
           <Grid
             sx={{
-              // border: "1px solid black",
               width: "100%",
               minHeight: "50px",
               marginBottom: "15px",
@@ -96,10 +103,8 @@ export function ProfileInfo({ name, role }) {
             }}
           >
             <Avatar sx={{ marginBottom: "10px" }}>{firstLetter}</Avatar>
-            {/* <Typography>{name}</Typography> */}
             <Box
               sx={{
-                // border: "1px solid black",
                 padding: "4px",
                 background: "rgba(0, 108, 181, 0.10)",
                 borderRadius: "15px",
@@ -114,6 +119,7 @@ export function ProfileInfo({ name, role }) {
           </Grid>
           {profileDetails.map((profile) => (
             <Link
+              key={profile.name}
               href={`/${profile.link}`}
               style={{
                 padding: "5px",
@@ -121,12 +127,10 @@ export function ProfileInfo({ name, role }) {
                 fontSize: "14px",
                 color: "black",
                 marginBottom: "5px",
-                // border: "1px solid lightgray",
               }}
             >
               <Grid
                 sx={{
-                  // borderTop: "1px solid black",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
@@ -136,7 +140,6 @@ export function ProfileInfo({ name, role }) {
                 <Typography>{profile.name}</Typography>
                 <ArrowRightIcon />
               </Grid>
-              <Divider />
             </Link>
           ))}
           <Grid container xs={12}>
@@ -153,7 +156,6 @@ export function ProfileInfo({ name, role }) {
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: "500",
-                // lineHeight: "30px",
                 textTransform: "capitalize",
               }}
             >
@@ -165,7 +167,7 @@ export function ProfileInfo({ name, role }) {
     </Grid>
   );
 }
+
 ProfileInfo.propTypes = {
   name: PropTypes.string.isRequired,
-  // photo: PropTypes.string.isRequired,
 };

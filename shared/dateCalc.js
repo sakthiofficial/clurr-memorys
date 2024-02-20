@@ -12,13 +12,8 @@ export function unixTo12HourTime(unixTimestamp) {
   // Create a new Date object
   const dateObject = new Date(unixMilliseconds);
 
-  // Extract individual components of the date and time
-  const year = dateObject.getFullYear();
-  const month = String(dateObject.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const day = String(dateObject.getDate()).padStart(2, "0");
   let hours = dateObject.getHours();
   const minutes = String(dateObject.getMinutes()).padStart(2, "0");
-  const seconds = String(dateObject.getSeconds()).padStart(2, "0");
 
   // Determine AM or PM
   const amOrPm = hours >= 12 ? "PM" : "AM";
@@ -30,4 +25,38 @@ export function unixTo12HourTime(unixTimestamp) {
   const formattedDateTime = `${hours}:${minutes} ${amOrPm}`;
 
   return formattedDateTime;
+}
+
+export function unixToDate(unixTimestamp) {
+  // Convert Unix timestamp to milliseconds
+  const timestampInMillis = unixTimestamp * 1000;
+
+  // Create a new Date object
+  const date = new Date(timestampInMillis);
+
+  // Get day, month, and year
+  const day = date.getDate();
+  const month = date.toLocaleString("default", { month: "long" });
+  const year = date.getFullYear();
+
+  // Concatenate day, month, and year
+  const formattedDate = `${day} ${month} ${year}`;
+
+  return formattedDate;
+}
+
+export default function isTodayOrYesterday(date) {
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const inputDate = new Date(date);
+
+  if (inputDate.toDateString() === today.toDateString()) {
+    return "Today";
+  }
+  if (inputDate.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  }
+  return false;
 }

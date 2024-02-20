@@ -207,7 +207,7 @@ export default function Page() {
       console.error('No data found in local storage for key "user".');
     }
   }, []);
-
+  console.log(userData);
   if (!userData) {
     return (
       <Box
@@ -225,6 +225,7 @@ export default function Page() {
   }
 
   const SubordinateRoles = userData?.subordinateRoles;
+  // console.log(SubordinateRoles);
   const SubordinateProjects = userData?.projects;
   // handle project function
   const handleChangeProject = (event) => {

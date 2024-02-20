@@ -350,8 +350,8 @@ export default function Page() {
       >
         <Grid
           sx={{
-            minWidth: "120px",
-            paddingRight: "30px",
+            width: "50%",
+            // paddingRight: "30px",
             // border: "1px solid black",
           }}
         >
@@ -366,6 +366,7 @@ export default function Page() {
             Lead List
           </Typography>
         </Grid>
+
         <Grid
           sx={{
             minWidth: "600px",

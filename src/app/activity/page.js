@@ -63,10 +63,8 @@ export default function Page() {
     to: selectedEndDate,
     role,
   };
-  const activityData = useActivityQuery(updatedvalue);
-  const resultActivityData = structureDataInDateWise(
-    activityData?.data?.result,
-  );
+  const { data, isFetching } = useActivityQuery(updatedvalue);
+  const resultActivityData = structureDataInDateWise(data?.result);
 
   // console.log(resultActivityData);
 
@@ -79,20 +77,16 @@ export default function Page() {
     friday: "Fr",
     saturday: "Sa",
     ok: "Apply",
-    today: "Today",
-    yesterday: "Yesterday",
+    // today: "Today",
+    // yesterday: "Yesterday",
     hours: "Hours",
     minutes: "Minutes",
     seconds: "Seconds",
     formattedMonthPattern: "MMM yyyy",
     formattedDayPattern: "dd MMM yyyy",
   };
-  const locale = {
-    DateRangePicker: {
-      ...Calendar,
-      last7Days: "Last 7 Days",
-    },
-  };
+
+  // console.log(resultActivityData);
 
   return (
     <Grid
@@ -107,7 +101,7 @@ export default function Page() {
           height: "10vh",
           display: "flex",
           alignItems: "center",
-          backgroundColor: "black",
+          backgroundColor: "#021522",
           borderRadius: "30px 30px 0px 0px",
           color: "white",
           justifyContent: "space-between",
@@ -160,7 +154,7 @@ export default function Page() {
             defaultValue={defaultFilterValue}
             placeholder="Fitler By Date"
             shouldDisableDate={combine(before("08/10/2023"), afterToday())}
-            locale={locale}
+            // locale={locale}
             style={{ width: 280 }}
             onOk={(value) => handleDateRangeFilter(value)}
             onChange={(value) => handleDateRangeFilter(value)}
@@ -198,10 +192,12 @@ export default function Page() {
       <Grid
         sx={{
           minHeight: "100vh",
-          // padding: "20px",
         }}
       >
-        <Timeline resultActivityData={resultActivityData} />
+        <Timeline
+          resultActivityData={resultActivityData}
+          isFetching={isFetching}
+        />
       </Grid>
     </Grid>
   );

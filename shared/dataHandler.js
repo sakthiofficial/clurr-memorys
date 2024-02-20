@@ -5,7 +5,7 @@ export function structureDataInDateWise(data) {
   if (!data) {
     return null;
   }
-  const dateWise = {} || null;
+  const dateWise = {};
   for (let i = 0; i < data?.length; i += 1) {
     const date = convertTimestampToDateTime(
       data[i][activityDataFields?.created],

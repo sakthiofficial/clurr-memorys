@@ -34,10 +34,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ListItemButton from "@mui/material/ListItemButton";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import { ToastContainer, toast } from "react-toastify";
 import store from "../store";
 import {
@@ -50,7 +47,6 @@ import { usePathname, useRouter } from "next/navigation";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import PeopleIcon from "@mui/icons-material/People";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import HistoryIcon from "@mui/icons-material/History";
 import { ProfileInfo } from "./components/ProfileBtn";
