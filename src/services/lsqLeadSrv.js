@@ -248,7 +248,7 @@ class LSQLeadSrv {
         }
         let apiData = await fetchLeadData(apiPageIndex);
 
-        for (let i = 0; i <= apiData?.data.length; i += 1) {
+        for (let i = 0; i < apiData?.data.length; i += 1) {
           const dateIst = convertUTCtoIST(
             apiData.data[i][lsqLeadFieldNames?.createdOn],
           );
@@ -265,7 +265,6 @@ class LSQLeadSrv {
             return data;
           }
           apiData.data[i][lsqLeadFieldNames?.createdOn] = dateIst;
-
           const structuredApiData = await this.handleApiData(
             providedUser,
             apiData.data[i],
@@ -284,7 +283,6 @@ class LSQLeadSrv {
         }
       }),
     );
-    console.log(data.length);
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, data);
   };
 
