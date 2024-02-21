@@ -1,11 +1,62 @@
 "use client";
 
 import React, { useState } from "react";
-import { Grid, TextField, Typography } from "@mui/material";
+import { FormControl, Grid, TextField, Typography } from "@mui/material";
+import { DateRangePicker } from "rsuite";
 import Timeline from "../components/Timeline";
+import { dateToUnixTimestamp } from "../../../shared/dateCalc";
+import "rsuite/dist/rsuite.min.css";
 
 export default function page() {
   const [search, setSearch] = useState("");
+
+  const { combine, before, afterToday } = DateRangePicker;
+  const today = new Date();
+  const last7Days = new Date(today);
+  last7Days.setDate(today.getDate() - 6);
+  const defaultFilterValue = [new Date("2024-01-01"), new Date()];
+
+  const intialStartDate = dateToUnixTimestamp(defaultFilterValue[0]);
+  const intialEndDate = dateToUnixTimestamp(defaultFilterValue[1]);
+
+  const [selectedStartDate, SetSelectedStartDate] = useState(intialStartDate);
+  const [selectedEndDate, SetSelectedEndDate] = useState(intialEndDate);
+
+  const handleDateRangeFilter = (newValue) => {
+    if (newValue[0] !== null && newValue[1] !== null) {
+      const startSelectDate = dateToUnixTimestamp(newValue[0]);
+      SetSelectedStartDate(startSelectDate);
+      const endSelectDate = dateToUnixTimestamp(newValue[1]);
+      SetSelectedEndDate(endSelectDate);
+    }
+  };
+  // console.log(selectedStartDate);
+  // console.log(selectedEndDate);
+
+
+  const Calendar = {
+    sunday: "Su",
+    monday: "Mo",
+    tuesday: "Tu",
+    wednesday: "We",
+    thursday: "Th",
+    friday: "Fr",
+    saturday: "Sa",
+    ok: "Apply",
+    today: "Today",
+    yesterday: "Yesterday",
+    hours: "Hours",
+    minutes: "Minutes",
+    seconds: "Seconds",
+    formattedMonthPattern: "MMM yyyy",
+    formattedDayPattern: "dd MMM yyyy",
+  };
+  const locale = {
+    DateRangePicker: {
+      ...Calendar,
+      last7Days: "Last 7 Days",
+    },
+  };
 
   return (
     <Grid
@@ -44,7 +95,41 @@ export default function page() {
           justifyContent: "start",
         }}
       >
-        <Grid sx={{ padding: "15px" }}>
+        <Grid
+          sx={{
+            padding: "15px",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "10px",
+            // border: "1px solid black",
+            height: "100%",
+            width: "100%",
+          }}
+        >
+          <FormControl
+            sx={{
+              width: "300px",
+              // height: "0px",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "5px",
+              },
+            }}
+            // size="md"
+          >
+            <DateRangePicker
+              defaultValue={defaultFilterValue}
+              placeholder="Fitler By Date"
+              shouldDisableDate={combine(before("08/10/2023"), afterToday())}
+              locale={locale}
+              style={{ width: 280 }}
+              onOk={(value) => handleDateRangeFilter(value)}
+              onChange={(value) => handleDateRangeFilter(value)}
+              size="lg"
+              showOneCalendar
+            />
+          </FormControl>
           <TextField
             size="small"
             label="Search"
@@ -64,7 +149,6 @@ export default function page() {
       <Grid
         sx={{
           minHeight: "100vh",
-          // padding: "20px",
         }}
       >
         <Timeline />
