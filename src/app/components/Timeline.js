@@ -25,6 +25,7 @@ export default function NoOppositeContent({ resultActivityData, isFetching }) {
     const initialState = {};
     (resultActivityData || []).forEach((activity, index) => {
       const dateKeys = Object.keys(activity);
+
       dateKeys.forEach((date, activityIndex) => {
         if (isTodayOrYesterday(date)) {
           initialState[`timeline${index + 1}-${activityIndex + 1}`] = false;

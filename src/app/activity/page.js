@@ -68,24 +68,6 @@ export default function Page() {
 
   // console.log(resultActivityData);
 
-  const Calendar = {
-    sunday: "Su",
-    monday: "Mo",
-    tuesday: "Tu",
-    wednesday: "We",
-    thursday: "Th",
-    friday: "Fr",
-    saturday: "Sa",
-    ok: "Apply",
-    // today: "Today",
-    // yesterday: "Yesterday",
-    hours: "Hours",
-    minutes: "Minutes",
-    seconds: "Seconds",
-    formattedMonthPattern: "MMM yyyy",
-    formattedDayPattern: "dd MMM yyyy",
-  };
-
   // console.log(resultActivityData);
 
   return (

@@ -363,7 +363,7 @@ export default function Page() {
               // border: "1px solid black",
             }}
           >
-            Lead List
+            Leads List
           </Typography>
         </Grid>
 

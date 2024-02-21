@@ -490,27 +490,28 @@ export default function Page() {
                   }}
                 >
                   <Grid>
-                    <Button
+                    <Typography
                       variant="outlined"
                       onClick={handleClickOpen}
                       sx={{
                         color: "red",
-                        border: "1px solid  black",
+                        // border: "1px solid  black",
+                        cursor: "pointer",
                       }}
                     >
-                      enter cp code
-                    </Button>
+                      Enter Cp Code
+                    </Typography>
                     <BootstrapDialog
                       onClose={handleClose}
                       aria-labelledby="customized-dialog-title"
                       open={open}
-                      maxWidth="200px"
+                      // maxWidth="200px"
                       PaperProps={{
                         sx: {
-                          borderRadius: "34px",
-                          minHeight: "300px",
-                          // width: "456px",
-                          border: "1px solid black",
+                          borderRadius: "20px",
+                          minHeight: "320px",
+                          width: "300px",
+                          // border: "1px solid black",
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
@@ -519,68 +520,83 @@ export default function Page() {
                       }}
                       disableScrollLock
                     >
-                      <Grid
-                        sx={{
-                          border: "none",
-                          height: "64px",
-                          width: "400px",
-                          borderRadius: "19px",
-                          backgroundColor: "#F9B800",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "15px",
-                        }}
-                      >
-                        <Typography
-                          sx={{ fontSize: "20px", fontWeight: "600" }}
-                        >
-                          ENTER CP CODE
-                        </Typography>
-                        <IconButton
-                          aria-label="close"
-                          onClick={handleClose}
+                      <Grid>
+                        <Grid
                           sx={{
-                            cursor: "pointer",
-                            "&:hover": {
-                              backgroundColor: "transparent",
-                              boxShadow: "none",
-                            },
+                            border: "none",
+                            height: "54px",
+                            width: "280px",
+                            borderRadius: "9px",
+                            backgroundColor: "#F9B800",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "8px",
+                            marginBottom: "15px",
                           }}
                         >
-                          <CloseIcon />
-                        </IconButton>
-                      </Grid>
-                      <Grid
-                        sx={{
-                          // border: "1px solid rgba(189, 189, 189, 1)",
-                          minHeight: "100px",
-                          width: "400px",
-                          borderRadius: "19px",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "space-around",
-                        }}
-                      >
-                        <TextField
+                          <Typography
+                            sx={{ fontSize: "20px", fontWeight: "300" }}
+                          >
+                            ENTER CP CODE
+                          </Typography>
+                          <IconButton
+                            aria-label="close"
+                            onClick={handleClose}
+                            sx={{
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: "transparent",
+                                boxShadow: "none",
+                              },
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                        </Grid>
+
+                        <Grid
                           sx={{
-                            width: "80%",
-                            borderRadius: "15px",
-                            height: "48px",
+                            // border: "1px solid rgba(189, 189, 189, 1)",
+                            minHeight: "100px",
+                            width: "280px",
+                            borderRadius: "19px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-around",
                           }}
-                          placeholder="Provide only cpcode numbers"
-                          type="number"
-                          onChange={(e) => setCpEnteredCode(e.target.value)}
-                          value={cpEnteredCode}
-                        />
+                        >
+                          <TextField
+                            sx={{
+                              width: "100%",
+                              borderRadius: "15px",
+                              height: "48px",
+                              marginBottom: "15px",
+                            }}
+                            placeholder="Enter Only 6 Digit Code"
+                            type="text"
+                            inputProps={{
+                              maxLength: 6,
+                              pattern: "[A-Za-z0-9]{6}",
+                            }}
+                            onChange={(e) => {
+                              const value = e.target.value
+                                .replace(/\D/g, "")
+                                .substring(0, 6);
+                              setCpEnteredCode(value);
+                            }}
+                            value={cpEnteredCode}
+                          />
+                        </Grid>
                       </Grid>
+
                       <Grid
                         sx={{
+                          display: "flex",
+                          justifyContent: "end",
                           // border: "1px solid black",
-                          display: "flex",
-                          // flexDirection: "column",
-                          justifyContent: "space-around",
+                          gap: "10px",
                           width: "100%",
                         }}
                       >
@@ -588,9 +604,9 @@ export default function Page() {
                           onClick={handleClear}
                           sx={{
                             border: "1px solid black",
-                            height: "46px",
-                            width: "120px",
-                            borderRadius: "19px",
+                            // height: "46px",
+                            width: "80px",
+                            borderRadius: "8px",
                             backgroundColor: "white",
                             color: "black",
                             "&:hover": {
@@ -606,9 +622,9 @@ export default function Page() {
                           onClick={handleClose}
                           sx={{
                             border: "1px solid black",
-                            height: "46px",
-                            width: "120px",
-                            borderRadius: "19px",
+                            // height: "46px",
+                            width: "80px",
+                            borderRadius: "8px",
                             backgroundColor: "white",
                             color: "black",
                             "&:hover": {
