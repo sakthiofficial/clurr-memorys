@@ -486,8 +486,8 @@ export default function Page() {
                                   color: "#757575",
                                 }}
                               >
-                                "Are you certain about your intention to delete
-                                this user from the table?"
+                                &quot;Are you certain about your intention to
+                                delete this user from the table&nbsp;?&quot;
                               </Grid>
                             </Grid>
                             <DialogActions

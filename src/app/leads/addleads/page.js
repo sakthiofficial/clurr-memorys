@@ -91,6 +91,7 @@ export default function Page() {
       }));
     }
   }, [permissionproject]);
+
   useEffect(() => {
     const selectedCp = resultCps?.data?.result?.find(
       (cp) => cp.name === selectedCompanyName,

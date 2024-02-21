@@ -7,7 +7,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 import { DateRangePicker } from "rsuite";

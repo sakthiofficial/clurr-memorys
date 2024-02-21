@@ -483,7 +483,7 @@ export default function Page() {
                       <TableCell sx={{ fontSize: "12px" }}>
                         {row?.cpBranchHead
                           ? 1 + row?.cpExecutes?.length
-                          : row?.cpExecutes.length || "N/A"}
+                          : row?.cpExecutes?.length || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
                         {row?.cpRm?.name || "N/A"}
@@ -602,8 +602,9 @@ export default function Page() {
                                   color: "#757575",
                                 }}
                               >
-                                "Are you certain about your intention to delete
-                                this chanel partner from the table?"
+                                &quot;Are you certain about your intention to
+                                delete this chanel partner from the
+                                table?&nbsp;?&quot;
                               </Grid>
                             </Grid>
                             <DialogActions

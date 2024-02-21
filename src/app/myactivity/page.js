@@ -7,7 +7,7 @@ import Timeline from "../components/Timeline";
 import { dateToUnixTimestamp } from "../../../shared/dateCalc";
 import "rsuite/dist/rsuite.min.css";
 
-export default function page() {
+export default function Page() {
   const [search, setSearch] = useState("");
 
   const { combine, before, afterToday } = DateRangePicker;
@@ -32,7 +32,6 @@ export default function page() {
   };
   // console.log(selectedStartDate);
   // console.log(selectedEndDate);
-
 
   const Calendar = {
     sunday: "Su",

@@ -32,9 +32,7 @@ import {
   subDays,
 } from "date-fns";
 import { Add, Close } from "@mui/icons-material";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import AddLeadsBtn from "../components/AddLeadsBtn";
 // import ExportLeadsBtn from "../components/ExportLeadsBtn";
 // import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
 // import RegisterLeads from "../../../public/LeadsCard/registerLeads.svg";
@@ -257,7 +255,7 @@ export default function Page() {
     }
   };
   // getting leads details
-  const { data, isFetching, isLoading, refetch } = useGetLeadsByDateQuery({
+  const { data, isFetching, isLoading } = useGetLeadsByDateQuery({
     selectedProject,
     selectedStartDate,
     selectedEndDate,
