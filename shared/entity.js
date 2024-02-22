@@ -7,4 +7,10 @@ const appEntityActions = {
   projectDeleted: "Project Deleted",
   leadAdded: "Lead Added",
 };
-export { appEntityActions };
+const activityDataFields = {
+  performedTo: "performedTo",
+  performedById: "performedById",
+  performedBy: "performedBy",
+  created: "created",
+};
+export { appEntityActions, activityDataFields };

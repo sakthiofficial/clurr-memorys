@@ -7,15 +7,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
-import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { DateRangePicker } from "rsuite";
 import Timeline from "../components/Timeline";
+import { dateToUnixTimestamp } from "../../../shared/dateCalc";
+import "rsuite/dist/rsuite.min.css";
+import { useActivityQuery } from "@/reduxSlice/apiSlice";
+import { structureDataInDateWise } from "../../../shared/dataHandler";
 
 export default function Page() {
   const [subOrdinateRole, setSubOrdinateRole] = useState([]);
@@ -34,8 +33,41 @@ export default function Page() {
     }
   }, []);
 
-  console.log(search);
-  console.log(role);
+  // console.log(search);
+  // console.log(role);
+
+  const { combine, before, afterToday } = DateRangePicker;
+  const today = new Date();
+  const last7Days = new Date(today);
+  last7Days.setDate(today.getDate() - 6);
+  const defaultFilterValue = [new Date("2024-01-01"), new Date()];
+
+  const intialStartDate = dateToUnixTimestamp(defaultFilterValue[0]);
+  const intialEndDate = dateToUnixTimestamp(defaultFilterValue[1]);
+
+  const [selectedStartDate, SetSelectedStartDate] = useState(intialStartDate);
+  const [selectedEndDate, SetSelectedEndDate] = useState(intialEndDate);
+
+  const handleDateRangeFilter = (newValue) => {
+    if (newValue[0] !== null && newValue[1] !== null) {
+      const startSelectDate = dateToUnixTimestamp(newValue[0]);
+      SetSelectedStartDate(startSelectDate);
+      const endSelectDate = dateToUnixTimestamp(newValue[1]);
+      SetSelectedEndDate(endSelectDate);
+    }
+  };
+
+  const updatedvalue = {
+    from: selectedStartDate,
+    to: selectedEndDate,
+    role,
+  };
+  const { data, isFetching } = useActivityQuery(updatedvalue);
+  const resultActivityData = structureDataInDateWise(data?.result);
+
+  // console.log(resultActivityData);
+
+  // console.log(resultActivityData);
 
   return (
     <Grid
@@ -50,7 +82,7 @@ export default function Page() {
           height: "10vh",
           display: "flex",
           alignItems: "center",
-          backgroundColor: "black",
+          backgroundColor: "#021522",
           borderRadius: "30px 30px 0px 0px",
           color: "white",
           justifyContent: "space-between",
@@ -76,7 +108,7 @@ export default function Page() {
           flexWrap: "wrap",
         }}
       >
-        <TextField
+        {/* <TextField
           size="small"
           label="Search"
           name="email"
@@ -88,7 +120,29 @@ export default function Page() {
               borderRadius: "8px",
             },
           }}
-        />
+        /> */}
+        <FormControl
+          sx={{
+            width: "300px",
+            // height: "0px",
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              borderRadius: "5px",
+            },
+          }}
+          // size="md"
+        >
+          <DateRangePicker
+            defaultValue={defaultFilterValue}
+            placeholder="Fitler By Date"
+            shouldDisableDate={combine(before("08/10/2023"), afterToday())}
+            // locale={locale}
+            style={{ width: 280 }}
+            onOk={(value) => handleDateRangeFilter(value)}
+            onChange={(value) => handleDateRangeFilter(value)}
+            size="lg"
+            showOneCalendar
+          />
+        </FormControl>
         <FormControl
           size="small"
           sx={{
@@ -119,10 +173,12 @@ export default function Page() {
       <Grid
         sx={{
           minHeight: "100vh",
-          // padding: "20px",
         }}
       >
-        <Timeline />
+        <Timeline
+          resultActivityData={resultActivityData}
+          isFetching={isFetching}
+        />
       </Grid>
     </Grid>
   );

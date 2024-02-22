@@ -4,7 +4,13 @@ import { CpAppRole } from "../../models/AppRole";
 import { roleSubordinates, userDataObj } from "../../shared/roleManagement";
 import { CpAppPermission } from "../../models/Permission";
 import { CpAppActivity } from "../../models/AppActivity";
-import { ApiResponse, RESPONSE_MESSAGE, RESPONSE_STATUS } from "@/appConstants";
+import {
+  ApiResponse,
+  RESPONSE_MESSAGE,
+  RESPONSE_STATUS,
+  convertTimestampToDateTime,
+} from "@/appConstants";
+import { activityDataFields } from "../../shared/entity";
 
 const {
   permissionKeyNames,
@@ -80,7 +86,7 @@ class ActivitySrv {
         performedToId,
       ]);
       const roleData = await CpAppRole.find({
-        name: userData[1][userDataObj?.role],
+        name: userData[0][userDataObj?.role],
       });
       const permissionData = await CpAppPermission.findOne({
         name: activityEntity?.category,
@@ -94,7 +100,7 @@ class ActivitySrv {
         actionType: activityEntity?.actionType,
         performedBy,
         performedById,
-        performedRole: roleId,
+        performedByRole: roleId,
       };
       const actitySchema = new CpAppActivity(activity);
       const actityResult = await actitySchema.save();
@@ -132,22 +138,84 @@ class ActivitySrv {
         : role;
     const roleDbData = await CpAppRole.find({ name: roleData });
     const roleIds = roleDbData.map((roleDb) => roleDb._id);
-
     const query = {
       created: {
         $gte: +from,
         $lte: +to,
       },
-      performedRole: { $in: roleIds },
+      performedByRole: { $in: roleIds },
     };
-    console.log("", query);
 
     // Fetch activities based on the query
-    const activities = await CpAppActivity.find(query);
+    const activities =
+      await CpAppActivity.find(query).populate("actionCategory");
+    const structuredData = (activities || []).map((activity) => {
+      const actionCategory = activity?.actionCategory?.name || null;
+      const message = `${activity.performedBy} performed ${activity.actionType} on ${activity.performedTo} in ${actionCategory}`;
+
+      return {
+        performedBy: activity[activityDataFields?.performedBy],
+        [activityDataFields?.performedById]:
+          activity[activityDataFields?.performedById],
+        [activityDataFields?.performedTo]:
+          activity[activityDataFields?.performedTo],
+        [activityDataFields?.created]: activity[activityDataFields?.created],
+        actionCategory,
+        message,
+      };
+    });
+
     return new ApiResponse(
       RESPONSE_STATUS?.OK,
       RESPONSE_MESSAGE?.OK,
-      activities,
+
+      structuredData,
+    );
+  };
+
+  retriveActivitysById = async (providedUser, { id, from, to }) => {
+    if (
+      !providedUser[userDataObj?.role].includes(roleNames?.superAdmin) &&
+      providedUser?._id === id
+    ) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.UNAUTHORIZED,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
+        null,
+      );
+    }
+    const query = {
+      created: {
+        $gte: +from,
+        $lte: +to,
+      },
+      performedById: id,
+    };
+    console.log("query", query);
+    // Fetch activities based on the query
+    const activities =
+      await CpAppActivity.find(query).populate("actionCategory");
+    const structuredData = (activities || []).map((activity) => {
+      const actionCategory = activity?.actionCategory?.name || null;
+      const message = `${"You"} performed ${activity.actionType} on ${activity.performedTo} in ${actionCategory}`;
+
+      return {
+        performedBy: activity[activityDataFields?.performedBy],
+        [activityDataFields?.performedById]:
+          activity[activityDataFields?.performedById],
+        [activityDataFields?.performedTo]:
+          activity[activityDataFields?.performedTo],
+        [activityDataFields?.created]: activity[activityDataFields?.created],
+        actionCategory,
+        message,
+      };
+    });
+
+    return new ApiResponse(
+      RESPONSE_STATUS?.OK,
+      RESPONSE_MESSAGE?.OK,
+
+      structuredData,
     );
   };
 }

@@ -17,6 +17,8 @@ import {
   Box,
   DialogActions,
   Dialog,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
@@ -52,23 +54,6 @@ export default function Page() {
   // get user data
   const { data, refetch, isFetching } = useGetUsersQuery();
 
-  // table functions
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const slicedRows = (data?.result || []).slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage,
-  );
-
   // delete user
   const [deleteUser] = useDeleteUsersMutation();
 
@@ -93,7 +78,7 @@ export default function Page() {
       try {
         if (data) {
           if (data?.message === "UNAUTHORIZED") {
-            console.log("logouted");
+            // console.log("logouted");
             localStorage.removeItem("user");
             window.location.href = "login";
           }
@@ -133,20 +118,99 @@ export default function Page() {
     },
   }));
 
+  const preDefinedValues = [
+    { label: "Name", key: "name" },
+    { label: "Email", key: "email" },
+    { label: "Phone", key: "phone" },
+  ];
+
+  const [selectedFilter, setSelectedFilter] = useState(preDefinedValues[0]);
+  const [getUserFilter, setGetUserFilter] = useState(null);
+  const [filterDatasByCategory, setFilterDatasByCategory] = useState([]);
+  const [filterUser, setFilterUser] = useState();
+  // console.log(selectedFilter);
+  const handleChangeFilter = (event, value) => {
+    if (!value) {
+      setSelectedFilter(preDefinedValues[0]);
+    } else {
+      setSelectedFilter(value);
+    }
+  };
+
+  const handleFilterSearchUser = (event, value) => {
+    setGetUserFilter(value);
+  };
+  // console.log(filterUser);
+
+  useEffect(() => {
+    if (selectedFilter?.label) {
+      const filteredResults = (data?.result || []).map(
+        (item) => item[selectedFilter.key],
+      );
+      setFilterDatasByCategory(filteredResults);
+      // console.log(filteredResults);
+    }
+  }, [data, selectedFilter]);
+
+  useEffect(() => {
+    if (selectedFilter?.label) {
+      const filteredResults = data?.result.filter(
+        (item) => item[selectedFilter.key] === getUserFilter,
+      );
+      setFilterUser(filteredResults);
+      // console.log("worked");
+    }
+  }, [getUserFilter]);
+
+  // console.log(selectedFilter);
+
+  // table functions
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // const slicedRows = (filterUser || data?.result || []).slice(
+  //   page * rowsPerPage,
+  //   page * rowsPerPage + rowsPerPage,
+  // );
+
+  let arrayToSlice;
+
+  if (filterUser && filterUser.length >= 1) {
+    arrayToSlice = filterUser;
+  } else {
+    arrayToSlice = data?.result || [];
+  }
+
+  const slicedRows = arrayToSlice.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
+
   return (
     <>
       <ToastContainer />
       <Grid style={{ minHeight: "100vh" }}>
         <Grid
           sx={{
-            height: "8vh",
+            minHeight: "8vh",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             // padding: "0px 10px",
+            // border: "1px solid black",
+            margin: "10px",
+            // flexWrap: "wrap",
           }}
         >
-          <Grid sx={{ width: "60%" }}>
+          <Grid sx={{ width: "50%" }}>
             <Typography
               sx={{
                 fontSize: "18px",
@@ -156,6 +220,51 @@ export default function Page() {
             >
               User List
             </Typography>
+          </Grid>
+          <Grid
+            sx={{
+              // border: "1px solid black",
+              minWidth: "600px",
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
+            <Grid>
+              <Autocomplete
+                size="small"
+                disablePortal
+                id="combo-box-demo"
+                options={preDefinedValues}
+                sx={{ width: 280 }}
+                onChange={handleChangeFilter}
+                value={selectedFilter}
+                renderInput={(params) => (
+                  <TextField {...params} label="selecet by" />
+                )}
+              />
+            </Grid>
+            <Grid>
+              <Autocomplete
+                size="small"
+                disablePortal
+                id="combo-box-demo"
+                options={filterDatasByCategory}
+                sx={{ width: 280 }}
+                onChange={handleFilterSearchUser}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={
+                      selectedFilter ? (
+                        <>Search By {selectedFilter.label}</>
+                      ) : (
+                        "select one filter"
+                      )
+                    }
+                  />
+                )}
+              />
+            </Grid>
           </Grid>
           <Grid
             sx={{
@@ -377,8 +486,8 @@ export default function Page() {
                                   color: "#757575",
                                 }}
                               >
-                                "Are you certain about your intention to delete
-                                this user from the table?"
+                                &quot;Are you certain about your intention to
+                                delete this user from the table&nbsp;?&quot;
                               </Grid>
                             </Grid>
                             <DialogActions
@@ -444,7 +553,7 @@ export default function Page() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={data?.result?.length || 0}
+              count={arrayToSlice?.length || 0}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

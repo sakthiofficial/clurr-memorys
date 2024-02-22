@@ -17,6 +17,8 @@ import {
   Box,
   DialogActions,
   Dialog,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
@@ -25,9 +27,9 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 import { useCpDeleteMutation, useGetCpQuery } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
-import { unixToDate } from "../../../shared/dateCalc";
 import ExportLead from "../leads/component/export";
 import { convertTimestampToDateTime } from "@/appConstants";
+import { unixToDate } from "../../../shared/dateCalc";
 
 export default function Page() {
   const [open, setOpen] = useState(false);
@@ -47,12 +49,8 @@ export default function Page() {
 
   // get cp data query
   const { data, refetch, isFetching } = useGetCpQuery();
-  // console.log(data);
-  // const handleUnauthorizedUser = () => {
-  //   localStorage.removeItem("user");
-  //   window.location.href = "/login";
-  // };
 
+  // check AUTHORIZED or not
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -73,21 +71,6 @@ export default function Page() {
 
     fetchData();
   }, [data]);
-
-  // set pagination
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const slicedRows = (data?.result || []).slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage,
-  );
 
   // delete mutation
   const [deleteCp] = useCpDeleteMutation();
@@ -127,6 +110,8 @@ export default function Page() {
   }, []);
 
   // console.log(data);
+
+  // export to excel
   const covertCpDataToExcel = useCallback((cpData) => {
     cpData = (cpData || []).map((singleCpData) => {
       const executes = (singleCpData?.cpExecutes || []).map(
@@ -146,6 +131,149 @@ export default function Page() {
     });
     return cpData;
   });
+
+  // predefined values
+  const preDefinedValues = [
+    { label: "Cp Code", key: "cpCode" },
+    { label: "Cp Branch Head", key: "name" },
+    { label: "Cp Rm", key: "name" },
+    { label: "Company", key: "name" },
+  ];
+  // console.log(preDefinedValues[0]);
+  // filter functions
+  const [selectedFilter, setSelectedFilter] = useState(preDefinedValues[0]);
+  const [getUserFilter, setGetUserFilter] = useState(null);
+  const [filterUser, setFilterUser] = useState();
+  const [getCpCodes, setGetCpCodes] = useState([]);
+  const [getCpBranchHead, setCpBranchHead] = useState([]);
+  const [getCpRm, setGetCpRm] = useState([]);
+  const [getCompany, setGetCompany] = useState([]);
+
+  const [options, setOptions] = useState(null);
+
+  useEffect(() => {
+    if (selectedFilter?.label === "Cp Code") {
+      setOptions(getCpCodes);
+    }
+    if (selectedFilter?.label === "Cp Branch Head") {
+      setOptions(getCpBranchHead);
+    }
+    if (selectedFilter?.label === "Cp Rm") {
+      const uniqueData = Array.from(
+        new Set(getCpRm.map((item) => JSON.stringify(item))),
+      ).map((item) => JSON.parse(item));
+      setOptions(uniqueData);
+      setOptions(uniqueData);
+    }
+    if (selectedFilter?.label === "Company") {
+      setOptions(getCompany);
+    }
+  }, [getCpCodes, getCpBranchHead, getCpRm, getCompany]);
+
+  // console.log(options);
+
+  const handleChangeFilter = (event, value) => {
+    if (!value) {
+      setSelectedFilter(preDefinedValues[0]);
+    } else {
+      setSelectedFilter(value);
+    }
+  };
+
+  const handleFilterSearchUser = (event, value) => {
+    setGetUserFilter(value);
+  };
+
+  useEffect(() => {
+    setGetUserFilter("");
+  }, [selectedFilter]);
+
+  useEffect(() => {
+    if (selectedFilter.label === "Cp Code") {
+      const result = (data?.result || []).map(
+        (item) => item.company[selectedFilter.key],
+      );
+      setGetCpCodes(result);
+    }
+
+    if (selectedFilter.label === "Cp Branch Head") {
+      const resultBranchHead = (data?.result || []).map(
+        (item) => item.cpBranchHead[selectedFilter.key],
+      );
+      console.log("b Worked");
+
+      setCpBranchHead(resultBranchHead);
+      // console.log("branchhead", getCpBranchHead);
+    }
+
+    if (selectedFilter.label === "Cp Rm") {
+      const resultCpRm = (data?.result || []).map(
+        (item) => item.cpRm[selectedFilter.key],
+      );
+      setGetCpRm(resultCpRm);
+      // console.log("rm", getCpRm);
+    }
+    if (selectedFilter.label === "Company") {
+      const resultCompany = (data?.result || []).map(
+        (item) => item.company[selectedFilter.key],
+      );
+      // console.log("company Worked");
+
+      setGetCompany(resultCompany);
+      // console.log("company", getCompany);
+    }
+  }, [data?.result, selectedFilter]);
+
+  useEffect(() => {
+    if (selectedFilter?.label === "Cp Code") {
+      const filteredResults = data?.result.filter(
+        (item) => item.company[selectedFilter.key] === getUserFilter,
+      );
+      setFilterUser(filteredResults);
+    }
+    if (selectedFilter.label === "Cp Branch Head") {
+      const filteredResults = data?.result.filter(
+        (item) => item.cpBranchHead[selectedFilter.key] === getUserFilter,
+      );
+      setFilterUser(filteredResults);
+    }
+    if (selectedFilter.label === "Cp Rm") {
+      const filteredResults = data?.result.filter(
+        (item) => item.cpRm[selectedFilter.key] === getUserFilter,
+      );
+      setFilterUser(filteredResults);
+    }
+    if (selectedFilter?.label === "Company") {
+      const filteredResults = data?.result.filter(
+        (item) => item.company[selectedFilter.key] === getUserFilter,
+      );
+      setFilterUser(filteredResults);
+    }
+  }, [getUserFilter, selectedFilter]);
+
+  // set pagination
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  let arrayToSlice;
+
+  if (filterUser && filterUser.length >= 1) {
+    arrayToSlice = filterUser;
+  } else {
+    arrayToSlice = data?.result || [];
+  }
+
+  const slicedRows = arrayToSlice.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
+  // console.log(arrayToSlice.length);
   return (
     <>
       <ToastContainer />
@@ -158,9 +286,10 @@ export default function Page() {
             justifyContent: "space-between",
             alignItems: "center",
             // marginBottom: "10px",
+            margin: "10px",
           }}
         >
-          <Grid sx={{ width: "60%" }}>
+          <Grid sx={{ width: "50%" }}>
             <Typography
               sx={{
                 fontSize: "18px",
@@ -171,6 +300,51 @@ export default function Page() {
             >
               CP List
             </Typography>
+          </Grid>
+          <Grid
+            sx={{
+              // border: "1px solid black",
+              minWidth: "600px",
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
+            <Grid>
+              <Autocomplete
+                size="small"
+                disablePortal
+                id="combo-box-demo"
+                options={preDefinedValues}
+                sx={{ width: 280 }}
+                onChange={handleChangeFilter}
+                value={selectedFilter}
+                renderInput={(params) => (
+                  <TextField {...params} label="selecet by" />
+                )}
+              />
+            </Grid>
+            <Grid>
+              <Autocomplete
+                size="small"
+                disablePortal
+                id="combo-box-demo"
+                sx={{ width: 280 }}
+                options={options}
+                onChange={handleFilterSearchUser}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={
+                      selectedFilter ? (
+                        <>Search By {selectedFilter.label}</>
+                      ) : (
+                        "select one filter"
+                      )
+                    }
+                  />
+                )}
+              />
+            </Grid>
           </Grid>
           <Grid
             sx={{
@@ -309,7 +483,7 @@ export default function Page() {
                       <TableCell sx={{ fontSize: "12px" }}>
                         {row?.cpBranchHead
                           ? 1 + row?.cpExecutes?.length
-                          : row?.cpExecutes.length || "N/A"}
+                          : row?.cpExecutes?.length || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "12px" }}>
                         {row?.cpRm?.name || "N/A"}
@@ -428,8 +602,9 @@ export default function Page() {
                                   color: "#757575",
                                 }}
                               >
-                                "Are you certain about your intention to delete
-                                this chanel partner from the table?"
+                                &quot;Are you certain about your intention to
+                                delete this chanel partner from the
+                                table?&nbsp;?&quot;
                               </Grid>
                             </Grid>
                             <DialogActions
@@ -498,7 +673,7 @@ export default function Page() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={data?.result?.length || 0}
+              count={arrayToSlice?.length || 0}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

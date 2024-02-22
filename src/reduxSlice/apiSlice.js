@@ -160,6 +160,13 @@ export const apiSlice = createApi({
         body: cpData,
       }),
     }),
+    activity: builder.query({
+      query: (activityData) => ({
+        url: `/activity`,
+        method: "POST",
+        body: activityData,
+      }),
+    }),
   }),
 });
 
@@ -187,4 +194,5 @@ export const {
   useResetPasswordMutation,
   useEditCpRmMutation,
   useAddCpExecuteMutation,
+  useActivityQuery,
 } = apiSlice;

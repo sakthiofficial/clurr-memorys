@@ -86,7 +86,7 @@ export default function CpEditDialog({ data, refetch }) {
                 fontSize: "16px",
               }}
             >
-              Change Branch Head Details
+              Edit Branch Head Details
             </Typography>
             <Grid
               sx={{ display: "flex", flexDirection: "column", gap: "20px" }}

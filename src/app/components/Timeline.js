@@ -1,153 +1,158 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
-import { Avatar, Button, Divider, Grid, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  Grid,
+  Typography,
+} from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import isTodayOrYesterday, { unixTo12HourTime } from "../../../shared/dateCalc";
 
-export default function NoOppositeContent() {
-  const [isOpen, setIsOpen] = useState(true);
+export default function NoOppositeContent({ resultActivityData, isFetching }) {
+  const [isOpen, setIsOpen] = useState({});
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
+  useEffect(() => {
+    const initialState = {};
+    (resultActivityData || []).forEach((activity, index) => {
+      const dateKeys = Object.keys(activity);
+
+      dateKeys.forEach((date, activityIndex) => {
+        if (isTodayOrYesterday(date)) {
+          initialState[`timeline${index + 1}-${activityIndex + 1}`] = false;
+        } else {
+          initialState[`timeline${index + 1}-${activityIndex + 1}`] = true;
+        }
+      });
+    });
+    setIsOpen(initialState);
+  }, [resultActivityData]);
+
+  const handleToggle = (timelineKey) => {
+    setIsOpen((prevState) => ({
+      ...prevState,
+      [timelineKey]: !prevState[timelineKey],
+    }));
   };
 
   return (
-    <Timeline
-      sx={{
-        [`& .${timelineItemClasses.root}:before`]: {
-          flex: 0,
-          padding: 0,
-          minHeight: "25vh",
-        },
-      }}
-    >
-      <Grid sx={{ padding: "0px 10px" }}>
-        <Button
-          onClick={handleToggle}
+    <>
+      {isFetching ? (
+        <Box
           sx={{
-            margin: "40px 0px",
-            padding: " 5px 10px",
-            color: "black",
-            fontSize: "12px",
-            borderRadius: "10px",
-            backgroundColor: "#F9B800",
-            "&:hover": {
-              backgroundColor: "#F9B800",
-              boxShadow: "none",
-              border: "none",
+            display: "flex",
+            width: "100%",
+            height: "80vh",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Timeline
+          sx={{
+            [`& .${timelineItemClasses.root}:before`]: {
+              flex: 0,
+              padding: 0,
+              minHeight: "25vh",
             },
           }}
         >
-          Today
-          {isOpen ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
-        </Button>
-        {isOpen && (
-          <>
-            <TimelineItem>
-              <TimelineSeparator>
-                <TimelineDot color="primary" />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <Grid sx={{ display: "flex", marginTop: "3px" }}>
-                <TimelineContent sx={{ fontSize: "12px", paddingLeft: "30px" }}>
-                  12:30 pm
-                </TimelineContent>
-                <Grid>
-                  <TimelineContent sx={{ fontSize: "12px" }}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do
-                  </TimelineContent>
-                  <TimelineContent
+          {(resultActivityData || []).map((dateActivities, index) =>
+            Object.entries(dateActivities)
+              .reverse()
+              .map(([date, activities], activityIndex) => (
+                <Grid key={date} sx={{ padding: "0px 10px" }}>
+                  <Button
+                    onClick={() =>
+                      handleToggle(`timeline${index + 1}-${activityIndex + 1}`)
+                    }
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
+                      margin: "40px 0px",
+                      padding: " 5px 10px",
+                      color: "black",
+                      fontSize: "12px",
+                      borderRadius: "10px",
+                      backgroundColor: "#F9B800",
+                      "&:hover": {
+                        backgroundColor: "#F9B800",
+                        boxShadow: "none",
+                        border: "none",
+                      },
                     }}
                   >
-                    <Avatar
-                      sx={{ width: "30px", height: "30px", fontSize: "14px" }}
-                    >
-                      A
-                    </Avatar>
-                    <Typography>Asfer</Typography>
-                  </TimelineContent>
-                </Grid>
-              </Grid>
-            </TimelineItem>
-            <TimelineItem>
-              <TimelineSeparator>
-                <TimelineDot color="primary" />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <Grid sx={{ display: "flex", marginTop: "3px" }}>
-                <TimelineContent sx={{ fontSize: "12px", paddingLeft: "30px" }}>
-                  12:30 pm
-                </TimelineContent>
-                <Grid>
-                  <TimelineContent sx={{ fontSize: "12px" }}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do
-                  </TimelineContent>
-                  <TimelineContent
+                    {isTodayOrYesterday(date) || date}
+                    {isOpen[`timeline${index + 1}-${activityIndex + 1}`] ? (
+                      <KeyboardArrowDownIcon sx={{ fontSize: "18px" }} />
+                    ) : (
+                      <KeyboardArrowRightIcon sx={{ fontSize: "18px" }} />
+                    )}
+                  </Button>
+                  {isOpen[`timeline${index + 1}-${activityIndex + 1}`] &&
+                    activities.map((activity) => (
+                      <TimelineItem key={date}>
+                        <TimelineSeparator>
+                          <TimelineDot color="primary" />
+                          <TimelineConnector />
+                        </TimelineSeparator>
+                        <Grid sx={{ display: "flex", marginTop: "3px" }}>
+                          <TimelineContent
+                            sx={{ fontSize: "12px", paddingLeft: "30px" }}
+                          >
+                            {unixTo12HourTime(activity.created)}
+                          </TimelineContent>
+                          <Grid>
+                            <TimelineContent sx={{ fontSize: "12px" }}>
+                              {activity.message}
+                            </TimelineContent>
+                            <TimelineContent
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                              }}
+                            >
+                              <Avatar
+                                sx={{
+                                  width: "30px",
+                                  height: "30px",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {activity?.performedBy
+                                  ?.charAt(0)
+                                  ?.toUpperCase()}
+                              </Avatar>
+                              <Typography>{activity.performedBy}</Typography>
+                            </TimelineContent>
+                          </Grid>
+                        </Grid>
+                      </TimelineItem>
+                    ))}
+                  <Divider
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
+                      margin: isOpen[
+                        `timeline${index + 1}-${activityIndex + 1}`
+                      ]
+                        ? "30px"
+                        : 0,
                     }}
-                  >
-                    <Avatar
-                      sx={{ width: "30px", height: "30px", fontSize: "14px" }}
-                    >
-                      A
-                    </Avatar>
-                    <Typography>Asfer</Typography>
-                  </TimelineContent>
+                  />
                 </Grid>
-              </Grid>
-            </TimelineItem>
-            <TimelineItem>
-              <TimelineSeparator>
-                <TimelineDot color="primary" variant="filled" />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <Grid sx={{ display: "flex", marginTop: "3px" }}>
-                <TimelineContent sx={{ fontSize: "12px", paddingLeft: "30px" }}>
-                  12:30 pm
-                </TimelineContent>
-                <Grid>
-                  <TimelineContent sx={{ fontSize: "12px" }}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                    sed do
-                  </TimelineContent>
-                  <TimelineContent
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <Avatar
-                      sx={{ width: "30px", height: "30px", fontSize: "14px" }}
-                    >
-                      A
-                    </Avatar>
-                    <Typography>Asfer</Typography>
-                  </TimelineContent>
-                </Grid>
-              </Grid>
-            </TimelineItem>
-          </>
-        )}
-        <Divider sx={{ margin: isOpen ? "30px" : 0 }} />
-      </Grid>
-    </Timeline>
+              )),
+          )}
+        </Timeline>
+      )}
+    </>
   );
 }

@@ -32,13 +32,11 @@ export default function Page() {
   const [role, setRole] = useState("");
   const [isCproleCheck, setIsCproleCheck] = useState();
   const [isEmailCheckLeads, setIsEmailCheckLeads] = useState(false);
-  // console.log("usestate", isCproleCheck);
   const [userCpCode, setUserCpCode] = useState("");
   const [selectedCompanyName, setSelectedCompanyName] = useState("");
   checkValidRoleToAddLead(role);
 
   const [leadData] = useAddLeadMutation();
-  // console.log(checkBranchHeadAndExecutes);
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
@@ -65,18 +63,14 @@ export default function Page() {
   }, []);
 
   const isCps = isCpUser(role);
-  // console.log(isCps);
 
   useEffect(() => {
     setIsCproleCheck(isCps);
   }, [role, isCps]);
 
-  // console.log(isCproleCheck);
-  // console.log(userCpCode);
   const handleCpChange = (event) => {
     const selectedCpName = event.target.value;
     setSelectedCompanyName(selectedCpName);
-    // console.log(selectedCpName);
   };
 
   useEffect(() => {
@@ -86,7 +80,6 @@ export default function Page() {
       );
 
       setPermissionProject(projectsWithLeadAddPermission);
-      // console.log(resultProject);
     }
   }, [resultProject]);
 
@@ -98,7 +91,7 @@ export default function Page() {
       }));
     }
   }, [permissionproject]);
-  // console.log(permissionproject.length);
+
   useEffect(() => {
     const selectedCp = resultCps?.data?.result?.find(
       (cp) => cp.name === selectedCompanyName,
@@ -133,7 +126,6 @@ export default function Page() {
     }
 
     const resultLeads = await leadData(formData);
-    // console.log(resultLeads?.data?.result?.Status);
     if (resultLeads?.data?.result?.Status === "Success") {
       setFormData({
         userName: "",
@@ -184,7 +176,6 @@ export default function Page() {
     }
 
     const resultLeads = await leadData(formData);
-    // console.log(resultLeads?.data?.result?.Status);
     if (resultLeads?.data?.result?.Status === "Success") {
       setFormData({
         userName: "",
@@ -557,14 +548,14 @@ export default function Page() {
             minHeight: "580px",
             borderRadius: "29px",
             boxShadow: " 0px 6px 32px 0px rgba(0, 0, 0, 0.15)",
-            border: "1px solid #9E9E9E",
+            // border: "1px solid #9E9E9E",
             width: "100%",
           }}
         >
           <Grid
             sx={{
               height: "59px",
-              backgroundColor: "black",
+              backgroundColor: "#021522",
               color: "white",
               borderRadius: "29px 29px 0px 0px",
               display: "flex",
@@ -581,7 +572,7 @@ export default function Page() {
             container
             alignItems="center"
             justifyContent="center"
-            sx={{ minHeight: "550px" }}
+            sx={{ minHeight: "600px" }}
           >
             <Grid
               item
@@ -590,6 +581,7 @@ export default function Page() {
                 flexDirection: "column",
                 gap: "20px",
                 width: "60%",
+                // border: "1px solid black",
               }}
             >
               <Grid
@@ -600,6 +592,8 @@ export default function Page() {
                 }}
               >
                 <TextField
+                  item
+                  md={12}
                   name="userName"
                   placeholder="Enter name"
                   value={formData?.userName}
@@ -621,7 +615,7 @@ export default function Page() {
                   <TextField
                     name="phone"
                     placeholder="Enter Phone"
-                    value={formData.phone}
+                    value={formData?.phone}
                     sx={{
                       width: "300px",
                       "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":

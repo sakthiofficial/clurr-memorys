@@ -34,10 +34,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ListItemButton from "@mui/material/ListItemButton";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import { ToastContainer, toast } from "react-toastify";
 import store from "../store";
 import {
@@ -50,9 +47,9 @@ import { usePathname, useRouter } from "next/navigation";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import PeopleIcon from "@mui/icons-material/People";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import HistoryIcon from "@mui/icons-material/History";
+import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
+import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import { ProfileInfo } from "./components/ProfileBtn";
 import LoginBanner from "../../public/loginBanner2.png";
 import { permissionKeyNames } from "../../shared/cpNamings";
@@ -82,6 +79,19 @@ const sidebarlist = [
     insideUrl: "addcp",
     icon: PersonAddAlt1Icon,
     shortName: permissionKeyNames?.cpManagement,
+  },
+];
+const superAdminOnly = [
+  // {
+  //   title: "Permission",
+  //   url: "permission",
+  //   insideUrl: "edit",
+  //   icon: NoAccountsRoundedIcon,
+  // },
+  {
+    title: "Activity",
+    url: "activity",
+    icon: HistoryRoundedIcon,
   },
 ];
 // login function
@@ -363,7 +373,12 @@ function Login() {
               fontSize: "14px",
             }}
           >
-            <Button onClick={handleBackLogin}>Back to Login ?</Button>
+            <Button
+              onClick={handleBackLogin}
+              sx={{ color: "black", fontSize: "12px" }}
+            >
+              Back to Login ?
+            </Button>
           </Typography>
           <Button
             sx={{
@@ -540,16 +555,14 @@ export default function RootLayout({ children }) {
                 }}
               >
                 <ListItemButton
-                  key={item.title}
-                  sx={{
-                    "&:hover": {
-                      textDecoration: "none",
-                    },
-                  }}
+                // key={item.title}
+                // sx={{
+                //   "&:hover": {
+                //     textDecoration: "none",
+                //   },
+                // }}
                 >
-                  <ListItemIcon alt={item.title}>
-                    {React.createElement(item.icon)}
-                  </ListItemIcon>
+                  <ListItemIcon>{React.createElement(item.icon)}</ListItemIcon>
                   <Typography sx={{ fontSize: "15px" }}>
                     {item.title}
                   </Typography>
@@ -558,35 +571,49 @@ export default function RootLayout({ children }) {
             </Link>
           ))}
         {isRoleBranchHead[0] === "Super Administrator" && (
-          <Link href="/activity" style={{ textDecoration: "none" }}>
-            <ListItem
-              disablePadding
-              style={{
-                textDecoration: "none",
-                color: "black",
-                // backgroundColor:
-                //   pathname === `/cpmanagement/view?id=${roleBranchHeadId}`
-                //     ? "red"
-                //     : "transparent",
-                backgroundColor:
-                  pathname === "/activity"
-                    ? "rgba(250, 185, 0, 0.15)"
-                    : "transparent",
-                borderRight:
-                  pathname === "/activity"
-                    ? "2px solid rgba(250, 185, 0, 1)"
-                    : "white",
-              }}
-            >
-              <ListItemButton>
-                <ListItemIcon>{React.createElement(HistoryIcon)}</ListItemIcon>
-                {/* <ListItemText  primary="Leads list" /> */}
-                <Typography sx={{ fontSize: "15px" }}>
-                  Activity History
-                </Typography>
-              </ListItemButton>
-            </ListItem>
-          </Link>
+          <>
+            {superAdminOnly.map((item) => (
+              <Link href={item.url} style={{ textDecoration: "none" }}>
+                <ListItem
+                  disablePadding
+                  style={{
+                    textDecoration: "none",
+                    color: "black",
+                    backgroundColor:
+                      pathname === `/${item.url}` ||
+                      pathname === `/${item.url}/${item.insideUrl}`
+                        ? "rgba(250, 185, 0, 0.15)"
+                        : "transparent",
+                    borderRight:
+                      pathname === `/${item.url}` ||
+                      pathname === `/${item.url}/${item.insideUrl}`
+                        ? "2px solid rgba(250, 185, 0, 1)"
+                        : "none",
+                    "&:hover": {
+                      textDecoration: "none",
+                    },
+                  }}
+                >
+                  <ListItemButton
+                    key={item.title}
+                    sx={{
+                      "&:hover": {
+                        textDecoration: "none",
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ objectFit: "contain" }}>
+                      {React.createElement(item.icon)}
+                    </ListItemIcon>
+                    {/* <ListItemText  primary="Leads list" /> */}
+                    <Typography sx={{ fontSize: "15px" }}>
+                      {item.title}
+                    </Typography>
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            ))}
+          </>
         )}
       </List>
     </Grid>
