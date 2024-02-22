@@ -82,12 +82,12 @@ const sidebarlist = [
   },
 ];
 const superAdminOnly = [
-  {
-    title: "Permission",
-    url: "permission",
-    insideUrl: "edit",
-    icon: NoAccountsRoundedIcon,
-  },
+  // {
+  //   title: "Permission",
+  //   url: "permission",
+  //   insideUrl: "edit",
+  //   icon: NoAccountsRoundedIcon,
+  // },
   {
     title: "Activity",
     url: "activity",
