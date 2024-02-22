@@ -11,9 +11,12 @@ import {
   TableRow,
   Typography,
   Button,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useGetUsersQuery } from "@/reduxSlice/apiSlice";
 
 export default function Page() {
   // const preDefinedValues = [
@@ -78,6 +81,7 @@ export default function Page() {
       activityHistory: "Access Denied",
     },
   ];
+  const { data } = useGetUsersQuery();
 
   const getBackgroundColor = (status) => {
     if (status === "Access") {
@@ -117,6 +121,47 @@ export default function Page() {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
+  const preDefinedValues = [
+    { label: "Name", key: "name" },
+    { label: "Email", key: "email" },
+    { label: "Phone", key: "phone" },
+  ];
+  const [selectedFilter, setSelectedFilter] = useState(preDefinedValues[0]);
+  const [filterDatasByCategory, setFilterDatasByCategory] = useState([]);
+  const [filterUser, setFilterUser] = useState();
+  const [getUserFilter, setGetUserFilter] = useState(null);
+
+  const handleChangeFilter = (event, value) => {
+    if (!value) {
+      setSelectedFilter(preDefinedValues[0]);
+    } else {
+      setSelectedFilter(value);
+    }
+  };
+
+  const handleFilterSearchUser = (event, value) => {
+    setGetUserFilter(value);
+  };
+
+  useEffect(() => {
+    if (selectedFilter?.label) {
+      const filteredResults = (data?.result || []).map(
+        (item) => item[selectedFilter.key],
+      );
+      setFilterDatasByCategory(filteredResults);
+      // console.log(filteredResults);
+    }
+  }, [data, selectedFilter]);
+
+  useEffect(() => {
+    if (selectedFilter?.label) {
+      const filteredResults = data?.result.filter(
+        (item) => item[selectedFilter.key] === getUserFilter,
+      );
+      setFilterUser(filteredResults);
+      // console.log("worked");
+    }
+  }, [getUserFilter]);
 
   return (
     <Grid style={{ minHeight: "100vh" }}>
@@ -124,7 +169,7 @@ export default function Page() {
         sx={{
           minHeight: "8vh",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "start",
           alignItems: "center",
           // padding: "0px 10px",
           // border: "1px solid black",
@@ -132,7 +177,7 @@ export default function Page() {
           // flexWrap: "wrap",
         }}
       >
-        <Grid sx={{ width: "50%" }}>
+        <Grid sx={{ width: "20%" }}>
           <Typography
             sx={{
               fontSize: "18px",
@@ -143,7 +188,7 @@ export default function Page() {
             User List
           </Typography>
         </Grid>
-        {/* <Grid
+        <Grid
           sx={{
             // border: "1px solid black",
             minWidth: "600px",
@@ -158,8 +203,8 @@ export default function Page() {
               id="combo-box-demo"
               options={preDefinedValues}
               sx={{ width: 280 }}
-              //   onChange={handleChangeFilter}
-              //   value={selectedFilter}
+              onChange={handleChangeFilter}
+              value={selectedFilter}
               renderInput={(params) => (
                 <TextField {...params} label="selecet by" />
               )}
@@ -170,24 +215,24 @@ export default function Page() {
               size="small"
               disablePortal
               id="combo-box-demo"
-              //   options={filterDatasByCategory}
+              options={filterDatasByCategory}
               sx={{ width: 280 }}
-              //   onChange={handleFilterSearchUser}
+              onChange={handleFilterSearchUser}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  //   label={
-                  //     selectedFilter ? (
-                  //       <>Search By {selectedFilter.label}</>
-                  //     ) : (
-                  //       "select one filter"
-                  //     )
-                  //   }
+                  label={
+                    selectedFilter ? (
+                      <>Search By {selectedFilter.label}</>
+                    ) : (
+                      "select one filter"
+                    )
+                  }
                 />
               )}
             />
           </Grid>
-        </Grid> */}
+        </Grid>
       </Grid>
       <Grid>
         <TableContainer

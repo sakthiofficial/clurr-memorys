@@ -66,7 +66,7 @@ export default function Page() {
   };
 
   return (
-    <>
+    <Grid sx={{ maxWidth: "1356px", margin: "0 auto" }}>
       <Grid
         sx={{
           height: "5vh",
@@ -530,6 +530,6 @@ export default function Page() {
           </Grid>
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 }

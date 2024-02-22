@@ -536,7 +536,10 @@ export default function Page() {
                           }}
                         >
                           <Typography
-                            sx={{ fontSize: "20px", fontWeight: "300" }}
+                            sx={{
+                              fontSize: "20px",
+                              fontWeight: "300",
+                            }}
                           >
                             ENTER CP CODE
                           </Typography>
@@ -567,6 +570,17 @@ export default function Page() {
                             justifyContent: "space-around",
                           }}
                         >
+                          {/* <Typography
+                            sx={{
+                              // border: "1px solid black",
+                              width: "100%",
+                              color: "black",
+                              fontSize: "14px",
+                              padding: "3px",
+                            }}
+                          >
+                            Enter Code
+                          </Typography> */}
                           <TextField
                             sx={{
                               width: "100%",
