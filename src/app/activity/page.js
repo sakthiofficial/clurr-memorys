@@ -12,9 +12,9 @@ import {
 import { DateRangePicker } from "rsuite";
 import Timeline from "../components/Timeline";
 import { dateToUnixTimestamp } from "../../../shared/dateCalc";
-import "rsuite/dist/rsuite.min.css";
 import { useActivityQuery } from "@/reduxSlice/apiSlice";
 import { structureDataInDateWise } from "../../../shared/dataHandler";
+import "rsuite/dist/rsuite.min.css";
 
 export default function Page() {
   const [subOrdinateRole, setSubOrdinateRole] = useState([]);
