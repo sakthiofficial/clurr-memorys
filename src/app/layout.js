@@ -573,7 +573,7 @@ export default function RootLayout({ children }) {
         {isRoleBranchHead[0] === "Super Administrator" && (
           <>
             {superAdminOnly.map((item) => (
-              <Link href={item.url} style={{ textDecoration: "none" }}>
+              <Link href={`/${item.url}`} style={{ textDecoration: "none" }}>
                 <ListItem
                   disablePadding
                   style={{
