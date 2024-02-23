@@ -15,7 +15,7 @@ export async function POST(req) {
 
   const validateQuery = Joi.object({
     newPassword: Joi.string().required(),
-    password: Joi.string().required(),
+    password: Joi.string(),
     id: Joi.string(),
   });
   const bodyData = await req.json();

@@ -863,7 +863,8 @@ class CPUserSrv {
 
     const passwordValidationNeeded = !(
       isPriorityUser(providedUser[userDataObj?.role]) &&
-      isCpUser(userDbData[userDataObj?.role])
+      isCpUser(userDbData[userDataObj?.role]) &&
+      providedUser?._id.toString() !== resetUser?.id
     );
     if (passwordCheck && passwordValidationNeeded) {
       return new ApiResponse(

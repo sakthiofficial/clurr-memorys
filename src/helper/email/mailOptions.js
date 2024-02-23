@@ -126,50 +126,34 @@ export function cpMailOption(
   return {
     from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
     to: userEmail,
-    subject: "Message from Urbanrise",
+    subject: `Hello ${userName}, Your CP Account is Created – Urbanrise Hyderabad`,
     html: `
       <html>
         <head>
           <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              background-color: #f4f4f4;
-            }
-            .container {
-              max-width: 600px;
-              background-color: #ffffff;
-              padding: 30px;
-              border-radius: 10px;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-              margin: 20px auto;
-            }
-            h1 {
-              color: #000;
-            }
-            p {
-              color: #555;
-              line-height: 1.5;
-              margin-bottom: 15px;
-            }
-            a {
-              color: #F9B800; /* Secondary color */
-            }
+
           </style>
         </head>
         <body>
           <div class="container">
             <h1>Dear ${userName},</h1>
-            <p>Your account is successfully created in Urbanrise Hyderabad CP Portal.</p>
+           
+            <p>Congratulations, your Channle Partner account is created successfully in Urbanrise Hyderabad Channel Partner Portal.</p>
+             
+            <p>Your Current role is ${role}</p>
   
-            <p>Your current role is ${role} for the following Urbanrise Hyderabad projects: ${projects}.</p>
-  
-            <p>Your company code is: ${companyCode}</p>
+            <p>Project(s):${projects}.</p>
+            
+            <p>Your CP code is: ${companyCode}</</p>
 
-            <p>Please contact the Urbanrise team to obtain your credentials.</p>
+            <p>Your Relationship Manager is ${parentName}</p>
+            
+            <p>Login url:<a href="https://cph.urbanriseprojects.in" style="color: #F9B800;">https://cph.urbanriseprojects.in</a></p>
   
-            <p>Login to our portal at: <a href="https://cph.urbanriseprojects.in" style="color: #F9B800;">https://cph.urbanriseprojects.in</a></p>
-  
-            <p>Best regards,<br>${parentName}</p>
+            <p>If you have any queries, please contact your RM.</p> 
+           
+            Thanks,
+            Team Urbanrise
           </div>
         </body>
       </html>
