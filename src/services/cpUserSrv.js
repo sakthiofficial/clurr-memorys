@@ -858,7 +858,7 @@ class CPUserSrv {
 
     const passwordCheck = await bcrypt.compare(
       userDbData[userDataObj?.password],
-      password,
+      password || "null",
     );
 
     const passwordValidationNeeded = !(
