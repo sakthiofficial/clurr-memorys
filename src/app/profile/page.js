@@ -13,7 +13,10 @@ import {
 import React, { useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
-import { useGetUserByIdQuery } from "@/reduxSlice/apiSlice";
+import {
+  useGetUserByIdQuery,
+  useResetPasswordMutation,
+} from "@/reduxSlice/apiSlice";
 
 export default function Page() {
   const [userData, setUserData] = useState(null);
@@ -32,7 +35,7 @@ export default function Page() {
     }));
   };
 
-  // console.log(data);
+  // console.log(updatedValues);
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -51,16 +54,21 @@ export default function Page() {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const handleSubmit = () => {
+  const [resetPasswordSend] = useResetPasswordMutation();
+
+  const handleSubmit = async () => {
     if (resetPassword.NewPassword === resetPassword.ConfirmPassword) {
       const result = {
-        password: resetPassword.ConfirmPassword,
+        newPassword: resetPassword.ConfirmPassword,
+        id: data?.result?._id,
       };
       setResetPassword({
         NewPassword: "",
         ConfirmPassword: "",
       });
+
       toast.success("Reset successfully");
+      await resetPasswordSend(result);
       console.log(result);
     } else {
       toast.error("Password does not match");

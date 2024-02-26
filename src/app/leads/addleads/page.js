@@ -40,7 +40,7 @@ export default function Page() {
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
-    phone: "+91",
+    phone: "",
     project: "",
     companyCode: "",
     notes: "",
@@ -130,7 +130,7 @@ export default function Page() {
       setFormData({
         userName: "",
         email: "",
-        phone: "+91",
+        phone: "",
         project: "",
         companyCode: "",
         notes: "",
@@ -614,7 +614,7 @@ export default function Page() {
                 <Grid>
                   <TextField
                     name="phone"
-                    placeholder="Enter Phone"
+                    placeholder="Enter phone"
                     value={formData?.phone}
                     sx={{
                       width: "300px",

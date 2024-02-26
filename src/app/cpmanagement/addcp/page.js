@@ -95,7 +95,7 @@ export default function Page() {
 
     // Find the selected category data
     const selectedCategoryData = (result?.data?.result || []).find(
-      (rm) => rm.name === selectedCategoryValue,
+      (rm) => rm.name === selectedCategoryValue
     );
 
     const initialSelectedProjects = selectedCategoryData?.projects || [];
@@ -116,7 +116,7 @@ export default function Page() {
 
     if (
       (formData?.cpExecutes || []).some(
-        (exec) => !exec.name || !exec.phone || !exec.email || !exec.password,
+        (exec) => !exec.name || !exec.phone || !exec.email || !exec.password
       )
     ) {
       console.error("All CP Executive fields are required.");
@@ -185,7 +185,7 @@ export default function Page() {
   };
 
   const selectedCategoryData = result?.data?.result?.find(
-    (rm) => rm.name === selectedCategory,
+    (rm) => rm.name === selectedCategory
   );
 
   // form submit function
@@ -510,7 +510,7 @@ export default function Page() {
                         sx: {
                           borderRadius: "20px",
                           minHeight: "320px",
-                          width: "300px",
+                          width: "350px",
                           // border: "1px solid black",
                           display: "flex",
                           justifyContent: "space-between",
@@ -525,7 +525,7 @@ export default function Page() {
                           sx={{
                             border: "none",
                             height: "54px",
-                            width: "280px",
+                            width: "330px",
                             borderRadius: "9px",
                             backgroundColor: "#F9B800",
                             display: "flex",
@@ -562,7 +562,7 @@ export default function Page() {
                           sx={{
                             // border: "1px solid rgba(189, 189, 189, 1)",
                             minHeight: "100px",
-                            width: "280px",
+                            width: "330px",
                             borderRadius: "19px",
                             display: "flex",
                             flexDirection: "column",
@@ -570,17 +570,45 @@ export default function Page() {
                             justifyContent: "space-around",
                           }}
                         >
-                          {/* <Typography
+                          <Grid
                             sx={{
                               // border: "1px solid black",
                               width: "100%",
                               color: "black",
                               fontSize: "14px",
-                              padding: "3px",
+                              padding: "5px",
+                              marginBottom: "8px",
                             }}
                           >
-                            Enter Code
-                          </Typography> */}
+                            <Typography
+                              sx={{
+                                fontSize: "10px",
+                                marginBottom: "4px",
+                                color: "#ff6347",
+                                letterSpacing: ".5px",
+                              }}
+                            >
+                              {" "}
+                              If your old CP code is HYD1996, enter only the
+                              number - 1996.
+                            </Typography>
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontSize: "10px",
+                                color: "#ff6347",
+                                letterSpacing: ".5px",
+                                display:'flex',
+                                // flexDirection:"column"
+                              }}
+                            >
+                              {" "}
+                              The New Code will be{" "}&nbsp;
+                              <Typography component="span" sx={{fontSize: "10px",fontWeight:"bold",letterSpacing:".5px"}}>
+                                URHCP01996.
+                              </Typography>
+                            </Typography>
+                          </Grid>
                           <TextField
                             sx={{
                               width: "100%",
@@ -588,7 +616,7 @@ export default function Page() {
                               height: "48px",
                               marginBottom: "15px",
                             }}
-                            placeholder="Enter Only 6 Digit Code"
+                            placeholder="Enter Digits Only"
                             type="text"
                             inputProps={{
                               maxLength: 6,
@@ -699,7 +727,7 @@ export default function Page() {
                               cpExecutes: prev?.cpExecutes?.map((item, i) =>
                                 i === index
                                   ? { ...item, name: e.target.value }
-                                  : item,
+                                  : item
                               ),
                             }))
                           }
@@ -722,7 +750,7 @@ export default function Page() {
                               cpExecutes: prev?.cpExecutes?.map((item, i) =>
                                 i === index
                                   ? { ...item, phone: e.target.value }
-                                  : item,
+                                  : item
                               ),
                             }))
                           }
@@ -745,7 +773,7 @@ export default function Page() {
                               cpExecutes: prev?.cpExecutes?.map((item, i) =>
                                 i === index
                                   ? { ...item, email: e.target.value }
-                                  : item,
+                                  : item
                               ),
                             }))
                           }

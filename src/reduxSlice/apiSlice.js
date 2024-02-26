@@ -167,6 +167,13 @@ export const apiSlice = createApi({
         body: activityData,
       }),
     }),
+    getActivityById: builder.query({
+      query: (activityData) => ({
+        url: `/activity/activityById`,
+        method: "POST",
+        body: activityData,
+      }),
+    }),
   }),
 });
 
@@ -195,4 +202,5 @@ export const {
   useEditCpRmMutation,
   useAddCpExecuteMutation,
   useActivityQuery,
+  useGetActivityByIdQuery,
 } = apiSlice;

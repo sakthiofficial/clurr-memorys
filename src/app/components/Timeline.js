@@ -18,7 +18,12 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import isTodayOrYesterday, { unixTo12HourTime } from "../../../shared/dateCalc";
 
-export default function NoOppositeContent({ resultActivityData, isFetching }) {
+export default function NoOppositeContent({
+  resultActivityData,
+  isFetching,
+  resultActivityData2,
+  isFetching2,
+}) {
   const [isOpen, setIsOpen] = useState({});
 
   useEffect(() => {
@@ -46,7 +51,7 @@ export default function NoOppositeContent({ resultActivityData, isFetching }) {
 
   return (
     <>
-      {isFetching ? (
+      {isFetching || isFetching2 ? (
         <Box
           sx={{
             display: "flex",
@@ -68,88 +73,91 @@ export default function NoOppositeContent({ resultActivityData, isFetching }) {
             },
           }}
         >
-          {(resultActivityData || []).map((dateActivities, index) =>
-            Object.entries(dateActivities)
-              .reverse()
-              .map(([date, activities], activityIndex) => (
-                <Grid key={date} sx={{ padding: "0px 10px" }}>
-                  <Button
-                    onClick={() =>
-                      handleToggle(`timeline${index + 1}-${activityIndex + 1}`)
-                    }
-                    sx={{
-                      margin: "40px 0px",
-                      padding: " 5px 10px",
-                      color: "black",
-                      fontSize: "12px",
-                      borderRadius: "10px",
-                      backgroundColor: "#F9B800",
-                      "&:hover": {
+          {(resultActivityData || resultActivityData2 || []).map(
+            (dateActivities, index) =>
+              Object.entries(dateActivities)
+                .reverse()
+                .map(([date, activities], activityIndex) => (
+                  <Grid key={date} sx={{ padding: "0px 10px" }}>
+                    <Button
+                      onClick={() =>
+                        handleToggle(
+                          `timeline${index + 1}-${activityIndex + 1}`
+                        )
+                      }
+                      sx={{
+                        margin: "40px 0px",
+                        padding: " 5px 10px",
+                        color: "black",
+                        fontSize: "12px",
+                        borderRadius: "10px",
                         backgroundColor: "#F9B800",
-                        boxShadow: "none",
-                        border: "none",
-                      },
-                    }}
-                  >
-                    {isTodayOrYesterday(date) || date}
-                    {isOpen[`timeline${index + 1}-${activityIndex + 1}`] ? (
-                      <KeyboardArrowDownIcon sx={{ fontSize: "18px" }} />
-                    ) : (
-                      <KeyboardArrowRightIcon sx={{ fontSize: "18px" }} />
-                    )}
-                  </Button>
-                  {isOpen[`timeline${index + 1}-${activityIndex + 1}`] &&
-                    activities.map((activity) => (
-                      <TimelineItem key={date}>
-                        <TimelineSeparator>
-                          <TimelineDot color="primary" />
-                          <TimelineConnector />
-                        </TimelineSeparator>
-                        <Grid sx={{ display: "flex", marginTop: "3px" }}>
-                          <TimelineContent
-                            sx={{ fontSize: "12px", paddingLeft: "30px" }}
-                          >
-                            {unixTo12HourTime(activity.created)}
-                          </TimelineContent>
-                          <Grid>
-                            <TimelineContent sx={{ fontSize: "12px" }}>
-                              {activity.message}
-                            </TimelineContent>
+                        "&:hover": {
+                          backgroundColor: "#F9B800",
+                          boxShadow: "none",
+                          border: "none",
+                        },
+                      }}
+                    >
+                      {isTodayOrYesterday(date) || date}
+                      {isOpen[`timeline${index + 1}-${activityIndex + 1}`] ? (
+                        <KeyboardArrowDownIcon sx={{ fontSize: "18px" }} />
+                      ) : (
+                        <KeyboardArrowRightIcon sx={{ fontSize: "18px" }} />
+                      )}
+                    </Button>
+                    {isOpen[`timeline${index + 1}-${activityIndex + 1}`] &&
+                      activities.map((activity) => (
+                        <TimelineItem key={date}>
+                          <TimelineSeparator>
+                            <TimelineDot color="primary" />
+                            <TimelineConnector />
+                          </TimelineSeparator>
+                          <Grid sx={{ display: "flex", marginTop: "3px" }}>
                             <TimelineContent
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
-                              }}
+                              sx={{ fontSize: "12px", paddingLeft: "30px" }}
                             >
-                              <Avatar
+                              {unixTo12HourTime(activity.created)}
+                            </TimelineContent>
+                            <Grid>
+                              <TimelineContent sx={{ fontSize: "12px" }}>
+                                {activity.message}
+                              </TimelineContent>
+                              <TimelineContent
                                 sx={{
-                                  width: "30px",
-                                  height: "30px",
-                                  fontSize: "14px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
                                 }}
                               >
-                                {activity?.performedBy
-                                  ?.charAt(0)
-                                  ?.toUpperCase()}
-                              </Avatar>
-                              <Typography>{activity.performedBy}</Typography>
-                            </TimelineContent>
+                                <Avatar
+                                  sx={{
+                                    width: "30px",
+                                    height: "30px",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  {activity?.performedBy
+                                    ?.charAt(0)
+                                    ?.toUpperCase()}
+                                </Avatar>
+                                <Typography>{activity.performedBy}</Typography>
+                              </TimelineContent>
+                            </Grid>
                           </Grid>
-                        </Grid>
-                      </TimelineItem>
-                    ))}
-                  <Divider
-                    sx={{
-                      margin: isOpen[
-                        `timeline${index + 1}-${activityIndex + 1}`
-                      ]
-                        ? "30px"
-                        : 0,
-                    }}
-                  />
-                </Grid>
-              )),
+                        </TimelineItem>
+                      ))}
+                    <Divider
+                      sx={{
+                        margin: isOpen[
+                          `timeline${index + 1}-${activityIndex + 1}`
+                        ]
+                          ? "30px"
+                          : 0,
+                      }}
+                    />
+                  </Grid>
+                ))
           )}
         </Timeline>
       )}

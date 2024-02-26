@@ -5,9 +5,7 @@
     "airbnb",
     "plugin:prettier/recommended"
   ],
-  "plugins": [
-    "prettier"
-  ],
+  "plugins": ["prettier"],
   "rules": {
     "react-hooks/exhaustive-deps": [
       "warn",
@@ -24,21 +22,14 @@
     "jsx-a11y/anchor-is-valid": [
       "error",
       {
-        "components": [
-          "Link"
-        ],
-        "specialLink": [
-          "to"
-        ]
+        "components": ["Link"],
+        "specialLink": ["to"]
       }
     ],
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [
-          ".js",
-          ".jsx"
-        ]
+        "extensions": [".js", ".jsx"]
       }
     ],
     "import/prefer-default-export": "off",
@@ -51,9 +42,7 @@
       }
     ],
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": [
-      "error"
-    ],
+    "prettier/prettier": 0,
     "react/no-string-refs": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "react/jsx-boolean-value": 0,

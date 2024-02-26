@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormControl, Grid, TextField, Typography } from "@mui/material";
 import { DateRangePicker } from "rsuite";
 import Timeline from "../components/Timeline";
 import { dateToUnixTimestamp } from "../../../shared/dateCalc";
 import "rsuite/dist/rsuite.min.css";
+import { useGetActivityByIdQuery } from "@/reduxSlice/apiSlice";
+import { structureDataInDateWise } from "../../../shared/dataHandler";
 
 export default function Page() {
   const [search, setSearch] = useState("");
-
+  const [user, setUser] = useState(null);
   const { combine, before, afterToday } = DateRangePicker;
   const today = new Date();
   const last7Days = new Date(today);
@@ -32,6 +34,26 @@ export default function Page() {
   };
   // console.log(selectedStartDate);
   // console.log(selectedEndDate);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+    if (storedData) {
+      const jsonData = JSON.parse(storedData);
+      setUser(jsonData);
+    }
+  }, []);
+
+  const updatedValues = {
+    from: selectedStartDate,
+    to: selectedEndDate,
+    id: user?._id,
+  };
+
+  const {data,isFetching} = useGetActivityByIdQuery(updatedValues)
+  const resultActivityData = structureDataInDateWise(data?.result);
+
+  console.log(resultActivityData)
+  // console.log(updatedValues);
 
   const Calendar = {
     sunday: "Su",
@@ -100,7 +122,7 @@ export default function Page() {
             display: "flex",
             flexWrap: "wrap",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "end",
             gap: "10px",
             // border: "1px solid black",
             height: "100%",
@@ -129,7 +151,7 @@ export default function Page() {
               showOneCalendar
             />
           </FormControl>
-          <TextField
+          {/* <TextField
             size="small"
             label="Search"
             name="email"
@@ -141,7 +163,7 @@ export default function Page() {
                 borderRadius: "8px",
               },
             }}
-          />
+          /> */}
         </Grid>
       </Grid>
 
@@ -150,7 +172,7 @@ export default function Page() {
           minHeight: "100vh",
         }}
       >
-        <Timeline />
+        <Timeline resultActivityData2={resultActivityData} isFetching2={isFetching} />
       </Grid>
     </Grid>
   );
