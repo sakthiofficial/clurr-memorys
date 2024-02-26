@@ -11,6 +11,7 @@ const CpAppLeadSchema = new Schema({
   project: { type: String },
   created: { type: Number },
   createdBy: { type: Schema.Types.ObjectId, ref: "CpAppUser", required: true },
+  leadId: { type: String, trim: true },
 });
 // have a refrence old project to add created hook
 addCreatedHook(CpAppLeadSchema);
