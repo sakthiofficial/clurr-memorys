@@ -57,6 +57,7 @@ export default function Page() {
   const [cpExecuteName, setCpExecuteName] = useState(false);
   const [cpExecutePhone, setCpExecutePhone] = useState(false);
   const [cpExecuteEmail, setCpExecuteEmail] = useState(false);
+  const [isCodeCheck, setIsCodeCheck] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -286,11 +287,17 @@ export default function Page() {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setIsCodeCheck(false);
   };
   const handleClose = () => {
     setOpen(false);
+    if (cpEnteredCode.length >= 1) {
+      setIsCodeCheck(true);
+    } else {
+      setIsCodeCheck(false);
+    }
   };
-
+  console.log(isCodeCheck);
   // handle clear
   const handleClear = () => {
     setCpEnteredCode("");
@@ -502,8 +509,13 @@ export default function Page() {
                       }}
                     >
                       {/* Enter Cp Code */}
-                      ENTER CP CODE
+                      {isCodeCheck ? (
+                        <Typography>CODE - {cpEnteredCode}</Typography>
+                      ) : (
+                        <Typography> ENTER CP CODE</Typography>
+                      )}
                     </Typography>
+
                     <BootstrapDialog
                       onClose={handleClose}
                       aria-labelledby="customized-dialog-title"

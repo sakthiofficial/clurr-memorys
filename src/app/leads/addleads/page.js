@@ -614,6 +614,26 @@ export default function Page() {
                     setFormData({ ...formData, userName: e.target.value })
                   }
                 />
+                {/* <Grid>
+                  <TextField
+                    name="phone"
+                    placeholder="Enter phone"
+                    value={formData?.phone}
+                    sx={{
+                      width: "300px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "5px",
+                        },
+                      "& input::placeholder": {
+                        color: "black",
+                      },
+                    }}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                  />
+                </Grid> */}
                 <Grid>
                   <TextField
                     name="phone"
