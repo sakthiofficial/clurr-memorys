@@ -267,6 +267,7 @@ class LSQLeadSrv {
               name: "name",
               createdBy: "createdBy",
               subSource: "subSource",
+              email:"email"
             };
             const resultArray = leads.map((lead) => {
               const matchingLeadData = structuredLeadData.find((leadData) => {
@@ -276,8 +277,10 @@ class LSQLeadSrv {
                 lead[leadDataObj?.name];
               matchingLeadData[lsqLeadFieldNames?.subSource] =
                 lead[leadDataObj?.subSource];
+                matchingLeadData[lsqLeadFieldNames?.email] =
+                lead[leadDataObj?.email];
 
-              return matchingLeadData;
+              return {...matchingLeadData};
             });
             data = [...resultArray];
           } catch (error) {
@@ -446,7 +449,6 @@ class LSQLeadSrv {
           userName,
           leadResult?._id,
         );
-
         return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
           leadResult,
           Status: "Success",
@@ -455,6 +457,7 @@ class LSQLeadSrv {
           },
         });
       }
+      console.log('comming here');
       const { lsqConfig } = config;
       const { projectCredential } = lsqConfig;
       const { accessKey, secretKey } = projectCredential[project];
