@@ -13,7 +13,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
-import { useGetUserByIdQuery } from "@/reduxSlice/apiSlice";
+import {
+  useGetUserByIdQuery,
+  useResetPasswordMutation,
+} from "@/reduxSlice/apiSlice";
+import Link from "next/link";
 
 export default function Page() {
   const [userData, setUserData] = useState(null);
@@ -32,7 +36,7 @@ export default function Page() {
     }));
   };
 
-  // console.log(data);
+  // console.log(updatedValues);
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -51,16 +55,21 @@ export default function Page() {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const handleSubmit = () => {
+  const [resetPasswordSend] = useResetPasswordMutation();
+
+  const handleSubmit = async () => {
     if (resetPassword.NewPassword === resetPassword.ConfirmPassword) {
       const result = {
-        password: resetPassword.ConfirmPassword,
+        newPassword: resetPassword.ConfirmPassword,
+        id: data?.result?._id,
       };
       setResetPassword({
         NewPassword: "",
         ConfirmPassword: "",
       });
+
       toast.success("Reset successfully");
+      await resetPasswordSend(result);
       console.log(result);
     } else {
       toast.error("Password does not match");
@@ -72,6 +81,37 @@ export default function Page() {
     <>
       <ToastContainer />
       <Grid
+          sx={{
+            height: "5vh",
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "20px",
+            justifyContent: "end",
+          }}
+        >
+          <Link href="/leads">
+            <Button
+              type="button"
+              sx={{
+                backgroundColor: "transparent",
+                color: "black",
+                width: "92px",
+                height: "39px",
+                borderRadius: "13px",
+                border: "1px solid black",
+                fontSize: "13px",
+                fontWeight: "400",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              back
+            </Button>
+          </Link>
+        </Grid>
+      <Grid
         sx={{
           border: "1px solid lightgrey",
           borderRadius: "30px",
@@ -82,7 +122,7 @@ export default function Page() {
       >
         <Grid
           sx={{
-            height: "12vh",
+            height: "8vh",
             display: "flex",
             alignItems: "center",
             backgroundColor: "#021522",
@@ -260,7 +300,7 @@ export default function Page() {
                     // backgroundColor: "black",
                     display: "flex",
                     alignItems: "center",
-                    padding: "10px",
+                    padding: "15px",
                   }}
                 >
                   <Typography

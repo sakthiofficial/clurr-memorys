@@ -35,7 +35,7 @@ export default function Page() {
   const [open, setOpen] = useState(false);
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(50);
 
   // dialog box setup
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -290,7 +290,7 @@ export default function Page() {
           }}
         >
           <Grid sx={{ width: "50%" }}>
-            <Typography
+            {/* <Typography
               sx={{
                 fontSize: "18px",
                 fontWeight: "500",
@@ -299,7 +299,7 @@ export default function Page() {
               }}
             >
               CP List
-            </Typography>
+            </Typography> */}
           </Grid>
           <Grid
             sx={{
@@ -671,7 +671,7 @@ export default function Page() {
               </Table>
             )}
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[50, 100, 150]}
               component="div"
               count={arrayToSlice?.length || 0}
               rowsPerPage={rowsPerPage}

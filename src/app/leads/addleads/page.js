@@ -42,7 +42,7 @@ export default function Page() {
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
-    phone: "+91",
+    phone: "",
     project: "",
     companyCode: "",
     notes: "",
@@ -78,7 +78,7 @@ export default function Page() {
   useEffect(() => {
     if (resultProject?.data?.status === 200) {
       const projectsWithLeadAddPermission = resultProject?.data?.result?.filter(
-        (project) => project?.permission === "leadAddAndView",
+        (project) => project?.permission === "leadAddAndView"
       );
 
       setPermissionProject(projectsWithLeadAddPermission);
@@ -96,7 +96,7 @@ export default function Page() {
 
   useEffect(() => {
     const selectedCp = resultCps?.data?.result?.find(
-      (cp) => cp.name === selectedCompanyName,
+      (cp) => cp.name === selectedCompanyName
     );
 
     if (selectedCompanyName) {
@@ -132,8 +132,8 @@ export default function Page() {
       setFormData({
         userName: "",
         email: "",
-        phone: "+91",
-        project: "",
+        phone: "",
+        project: permissionproject[0]?.name,
         companyCode: "",
         notes: "",
         id: "",
@@ -182,7 +182,7 @@ export default function Page() {
       setFormData({
         userName: "",
         email: "",
-        phone: "+91",
+        phone: "",
         project: "",
         companyCode: "",
         notes: "",
@@ -225,10 +225,13 @@ export default function Page() {
       <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
         <Grid
           sx={{
-            height: "5vh",
+            height: "6vh",
             display: "flex",
             alignItems: "center",
             marginBottom: "20px",
+            justifyContent: "end",
+            // border:"1px solid black",
+            // padding:"10px"
           }}
         >
           <Link href="/leads">
@@ -613,10 +616,30 @@ export default function Page() {
                     setFormData({ ...formData, userName: e.target.value })
                   }
                 />
+                {/* <Grid>
+                  <TextField
+                    name="phone"
+                    placeholder="Enter phone"
+                    value={formData?.phone}
+                    sx={{
+                      width: "300px",
+                      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderRadius: "5px",
+                        },
+                      "& input::placeholder": {
+                        color: "black",
+                      },
+                    }}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                  />
+                </Grid> */}
                 <Grid>
                   {/* <TextField
                     name="phone"
-                    placeholder="Enter Phone"
+                    placeholder="Enter phone"
                     value={formData?.phone}
                     sx={{
                       width: "300px",

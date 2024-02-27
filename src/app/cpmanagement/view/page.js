@@ -27,6 +27,7 @@ import CpEditRmDialogBox from "../../components/CpEditRmDialog";
 import CpEditDialog from "../../components/CpEditDialog";
 import CpEditExecuteDialog from "../../components/CpEditExecuteDialog";
 import AddExecuteAccount from "@/app/components/AddExecuteAccount";
+import { roleNames } from "../../../../shared/cpNamings";
 
 export default function Page() {
   const params = useSearchParams();
@@ -106,6 +107,7 @@ export default function Page() {
                   display: "flex",
                   alignItems: "center",
                   marginBottom: "20px",
+                  justifyContent: "end",
                 }}
               >
                 <Link href="/cpmanagement">
@@ -177,7 +179,7 @@ export default function Page() {
                   <Typography
                     sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "12px" }}
                   >
-                    Company -
+                    Company Name -
                   </Typography>
                   &nbsp;&nbsp;&nbsp;
                   <Typography sx={{ fontSize: "12px" }}>
@@ -199,7 +201,7 @@ export default function Page() {
                   <Typography
                     sx={{ color: "rgba(58, 53, 65, 0.68)", fontSize: "12px" }}
                   >
-                    Assigned Under -
+                    {roleNames?.cpRm} -
                   </Typography>
                   &nbsp;&nbsp;&nbsp;
                   <Typography sx={{ fontSize: "12px" }}>
@@ -303,7 +305,7 @@ export default function Page() {
                               sx={{ fontSize: "20px", cursor: "pointer" }}
                               onClick={() =>
                                 handleBranchHeadReset(
-                                  data?.result?.cpBranchHead,
+                                  data?.result?.cpBranchHead
                                 )
                               }
                             />

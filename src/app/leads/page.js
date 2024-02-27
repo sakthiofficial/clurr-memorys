@@ -65,16 +65,16 @@ import {
 
 // predefined dates
 const predefinedRanges = [
-  {
-    label: "Today",
-    value: [new Date(), new Date()],
-    placement: "left",
-  },
-  {
-    label: "Yesterday",
-    value: [addDays(new Date(), -1), addDays(new Date(), -1)],
-    placement: "left",
-  },
+  // {
+  //   label: "Today",
+  //   value: [new Date(), new Date()],
+  //   placement: "left",
+  // },
+  // {
+  //   label: "Yesterday",
+  //   value: [addDays(new Date(), -1), addDays(new Date(), -1)],
+  //   placement: "left",
+  // },
   {
     label: "This week",
     value: [startOfWeek(new Date()), endOfWeek(new Date())],
@@ -164,7 +164,7 @@ export default function Page() {
     setSelectedProject(selectedProjectName);
 
     const selectProject = resultProject?.data?.result?.find(
-      (project) => project.name === selectedProjectName,
+      (project) => project.name === selectedProjectName
     );
 
     setSelectedProjectId(selectProject?._id || null);
@@ -188,7 +188,7 @@ export default function Page() {
       setSelectedProject(
         resultProject.data?.result.length > 1
           ? "All"
-          : resultProject.data?.result[0]?.name,
+          : resultProject.data?.result[0]?.name
       );
     }
   }, [resultProject]);
@@ -223,8 +223,8 @@ export default function Page() {
     friday: "Fr",
     saturday: "Sa",
     ok: "Apply",
-    today: "Today",
-    yesterday: "Yesterday",
+    // today: "Today",
+    // yesterday: "Yesterday",
     hours: "Hours",
     minutes: "Minutes",
     seconds: "Seconds",
@@ -268,7 +268,7 @@ export default function Page() {
 
   // table functions
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(50);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -340,13 +340,13 @@ export default function Page() {
         sx={{
           height: "8vh",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "end",
           alignItems: "center",
-          // padding:"0px 10px"
+          // padding: "0px 40%",
           // border: "1px solid black",
         }}
       >
-        <Grid
+        {/* <Grid
           sx={{
             width: "50%",
             // paddingRight: "30px",
@@ -363,7 +363,7 @@ export default function Page() {
           >
             Leads List
           </Typography>
-        </Grid>
+        </Grid> */}
 
         <Grid
           sx={{
@@ -432,16 +432,16 @@ export default function Page() {
 
         <Grid
           sx={{
-            gap: "10px",
-            minWidth: "300px",
-            display: "flex",
+            // gap: "10px",
+            // minWidth: "300px",
+            // display: "flex",
             justifyContent: "end",
-            alignItems: "end",
+            // alignItems: "end",
             paddingLeft: "20px",
             // border: "1px solid black",
           }}
         >
-          {permissions &&
+          {/* {permissions &&
             permissions.includes(permissionKeyNames?.leadManagement) &&
             selectedProject === "All" && (
               <Link href="/leads/addleads">
@@ -502,7 +502,8 @@ export default function Page() {
                   </Grid>
                 ))}
               </>
-            )}
+            )} */}
+
           <ExportLead
             data={data?.result}
             excelHeaders={["Name", "CreatedOn", "Email", "Source", "Phone"]}
@@ -870,7 +871,7 @@ export default function Page() {
           )}
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[50, 100, 150]}
             component="div"
             count={leadsDatas?.length || 0}
             rowsPerPage={rowsPerPage}

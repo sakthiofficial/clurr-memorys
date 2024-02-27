@@ -40,7 +40,7 @@ export default function Page() {
   // selected roles and projects
   const [selectedRole, setSelectedRole] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState(
-    data?.result?.projects || [],
+    data?.result?.projects || []
   );
   // default user datas
   const [defaultParent, setDefaultParent] = useState();
@@ -87,7 +87,7 @@ export default function Page() {
   useEffect(() => {
     if (data?.result?.parentId) {
       const filterParent = (parentResult?.data?.result || [])?.filter(
-        (parent) => parent?._id === data?.result?.parentId,
+        (parent) => parent?._id === data?.result?.parentId
       );
       if (filterParent && filterParent.length > 0) {
         const parentName = filterParent[0]?.name;
@@ -231,7 +231,7 @@ export default function Page() {
   useEffect(() => {
     if (selectedValues.parentId && parentResult?.data?.result) {
       const selectedParent = parentResult?.data?.result.find(
-        (parent) => parent.name === selectedValues.parentId,
+        (parent) => parent.name === selectedValues.parentId
       );
       const retriveparentId = selectedParent?._id || null;
       setSelectedParentId(retriveparentId);
@@ -250,6 +250,7 @@ export default function Page() {
             display: "flex",
             alignItems: "center",
             marginBottom: "20px",
+            justifyContent: "end",
           }}
         >
           <Link href="/usermanagement">
@@ -618,7 +619,7 @@ export default function Page() {
                                   <MenuItem key={index} value={option.name}>
                                     {option?.name}
                                   </MenuItem>
-                                ),
+                                )
                               )}
                             </Select>
                           ) : (

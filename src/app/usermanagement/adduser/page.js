@@ -246,6 +246,7 @@ export default function Page() {
             display: "flex",
             alignItems: "center",
             marginBottom: "20px",
+            justifyContent: "end",
           }}
         >
           <Link href="/usermanagement">
@@ -581,7 +582,7 @@ export default function Page() {
                                 <MenuItem key={index} value={option}>
                                   {option?.name}
                                 </MenuItem>
-                              ),
+                              )
                             )}
                           </Select>
                         ) : (

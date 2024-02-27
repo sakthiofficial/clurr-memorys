@@ -29,7 +29,10 @@ export function ProfileInfo({ name, role }) {
 
   const firstLetter = name.charAt(0).toUpperCase();
 
-  const profileDetails = [{ name: "Profile", link: "profile" }];
+  const profileDetails = [
+    { name: "Profile", link: "profile" },
+    { name: "My Activity", link: "myactivity" },
+  ];
 
   return (
     <Grid

@@ -57,6 +57,7 @@ export default function Page() {
   const [cpExecuteName, setCpExecuteName] = useState(false);
   const [cpExecutePhone, setCpExecutePhone] = useState(false);
   const [cpExecuteEmail, setCpExecuteEmail] = useState(false);
+  const [isCodeCheck, setIsCodeCheck] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -95,7 +96,7 @@ export default function Page() {
 
     // Find the selected category data
     const selectedCategoryData = (result?.data?.result || []).find(
-      (rm) => rm.name === selectedCategoryValue,
+      (rm) => rm.name === selectedCategoryValue
     );
 
     const initialSelectedProjects = selectedCategoryData?.projects || [];
@@ -116,7 +117,7 @@ export default function Page() {
 
     if (
       (formData?.cpExecutes || []).some(
-        (exec) => !exec.name || !exec.phone || !exec.email || !exec.password,
+        (exec) => !exec.name || !exec.phone || !exec.email || !exec.password
       )
     ) {
       console.error("All CP Executive fields are required.");
@@ -185,7 +186,7 @@ export default function Page() {
   };
 
   const selectedCategoryData = result?.data?.result?.find(
-    (rm) => rm.name === selectedCategory,
+    (rm) => rm.name === selectedCategory
   );
 
   // form submit function
@@ -286,11 +287,17 @@ export default function Page() {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setIsCodeCheck(false);
   };
   const handleClose = () => {
     setOpen(false);
+    if (cpEnteredCode.length >= 1) {
+      setIsCodeCheck(true);
+    } else {
+      setIsCodeCheck(false);
+    }
   };
-
+  console.log(isCodeCheck);
   // handle clear
   const handleClear = () => {
     setCpEnteredCode("");
@@ -306,6 +313,7 @@ export default function Page() {
             display: "flex",
             alignItems: "center",
             marginBottom: "20px",
+            justifyContent: "end",
           }}
         >
           <Link href="/cpmanagement">
@@ -486,7 +494,8 @@ export default function Page() {
                     display: "flex",
                     justifyContent: "end",
                     marginBottom: "30px",
-                    padding: "0px 15px",
+                    padding: "10px 45px",
+                    // margin:"10px"
                   }}
                 >
                   <Grid>
@@ -499,8 +508,14 @@ export default function Page() {
                         cursor: "pointer",
                       }}
                     >
-                      Enter Cp Code
+                      {/* Enter Cp Code */}
+                      {isCodeCheck ? (
+                        <Typography>CODE - {cpEnteredCode}</Typography>
+                      ) : (
+                        <Typography> ENTER CP CODE</Typography>
+                      )}
                     </Typography>
+
                     <BootstrapDialog
                       onClose={handleClose}
                       aria-labelledby="customized-dialog-title"
@@ -510,7 +525,7 @@ export default function Page() {
                         sx: {
                           borderRadius: "20px",
                           minHeight: "320px",
-                          width: "300px",
+                          width: "350px",
                           // border: "1px solid black",
                           display: "flex",
                           justifyContent: "space-between",
@@ -525,7 +540,7 @@ export default function Page() {
                           sx={{
                             border: "none",
                             height: "54px",
-                            width: "280px",
+                            width: "330px",
                             borderRadius: "9px",
                             backgroundColor: "#F9B800",
                             display: "flex",
@@ -562,7 +577,7 @@ export default function Page() {
                           sx={{
                             // border: "1px solid rgba(189, 189, 189, 1)",
                             minHeight: "100px",
-                            width: "280px",
+                            width: "330px",
                             borderRadius: "19px",
                             display: "flex",
                             flexDirection: "column",
@@ -570,17 +585,52 @@ export default function Page() {
                             justifyContent: "space-around",
                           }}
                         >
-                          {/* <Typography
+                          <Grid
                             sx={{
                               // border: "1px solid black",
                               width: "100%",
                               color: "black",
                               fontSize: "14px",
-                              padding: "3px",
+                              padding: "5px",
+                              marginBottom: "8px",
                             }}
                           >
-                            Enter Code
-                          </Typography> */}
+                            <Typography
+                              sx={{
+                                fontSize: "10px",
+                                marginBottom: "4px",
+                                color: "#ff6347",
+                                letterSpacing: ".5px",
+                              }}
+                            >
+                              {" "}
+                              If your old CP code is HYD1996, enter only the
+                              number - 1996.
+                            </Typography>
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontSize: "10px",
+                                color: "#ff6347",
+                                letterSpacing: ".5px",
+                                display: "flex",
+                                // flexDirection:"column"
+                              }}
+                            >
+                              {" "}
+                              The New Code will be &nbsp;
+                              <Typography
+                                component="span"
+                                sx={{
+                                  fontSize: "10px",
+                                  fontWeight: "bold",
+                                  letterSpacing: ".5px",
+                                }}
+                              >
+                                URHCP01996.
+                              </Typography>
+                            </Typography>
+                          </Grid>
                           <TextField
                             sx={{
                               width: "100%",
@@ -588,7 +638,7 @@ export default function Page() {
                               height: "48px",
                               marginBottom: "15px",
                             }}
-                            placeholder="Enter Only 6 Digit Code"
+                            placeholder="Enter Digits Only"
                             type="text"
                             inputProps={{
                               maxLength: 6,
@@ -670,6 +720,7 @@ export default function Page() {
                       flexDirection: "column",
                       justifyContent: "space-around",
                       alignItems: "center",
+                      width: "100%",
                     }}
                   >
                     {(formData?.cpExecutes || []).map((cpExecute, index) => (
@@ -679,6 +730,8 @@ export default function Page() {
                           justifyContent: "space-around",
                           alignItems: "center",
                           marginBottom: "20px",
+                          // border:"1px solid black",
+                          width: "100%",
                         }}
                       >
                         <TextField
@@ -699,7 +752,7 @@ export default function Page() {
                               cpExecutes: prev?.cpExecutes?.map((item, i) =>
                                 i === index
                                   ? { ...item, name: e.target.value }
-                                  : item,
+                                  : item
                               ),
                             }))
                           }
@@ -722,7 +775,7 @@ export default function Page() {
                               cpExecutes: prev?.cpExecutes?.map((item, i) =>
                                 i === index
                                   ? { ...item, phone: e.target.value }
-                                  : item,
+                                  : item
                               ),
                             }))
                           }
@@ -745,7 +798,7 @@ export default function Page() {
                               cpExecutes: prev?.cpExecutes?.map((item, i) =>
                                 i === index
                                   ? { ...item, email: e.target.value }
-                                  : item,
+                                  : item
                               ),
                             }))
                           }
@@ -839,20 +892,23 @@ export default function Page() {
                       width: "100%",
                       display: "flex",
                       justifyContent: "flex-end",
+                      // border:"1px solid black",
+                      padding: "0px 45px",
                     }}
                   >
                     {showAddAccountButton ? (
-                      <Button
+                      <Typography
                         sx={{
-                          border: "1px solid black",
+                          // border: "1px solid black",
                           // backgroundColor: "rgba(249, 184, 0, 1)",
                           color: "black",
-                          height: "43px",
-                          borderRadius: "5px",
+                          // height: "43px",
+                          // borderRadius: "5px",
                           // border: "none",
-                          fontSize: "12px",
-                          fontWeight: "400",
-                          paddind: "5px",
+                          // fontSize: "12px",
+                          fontWeight: "300",
+                          // paddind: "5px",
+                          cursor: "pointer",
                           // "&:hover": {
                           //   backgroundColor: "rgba(249, 184, 0, 1)",
                           //   boxShadow: "none",
@@ -861,8 +917,9 @@ export default function Page() {
                         }}
                         onClick={handleAddAccount}
                       >
-                        Add Another Account
-                      </Button>
+                        ADD ANOTHER ACCOUNT
+                        {/* ADD ACCOUNT */}
+                      </Typography>
                     ) : (
                       ""
                     )}
