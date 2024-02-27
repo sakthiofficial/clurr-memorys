@@ -27,7 +27,6 @@ import {
 } from "@/reduxSlice/apiSlice";
 import { clientAppLsqMsg } from "../../../../shared/lsqConstants";
 // import PhoneInput from "react-phone-input";
-import PhoneInput from "react-phone-number-input";
 
 export default function Page() {
   const router = useRouter();
@@ -140,7 +139,7 @@ export default function Page() {
       setFormData({
         userName: "",
         email: "",
-        phone: "",
+        phone: "+91",
         project: permissionproject[0]?.name,
         companyCode: "",
         notes: "",
@@ -190,7 +189,7 @@ export default function Page() {
       setFormData({
         userName: "",
         email: "",
-        phone: "",
+        phone: "+91",
         project: "",
         companyCode: "",
         notes: "",
@@ -645,15 +644,6 @@ export default function Page() {
                   />
                 </Grid> */}
                 <Grid>
-<<<<<<< HEAD
-                  <PhoneInput
-                    placeholder="Enter phone number"
-                    value={value}
-                    onChange={setValue}
-                    style={{ innerHeight: "30px", innerWidth: "30px",outerHeight:"30px",outerWidth:"30px" }}
-                  />
-=======
->>>>>>> 0b6946d2dc7696a69e58713e5707da45bad1367b
                   {/* <TextField
                     name="phone"
                     placeholder="Enter phone"
@@ -672,14 +662,12 @@ export default function Page() {
                       setFormData({ ...formData, phone: e.target.value })
                     }
                   /> */}
-<<<<<<< HEAD
-=======
                   <PhoneInput
-                    country="us"
+                    country="in"
                     value={formData?.phone}
                     onChange={(phone) => setFormData({ ...formData, phone })}
+                    inputStyle={{height:"56px"}}
                   />
->>>>>>> 0b6946d2dc7696a69e58713e5707da45bad1367b
                 </Grid>
               </Grid>
               {isCproleCheck ? null : (
