@@ -168,51 +168,154 @@ class LSQLeadSrv {
         permissionKeyNames?.leadViewWithoutNumber,
       )
     ) {
-      console.log("commming here", providedUser[userDataObj?.permissions]);
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
-        RESPONSE_MESSAGE?.INVALID,
+        RESPONSE_MESSAGE?.UNAUTHORIZED,
         null,
       );
     }
-    function convertUTCtoIST(utcTime) {
-      const utcDate = new Date(utcTime);
-
-      utcDate.setUTCHours(utcDate.getUTCHours() + 11);
-
-      // Format the date as 'YYYY-MM-DD HH:mm:ss'.
-      const formattedDate = utcDate
-        .toISOString()
-        .replace("T", " ")
-        .slice(0, -5);
-
-      return formattedDate;
-    }
-    function convertISTtoUTC(utcTime) {
-      const utcDate = new Date(utcTime);
-
-      // Format the date as 'YYYY-MM-DD HH:mm:ss'.
-      const formattedDate = utcDate
-        .toISOString()
-        .replace("T", " ")
-        .slice(0, -5);
-
-      return formattedDate;
-    }
-    const startDate = convertISTtoUTC(
-      convertTimestampToDateTime(leadStartDate),
-    );
-    const endDate = convertISTtoUTC(convertTimestampToDateTime(leadEndDate));
-    const apiUrl = this.lsqConfig?.apiUrl;
     const { projectCredential } = this.lsqConfig;
     const projectArr = isPriorityUser(providedUser[userDataObj?.role])
       ? Object.keys(projectCredential)
       : providedUser[userDataObj?.projects];
     const projectKeys = project !== "All" ? [project] : projectArr;
-    const data = [];
+    let data = [];
+
     await Promise.all(
-      projectKeys.map(async (projectName) => {
+      (projectKeys || []).map(async (projectName) => {
+        const apiUrl = this.lsqConfig?.apiUrl;
+
         const { accessKey, secretKey } = projectCredential[projectName];
+        const projectDbData = await CpAppProject.findOne({ name: projectName });
+        if (projectDbData?.permission === "leadAddAndView") {
+          let cpCode = null;
+          if (
+            providedUser[userDataObj?.role].includes(roleNames?.cpBranchHead)
+          ) {
+            const branchHeadCompany = await CpAppCompany.findOne({
+              branchHeadId: providedUser[userDataObj.id],
+            });
+            cpCode = branchHeadCompany?.cpCode || null;
+          }
+          let query = {
+            project,
+            created: {
+              $gte: leadStartDate,
+              $lte: leadEndDate,
+            },
+          };
+          const cpBranchHeadQuery = {
+            ...query,
+            subSource: new RegExp(cpCode),
+          };
+          const cpExecuteQuery = {
+            ...query,
+            createdBy: providedUser[userDataObj?.id],
+          };
+          switch (providedUser[userDataObj?.role][0]) {
+            case roleNames?.cpBranchHead:
+              query = cpBranchHeadQuery;
+              break;
+            case roleNames?.cpExecute:
+              query = cpExecuteQuery;
+              break;
+            default:
+              break;
+          }
+          const cpLeads = await CpAppLead.find(query);
+          const leads = (cpLeads || [])
+            .map((lead) => {
+              if (lead?.leadId) {
+                return lead;
+              }
+              return null;
+            })
+            .filter(Boolean);
+          console.log("leads", leads, query);
+          const leadIds = leads.map((lead) => lead?.leadId);
+          try {
+            const lsqLeadData = await axios.post(
+              `${apiUrl}LeadManagement.svc/Leads/Retrieve/ByIds?accessKey=${accessKey}&secretKey=${secretKey}`,
+              {
+                SearchParameters: {
+                  LeadIds: leadIds,
+                },
+                Columns: {
+                  Include_CSV:
+                    "mx_Origin_Project,mx_Project_Name,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source,ProspectID",
+                },
+                Paging: {
+                  PageIndex: 1,
+                  PageSize: leadIds?.length,
+                },
+              },
+            );
+            const structuredLeadData = await Promise.all(
+              (lsqLeadData?.data?.Leads || []).map(async (lead) => {
+                const structuredApiData = await this.handleApiData(
+                  providedUser,
+                  lead,
+                  projectName,
+                );
+
+                if (structuredApiData) {
+                  return structuredApiData;
+                }
+              }),
+            );
+            const leadDataObj = {
+              name: "name",
+              createdBy: "createdBy",
+              subSource: "subSource",
+            };
+            const resultArray = leads.map((lead) => {
+              const matchingLeadData = structuredLeadData.find((leadData) => {
+                return leadData[lsqLeadFieldNames?.leadId] === lead?.leadId;
+              });
+              matchingLeadData[lsqLeadFieldNames?.firstName] =
+                lead[leadDataObj?.name];
+              matchingLeadData[lsqLeadFieldNames?.subSource] =
+                lead[leadDataObj?.subSource];
+
+              return matchingLeadData;
+            });
+            data = [...resultArray];
+          } catch (error) {
+            console.log("Error while Fetching lead By Id", error);
+          }
+          return null;
+        }
+        function convertUTCtoIST(utcTime) {
+          const utcDate = new Date(utcTime);
+
+          utcDate.setUTCHours(utcDate.getUTCHours() + 11);
+
+          // Format the date as 'YYYY-MM-DD HH:mm:ss'.
+          const formattedDate = utcDate
+            .toISOString()
+            .replace("T", " ")
+            .slice(0, -5);
+
+          return formattedDate;
+        }
+        function convertISTtoUTC(utcTime) {
+          const utcDate = new Date(utcTime);
+
+          // Format the date as 'YYYY-MM-DD HH:mm:ss'.
+          const formattedDate = utcDate
+            .toISOString()
+            .replace("T", " ")
+            .slice(0, -5);
+
+          return formattedDate;
+        }
+        const startDate = convertISTtoUTC(
+          convertTimestampToDateTime(leadStartDate),
+        );
+        const endDate = convertISTtoUTC(
+          convertTimestampToDateTime(leadEndDate),
+        );
+
         let apiPageIndex = 1;
 
         async function fetchLeadData(pageIndex) {
@@ -228,7 +331,7 @@ class LSQLeadSrv {
                 },
                 Columns: {
                   Include_CSV:
-                    "mx_Origin_Project,mx_Project_Name,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source",
+                    "mx_Origin_Project,mx_Project_Name,FirstName,EmailAddress,ProspectAutoId,Source,SourceCampaign,ProspectStage,CreatedOn,Origin,mx_Agency_Name,Phone,OwnerIdName,ProspectNumber,mx_Sub_Source,RelatedId",
                 },
                 Sorting: {
                   ColumnName: "CreatedOn",
@@ -283,6 +386,7 @@ class LSQLeadSrv {
         }
       }),
     );
+
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, data);
   };
 
@@ -314,8 +418,43 @@ class LSQLeadSrv {
           null,
         );
       }
-      const subSource = `${cpUser[userDataObj?.name]} - ${companyCode} `;
+      const subSource = `${cpUser[userDataObj?.name]} - ${companyCode}`;
+      const isPresentInLsq = await this.retriveLeadByPhone(providedUser, {
+        phone,
+        project,
+      });
+      const data = isPresentInLsq?.result[0];
+      if (data) {
+        const cpLeadSchema = new CpAppLead({
+          name: userName,
+          email,
+          phone,
 
+          project,
+          leadId: data[lsqLeadFieldNames?.leadId],
+          createdBy: id,
+          subSource,
+        });
+        const leadResult = await cpLeadSchema.save();
+        const activityService = new ActivitySrv();
+
+        await activityService.createActivity(
+          activityActionTypes?.leadAdd,
+          providedUser[userDataObj?.name],
+
+          providedUser?._id,
+          userName,
+          leadResult?._id,
+        );
+
+        return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+          leadResult,
+          Status: "Success",
+          Message: {
+            IsCreated: false,
+          },
+        });
+      }
       const { lsqConfig } = config;
       const { projectCredential } = lsqConfig;
       const { accessKey, secretKey } = projectCredential[project];
@@ -350,14 +489,22 @@ class LSQLeadSrv {
           Value: notes,
         },
       ];
+
+      const promise = await axios.post(this.lsqApiUrlToCaptureLead, postBody, {
+        params: {
+          accessKey,
+          secretKey,
+        },
+      });
       const cpLeadSchema = new CpAppLead({
         name: userName,
         email,
         phone,
 
         project,
-
+        leadId: promise.data?.Message?.RelatedId,
         createdBy: id,
+        subSource,
       });
       const leadResult = await cpLeadSchema.save();
       const activityService = new ActivitySrv();
@@ -369,12 +516,7 @@ class LSQLeadSrv {
         userName,
         leadResult?._id,
       );
-      const promise = await axios.post(this.lsqApiUrlToCaptureLead, postBody, {
-        params: {
-          accessKey,
-          secretKey,
-        },
-      });
+
       return new ApiResponse(
         promise?.status,
         promise?.statusText,

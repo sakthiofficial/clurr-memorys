@@ -39,7 +39,11 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
+<<<<<<< HEAD
     "react-phone-number-input": "^3.3.9",
+=======
+    "react-phone-input-2": "^2.15.1",
+>>>>>>> 0b6946d2dc7696a69e58713e5707da45bad1367b
     "react-query": "^3.39.3",
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.22.0",

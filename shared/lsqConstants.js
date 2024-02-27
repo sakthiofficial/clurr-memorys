@@ -39,8 +39,8 @@ export const leadStage = {
 };
 export const leadRegistrationStatus = {
   sucess: "Sucess",
-  duplicateMax: "Duplicate Max",
-  duplicate: "Duplicate",
+  duplicateMax: "No Sv",
+  duplicate: "Duplicate Sv Done",
   exist: "Exist",
 };
 

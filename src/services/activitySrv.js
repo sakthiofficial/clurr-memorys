@@ -173,7 +173,7 @@ class ActivitySrv {
     );
   };
 
-  retriveActivitysById = async (providedUser, { id, from, to }) => {
+  retriveActivitysByUserId = async (providedUser, { id, from, to }) => {
     if (
       !providedUser[userDataObj?.role].includes(roleNames?.superAdmin) &&
       providedUser?._id === id
