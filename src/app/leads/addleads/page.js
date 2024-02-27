@@ -24,6 +24,8 @@ import {
   useGetProjectWithPermissionQuery,
 } from "@/reduxSlice/apiSlice";
 import { clientAppLsqMsg } from "../../../../shared/lsqConstants";
+// import PhoneInput from "react-phone-input";
+import PhoneInput from "react-phone-number-input";
 
 export default function Page() {
   const router = useRouter();
@@ -49,6 +51,12 @@ export default function Page() {
 
   const resultProject = useGetProjectWithPermissionQuery();
   const resultCps = useGetCPSQuery();
+
+  const [value, setValue] = useState("india");
+
+  const handlePhoneInputChange = (newValue) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     const storedData = localStorage.getItem("user");
@@ -635,7 +643,13 @@ export default function Page() {
                   />
                 </Grid> */}
                 <Grid>
-                  <TextField
+                  <PhoneInput
+                    placeholder="Enter phone number"
+                    value={value}
+                    onChange={setValue}
+                    style={{ innerHeight: "30px", innerWidth: "30px",outerHeight:"30px",outerWidth:"30px" }}
+                  />
+                  {/* <TextField
                     name="phone"
                     placeholder="Enter phone"
                     value={formData?.phone}
@@ -652,7 +666,7 @@ export default function Page() {
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
                     }
-                  />
+                  /> */}
                 </Grid>
               </Grid>
               {isCproleCheck ? null : (
