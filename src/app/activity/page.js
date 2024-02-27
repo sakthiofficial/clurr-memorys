@@ -79,7 +79,7 @@ export default function Page() {
     >
       <Grid
         sx={{
-          height: "10vh",
+          height: "8vh",
           display: "flex",
           alignItems: "center",
           backgroundColor: "#021522",

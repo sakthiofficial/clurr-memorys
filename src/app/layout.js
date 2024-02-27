@@ -34,7 +34,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ListItemButton from "@mui/material/ListItemButton";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Add, Visibility, VisibilityOff } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import store from "../store";
 import {
@@ -94,10 +94,9 @@ const superAdminOnly = [
     icon: HistoryRoundedIcon,
   },
 ];
+
 // login function
 function Login() {
-  const theme = useTheme();
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
@@ -143,9 +142,9 @@ function Login() {
         if (result?.data?.status === 200) {
           localStorage.setItem(
             "user",
-            JSON.stringify(result.data.result.userData),
+            JSON.stringify(result.data.result.userData)
           );
-          console.log(result?.data?.isFirstSignIn);
+          // console.log(result?.data?.isFirstSignIn);
           if (result?.data?.result?.userData?.isFirstSignIn === true) {
             toast.success("Reset Your Password!");
           }
@@ -165,11 +164,11 @@ function Login() {
         setLoginInProgress(false);
       }
     },
-    [formData, setLoginPassword, setLoginInProgress],
+    [formData, setLoginPassword, setLoginInProgress]
   );
 
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     if (user?.isFirstSignIn === false) {
       window.location.href = "leads";
     }
@@ -197,7 +196,7 @@ function Login() {
         window.location.reload();
       }, 1800);
     }
-    console.log(finalResult);
+    // console.log(finalResult);
   }, [userData]);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -668,11 +667,23 @@ export default function RootLayout({ children }) {
                   sx={{
                     minHeight: "100vh",
                     display: "flex",
-                    // border: "1px solid black",
                     backgroundColor: "white",
+                    "@media (max-width: 1200px)": {
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    },
                   }}
                 >
-                  <Grid sx={{ width: "60%", position: "relative" }}>
+                  <Grid
+                    sx={{
+                      width: "60%",
+                      position: "relative",
+                      "@media (max-width: 1200px)": {
+                        display: "none",
+                      },
+                    }}
+                  >
                     <Image
                       style={{ backgroundColor: "white" }}
                       src={LoginBanner}
@@ -681,7 +692,20 @@ export default function RootLayout({ children }) {
                       objectFit="cover"
                     />
                   </Grid>
-                  <Grid sx={{ width: "40%" }}>
+                  <Grid
+                    sx={{
+                      width: "40%",
+                      "@media (max-width: 1200px)": {
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        // border: "1px solid black",
+                        width: "80%",
+                        gap: "20px",
+                        height: "60vh",
+                      },
+                    }}
+                  >
                     <Box
                       sx={{
                         width: "100%",
@@ -793,20 +817,44 @@ export default function RootLayout({ children }) {
                           </Typography> */}
                         </Grid>
                       </Grid>
+
                       <Grid
                         sx={{
-                          minWidth: "25%",
+                          minWidth: "28%",
                           color: "black",
                           height: "100%",
                           padding: 0,
                           display: "flex",
-                          justifyContent: "end",
+                          justifyContent: "space-between",
                           alignItems: "center",
                           paddingRight: "10px",
-
                           // border: "1px solid black",
                         }}
                       >
+                        <Grid>
+                          <Link href="/leads/addleads">
+                            <Button
+                              variant="outlined"
+                              sx={{
+                                backgroundColor: "rgba(0, 0, 0, 1)",
+                                color: "rgba(255, 255, 255, 1)",
+                                width: "130px",
+                                height: "40px",
+                                borderRadius: "10px",
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                "&:hover": {
+                                  backgroundColor: "rgba(0, 0, 0, 1)",
+                                  boxShadow: "none",
+                                  border: "none",
+                                },
+                              }}
+                            >
+                              <Add sx={{ fontSize: "18px" }} />
+                              Add Lead
+                            </Button>
+                          </Link>
+                        </Grid>
                         <ProfileInfo name={user?.name} role={user?.role[0]} />
                         {/* <Grid
                           sx={{

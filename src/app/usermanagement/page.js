@@ -145,7 +145,7 @@ export default function Page() {
   useEffect(() => {
     if (selectedFilter?.label) {
       const filteredResults = (data?.result || []).map(
-        (item) => item[selectedFilter.key],
+        (item) => item[selectedFilter.key]
       );
       setFilterDatasByCategory(filteredResults);
       // console.log(filteredResults);
@@ -155,7 +155,7 @@ export default function Page() {
   useEffect(() => {
     if (selectedFilter?.label) {
       const filteredResults = data?.result.filter(
-        (item) => item[selectedFilter.key] === getUserFilter,
+        (item) => item[selectedFilter.key] === getUserFilter
       );
       setFilterUser(filteredResults);
       // console.log("worked");
@@ -191,7 +191,7 @@ export default function Page() {
 
   const slicedRows = arrayToSlice.slice(
     page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage,
+    page * rowsPerPage + rowsPerPage
   );
 
   return (
@@ -211,7 +211,7 @@ export default function Page() {
           }}
         >
           <Grid sx={{ width: "50%" }}>
-            <Typography
+            {/* <Typography
               sx={{
                 fontSize: "18px",
                 fontWeight: "500",
@@ -219,7 +219,7 @@ export default function Page() {
               }}
             >
               User List
-            </Typography>
+            </Typography> */}
           </Grid>
           <Grid
             sx={{
@@ -393,9 +393,10 @@ export default function Page() {
                               sx={{
                                 borderRadius: "10px",
                                 color: "black",
-                                width: "48px",
+                                // width: "100px",
                                 height: "25px",
                                 fontSize: "11px",
+                                // padding: "10px",
                                 backgroundColor: "rgba(249, 184, 0, 1)",
                                 "&:hover": {
                                   backgroundColor: "rgba(249, 184, 0, 1)",
@@ -403,7 +404,7 @@ export default function Page() {
                                 },
                               }}
                             >
-                              edit
+                              view / edit
                             </Button>
                           </Link>
                           <Button

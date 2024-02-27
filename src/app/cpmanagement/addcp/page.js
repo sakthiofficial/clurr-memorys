@@ -306,6 +306,7 @@ export default function Page() {
             display: "flex",
             alignItems: "center",
             marginBottom: "20px",
+            justifyContent: "end",
           }}
         >
           <Link href="/cpmanagement">
@@ -486,7 +487,8 @@ export default function Page() {
                     display: "flex",
                     justifyContent: "end",
                     marginBottom: "30px",
-                    padding: "0px 15px",
+                    padding: "10px 45px",
+                    // margin:"10px"
                   }}
                 >
                   <Grid>
@@ -499,7 +501,8 @@ export default function Page() {
                         cursor: "pointer",
                       }}
                     >
-                      Enter Cp Code
+                      {/* Enter Cp Code */}
+                      ENTER CP CODE
                     </Typography>
                     <BootstrapDialog
                       onClose={handleClose}
@@ -598,13 +601,20 @@ export default function Page() {
                                 fontSize: "10px",
                                 color: "#ff6347",
                                 letterSpacing: ".5px",
-                                display:'flex',
+                                display: "flex",
                                 // flexDirection:"column"
                               }}
                             >
                               {" "}
-                              The New Code will be{" "}&nbsp;
-                              <Typography component="span" sx={{fontSize: "10px",fontWeight:"bold",letterSpacing:".5px"}}>
+                              The New Code will be &nbsp;
+                              <Typography
+                                component="span"
+                                sx={{
+                                  fontSize: "10px",
+                                  fontWeight: "bold",
+                                  letterSpacing: ".5px",
+                                }}
+                              >
                                 URHCP01996.
                               </Typography>
                             </Typography>
@@ -698,6 +708,7 @@ export default function Page() {
                       flexDirection: "column",
                       justifyContent: "space-around",
                       alignItems: "center",
+                      width: "100%",
                     }}
                   >
                     {(formData?.cpExecutes || []).map((cpExecute, index) => (
@@ -707,6 +718,8 @@ export default function Page() {
                           justifyContent: "space-around",
                           alignItems: "center",
                           marginBottom: "20px",
+                          // border:"1px solid black",
+                          width: "100%",
                         }}
                       >
                         <TextField
@@ -867,20 +880,23 @@ export default function Page() {
                       width: "100%",
                       display: "flex",
                       justifyContent: "flex-end",
+                      // border:"1px solid black",
+                      padding: "0px 45px",
                     }}
                   >
                     {showAddAccountButton ? (
-                      <Button
+                      <Typography
                         sx={{
-                          border: "1px solid black",
+                          // border: "1px solid black",
                           // backgroundColor: "rgba(249, 184, 0, 1)",
                           color: "black",
-                          height: "43px",
-                          borderRadius: "5px",
+                          // height: "43px",
+                          // borderRadius: "5px",
                           // border: "none",
-                          fontSize: "12px",
-                          fontWeight: "400",
-                          paddind: "5px",
+                          // fontSize: "12px",
+                          fontWeight: "300",
+                          // paddind: "5px",
+                          cursor: "pointer",
                           // "&:hover": {
                           //   backgroundColor: "rgba(249, 184, 0, 1)",
                           //   boxShadow: "none",
@@ -889,8 +905,9 @@ export default function Page() {
                         }}
                         onClick={handleAddAccount}
                       >
-                        Add Another Account
-                      </Button>
+                        ADD ANOTHER ACCOUNT
+                        {/* ADD ACCOUNT */}
+                      </Typography>
                     ) : (
                       ""
                     )}

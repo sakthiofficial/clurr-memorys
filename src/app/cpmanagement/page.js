@@ -290,7 +290,7 @@ export default function Page() {
           }}
         >
           <Grid sx={{ width: "50%" }}>
-            <Typography
+            {/* <Typography
               sx={{
                 fontSize: "18px",
                 fontWeight: "500",
@@ -299,7 +299,7 @@ export default function Page() {
               }}
             >
               CP List
-            </Typography>
+            </Typography> */}
           </Grid>
           <Grid
             sx={{

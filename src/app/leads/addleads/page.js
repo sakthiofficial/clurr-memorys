@@ -76,7 +76,7 @@ export default function Page() {
   useEffect(() => {
     if (resultProject?.data?.status === 200) {
       const projectsWithLeadAddPermission = resultProject?.data?.result?.filter(
-        (project) => project?.permission === "leadAddAndView",
+        (project) => project?.permission === "leadAddAndView"
       );
 
       setPermissionProject(projectsWithLeadAddPermission);
@@ -94,7 +94,7 @@ export default function Page() {
 
   useEffect(() => {
     const selectedCp = resultCps?.data?.result?.find(
-      (cp) => cp.name === selectedCompanyName,
+      (cp) => cp.name === selectedCompanyName
     );
 
     if (selectedCompanyName) {
@@ -131,7 +131,7 @@ export default function Page() {
         userName: "",
         email: "",
         phone: "",
-        project: "",
+        project: permissionproject[0]?.name,
         companyCode: "",
         notes: "",
         id: "",
@@ -180,7 +180,7 @@ export default function Page() {
       setFormData({
         userName: "",
         email: "",
-        phone: "+91",
+        phone: "",
         project: "",
         companyCode: "",
         notes: "",
@@ -223,10 +223,13 @@ export default function Page() {
       <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
         <Grid
           sx={{
-            height: "5vh",
+            height: "6vh",
             display: "flex",
             alignItems: "center",
             marginBottom: "20px",
+            justifyContent: "end",
+            // border:"1px solid black",
+            // padding:"10px"
           }}
         >
           <Link href="/leads">
