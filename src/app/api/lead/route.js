@@ -84,7 +84,7 @@ export async function GET(request) {
     };
 
     const validateQuery = Joi.object({
-      project: Joi.string().allow(""),
+      project: Joi.string().required(),
       leadStartDate: Joi.string().required(),
       leadEndDate: Joi.string().required(),
     });

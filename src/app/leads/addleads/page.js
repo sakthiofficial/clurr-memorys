@@ -14,6 +14,8 @@ import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Add, SaveAlt } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import {
   checkValidRoleToAddLead,
   isCpUser,
@@ -612,7 +614,7 @@ export default function Page() {
                   }
                 />
                 <Grid>
-                  <TextField
+                  {/* <TextField
                     name="phone"
                     placeholder="Enter Phone"
                     value={formData?.phone}
@@ -629,6 +631,11 @@ export default function Page() {
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
                     }
+                  /> */}
+                  <PhoneInput
+                    country="us"
+                    value={formData?.phone}
+                    onChange={(phone) => setFormData({ ...formData, phone })}
                   />
                 </Grid>
               </Grid>

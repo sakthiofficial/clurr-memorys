@@ -37,7 +37,7 @@ export async function POST(request) {
       );
     }
     const activitySrv = new ActivitySrv();
-    const serviceRes = await activitySrv.retriveActivitysById(
+    const serviceRes = await activitySrv.retriveActivitysByUserId(
       providedUser,
       value,
     );
