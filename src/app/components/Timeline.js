@@ -53,7 +53,7 @@ export default function NoOppositeContent({
   useEffect(() => {
     const result = resultActivityData?.map((datas) => datas);
     // console.log(result);
-    if (resultActivityData) {
+    if (result) {
       setLengthCheck(Object.keys(result[0])?.length);
     }
   }, [resultActivityData]);

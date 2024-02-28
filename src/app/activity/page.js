@@ -65,7 +65,7 @@ export default function Page() {
   const { data, isFetching } = useActivityQuery(updatedvalue);
   const resultActivityData = structureDataInDateWise(data?.result);
 
-  console.log(resultActivityData?.length);
+  // console.log(resultActivityData?.length);
 
   // console.log(resultActivityData);
 
