@@ -28,7 +28,15 @@ export default function Page() {
 
   return (
     <Grid sx={{ minHeight: "100vh", maxWidth: "1356px", margin: "0 auto" }}>
-      <Grid sx={{ heigth: "8vh", marginBottom: "20px" }}>
+      <Grid
+        sx={{
+          heigth: "8vh",
+          marginBottom: "20px",
+          // border: "1px solid black",
+          display: "flex",
+          justifyContent: "end",
+        }}
+      >
         <Button
           onClick={handleBack}
           sx={{
