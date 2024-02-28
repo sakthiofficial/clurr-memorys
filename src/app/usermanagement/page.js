@@ -239,7 +239,7 @@ export default function Page() {
                 onChange={handleChangeFilter}
                 value={selectedFilter}
                 renderInput={(params) => (
-                  <TextField {...params} label="selecet by" />
+                  <TextField {...params} label="Selecet By" />
                 )}
               />
             </Grid>

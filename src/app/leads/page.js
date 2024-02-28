@@ -280,7 +280,7 @@ export default function Page() {
   };
   const leadsDatas = data?.result || data || [];
   const slicedRows =
-    leadsDatas.length > 1
+    leadsDatas.length >= 1
       ? leadsDatas.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
       : [];
 

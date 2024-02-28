@@ -820,7 +820,7 @@ export default function RootLayout({ children }) {
 
                       <Grid
                         sx={{
-                          minWidth: "28%",
+                          minWidth: "26%",
                           color: "black",
                           height: "100%",
                           padding: 0,
@@ -838,8 +838,8 @@ export default function RootLayout({ children }) {
                               sx={{
                                 backgroundColor: "rgba(0, 0, 0, 1)",
                                 color: "rgba(255, 255, 255, 1)",
-                                width: "130px",
-                                height: "40px",
+                                width: "120px",
+                                height: "38px",
                                 borderRadius: "10px",
                                 fontSize: "13px",
                                 fontWeight: "400",

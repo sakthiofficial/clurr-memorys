@@ -319,7 +319,7 @@ export default function Page() {
                 onChange={handleChangeFilter}
                 value={selectedFilter}
                 renderInput={(params) => (
-                  <TextField {...params} label="selecet by" />
+                  <TextField {...params} label="Selecet By" />
                 )}
               />
             </Grid>
@@ -508,7 +508,7 @@ export default function Page() {
                               sx={{
                                 borderRadius: "10px",
                                 color: "black",
-                                width: "48px",
+                                // width: "48px",
                                 height: "25px",
                                 fontSize: "12px",
                                 backgroundColor: "rgba(249, 184, 0, 1)",
@@ -518,7 +518,7 @@ export default function Page() {
                                 },
                               }}
                             >
-                              view
+                              view / edit
                             </Button>
                           </Link>
                           <Button

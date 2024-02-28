@@ -25,6 +25,7 @@ export default function NoOppositeContent({
   isFetching2,
 }) {
   const [isOpen, setIsOpen] = useState({});
+  const [lengthCheck, setLengthCheck] = useState(0);
 
   useEffect(() => {
     const initialState = {};
@@ -48,6 +49,16 @@ export default function NoOppositeContent({
       [timelineKey]: !prevState[timelineKey],
     }));
   };
+
+  useEffect(() => {
+    const result = resultActivityData?.map((datas) => datas);
+    // console.log(result);
+    if (result) {
+      setLengthCheck(Object.keys(result[0])?.length);
+    }
+  }, [resultActivityData]);
+
+  console.log(lengthCheck);
 
   return (
     <>
@@ -73,7 +84,115 @@ export default function NoOppositeContent({
             },
           }}
         >
-          {(resultActivityData || resultActivityData2 || []).map(
+          {resultActivityData && lengthCheck === 0 ? (
+            <Grid
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "50vh",
+                // border: "1px solid black",
+                fontSize: "18px",
+              }}
+            >
+              No Activity
+            </Grid>
+          ) : (
+            <>
+              {(resultActivityData || resultActivityData2 || []).map(
+                (dateActivities, index) =>
+                  Object.entries(dateActivities)
+                    .reverse()
+                    .map(([date, activities], activityIndex) => (
+                      <Grid key={date} sx={{ padding: "0px 10px" }}>
+                        <Button
+                          onClick={() =>
+                            handleToggle(
+                              `timeline${index + 1}-${activityIndex + 1}`
+                            )
+                          }
+                          sx={{
+                            margin: "40px 0px",
+                            padding: " 5px 10px",
+                            color: "black",
+                            fontSize: "12px",
+                            borderRadius: "10px",
+                            backgroundColor: "#F9B800",
+                            "&:hover": {
+                              backgroundColor: "#F9B800",
+                              boxShadow: "none",
+                              border: "none",
+                            },
+                          }}
+                        >
+                          {isTodayOrYesterday(date) || date}
+                          {isOpen[
+                            `timeline${index + 1}-${activityIndex + 1}`
+                          ] ? (
+                            <KeyboardArrowDownIcon sx={{ fontSize: "18px" }} />
+                          ) : (
+                            <KeyboardArrowRightIcon sx={{ fontSize: "18px" }} />
+                          )}
+                        </Button>
+                        {isOpen[`timeline${index + 1}-${activityIndex + 1}`] &&
+                          activities.map((activity) => (
+                            <TimelineItem key={date}>
+                              <TimelineSeparator>
+                                <TimelineDot color="primary" />
+                                <TimelineConnector />
+                              </TimelineSeparator>
+                              <Grid sx={{ display: "flex", marginTop: "3px" }}>
+                                <TimelineContent
+                                  sx={{ fontSize: "12px", paddingLeft: "30px" }}
+                                >
+                                  {unixTo12HourTime(activity.created)}
+                                </TimelineContent>
+                                <Grid>
+                                  <TimelineContent sx={{ fontSize: "12px" }}>
+                                    {activity.message}
+                                  </TimelineContent>
+                                  <TimelineContent
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
+                                    }}
+                                  >
+                                    <Avatar
+                                      sx={{
+                                        width: "30px",
+                                        height: "30px",
+                                        fontSize: "14px",
+                                      }}
+                                    >
+                                      {activity?.performedBy
+                                        ?.charAt(0)
+                                        ?.toUpperCase()}
+                                    </Avatar>
+                                    <Typography>
+                                      {activity.performedBy}
+                                    </Typography>
+                                  </TimelineContent>
+                                </Grid>
+                              </Grid>
+                            </TimelineItem>
+                          ))}
+                        <Divider
+                          sx={{
+                            margin: isOpen[
+                              `timeline${index + 1}-${activityIndex + 1}`
+                            ]
+                              ? "30px"
+                              : 0,
+                          }}
+                        />
+                      </Grid>
+                    ))
+              )}
+            </>
+          )}
+
+          {/* {(resultActivityData || resultActivityData2 || []).map(
             (dateActivities, index) =>
               Object.entries(dateActivities)
                 .reverse()
@@ -158,7 +277,7 @@ export default function NoOppositeContent({
                     />
                   </Grid>
                 ))
-          )}
+          )} */}
         </Timeline>
       )}
     </>
