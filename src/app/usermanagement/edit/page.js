@@ -32,6 +32,7 @@ export default function Page() {
   const id = params.get("id");
   const [userData, setUserData] = useState(null);
   const router = useRouter();
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   // get user by id
   const { data, isFetching, refetch } = useGetUserByIdQuery(id);
@@ -219,14 +220,21 @@ export default function Page() {
 
     if (storedData) {
       const jsonData = JSON.parse(storedData);
-
       setUserData(jsonData);
     } else {
       console.error('No data found in local storage for key "user".');
     }
   }, []);
-  // console.log(userData);
-  // console.log(data);
+
+  useEffect(() => {
+    if (userData?.role[0] === "Super Administrator") {
+      setIsSuperAdmin(true);
+    } else {
+      setIsSuperAdmin(false);
+    }
+  }, [userData]);
+  console.log(isSuperAdmin);
+  console.log(userData?.role[0]);
 
   // console.log(defaultParent);
 
@@ -365,7 +373,7 @@ export default function Page() {
                             },
                         }}
                       />
-                      <TextField
+                      {isSuperAdmin ? <TextField
                         label="Email"
                         name="email"
                         type="email"
@@ -379,7 +387,38 @@ export default function Page() {
                               borderRadius: "19px",
                             },
                         }}
-                      />
+                      />:( <TextField
+                        label="Email"
+                        name="email"
+                        type="email"
+                        // value={formData.email}
+                        disabled
+                        defaultValue="**********"
+                        // onChange={handleInputChange}
+                        sx={{
+                          width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      />)}
+                      {/* <TextField
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        sx={{
+                          width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      /> */}
                     </Grid>
 
                     <Grid
@@ -392,7 +431,7 @@ export default function Page() {
                         width: "80%",
                       }}
                     >
-                      <TextField
+                      {isSuperAdmin ?  <TextField
                         label="Phone"
                         name="phone"
                         type="text"
@@ -406,7 +445,38 @@ export default function Page() {
                               borderRadius: "19px",
                             },
                         }}
-                      />
+                      />:( <TextField
+                        label="Phone"
+                        name="phone"
+                        type="text"
+                        disabled
+                        defaultValue="**********"
+                        // value={formData.phone}
+                        // onChange={handleInputChange}
+                        sx={{
+                          width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      />)}
+                      {/* <TextField
+                        label="Phone"
+                        name="phone"
+                        type="text"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        sx={{
+                          width: "397px",
+                          color: "black",
+                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderRadius: "19px",
+                            },
+                        }}
+                      /> */}
                       <TextField
                         label="Password"
                         name="password"

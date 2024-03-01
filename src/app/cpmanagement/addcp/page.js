@@ -291,7 +291,7 @@ export default function Page() {
   };
   const handleClose = () => {
     setOpen(false);
-    if (cpEnteredCode.length >= 1) {
+    if (cpEnteredCode?.length >= 1) {
       setIsCodeCheck(true);
     } else {
       setIsCodeCheck(false);
