@@ -256,10 +256,10 @@ class LSQLeadSrv {
                   lead,
                   projectName,
                 );
-
                 if (structuredApiData) {
                   return structuredApiData;
                 }
+                return {}
               }),
             );
             const leadDataObj = {
@@ -269,8 +269,9 @@ class LSQLeadSrv {
               email:"email"
             };
             const resultArray = leads.map((lead) => {
-              const matchingLeadData = structuredLeadData.find((leadData) => {
-                return leadData[lsqLeadFieldNames?.leadId] === lead?.leadId;
+              const matchingLeadData = structuredLeadData.find((lsqLead) => {
+
+                return lsqLead[lsqLeadFieldNames?.leadId] === lead?.leadId;
               });
               matchingLeadData[lsqLeadFieldNames?.firstName] =
                 lead[leadDataObj?.name];
@@ -283,7 +284,7 @@ class LSQLeadSrv {
             });
             data = [...resultArray];
           } catch (error) {
-            console.log("Error while Fetching lead By Id", error);
+            console.log("Error while Fetching lead", error);
           }
           return null;
         }
