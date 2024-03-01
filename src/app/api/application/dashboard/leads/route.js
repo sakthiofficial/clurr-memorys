@@ -9,6 +9,9 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const params = {
     project: searchParams.get("project"),
+    leadStartDate: searchParams.get("leadStartDate"),
+    leadEndDate: searchParams.get("leadEndDate"),
+
   };
   const validateQuery = Joi.object({
     project: Joi.string().required(),
