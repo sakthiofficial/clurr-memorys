@@ -174,6 +174,12 @@ export const apiSlice = createApi({
         body: activityData,
       }),
     }),
+    getTotalUser: builder.query({
+      query: () => ({
+        url: `/application/dashboard/user/internal`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -203,4 +209,5 @@ export const {
   useAddCpExecuteMutation,
   useActivityQuery,
   useGetActivityByIdQuery,
+  useGetTotalUserQuery
 } = apiSlice;

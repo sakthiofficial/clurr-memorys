@@ -24,6 +24,7 @@ import {
   useGetUserByIdQuery,
 } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
+import { removeRolesFromArray } from "../../../../shared/dataHandler";
 
 export default function Page() {
   // console.log(id);
@@ -124,6 +125,8 @@ export default function Page() {
 
   // console.log(defaultParent);
   // console.log(selectedValues.parentId);
+
+  const subOrdinateRole = removeRolesFromArray(userData?.subordinateRoles);
 
   // console.log(selectedValues.parentId, "parentid");
   // handleinput change functions
@@ -467,7 +470,7 @@ export default function Page() {
                           onChange={(e) => handleChange("role", e.target.value)}
                           MenuProps={{ disableScrollLock: true }}
                         >
-                          {(userData?.subordinateRoles || []).map((option) => (
+                          {(subOrdinateRole || []).map((option) => (
                             <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>

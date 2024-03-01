@@ -42,7 +42,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-
 export default function Page() {
   // const [userData, setUserData] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -872,13 +871,30 @@ export default function Page() {
                           }}
                         />
 
-                        <Grid sx={{ display: "flex", alignItems: "center" }}>
-                          <Switch
-                            checked={cpExecute?.isPrimary}
-                            onChange={(e) =>
-                              handleSwitchChange(index, e.target.checked)
-                            }
-                          />
+                        <Grid
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            // border: "1px solid black",
+                          }}
+                        >
+                          <Grid>
+                            <Typography
+                              sx={{
+                                fontSize: "12px",
+                                paddingRight: "20px",
+                                color: "rgba(0, 0, 0, 0.6)",
+                              }}
+                            >
+                              Is Primary
+                            </Typography>
+                            <Switch
+                              checked={cpExecute?.isPrimary}
+                              onChange={(e) =>
+                                handleSwitchChange(index, e.target.checked)
+                              }
+                            />
+                          </Grid>
                           <DeleteOutlineOutlined
                             onClick={() => handleDeleteAccount(index)}
                           />

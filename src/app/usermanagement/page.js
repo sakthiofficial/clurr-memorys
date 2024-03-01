@@ -33,6 +33,7 @@ import Image from "next/image";
 // import ChanelPartner from "../../../public/UserCard/ChanelPartner.svg";
 import {
   useDeleteUsersMutation,
+  useGetTotalUserQuery,
   useGetUsersQuery,
 } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
@@ -223,6 +224,9 @@ export default function Page() {
     { name: "Execute", icon: BookedLeads, total: "7" },
   ];
 
+  const resultTotalUser = useGetTotalUserQuery();
+
+  // console.log(resultTotalUser);
   return (
     <>
       <ToastContainer />
@@ -338,7 +342,7 @@ export default function Page() {
         </Grid>
         <Grid>
           {/* <NivoFunnel data={newData} /> */}
-          <Grid
+          {/* <Grid
             sx={{
               minHeight: "30vh",
               display: "flex",
@@ -417,7 +421,7 @@ export default function Page() {
                 </Grid>
               </Grid>
             ))}
-          </Grid>
+          </Grid> */}
         </Grid>
         <Grid>
           <TableContainer
@@ -425,7 +429,9 @@ export default function Page() {
             sx={{
               border: "1px solid lightgrey",
               borderRadius: "29px",
-              marginTop: "10px",
+              // marginTop: "10px",
+              marginTop: "100px",
+
             }}
           >
             <Grid
@@ -505,10 +511,10 @@ export default function Page() {
                         {row?.name || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.phone || "N/A"}
+                        {row?.phone || "**********"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.email || "N/A"}
+                        {row?.email || "**********"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
                         {row?.projects && row?.projects?.length > 0

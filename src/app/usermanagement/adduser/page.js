@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { useAddUsersMutation, useGetParentsQuery } from "@/reduxSlice/apiSlice";
 import { isPriorityUser } from "../../../../shared/roleManagement";
 import "react-toastify/dist/ReactToastify.css";
+import { removeRolesFromArray } from "../../../../shared/dataHandler";
 
 export default function Page() {
   const [selectParentId, setSelectParentId] = useState("");
@@ -224,7 +225,9 @@ export default function Page() {
     );
   }
 
-  const SubordinateRoles = userData?.subordinateRoles;
+  // const SubordinateRoles = userData?.subordinateRoles;
+  const SubordinateRoles = removeRolesFromArray(userData?.subordinateRoles);
+  // console.log(resultt);
   // console.log(SubordinateRoles);
   const SubordinateProjects = userData?.projects;
   // handle project function

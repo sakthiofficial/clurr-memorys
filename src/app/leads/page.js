@@ -712,7 +712,7 @@ export default function Page() {
           >
             <Typography
               variant="h6"
-              sx={{ fontSixe: "16px", fontWeight: "500" }}
+              sx={{ fontSize: "16px", fontWeight: "500" }}
             >
               Leads List
             </Typography>
