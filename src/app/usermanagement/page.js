@@ -33,10 +33,18 @@ import Image from "next/image";
 // import ChanelPartner from "../../../public/UserCard/ChanelPartner.svg";
 import {
   useDeleteUsersMutation,
+  useGetTotalUserQuery,
   useGetUsersQuery,
 } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
 import ExportLead from "../leads/component/export";
+import NivoFunnel from "../components/NivoFunnel";
+import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
+import RegisterLeads from "../../../public/LeadsCard/registerLeads.svg";
+import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
+import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
+import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
+import BookedLeads from "../../../public/LeadsCard/bookLeads.svg";
 
 // card details
 // const users = [
@@ -194,32 +202,64 @@ export default function Page() {
     page * rowsPerPage + rowsPerPage
   );
 
+  const getBackgroundColor = (name) => {
+    switch (name) {
+      case "WarmLeads":
+        return "rgba(255, 92, 0, 0.08)";
+      case "Site Visit Scheduled":
+        return "rgba(205, 172, 0, 0.08)";
+      case "Site Visit Done Leads":
+        return "rgba(219, 0, 255, 0.08)";
+      default:
+        return "rgba(0, 133, 255, 0.08)";
+    }
+  };
+
+  const users = [
+    { name: "Super Admin", icon: TotalLeads, total: "4" },
+    { name: "Admin", icon: RegisterLeads, total: "6" },
+    { name: "Mis", icon: WarmLeads, total: "2" },
+    { name: "Cp Tl", icon: SiteVisit, total: "6" },
+    { name: "Branch Head", icon: SiteVisitDone, total: "3" },
+    { name: "Execute", icon: BookedLeads, total: "7" },
+  ];
+
+  const resultTotalUser = useGetTotalUserQuery();
+
+  // console.log(resultTotalUser);
   return (
     <>
       <ToastContainer />
       <Grid style={{ minHeight: "100vh" }}>
         <Grid
           sx={{
-            minHeight: "8vh",
+            minHeight: "10vh",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            // padding: "0px 10px",
             // border: "1px solid black",
-            margin: "10px",
-            // flexWrap: "wrap",
+            margin: "89px 10px 10px 0px",
+            position: "fixed",
+            top: "0",
+            left: "0px",
+            // width: "1250px",
+            width: "calc(100% - 260px)",
+            marginLeft: "260px",
+            backgroundColor: "white",
+            zIndex: "999",
+            padding: "10px",
           }}
         >
           <Grid sx={{ width: "50%" }}>
-            {/* <Typography
+            <Typography
               sx={{
                 fontSize: "18px",
                 fontWeight: "500",
                 color: "rgba(0, 0, 0, 1)",
               }}
             >
-              User List
-            </Typography> */}
+              User Information
+            </Typography>
           </Grid>
           <Grid
             sx={{
@@ -266,15 +306,16 @@ export default function Page() {
               />
             </Grid>
           </Grid>
+
           <Grid
             sx={{
               gap: "10px",
-              width: "40%",
+              width: "20%",
               display: "flex",
               justifyContent: "end",
             }}
           >
-            <Link href="/usermanagement/adduser">
+            {/* <Link href="/usermanagement/adduser">
               <Button
                 sx={{
                   backgroundColor: "rgba(0, 0, 0, 1)",
@@ -295,9 +336,92 @@ export default function Page() {
                 <Add sx={{ fontSize: "18px" }} />
                 Add User
               </Button>
-            </Link>
+            </Link> */}
             <ExportLead data={data?.result} />
           </Grid>
+        </Grid>
+        <Grid>
+          {/* <NivoFunnel data={newData} /> */}
+          {/* <Grid
+            sx={{
+              minHeight: "30vh",
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+              flexWrap: "wrap",
+              // border: "1px solid black",
+              marginTop: "60px",
+              // marginTop: "5px",
+              gap: "15px",
+            }}
+          >
+            {users?.map((item) => (
+              <Grid
+                key={item?.name}
+                sx={{
+                  width: "165px",
+                  height: "150px",
+                  boxShadow: "0px 0px 8px 0px rgba(0, 0, 0, 0.10)",
+                  marginBottom: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "white",
+                  border: "0.5px solid #BDBDBD",
+                  borderRadius: "13px",
+                }}
+              >
+                <Grid
+                  sx={{
+                    // border: "1px solid black",
+                    height: "80%",
+                    width: "90%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Grid
+                    sx={{
+                      width: "51px",
+                      height: "51px",
+                      borderRadius: "9px",
+                      backgroundColor: getBackgroundColor(item?.name),
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "5px",
+                    }}
+                  >
+                    <Image
+                      alt={item?.name}
+                      src={item?.icon}
+                      width={26}
+                      height={26}
+                    />
+                  </Grid>
+                  <Typography
+                    sx={{
+                      color: "#454545",
+                      fontSize: "14px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    {item?.name}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: "rgba(0, 0, 0, 1)",
+                      fontSize: "24px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {item?.total}
+                  </Typography>
+                </Grid>
+              </Grid>
+            ))}
+          </Grid> */}
         </Grid>
         <Grid>
           <TableContainer
@@ -305,6 +429,9 @@ export default function Page() {
             sx={{
               border: "1px solid lightgrey",
               borderRadius: "29px",
+              // marginTop: "10px",
+              marginTop: "100px",
+
             }}
           >
             <Grid
@@ -324,6 +451,28 @@ export default function Page() {
               >
                 User List
               </Typography>
+              <Link href="/usermanagement/adduser">
+                <Button
+                  sx={{
+                    backgroundColor: "rgb(138, 141, 147)",
+                    color: "rgba(255, 255, 255, 1)",
+                    // width: "125px",
+                    // height: "43px",
+                    borderRadius: "8px",
+                    border: "none",
+                    fontSize: "13px",
+                    fontWeight: "400",
+                    "&:hover": {
+                      backgroundColor: "rgb(138, 141, 147)",
+                      boxShadow: "none",
+                      border: "none",
+                    },
+                  }}
+                >
+                  <Add sx={{ fontSize: "18px" }} />
+                  Add User
+                </Button>
+              </Link>
             </Grid>
             {isFetching ? (
               <Box
@@ -362,10 +511,10 @@ export default function Page() {
                         {row?.name || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.phone || "N/A"}
+                        {row?.phone || "**********"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.email || "N/A"}
+                        {row?.email || "**********"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
                         {row?.projects && row?.projects?.length > 0

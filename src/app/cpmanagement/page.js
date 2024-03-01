@@ -115,7 +115,7 @@ export default function Page() {
   const covertCpDataToExcel = useCallback((cpData) => {
     cpData = (cpData || []).map((singleCpData) => {
       const executes = (singleCpData?.cpExecutes || []).map(
-        (execute) => execute?.name,
+        (execute) => execute?.name
       );
       return {
         Company: singleCpData?.company?.name,
@@ -160,7 +160,7 @@ export default function Page() {
     }
     if (selectedFilter?.label === "Cp Rm") {
       const uniqueData = Array.from(
-        new Set(getCpRm.map((item) => JSON.stringify(item))),
+        new Set(getCpRm.map((item) => JSON.stringify(item)))
       ).map((item) => JSON.parse(item));
       setOptions(uniqueData);
       setOptions(uniqueData);
@@ -191,14 +191,14 @@ export default function Page() {
   useEffect(() => {
     if (selectedFilter.label === "Cp Code") {
       const result = (data?.result || []).map(
-        (item) => item.company[selectedFilter.key],
+        (item) => item.company[selectedFilter.key]
       );
       setGetCpCodes(result);
     }
 
     if (selectedFilter.label === "Cp Branch Head") {
       const resultBranchHead = (data?.result || []).map(
-        (item) => item.cpBranchHead[selectedFilter.key],
+        (item) => item.cpBranchHead[selectedFilter.key]
       );
       console.log("b Worked");
 
@@ -208,14 +208,14 @@ export default function Page() {
 
     if (selectedFilter.label === "Cp Rm") {
       const resultCpRm = (data?.result || []).map(
-        (item) => item.cpRm[selectedFilter.key],
+        (item) => item.cpRm[selectedFilter.key]
       );
       setGetCpRm(resultCpRm);
       // console.log("rm", getCpRm);
     }
     if (selectedFilter.label === "Company") {
       const resultCompany = (data?.result || []).map(
-        (item) => item.company[selectedFilter.key],
+        (item) => item.company[selectedFilter.key]
       );
       // console.log("company Worked");
 
@@ -227,25 +227,25 @@ export default function Page() {
   useEffect(() => {
     if (selectedFilter?.label === "Cp Code") {
       const filteredResults = data?.result.filter(
-        (item) => item.company[selectedFilter.key] === getUserFilter,
+        (item) => item.company[selectedFilter.key] === getUserFilter
       );
       setFilterUser(filteredResults);
     }
     if (selectedFilter.label === "Cp Branch Head") {
       const filteredResults = data?.result.filter(
-        (item) => item.cpBranchHead[selectedFilter.key] === getUserFilter,
+        (item) => item.cpBranchHead[selectedFilter.key] === getUserFilter
       );
       setFilterUser(filteredResults);
     }
     if (selectedFilter.label === "Cp Rm") {
       const filteredResults = data?.result.filter(
-        (item) => item.cpRm[selectedFilter.key] === getUserFilter,
+        (item) => item.cpRm[selectedFilter.key] === getUserFilter
       );
       setFilterUser(filteredResults);
     }
     if (selectedFilter?.label === "Company") {
       const filteredResults = data?.result.filter(
-        (item) => item.company[selectedFilter.key] === getUserFilter,
+        (item) => item.company[selectedFilter.key] === getUserFilter
       );
       setFilterUser(filteredResults);
     }
@@ -271,7 +271,7 @@ export default function Page() {
 
   const slicedRows = arrayToSlice.slice(
     page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage,
+    page * rowsPerPage + rowsPerPage
   );
   // console.log(arrayToSlice.length);
   return (

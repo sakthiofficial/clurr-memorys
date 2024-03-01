@@ -2,7 +2,7 @@ const activityActionTypes = {
   leadAdd: "leadAdd",
   userAdd: "userAdd",
   userEdit: "userEdit",
-  userDelete: "userEdit",
+  userDelete: "userDelete",
   cpEdit: "cpEdit",
   cpDelete: "cpDelete",
   cpAdded: "cpAdded",

@@ -30,40 +30,37 @@ function NivoBump() {
     {
       id: "Totalleads",
       data: [
-        { x: "2000-01-01", y: 11 },
+        { x: "2000-01-01", y: 10 },
         { x: "2001-01-01", y: 15 },
-        { x: "2002-01-01", y: 26 },
-        { x: "2003-01-01", y: 12 },
-        { x: "2004-01-01", y: 15 },
-        { x: "2005-01-01", y: 22 },
+        { x: "2002-01-01", y: 16 },
+        { x: "2003-01-01", y: 2 },
+        { x: "2004-01-01", y: 5 },
+        { x: "2005-01-01", y: 12 },
       ],
     },
     {
       id: "registerLeads",
       data: [
-        { x: "2000-01-01", y: 30 },
-        { x: "2001-01-01", y: 30 },
+        { x: "2000-01-01", y: 3 },
+        { x: "2001-01-01", y: 13 },
         { x: "2002-01-01", y: 17 },
-        { x: "2003-01-01", y: 25 },
-        { x: "2004-01-01", y: 25 },
-        { x: "2005-01-01", y: 20 },
+        { x: "2003-01-01", y: 15 },
+        { x: "2004-01-01", y: 2 },
+        { x: "2005-01-01", y: 18 },
       ],
     },
   ];
 
   function MyResponsiveBump({ data, colorScheme }) {
-    // Calculate the maximum value in the dataset to determine the upper limit for tick values
     const maxDataValue = Math.max(
-      ...data.flatMap((serie) => serie.data.map((point) => point.y)),
+      ...data.flatMap((serie) => serie.data.map((point) => point.y))
     );
 
-    // Determine the upper limit for tick values (rounded up to the nearest multiple of 500)
-    const upperLimit = Math.ceil(maxDataValue / 500) * 500;
+    const upperLimit = Math.ceil(maxDataValue / 10) * 10;
 
-    // Generate an array of tick values starting from 0 up to the upper limit at intervals of 500
     const tickValues = Array.from(
-      { length: upperLimit / 500 + 1 },
-      (_, index) => index * 500,
+      { length: Math.ceil(upperLimit / 10) + 1 },
+      (_, index) => index * 10
     );
 
     return (
@@ -98,7 +95,7 @@ function NivoBump() {
           legendPosition: "middle",
           legendOffset: 30,
           invert: true,
-          tickValues, // Set custom tick values
+          tickValues,
         }}
         margin={{ top: 40, right: 100, bottom: 40, left: 60 }}
         axisRight={null}
@@ -138,7 +135,7 @@ function NivoBump() {
 
   return (
     <CCard>
-      <CCardBody style={{ height: "600px" }}>
+      <CCardBody style={{ height: "500px" }}>
         <MyResponsiveBump data={bumpData} colorScheme={colorScheme} />
       </CCardBody>
     </CCard>

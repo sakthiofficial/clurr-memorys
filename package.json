@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@canvasjs/react-charts": "^1.0.1",
     "@coreui/react": "^4.11.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -19,6 +20,9 @@
     "@mui/x-date-pickers": "^6.19.0",
     "@mui/x-date-pickers-pro": "^6.19.0",
     "@nivo/bump": "^0.84.0",
+    "@nivo/funnel": "^0.84.0",
+    "@nivo/line": "^0.84.0",
+    "@nivo/pie": "^0.84.0",
     "@reduxjs/toolkit": "^2.0.1",
     "@sendgrid/mail": "^8.1.0",
     "axios": "^1.6.5",

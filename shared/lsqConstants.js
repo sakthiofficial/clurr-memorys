@@ -28,14 +28,16 @@ export const lsqLeadFieldNames = {
 export const lsqFieldValues = {
   source: "Channel Partner",
 };
+// sv -> site visit
 export const leadStage = {
   new: "New",
   reengaged: "Reengaged",
   progressReenged: "Progressing Reengaged",
-  svd: "Site Visit Done",
-  svdCold: "SVD Cold",
-  svdWarm: "SVD Warm",
-  svdDroped: "Site Visit Done & Dropped",
+  svDone: "Site Visit Done",
+  svCold: "SVD Cold",
+  svWarm: "SVD Warm",
+  svDroped: "Site Visit Done & Dropped",
+  svSchedule:"Site Visit Scheduled"
 };
 export const leadRegistrationStatus = {
   sucess: "Sucess",

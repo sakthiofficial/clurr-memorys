@@ -50,6 +50,7 @@ import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import NoAccountsRoundedIcon from "@mui/icons-material/NoAccountsRounded";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import { ProfileInfo } from "./components/ProfileBtn";
 import LoginBanner from "../../public/loginBanner2.png";
 import { permissionKeyNames } from "../../shared/cpNamings";
@@ -132,7 +133,7 @@ function Login() {
   const [loginUserData] = useLoginUserDataMutation();
   const handleSubmit = useCallback(
     async (e) => {
-      e.preventDefault();
+      // e.preventDefault();
 
       try {
         setLoginInProgress(true);
@@ -208,6 +209,21 @@ function Login() {
     localStorage.removeItem("user");
     window.location.reload();
   };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keypress", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keypress", handleKeyPress);
+    };
+  }, [formData]);
+
   return (
     <>
       <ToastContainer />
@@ -456,13 +472,13 @@ export default function RootLayout({ children }) {
       </Grid>
       <List>
         {/* <Link href="/">
-<ListItem disablePadding>
-<ListItemButton>
-<ListItemIcon>{React.createElement(DashboardIcon)}</ListItemIcon>
-<ListItemText primary="Dashboard" />
-</ListItemButton>
-</ListItem>
-</Link> */}
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>{React.createElement(DashboardIcon)}</ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+          </ListItem>
+        </Link> */}
         <Link href="/leads" style={{ color: "none", textDecoration: "none" }}>
           <ListItem
             disablePadding
@@ -785,24 +801,24 @@ export default function RootLayout({ children }) {
                           // borderLeft: "1px solid lightgrey",
                           height: "100%",
                           padding: 0,
-                          display: "flex",
+                          display: { xs: "none", sm: "flex" },
                           justifyContent: "center",
                           flexDirection: "column",
                           alignItems: "center",
+                          // border:"1px solid black"
                         }}
                       >
                         <Grid
                           sx={{
                             // border: "1px solid black",
-                            display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
                           }}
                         >
                           <Grid
                             sx={{
-                              // display: "flex",
-                              display: { xs: "none", sm: "flex" },
+                              display: "flex",
+                              // display: { xs: "none", sm: "flex" },
                             }}
                           >
                             <Typography variant="h6">Hello,&nbsp;</Typography>

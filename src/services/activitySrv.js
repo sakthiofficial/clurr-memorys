@@ -77,6 +77,7 @@ class ActivitySrv {
     performedToId,
   ) => {
     // add //edit //delete //permission
+    console.log(activityType);
     try {
       const userSrv = new CPUserSrv();
       const activityEntity = this.getActivityEntitys(activityType);
