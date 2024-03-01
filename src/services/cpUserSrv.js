@@ -560,7 +560,7 @@ class CPUserSrv {
         .populate({
           path: "projects",
           model: "CpAppProject",
-        }).select(providedUser[userDataObj?.role][0] ===roleNames?.superAdmin? "" :"-phone").lean();
+        }).select(providedUser[userDataObj?.role][0] ===roleNames?.superAdmin? "" :"-phone -email").lean();
       users = users.map((user) => {
         const userPermissions = [
           ...new Set(
