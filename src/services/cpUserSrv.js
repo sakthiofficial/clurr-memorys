@@ -560,7 +560,7 @@ class CPUserSrv {
         .populate({
           path: "projects",
           model: "CpAppProject",
-        }).select(providedUser[userDataObj?.role][0] ===roleNames?.superAdmin? "" :"-phone -email").lean();
+        }).select(providedUser[userDataObj?.role][0] ===roleNames?.superAdmin? "" :"-phone").lean();
       users = users.map((user) => {
         const userPermissions = [
           ...new Set(
@@ -671,7 +671,11 @@ class CPUserSrv {
         null,
       );
     }
+if(providedUser[userDataObj?.role][0]!==roleNames?.superAdmin){
+userById[userDataObj?.phone] = null
+userById[userDataObj?.email] = null
 
+}
     const result = (userById[userDataObj?.role] || []).filter((role) =>
       providedUser[userDataObj?.subordinateRoles].includes(role),
     );
