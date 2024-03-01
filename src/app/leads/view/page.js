@@ -14,8 +14,7 @@ export default function Page() {
   const [leadId, setleadId] = useState(id);
   console.log(leadId);
 
-  // console.log("phone number check", phone);
-  // console.log(project);
+
 
   // get leads by phone and project
   const { data, isFetching } = useGetLeadByIdQuery({ project, leadId });
