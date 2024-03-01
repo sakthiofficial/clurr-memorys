@@ -8,6 +8,7 @@ import config from "@/lib/config";
 import { CpAppProject } from "../../models/AppProject";
 import { permissionKeyNames, roleNames } from "../../shared/cpNamings";
 import { CpAppUser } from "../../models/AppUser";
+import { CpAppCompany } from "../../models/AppCompany";
 
 const {
   ApiResponse,
@@ -91,7 +92,7 @@ class ApplicationSrv {
     }
   };
 
-  leadsOverallStatus = async (providedUser, { project }) => {
+  leadsOverallStatus = async (providedUser, { project,leadStartDate,leadEndDate }) => {
     const projectCheck = await CpAppProject.findOne({ name: project });
     if (!projectCheck) {
       return new ApiResponse(
@@ -100,7 +101,41 @@ class ApplicationSrv {
         null
       );
     }
-    const cpLeads = await CpAppLead.find({});
+    let cpCode = null;
+    if (
+      providedUser[userDataObj?.role].includes(roleNames?.cpBranchHead)
+    ) {
+      const branchHeadCompany = await CpAppCompany.findOne({
+        branchHeadId: providedUser[userDataObj.id],
+      });
+      cpCode = branchHeadCompany?.cpCode || null;
+    }
+    let query = {
+      project,
+      created: {
+        $gte: leadStartDate,
+        $lte: leadEndDate,
+      },
+    };
+    const cpBranchHeadQuery = {
+      ...query,
+      subSource: new RegExp(cpCode),
+    };
+    const cpExecuteQuery = {
+      ...query,
+      createdBy: providedUser[userDataObj?.id],
+    };
+    switch (providedUser[userDataObj?.role][0]) {
+      case roleNames?.cpBranchHead:
+        query = cpBranchHeadQuery;
+        break;
+      case roleNames?.cpExecute:
+        query = cpExecuteQuery;
+        break;
+      default:
+        break;
+    }
+    const cpLeads = await CpAppLead.find(query);
     // sv-> site visit
     const overAllStatus = {
       leadCount: 0,

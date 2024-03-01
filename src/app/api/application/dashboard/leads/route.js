@@ -12,6 +12,9 @@ export async function GET(request) {
   };
   const validateQuery = Joi.object({
     project: Joi.string().required(),
+    leadStartDate: Joi.number().required(),
+    leadEndDate: Joi.number().required(),
+
   });
   const { error, value } = validateQuery.validate(params);
   if (error || !providedUser) {
