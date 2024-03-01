@@ -107,7 +107,7 @@ class LSQLeadSrv {
 
       const svdActivity = (leadActivity || []).filter((activity) => {
         const isSvdAcitivity = activity?.Data.filter(
-          (dt) => dt?.Value === leadStage?.svd,
+          (dt) => dt?.Value === leadStage?.svDone,
         );
         if (isSvdAcitivity.length > 0) {
           return activity;
@@ -231,7 +231,6 @@ class LSQLeadSrv {
               return null;
             })
             .filter(Boolean);
-          console.log("leads", leads, query);
           const leadIds = leads.map((lead) => lead?.leadId);
           try {
             const lsqLeadData = await axios.post(
@@ -508,6 +507,7 @@ class LSQLeadSrv {
         leadId: promise.data?.Message?.RelatedId,
         createdBy: id,
         subSource,
+        isCreatedInLsq:promise?.data?.Message?.IsCreated||false
       });
       const leadResult = await cpLeadSchema.save();
       const activityService = new ActivitySrv();
@@ -519,7 +519,6 @@ class LSQLeadSrv {
         userName,
         leadResult?._id,
       );
-
       return new ApiResponse(
         promise?.status,
         promise?.statusText,

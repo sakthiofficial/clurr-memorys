@@ -13,6 +13,7 @@ const CpAppLeadSchema = new Schema({
   createdBy: { type: Schema.Types.ObjectId, ref: "CpAppUser", required: true },
   leadId: { type: String },
   subSource: { type: String },
+  isCreatedInLsq:{type:Boolean,default:false}
 });
 // have a refrence old project to add created hook
 addCreatedHook(CpAppLeadSchema);
