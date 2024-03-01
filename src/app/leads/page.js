@@ -775,7 +775,7 @@ export default function Page() {
                         <TableCell colSpan={7}>No Leads</TableCell>
                       </TableRow>
                     ) : (
-                      slicedRows.map((row) => (
+                      slicedRows.reverse().map((row) => (
                         <TableRow key={row?.FirstName}>
                           <TableCell sx={{ fontSize: "11px" }}>
                             {row?.FirstName || "N/A"}

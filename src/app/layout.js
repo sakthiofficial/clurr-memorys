@@ -133,7 +133,7 @@ function Login() {
   const [loginUserData] = useLoginUserDataMutation();
   const handleSubmit = useCallback(
     async (e) => {
-      e.preventDefault();
+      // e.preventDefault();
 
       try {
         setLoginInProgress(true);
@@ -209,6 +209,21 @@ function Login() {
     localStorage.removeItem("user");
     window.location.reload();
   };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keypress", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keypress", handleKeyPress);
+    };
+  }, [formData]);
+
   return (
     <>
       <ToastContainer />

@@ -173,6 +173,48 @@ export default function Page() {
   // console.log(selectedProjects);
 
   // handle submit functions
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (!selectedValues.parentId && !priorUser) {
+  //     toast.error("Please select at least one parent.");
+  //     return;
+  //   }
+  //   if (!parentResult?.isSuccess || parentResult?.data?.result?.length === 0) {
+  //     toast.error("No options available for parents or no parent user found.");
+  //     return;
+  //   }
+
+  //   const updatedParentValues = {
+  //     ...selectedValues,
+  //     parentId: priorUser ? userData._id : selectedParentId,
+  //     role: [selectedRole],
+  //     id,
+  //   };
+
+  //   const updatedValue = {
+  //     ...formData,
+  //     ...updatedParentValues,
+  //   };
+  //   editUserData(updatedValue).then((result) => {
+  //     console.log(result.data);
+
+  //     if (result.data.status === 400) {
+  //       // result.data.result.details.map((res) => toast.error(res.message));
+  //       toast.error("something went wrong");
+  //     }
+
+  //     if (result.data.status === 200) {
+  //       toast.success("User edit successfully!");
+  //       setTimeout(() => {
+  //         router.push("/usermanagement");
+  //         refetch();
+  //       }, 1500);
+  //     }
+  //   });
+  //   // console.log(updatedValue);
+  // };
+
+  // handle submit functions
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedValues.parentId && !priorUser) {
@@ -184,19 +226,29 @@ export default function Page() {
       return;
     }
 
-    const updatedParentValues = {
-      ...selectedValues,
-      parentId: priorUser ? userData._id : selectedParentId,
-      role: [selectedRole],
-      id,
-    };
+    let updatedValue = {};
 
-    const updatedValue = {
-      ...formData,
-      ...updatedParentValues,
-    };
+    if (isSuperAdmin) {
+      updatedValue = {
+        ...formData,
+        ...selectedValues,
+        parentId: priorUser ? userData._id : selectedParentId,
+        role: [selectedRole],
+        id,
+      };
+    } else {
+      updatedValue = {
+        name: formData.name,
+        password: formData.password,
+        ...selectedValues,
+        parentId: priorUser ? userData._id : selectedParentId,
+        role: [selectedRole],
+        id,
+      };
+    }
+
     editUserData(updatedValue).then((result) => {
-      console.log(result.data);
+      console.log(result?.data);
 
       if (result.data.status === 400) {
         // result.data.result.details.map((res) => toast.error(res.message));
@@ -211,7 +263,6 @@ export default function Page() {
         }, 1500);
       }
     });
-    // console.log(updatedValue);
   };
 
   // get user datas
@@ -373,37 +424,41 @@ export default function Page() {
                             },
                         }}
                       />
-                      {isSuperAdmin ? <TextField
-                        label="Email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        sx={{
-                          width: "397px",
-                          color: "black",
-                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                            {
-                              borderRadius: "19px",
-                            },
-                        }}
-                      />:( <TextField
-                        label="Email"
-                        name="email"
-                        type="email"
-                        // value={formData.email}
-                        disabled
-                        defaultValue="**********"
-                        // onChange={handleInputChange}
-                        sx={{
-                          width: "397px",
-                          color: "black",
-                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                            {
-                              borderRadius: "19px",
-                            },
-                        }}
-                      />)}
+                      {isSuperAdmin ? (
+                        <TextField
+                          label="Email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          sx={{
+                            width: "397px",
+                            color: "black",
+                            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderRadius: "19px",
+                              },
+                          }}
+                        />
+                      ) : (
+                        <TextField
+                          label="Email"
+                          name="email"
+                          type="email"
+                          // value={formData.email}
+                          disabled
+                          defaultValue="**********"
+                          // onChange={handleInputChange}
+                          sx={{
+                            width: "397px",
+                            color: "black",
+                            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderRadius: "19px",
+                              },
+                          }}
+                        />
+                      )}
                       {/* <TextField
                         label="Email"
                         name="email"
@@ -431,37 +486,41 @@ export default function Page() {
                         width: "80%",
                       }}
                     >
-                      {isSuperAdmin ?  <TextField
-                        label="Phone"
-                        name="phone"
-                        type="text"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        sx={{
-                          width: "397px",
-                          color: "black",
-                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                            {
-                              borderRadius: "19px",
-                            },
-                        }}
-                      />:( <TextField
-                        label="Phone"
-                        name="phone"
-                        type="text"
-                        disabled
-                        defaultValue="**********"
-                        // value={formData.phone}
-                        // onChange={handleInputChange}
-                        sx={{
-                          width: "397px",
-                          color: "black",
-                          "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                            {
-                              borderRadius: "19px",
-                            },
-                        }}
-                      />)}
+                      {isSuperAdmin ? (
+                        <TextField
+                          label="Phone"
+                          name="phone"
+                          type="text"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          sx={{
+                            width: "397px",
+                            color: "black",
+                            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderRadius: "19px",
+                              },
+                          }}
+                        />
+                      ) : (
+                        <TextField
+                          label="Phone"
+                          name="phone"
+                          type="text"
+                          disabled
+                          defaultValue="**********"
+                          // value={formData.phone}
+                          // onChange={handleInputChange}
+                          sx={{
+                            width: "397px",
+                            color: "black",
+                            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderRadius: "19px",
+                              },
+                          }}
+                        />
+                      )}
                       {/* <TextField
                         label="Phone"
                         name="phone"
