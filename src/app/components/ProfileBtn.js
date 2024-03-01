@@ -47,6 +47,7 @@ export function ProfileInfo({ name, role }) {
         backgroundColor: "rgba(250, 185, 0, 0.2)",
         padding: "5px",
         borderRadius: "48px",
+        marginLeft:"50px"
       }}
       onClick={() => setProfileInfo(!profileInfo)}
     >
