@@ -140,7 +140,7 @@ export default function Page() {
         >
           <Typography
             sx={{
-              fontSize: "20px",
+              fontSize: "16px",
             }}
           >
             My Activity

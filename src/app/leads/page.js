@@ -781,10 +781,12 @@ export default function Page() {
                             {row?.FirstName || "N/A"}
                           </TableCell>
                           <TableCell sx={{ fontSize: "11px" }}>
-                            {row?.Phone || "**********"}
+                            {/* {row?.Phone || "**********"} */}
+                            **********
                           </TableCell>
                           <TableCell sx={{ fontSize: "11px" }}>
-                            {row?.EmailAddress || (
+                            **********
+                            {/* {row?.EmailAddress || (
                               <Typography
                                 sx={{
                                   display: "inline-block",
@@ -802,7 +804,7 @@ export default function Page() {
                               >
                                 not provided
                               </Typography>
-                            )}
+                            )} */}
                           </TableCell>
                           <TableCell
                             style={{

@@ -472,7 +472,17 @@ export default function RootLayout({ children }) {
       </Grid>
       <List>
         {/* <Link href="/">
-          <ListItem disablePadding>
+          <ListItem
+            disablePadding
+            style={{
+              textDecoration: "none",
+              color: "black",
+              backgroundColor:
+                pathname === "/" ? "rgba(250, 185, 0, 0.15)" : "transparent",
+              borderRight:
+                pathname === "/" ? "2px solid rgba(250, 185, 0, 1)" : "none",
+            }}
+          >
             <ListItemButton>
               <ListItemIcon>{React.createElement(DashboardIcon)}</ListItemIcon>
               <ListItemText primary="Dashboard" />

@@ -38,13 +38,11 @@ import {
 } from "@/reduxSlice/apiSlice";
 import Trash from "../../../public/trash.png";
 import ExportLead from "../leads/component/export";
-import NivoFunnel from "../components/NivoFunnel";
-import TotalLeads from "../../../public/LeadsCard/totalLeads.svg";
-import RegisterLeads from "../../../public/LeadsCard/registerLeads.svg";
-import WarmLeads from "../../../public/LeadsCard/warmLeads.svg";
-import SiteVisit from "../../../public/LeadsCard/siteVisit.svg";
-import SiteVisitDone from "../../../public/LeadsCard/siteVisitDone.svg";
-import BookedLeads from "../../../public/LeadsCard/bookLeads.svg";
+import TotalLeads from "../../../public/UserCard/SuperAdmin.svg";
+import RegisterLeads from "../../../public/UserCard/Admin.svg";
+import WarmLeads from "../../../public/UserCard/CpHead.svg";
+import SiteVisit from "../../../public/UserCard/CPManager.svg";
+import SiteVisitDone from "../../../public/UserCard/ChanelPartner.svg";
 
 // card details
 // const users = [
@@ -132,6 +130,8 @@ export default function Page() {
     { label: "Phone", key: "phone" },
   ];
 
+  // console.log(preDefinedValues?.length);
+
   const [selectedFilter, setSelectedFilter] = useState(preDefinedValues[0]);
   const [getUserFilter, setGetUserFilter] = useState(null);
   const [filterDatasByCategory, setFilterDatasByCategory] = useState([]);
@@ -153,7 +153,7 @@ export default function Page() {
   useEffect(() => {
     if (selectedFilter?.label) {
       const filteredResults = (data?.result || []).map(
-        (item) => item[selectedFilter.key]
+        (item) => item[selectedFilter?.key]
       );
       setFilterDatasByCategory(filteredResults);
       // console.log(filteredResults);
@@ -162,8 +162,8 @@ export default function Page() {
 
   useEffect(() => {
     if (selectedFilter?.label) {
-      const filteredResults = data?.result.filter(
-        (item) => item[selectedFilter.key] === getUserFilter
+      const filteredResults = data?.result?.filter(
+        (item) => item[selectedFilter?.key] === getUserFilter
       );
       setFilterUser(filteredResults);
       // console.log("worked");
@@ -214,24 +214,77 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-
-  const users = [
-    { name: "Super Admin", icon: TotalLeads, total: "4" },
-    { name: "Admin", icon: RegisterLeads, total: "6" },
-    { name: "Mis", icon: WarmLeads, total: "2" },
-    { name: "Cp Tl", icon: SiteVisit, total: "6" },
-    { name: "Branch Head", icon: SiteVisitDone, total: "3" },
-    { name: "Execute", icon: BookedLeads, total: "7" },
-  ];
-
   const resultTotalUser = useGetTotalUserQuery();
 
-  // console.log(resultTotalUser);
+  const users = [
+    {
+      name: "Super Admin",
+      icon: TotalLeads,
+      total: resultTotalUser?.data?.result?.["Super Administrator"] || "0",
+    },
+    {
+      name: "Admin",
+      icon: RegisterLeads,
+      total: resultTotalUser?.data?.result?.["Administrator"] || "0",
+    },
+    {
+      name: "Mis",
+      icon: WarmLeads,
+      total: resultTotalUser?.data?.result?.["MIS"] || "0",
+    },
+    {
+      name: "Cp Tl",
+      icon: SiteVisit,
+      total: resultTotalUser?.data?.result?.["CP Team Lead"] || "0",
+    },
+    // {
+    //   name: "Branch Head",
+    //   icon: SiteVisitDone,
+    //   total: resultTotalUser?.data?.result?.["CP Branch Head"] || "0",
+    // },
+    {
+      name: "CP RM",
+      icon: SiteVisitDone,
+      total: resultTotalUser?.data?.result?.["CP Relationship Manager"] || "0",
+    },
+    // {
+    //   name: "Execute",
+    //   icon: BookedLeads,
+    //   total: resultTotalUser?.data?.result?.["CP Executive"] || "0",
+    // },
+    // Add other user types here
+  ];
+
+  console.log(resultTotalUser?.data?.result);
+
+  const handleScroll = () => {
+    const header = document.getElementById("header");
+    if (header) {
+      // Add box shadow if scrolled beyond certain offset
+      if (window.pageYOffset > 0) {
+        header.classList.add("with-box-shadow");
+      } else {
+        header.classList.remove("with-box-shadow");
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      // Cleanup: remove event listener
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <ToastContainer />
       <Grid style={{ minHeight: "100vh" }}>
         <Grid
+          id="header"
+          className="header"
           sx={{
             minHeight: "10vh",
             display: "flex",
@@ -244,7 +297,7 @@ export default function Page() {
             left: "0px",
             // width: "1250px",
             width: "calc(100% - 260px)",
-            marginLeft: "260px",
+            marginLeft: "255px",
             backgroundColor: "white",
             zIndex: "999",
             padding: "10px",
@@ -296,7 +349,7 @@ export default function Page() {
                     {...params}
                     label={
                       selectedFilter ? (
-                        <>Search By {selectedFilter.label}</>
+                        <>Search By {selectedFilter?.label}</>
                       ) : (
                         "select one filter"
                       )
@@ -341,8 +394,7 @@ export default function Page() {
           </Grid>
         </Grid>
         <Grid>
-          {/* <NivoFunnel data={newData} /> */}
-          {/* <Grid
+          <Grid
             sx={{
               minHeight: "30vh",
               display: "flex",
@@ -353,6 +405,7 @@ export default function Page() {
               marginTop: "60px",
               // marginTop: "5px",
               gap: "15px",
+              // width:"100vw"
             }}
           >
             {users?.map((item) => (
@@ -412,7 +465,7 @@ export default function Page() {
                   <Typography
                     sx={{
                       color: "rgba(0, 0, 0, 1)",
-                      fontSize: "24px",
+                      fontSize: "20px",
                       fontWeight: "600",
                     }}
                   >
@@ -421,7 +474,7 @@ export default function Page() {
                 </Grid>
               </Grid>
             ))}
-          </Grid> */}
+          </Grid>
         </Grid>
         <Grid>
           <TableContainer
@@ -430,8 +483,7 @@ export default function Page() {
               border: "1px solid lightgrey",
               borderRadius: "29px",
               // marginTop: "10px",
-              marginTop: "100px",
-
+              // marginTop: "100px",
             }}
           >
             <Grid

@@ -22,19 +22,19 @@ export default function NivoFunnel({ data: initialData }) {
     setData(initialData);
   }, [initialData]);
 
-  console.log(data);
+  // console.log(data);
+
+  const colors = ["#d4dffa", "#a6bff5", "#7a9ef1", "#4f7deb", "#235de6"];
 
   return (
     <Grid
       container
       sx={{
-        // border: "1px solid black",
         display: "flex",
-        height: "50vh",
-        // marginBottom: "40px",
+        height: "40vh",
         justifyContent: "start",
         width: "100vw",
-        padding:"10px"
+        // padding: "10px",
       }}
     >
       <Grid
@@ -42,9 +42,7 @@ export default function NivoFunnel({ data: initialData }) {
           width: "80%",
           display: "flex",
           justifyContent: "start",
-          //   height: "300px",
           alignItems: "center",
-          //   border: "1px solid black",
         }}
       >
         <Grid
@@ -54,13 +52,8 @@ export default function NivoFunnel({ data: initialData }) {
           md={8}
           lg={12}
           sx={{
-            height: "30vh",
-            // width:"300px"
-            // border: "1px solid black",
-            marginTop: "20px",
-            // marginBottom: "40px",
-            // display: "flex",
-            // justifyContent: "start",
+            height: "20vh",
+            // marginTop: "20px",
           }}
         >
           {LoadedFunnel ? (
@@ -77,22 +70,60 @@ export default function NivoFunnel({ data: initialData }) {
                 </Box>
               }
             >
+              <Grid
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  // border:"1px solid black",
+                  marginBottom: "20px",
+                }}
+              >
+                {data.map((item, index) => (
+                  <Grid
+                    key={item.id}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      // border:"1px solid black"
+                    }}
+                  >
+                    <Grid
+                      sx={{
+                        width: "15px",
+                        height: "15px",
+                        backgroundColor: colors[index % colors.length],
+                        borderRadius: "50px",
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                        width: "100px",
+                        textAlign: "center",
+                        color: "gray",
+                        fontWeight: "semibold",
+                      }}
+                      key={item.id}
+                    >
+                      {item.label}
+                    </Typography>
+                  </Grid>
+                ))}
+              </Grid>
               <DynamicFunnel
                 data={data.sort((a, b) => b.value - a.value)}
                 margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                 direction="horizontal"
-                shapeBlending={1}
-                colors={data.map((item) => item.color)}
-                borderWidth={0}
+                shapeBlending={0.5}
+                colors={colors}
+                borderWidth={20}
                 borderOpacity={0.65}
-                // labelColor={{ theme: "white" }}
-                // labelColor={{
-                //   from: "color",
-                //   modifiers: [["darker", "5"]],
-                // }}
                 labelColor="black"
-                currentBorderWidth={0}
-                // spacing={4}
+                // currentBorderWidth={0}
+                beforeSeparatorLength={100}
+                afterSeparatorOffset={100}
+                // currentBorderWidth={100}
                 motionConfig={{
                   mass: 1,
                   tension: 170,
@@ -102,31 +133,30 @@ export default function NivoFunnel({ data: initialData }) {
                   velocity: 0,
                 }}
               />
-              <Grid
+              {/* <Grid
                 sx={{
                   display: "flex",
-                  //   flexDirection: "column",
                   justifyContent: "space-around",
-                  //   border: "1px solid black",
-                  //   width: "100%",
+                  // border:"1px solid black",
+                  marginTop: "10px",
                 }}
               >
-                {data.map((item) => (
+                {data.map((item, index) => (
                   <Grid
                     key={item.id}
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      //   border: "1px solid black",
                       justifyContent: "center",
+                      // border:"1px solid black"
                     }}
                   >
                     <Grid
                       sx={{
-                        width: "10px",
-                        height: "10px",
-                        // marginRight: "5px",
-                        backgroundColor: item.color,
+                        width: "15px",
+                        height: "15px",
+                        backgroundColor: colors[index % colors.length],
+                        borderRadius: "50px",
                       }}
                     />
                     <Typography
@@ -134,6 +164,8 @@ export default function NivoFunnel({ data: initialData }) {
                         fontSize: "12px",
                         width: "100px",
                         textAlign: "center",
+                        color: "gray",
+                        fontWeight: "bold",
                       }}
                       key={item.id}
                     >
@@ -141,7 +173,7 @@ export default function NivoFunnel({ data: initialData }) {
                     </Typography>
                   </Grid>
                 ))}
-              </Grid>
+              </Grid> */}
             </Suspense>
           ) : null}
         </Grid>
