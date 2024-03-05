@@ -841,7 +841,7 @@ export default function Page() {
                                 href={{
                                   pathname: row?.isCreatedInLsq
                                     ? "/leads/view"
-                                    : "/leads",
+                                    : "",
                                   search: row?.isCreatedInLsq
                                     ? `?id=${row?.id}&project=${row?.Project}`
                                     : "",
