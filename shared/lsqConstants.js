@@ -60,4 +60,18 @@ const clientAppLsqMsg = {
   newLeadCreated: "Your new lead has been successfully created",
   existLeadCreated: "An existing lead has been created",
 };
-export { lsqActivityCode, customLsqField, lsqErrorMsg, clientAppLsqMsg };
+
+const leadDataObj = {
+  name: "name",
+  createdBy: "createdBy",
+  subSource: "subSource",
+  email: "email",
+  leadRegistration: "leadRegistration",
+  phone:"phone",
+  project:"project",
+  created:"created",
+  leadId:"leadId",
+  notes:"notes",
+  isCreatedInLsq:"isCreatedInLsq"
+};
+export { lsqActivityCode, customLsqField, lsqErrorMsg, clientAppLsqMsg ,leadDataObj};
