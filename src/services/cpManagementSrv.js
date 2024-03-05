@@ -439,12 +439,12 @@ class CpManagementSrv {
       providedUser[userDataObj?.permissions].includes(
         permissionKeyNames?.cpManagement,
       );
-    if (!checkRole) {
-      return new ApiResponse(
-        RESPONSE_STATUS?.UNAUTHORIZED,
-        RESPONSE_MESSAGE?.UNAUTHORIZED,
-      );
-    }
+    // if (!checkRole) {
+    //   return new ApiResponse(
+    //     RESPONSE_STATUS?.UNAUTHORIZED,
+    //     RESPONSE_MESSAGE?.UNAUTHORIZED,
+    //   );
+    // }
     const cpCompanys = await CpAppCompany.find().populate("projects");
 
     const companiesWithUsers = await Promise.all(
@@ -489,6 +489,7 @@ class CpManagementSrv {
   };
 
   retriveCpUser = async (providedUser) => {
+    console.log('comming here');
     const cpCompanyresult = await this.retriveCpCompanys(providedUser);
     const cpCompanyData = cpCompanyresult?.result;
     const cpUsers = [];
