@@ -250,6 +250,7 @@ class LSQLeadSrv {
                 },
               }
             );
+
             const structuredLeadData = await Promise.all(
               (lsqLeadData?.data?.Leads || []).map(async (lead) => {
                 const structuredApiData = await this.handleApiData(
@@ -263,6 +264,7 @@ class LSQLeadSrv {
                 return {};
               })
             );
+            console.log('lsqLeadData?.data?.Leads',structuredLeadData);
 
             const resultArray = leads.map((lead) => {
               const matchingLeadData = structuredLeadData.find((lsqLead) => {
@@ -428,6 +430,7 @@ class LSQLeadSrv {
       const data = isPresentInLsq?.result[0];
       if (data) {
         const registration = await this.getRegistrationStatus(data, project);
+        console.log('registration',registration,data);
         const leadRegistration =
           registration === leadRegistrationStatus?.sucess
             ? leadRegistrationStatus?.duplicateMax
