@@ -18,7 +18,7 @@ export default function Page() {
 
   // get leads by phone and project
   const { data, isFetching } = useGetLeadByIdQuery({ project, leadId });
-  // console.log(data);
+  // console.log(data?.result);
 
   // handle back function
   const handleBack = () => {

@@ -260,7 +260,7 @@ export default function Page() {
     selectedStartDate,
     selectedEndDate,
   });
-console.log(data)
+  console.log(data?.result?.isCreatedInLsq);
   /// refetch the data
   // useEffect(() => {
   //   refetch();
@@ -823,7 +823,9 @@ console.log(data)
                             {row?.mx_Sub_Source || "N/A"}
                           </TableCell>
                           <TableCell sx={{ fontSize: "11px" }}>
-                            {row?.ProspectStage || "N/A"}
+                            {row?.isCreatedInLsq
+                              ? row?.ProspectStage || "N/A"
+                              : ""}
                           </TableCell>
                           <TableCell sx={{ fontSize: "11px" }}>
                             {row?.CreatedOn || "N/A"}
@@ -837,8 +839,12 @@ console.log(data)
                             >
                               <Link
                                 href={{
-                                  pathname: "/leads/view",
-                                  search: `?id=${row?.id}&project=${row?.Project}`,
+                                  pathname: row?.isCreatedInLsq
+                                    ? "/leads/view"
+                                    : "/leads",
+                                  search: row?.isCreatedInLsq
+                                    ? `?id=${row?.id}&project=${row?.Project}`
+                                    : "",
                                 }}
                               >
                                 <Button
@@ -850,6 +856,9 @@ console.log(data)
                                     height: "25px",
                                     border: "none",
                                     fontSize: "12px",
+                                    cursor: row?.isCreatedInLsq
+                                      ? "pointer"
+                                      : "not-allowed",
                                     backgroundColor: "rgba(249, 184, 0, 1)",
                                     "&:hover": {
                                       backgroundColor: "rgba(249, 184, 0, 1)",
