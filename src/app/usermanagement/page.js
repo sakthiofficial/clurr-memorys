@@ -40,7 +40,7 @@ import Trash from "../../../public/trash.png";
 import ExportLead from "../leads/component/export";
 import TotalLeads from "../../../public/UserCard/SuperAdmin.svg";
 import RegisterLeads from "../../../public/UserCard/Admin.svg";
-import WarmLeads from "../../../public/UserCard/CpHead.svg";
+// import WarmLeads from "../../../public/UserCard/CpHead.svg";
 import SiteVisit from "../../../public/UserCard/CPManager.svg";
 import SiteVisitDone from "../../../public/UserCard/ChanelPartner.svg";
 
@@ -225,12 +225,12 @@ export default function Page() {
     {
       name: "Admin",
       icon: RegisterLeads,
-      total: resultTotalUser?.data?.result?.["Administrator"] || "0",
+      total: resultTotalUser?.data?.result?.Administrator || "0",
     },
     {
       name: "Mis",
-      icon: WarmLeads,
-      total: resultTotalUser?.data?.result?.["MIS"] || "0",
+      icon: RegisterLeads,
+      total: resultTotalUser?.data?.result?.MIS || "0",
     },
     {
       name: "Cp Tl",
