@@ -62,8 +62,8 @@ addDates();
     } else {
       dashboard.dayWise[date] = [leads[i]];
     }
-    dashboard.funnel.registratedLeads = leads[customLsqField?.isCreatedInLsq]
-      ? (dashboard.funnel.registratedLeads += 1)
+    dashboard.funnel.registratedLeads = leads[i][customLsqField?.isCreatedInLsq]
+      ? (dashboard.funnel.registratedLeads + 1)
       : dashboard.funnel.registratedLeads;
   }
   return dashboard;
