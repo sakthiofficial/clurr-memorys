@@ -52,7 +52,8 @@ const lsqActivityCode = {
 
 const customLsqField = {
   leadRegistration: "LeadRegistration",
-  isCreatedInLsq:"isCreatedInLsq"
+  isCreatedInLsq:"isCreatedInLsq",
+  isVisible:"isVisible"
 };
 const lsqErrorMsg = {
   emailError: "A Lead with same Email already exists.",
