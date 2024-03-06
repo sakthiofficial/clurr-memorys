@@ -277,6 +277,7 @@ class LSQLeadSrv {
                 ? true
                 : lead[leadDataObj?.isCreatedInLsq];
               matchingLeadData.id = lead?._id;
+              matchingLeadData[customLsqField?.created] =convertTimestampToDateTime(lead[leadDataObj?.created]);
               return { ...matchingLeadData };
             });
             data = [...resultArray];
