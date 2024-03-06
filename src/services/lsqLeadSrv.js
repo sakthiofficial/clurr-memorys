@@ -2,10 +2,8 @@ import config from "../lib/config";
 import {
   customLsqField,
   leadDataObj,
-  leadRegistrationMapping,
   leadRegistrationStatus,
   leadStage,
-  lsqActivityCode,
   lsqErrorMsg,
   lsqFieldValues,
   lsqLeadFieldNames,
