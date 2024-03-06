@@ -51,7 +51,7 @@ addDates();
 
   for (let i = 0; i < leads?.length; i += 1) {
     const leadStage = leads[i][lsqLeadFieldNames?.stage];
-    const date = leads[i][lsqLeadFieldNames?.createdOn].split(" ")[0];
+    const date = leads[i][customLsqField?.created].split(" ")[0];
     if (dashboard.funnel[leadStage]) {
       dashboard.funnel[leadStage] += 1;
     } else {
