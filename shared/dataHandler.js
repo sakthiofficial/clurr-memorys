@@ -35,9 +35,23 @@ export function dashboardBoardData(leads) {
     dayWise: {},
     recentLeads: leads,
   };
+  function addDates() {
+    const date = new Date();
+    date.setDate(date.getDate() - 15);
+    const endDate = new Date();
+
+    while (date.getTime() <= endDate.getTime()) {
+        const dateFormat = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        dashboard.dayWise[dateFormat] = [];
+        date.setDate(date.getDate() + 1);
+    }
+}
+
+addDates();
+
   for (let i = 0; i < leads?.length; i += 1) {
     const leadStage = leads[i][lsqLeadFieldNames?.stage];
-    const date = leads[i][lsqLeadFieldNames?.createdOn];
+    const date = leads[i][lsqLeadFieldNames?.createdOn].split(" ")[0];
     if (dashboard.funnel[leadStage]) {
       dashboard.funnel[leadStage] += 1;
     } else {
