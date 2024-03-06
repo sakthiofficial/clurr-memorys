@@ -569,14 +569,11 @@ export default function Page() {
                         {row?.email || "**********"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.projects && row?.projects.length > 0
-                          ? row?.projects
-                              .map((project) => project?.name)
-                              .join(",")
-                          : "All"}
+                        {row?.projects || "N/A"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.role.map((role) => role?.name)}
+                        {/* {row?.role.map((role) => role?.name)} */}
+                        {row?.role || "N/A"}
                       </TableCell>
                       <TableCell>
                         <Grid
