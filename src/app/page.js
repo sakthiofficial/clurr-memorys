@@ -239,6 +239,48 @@ export default function Home() {
       fat: "asfer@gmail.com",
       carbs: "Success",
     },
+    {
+      name: "Asfer",
+      calories: 8220958384,
+      fat: "asfer@gmail.com",
+      carbs: "Success",
+    },
+    {
+      name: "Asfer",
+      calories: 8220958384,
+      fat: "asfer@gmail.com",
+      carbs: "Success",
+    },
+    {
+      name: "Asfer",
+      calories: 8220958384,
+      fat: "asfer@gmail.com",
+      carbs: "Success",
+    },
+    {
+      name: "Asfer",
+      calories: 8220958384,
+      fat: "asfer@gmail.com",
+      carbs: "Success",
+    },
+    {
+      name: "Asfer",
+      calories: 8220958384,
+      fat: "asfer@gmail.com",
+      carbs: "Success",
+    },
+    {
+      name: "Asfer",
+      calories: 8220958384,
+      fat: "asfer@gmail.com",
+      carbs: "Success",
+    },
+    {
+      name: "Asfer",
+      calories: 8220958384,
+      fat: "asfer@gmail.com",
+      carbs: "Success",
+    },
   ];
 
   const { data, isFetching, isLoading } = useGetLeadsByDateQuery({
@@ -460,7 +502,7 @@ export default function Home() {
           sx={{
             width: "100%",
             border: "1px solid lightgray",
-            minHeight: "75vh",
+            // minHeight: "75vh",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -484,7 +526,7 @@ export default function Home() {
             alignItems: "center",
           }}
         >
-          <Typography>Last 7 Days Leads</Typography>
+          <Typography>Recent Days Leads</Typography>
           <Typography>
             <Link
               href="/leads"

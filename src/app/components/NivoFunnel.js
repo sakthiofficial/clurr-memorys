@@ -26,6 +26,8 @@ export default function NivoFunnel({ data: initialData }) {
 
   const colors = ["#d4dffa", "#a6bff5", "#7a9ef1", "#4f7deb", "#235de6"];
 
+  
+
   return (
     <Grid
       container

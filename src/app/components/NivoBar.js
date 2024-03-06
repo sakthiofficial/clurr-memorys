@@ -37,7 +37,7 @@ export default function NivoBar({ data: initialData }) {
           md={8}
           lg={12}
           sx={{
-            height: "70vh",
+            height: "50vh",
             // border:"1px solid black"
           }}
         >
@@ -76,9 +76,9 @@ export default function NivoBar({ data: initialData }) {
                   "donut",
                 ]}
                 indexBy="country"
-                margin={{ top: 10, right: 10, bottom: 30, left: 30 }}
-                padding={0.55}
-                maxValue={50}
+                margin={{ top: 30, right: 30, bottom: 35, left: 30 }}
+                padding={0.60}
+                maxValue={30}
                 layout="vertical"
                 valueScale={{ type: "linear" }}
                 indexScale={{ type: "band", round: true }}

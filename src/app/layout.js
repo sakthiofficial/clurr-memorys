@@ -652,9 +652,9 @@ export default function RootLayout({ children }) {
       setIsRoleBranchHead(jsonData?.role || []);
       setPermissions(jsonData?.permissions || []);
       setRoleBranchHeadId(jsonData?.companyId || "");
-      if (pathname === "/") {
-        router.push("/leads");
-      }
+      // if (pathname === "/") {
+      //   router.push("/leads");
+      // }
       // console.log(user);
     } else {
       setUser(null);
