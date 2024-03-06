@@ -94,6 +94,11 @@ const superAdminOnly = [
     url: "activity",
     icon: HistoryRoundedIcon,
   },
+  // {
+  //   title: "Dashboard",
+  //   url: "/",
+  //   icon: DashboardIcon,
+  // },
 ];
 
 // login function
@@ -471,6 +476,28 @@ export default function RootLayout({ children }) {
         </Grid>
       </Grid>
       <List>
+        {isRoleBranchHead[0] === "Super Administrator" && (
+          <Link href="/">
+            <ListItem
+              disablePadding
+              style={{
+                textDecoration: "none",
+                color: "black",
+                backgroundColor:
+                  pathname === "/" ? "rgba(250, 185, 0, 0.15)" : "transparent",
+                borderRight:
+                  pathname === "/" ? "2px solid rgba(250, 185, 0, 1)" : "none",
+              }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  {React.createElement(DashboardIcon)}
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        )}
         {/* <Link href="/">
           <ListItem
             disablePadding

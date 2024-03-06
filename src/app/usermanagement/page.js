@@ -201,7 +201,7 @@ export default function Page() {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
+  console.log(slicedRows);
   const getBackgroundColor = (name) => {
     switch (name) {
       case "WarmLeads":
@@ -214,48 +214,48 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-  // const resultTotalUser = useGetTotalUserQuery();
+  const resultTotalUser = useGetTotalUserQuery();
 
-  // const users = [
-  //   {
-  //     name: "Super Admin",
-  //     icon: TotalLeads,
-  //     total: resultTotalUser?.data?.result?.["Super Administrator"] || "0",
-  //   },
-  //   {
-  //     name: "Admin",
-  //     icon: RegisterLeads,
-  //     total: resultTotalUser?.data?.result?.Administrator || "0",
-  //   },
-  //   {
-  //     name: "Mis",
-  //     icon: RegisterLeads,
-  //     total: resultTotalUser?.data?.result?.MIS || "0",
-  //   },
-  //   {
-  //     name: "Cp Tl",
-  //     icon: SiteVisit,
-  //     total: resultTotalUser?.data?.result?.["CP Team Lead"] || "0",
-  //   },
-  //   // {
-  //   //   name: "Branch Head",
-  //   //   icon: SiteVisitDone,
-  //   //   total: resultTotalUser?.data?.result?.["CP Branch Head"] || "0",
-  //   // },
-  //   {
-  //     name: "CP RM",
-  //     icon: SiteVisitDone,
-  //     total: resultTotalUser?.data?.result?.["CP Relationship Manager"] || "0",
-  //   },
-  //   // {
-  //   //   name: "Execute",
-  //   //   icon: BookedLeads,
-  //   //   total: resultTotalUser?.data?.result?.["CP Executive"] || "0",
-  //   // },
-  //   // Add other user types here
-  // ];
+  const users = [
+    {
+      name: "Super Admin",
+      icon: TotalLeads,
+      total: resultTotalUser?.data?.result?.["Super Administrator"] || "0",
+    },
+    {
+      name: "Admin",
+      icon: RegisterLeads,
+      total: resultTotalUser?.data?.result?.Administrator || "0",
+    },
+    {
+      name: "Mis",
+      icon: RegisterLeads,
+      total: resultTotalUser?.data?.result?.MIS || "0",
+    },
+    {
+      name: "Cp Tl",
+      icon: SiteVisit,
+      total: resultTotalUser?.data?.result?.["CP Team Lead"] || "0",
+    },
+    // {
+    //   name: "Branch Head",
+    //   icon: SiteVisitDone,
+    //   total: resultTotalUser?.data?.result?.["CP Branch Head"] || "0",
+    // },
+    {
+      name: "CP RM",
+      icon: SiteVisitDone,
+      total: resultTotalUser?.data?.result?.["CP Relationship Manager"] || "0",
+    },
+    // {
+    //   name: "Execute",
+    //   icon: BookedLeads,
+    //   total: resultTotalUser?.data?.result?.["CP Executive"] || "0",
+    // },
+    // Add other user types here
+  ];
 
-  // console.log(resultTotalUser?.data?.result);
+  console.log(resultTotalUser?.data?.result);
 
   const handleScroll = () => {
     const header = document.getElementById("header");
@@ -408,7 +408,7 @@ export default function Page() {
               // width:"100vw"
             }}
           >
-            {/* {users?.map((item) => (
+            {users?.map((item) => (
               <Grid
                 key={item?.name}
                 sx={{
@@ -473,8 +473,7 @@ export default function Page() {
                   </Typography>
                 </Grid>
               </Grid>
-            ))} */}
-            
+            ))}
           </Grid>
         </Grid>
         <Grid>
@@ -558,7 +557,7 @@ export default function Page() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {slicedRows?.map((row) => (
+                  {slicedRows?.map((row, index) => (
                     <TableRow key={row?.name || "N/A"}>
                       <TableCell sx={{ fontSize: "11px" }}>
                         {row?.name || "N/A"}
@@ -570,12 +569,14 @@ export default function Page() {
                         {row?.email || "**********"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.projects && row?.projects?.length > 0
-                          ? row?.projects.join(",")
-                          : "N/A"}
+                        {row?.projects && row?.projects.length > 0
+                          ? row?.projects
+                              .map((project) => project?.name)
+                              .join(",")
+                          : "All"}
                       </TableCell>
                       <TableCell sx={{ fontSize: "11px" }}>
-                        {row?.role || "N/A"}
+                        {row?.role.map((role) => role?.name)}
                       </TableCell>
                       <TableCell>
                         <Grid

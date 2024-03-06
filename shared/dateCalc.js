@@ -60,3 +60,11 @@ export default function isTodayOrYesterday(date) {
   }
   return false;
 }
+
+export function removeTimeAndYear(dateString) {
+  // Splitting the date string to remove the time part
+  var dateWithoutTime = dateString.split("T")[0];
+  // Extracting characters from index 5 to remove the year part
+  var dateWithoutYear = dateWithoutTime.substring(5);
+  return dateWithoutYear;
+}

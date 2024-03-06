@@ -21,7 +21,7 @@ import NivoBar from "./components/NivoBar";
 import Paper from "@mui/material/Paper";
 import Link from "next/link";
 import { useGetLeadsByDateQuery } from "@/reduxSlice/apiSlice";
-import { dateToUnixTimestamp } from "../../shared/dateCalc";
+import { dateToUnixTimestamp, removeTimeAndYear } from "../../shared/dateCalc";
 import { dashboardBoardData } from "../../shared/dataHandler";
 
 export default function Home() {
@@ -141,7 +141,7 @@ export default function Home() {
   // ]);
 
   const barDetails = Object.entries(dayWiseLeads).map(([date, items]) => ({
-    country: date?.split(" ")[0],
+    country: removeTimeAndYear(date),
     "hot dog": items.length,
     "hot dogColor": "hsl(140, 70%, 20%)",
   }));
