@@ -176,7 +176,7 @@ function Login() {
   useEffect(() => {
     // console.log(user);
     if (user?.isFirstSignIn === false) {
-      window.location.href = "leads";
+      window.location.href = "/";
     }
   }, [user, userData]);
 
@@ -197,7 +197,7 @@ function Login() {
     if (finalResult?.data?.status === 200) {
       localStorage.setItem("user", JSON.stringify(finalResult?.data?.result));
       toast.success("Login Success!");
-      router.push("/leads");
+      router.push("/");
       setTimeout(() => {
         window.location.reload();
       }, 1800);
