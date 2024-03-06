@@ -7,6 +7,7 @@ import {
 } from "../../../appConstants";
 import getUserByToken from "../../../helper/getUserByToken";
 import LSQLeadSrv from "../../../services/lsqLeadSrv";
+import { dashboardBoardData } from "../../../../shared/dataHandler";
 
 export const dynamic = "force-dynamic";
 export async function POST(req) {
@@ -101,6 +102,7 @@ export async function GET(request) {
     }
     const leadSrv = new LSQLeadSrv();
     const serviceRes = await leadSrv.retriveLead(providedUser, value);
+
     return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
     console.log("Error while retriving lead", error);
