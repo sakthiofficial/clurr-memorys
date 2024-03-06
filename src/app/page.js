@@ -22,16 +22,17 @@ import Paper from "@mui/material/Paper";
 import Link from "next/link";
 import { useGetLeadsByDateQuery } from "@/reduxSlice/apiSlice";
 import { dateToUnixTimestamp } from "../../shared/dateCalc";
+import { dashboardBoardData } from "../../shared/dataHandler";
 
 export default function Home() {
   const [selectedProject] = useState("Galleria Gardens - Balanagar");
 
   // Calculate last 7 days
   const today = new Date();
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
+  const fifteenDaysAgo = new Date(today);
+  fifteenDaysAgo.setDate(today.getDate() - 15);
 
-  const startDate = sevenDaysAgo.toISOString().slice(0, 10);
+  const startDate = fifteenDaysAgo.toISOString().slice(0, 10);
   const endDate = today.toISOString().slice(0, 10);
   const selectedStartDate = dateToUnixTimestamp(startDate);
   const selectedEndDate = dateToUnixTimestamp(endDate);
@@ -39,84 +40,96 @@ export default function Home() {
   // console.log(startDate);
   // console.log(startEndDate);
   // console.log(selectedProject);
+  const { data, isFetching, isLoading } = useGetLeadsByDateQuery({
+    selectedProject,
+    selectedStartDate,
+    selectedEndDate,
+  });
+  const results = dashboardBoardData(data?.result);
+  console.log(results?.dayWise);
 
   const newData = [
     {
       id: "A",
       label: "Total Leads",
-      value: 6000,
+      value: 1,
       color: "#d4dffa",
       up: "yes",
     },
     {
       id: "B",
       label: "Register Leads",
-      value: 4500,
+      value: 1,
       color: "#a6bff5",
       up: "yes",
     },
     {
       id: "D",
       label: "Booked",
-      value: 1800,
+      value: 0,
       color: "#4f7deb",
       up: "yes",
     },
-    { id: "E", label: "SV Done", value: 3000, color: "#235de6" },
-  ];
-
-  const pie = [
     {
-      id: "Housing.com",
-      label: "Housing.com",
-      value: 300,
-    },
-    {
-      id: "99 Acre",
-      label: "99 Acre",
-      value: 20,
-    },
-    {
-      id: "No Broker",
-      label: "No Broker",
-      value: 60,
-    },
-    {
-      id: "Others",
-      label: "Others",
-      value: 10,
+      id: "E",
+      label: "SV Done",
+      value: results?.funnel?.["Site Visit Done"] || 0,
+      color: "#235de6",
     },
   ];
 
-  const [cardData, setCardData] = useState([
-    {
-      name: "Lead Ratio",
-      value: "26 %",
-      formula: "Total leads by Register leads",
-      up: "yes",
-    },
-    {
-      name: "Register Ratio",
-      value: "3 %",
-      formula: "Total leads by Register leads",
-    },
-    {
-      name: "Warm Ratio",
-      value: "13 %",
-      formula: "Total leads by Register leads",
-    },
-    {
-      name: "Booked Ratio",
-      value: "18 %",
-      formula: "Total leads by Register leads",
-      up: "yes",
-    },
-    {
-      name: "Site Ratio",
-      value: "9 %",
-      formula: "Total leads by Register leads",
-    },
-  ]);
+  // const pie = [
+  //   {
+  //     id: "Housing.com",
+  //     label: "Housing.com",
+  //     value: 300,
+  //   },
+  //   {
+  //     id: "99 Acre",
+  //     label: "99 Acre",
+  //     value: 20,
+  //   },
+  //   {
+  //     id: "No Broker",
+  //     label: "No Broker",
+  //     value: 60,
+  //   },
+  //   {
+  //     id: "Others",
+  //     label: "Others",
+  //     value: 10,
+  //   },
+  // ];
+
+  // const [cardData, setCardData] = useState([
+  //   {
+  //     name: "Lead Ratio",
+  //     value: "26 %",
+  //     formula: "Total leads by Register leads",
+  //     up: "yes",
+  //   },
+  //   {
+  //     name: "Register Ratio",
+  //     value: "3 %",
+  //     formula: "Total leads by Register leads",
+  //   },
+  //   {
+  //     name: "Warm Ratio",
+  //     value: "13 %",
+  //     formula: "Total leads by Register leads",
+  //   },
+  //   {
+  //     name: "Booked Ratio",
+  //     value: "18 %",
+  //     formula: "Total leads by Register leads",
+  //     up: "yes",
+  //   },
+  //   {
+  //     name: "Site Ratio",
+  //     value: "9 %",
+  //     formula: "Total leads by Register leads",
+  //   },
+  // ]);
 
   const barDetails = [
     {
@@ -283,13 +296,7 @@ export default function Home() {
     },
   ];
 
-  const { data, isFetching, isLoading } = useGetLeadsByDateQuery({
-    selectedProject,
-    selectedStartDate,
-    selectedEndDate,
-  });
-
-  console.log(data?.result?.length);
+  console.log(data?.result);
 
   return (
     <Grid sx={{ width: "100%", minHeight: "100vh" }}>

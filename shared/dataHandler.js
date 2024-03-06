@@ -32,7 +32,7 @@ export function dashboardBoardData(leads) {
     dayWise: {},
     recentLeads: leads,
   };
-  for (let i = 0; i < leads.length; i += 1) {
+  for (let i = 0; i < leads?.length; i += 1) {
     const leadStage = leads[i][lsqLeadFieldNames?.stage];
     const date = leads[i][lsqLeadFieldNames?.createdOn];
     if (dashboard.funnel[leadStage]) {
