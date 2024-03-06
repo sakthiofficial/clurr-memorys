@@ -125,32 +125,27 @@ class LSQLeadSrv {
       return leadRegistrationStatus?.duplicateMax;
     };
     this.handleApiData = async (providedUser, leadData, projectName) => {
-      const source = leadData[lsqLeadFieldNames?.source];
-      if (source === lsqFieldValues?.source) {
-        let push = true;
-        if (
-          providedUser[userDataObj?.permissions].includes(
-            permissionKeyNames?.leadViewWithoutNumber
-          )
-        ) {
-          leadData[lsqLeadFieldNames?.phone] = null;
-        }
-        if (
-          providedUser[userDataObj?.role] === roleNames?.cpExecute ||
-          providedUser[userDataObj?.role] === roleNames?.cpBranchHead
-        ) {
-          const lsqCpCode =
-            leadData[lsqLeadFieldNames?.subSource].split(" ")[0];
-          const cpCode = providedUser[userDataObj?.cpCode];
-          push = cpCode === lsqCpCode;
-        }
-        leadData.Project = projectName;
-
-        leadData[customLsqField?.leadRegistration] =
-          await this.getRegistrationStatus(leadData, projectName);
-        return push ? leadData : null;
+      let push = true;
+      if (
+        providedUser[userDataObj?.permissions].includes(
+          permissionKeyNames?.leadViewWithoutNumber
+        )
+      ) {
+        leadData[lsqLeadFieldNames?.phone] = null;
       }
-      return null;
+      if (
+        providedUser[userDataObj?.role] === roleNames?.cpExecute ||
+        providedUser[userDataObj?.role] === roleNames?.cpBranchHead
+      ) {
+        const lsqCpCode = leadData[lsqLeadFieldNames?.subSource].split(" ")[0];
+        const cpCode = providedUser[userDataObj?.cpCode];
+        push = cpCode === lsqCpCode;
+      }
+      leadData.Project = projectName;
+
+      leadData[customLsqField?.leadRegistration] =
+        await this.getRegistrationStatus(leadData, projectName);
+      return push ? leadData : null;
     };
   }
 
@@ -378,7 +373,9 @@ class LSQLeadSrv {
             apiData.data[i],
             projectName
           );
-          if (structuredApiData) {
+          const source = apiData.data[i][lsqLeadFieldNames?.source];
+
+          if (structuredApiData && source === lsqFieldValues?.source) {
             data.push(structuredApiData);
           }
 
