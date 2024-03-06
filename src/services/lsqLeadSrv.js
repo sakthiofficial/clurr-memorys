@@ -55,7 +55,6 @@ class LSQLeadSrv {
       if (!projectCredential[project]) {
         return null;
       }
-      console.log(projectCredential);
       const { accessKey, secretKey } = projectCredential[project];
 
       const lsqData = await axios.get(
@@ -264,7 +263,6 @@ class LSQLeadSrv {
                 return {};
               })
             );
-            console.log('lsqLeadData?.data?.Leads',structuredLeadData);
 
             const resultArray = leads.map((lead) => {
               const matchingLeadData = structuredLeadData.find((lsqLead) => {
@@ -278,9 +276,12 @@ class LSQLeadSrv {
                 lead[leadDataObj?.email];
               matchingLeadData[customLsqField?.leadRegistration] =
                 lead[leadDataObj?.leadRegistration];
-              matchingLeadData.isCreatedInLsq=
-                lead[leadDataObj?.isCreatedInLsq];
-                matchingLeadData.id = lead?._id
+              matchingLeadData.isCreatedInLsq = providedUser[
+                userDataObj?.role
+              ].includes(roleNames?.superAdmin)
+                ? true
+                : lead[leadDataObj?.isCreatedInLsq];
+              matchingLeadData.id = lead?._id;
               return { ...matchingLeadData };
             });
             data = [...resultArray];
@@ -430,7 +431,7 @@ class LSQLeadSrv {
       const data = isPresentInLsq?.result[0];
       if (data) {
         const registration = await this.getRegistrationStatus(data, project);
-        console.log('registration',registration,data);
+        console.log("registration", registration, data);
         const leadRegistration =
           registration === leadRegistrationStatus?.sucess
             ? leadRegistrationStatus?.duplicateMax
@@ -606,12 +607,16 @@ class LSQLeadSrv {
         null
       );
     }
-    const dbLeadData = await CpAppLead.findOne({_id:id});
-    let leadData = await this.leadFromLsqById(dbLeadData[leadDataObj?.leadId], project);
+    const dbLeadData = await CpAppLead.findOne({ _id: id });
+    let leadData = await this.leadFromLsqById(
+      dbLeadData[leadDataObj?.leadId],
+      project
+    );
 
     leadData = Promise.all(
       (leadData || []).map(async (lead) => {
-        lead[customLsqField?.leadRegistration] =dbLeadData[leadDataObj?.leadRegistration]
+        lead[customLsqField?.leadRegistration] =
+          dbLeadData[leadDataObj?.leadRegistration];
         return lead;
       })
     );
