@@ -33,12 +33,14 @@ export default function Home() {
   fifteenDaysAgo.setDate(today.getDate() - 15);
 
   const startDate = fifteenDaysAgo.toISOString().slice(0, 10);
-  const endDate = today.toISOString().slice(0, 10);
+  // const endDate = today.toISOString().slice(0, 10);
+  const endDate = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+  const endDateString = endDate.toISOString().slice(0, 10);
   const selectedStartDate = dateToUnixTimestamp(startDate);
-  const selectedEndDate = dateToUnixTimestamp(endDate);
+  const selectedEndDate = dateToUnixTimestamp(endDateString);
 
-  // console.log(startDate);
-  // console.log(startEndDate);
+  console.log(startDate);
+  console.log(endDateString);
   // console.log(selectedProject);
   const { data, isFetching, isLoading } = useGetLeadsByDateQuery({
     selectedProject,
@@ -46,20 +48,27 @@ export default function Home() {
     selectedEndDate,
   });
   const results = dashboardBoardData(data?.result);
-  console.log(results?.dayWise);
+  console.log(results);
 
+  const dayWiseLeads = results?.dayWise;
+
+  const datesAndLengths = Object.entries(dayWiseLeads).map(([date, items]) => ({
+    date,
+    length: items.length,
+  }));
+  console.log(datesAndLengths);
   const newData = [
     {
       id: "A",
       label: "Total Leads",
-      value: 1,
+      value: results?.funnel?.totalLeads || 0,
       color: "#d4dffa",
       up: "yes",
     },
     {
       id: "B",
       label: "Register Leads",
-      value: 1,
+      value: results?.funnel?.registratedLeads || 0,
       color: "#a6bff5",
       up: "yes",
     },
@@ -131,83 +140,89 @@ export default function Home() {
   //   },
   // ]);
 
-  const barDetails = [
-    {
-      country: "20-1-24",
-      "hot dog": 12,
-      "hot dogColor": "hsl(140, 70%, 20%)",
-    },
-    {
-      country: "21-1-24",
-      "hot dog": 16,
-      "hot dogColor": "hsl(149, 70%, 50%)",
-    },
-    {
-      country: "22-1-24",
-      "hot dog": 20,
-      "hot dogColor": "hsl(274, 70%, 50%)",
-    },
-    {
-      country: "23-1-24",
-      "hot dog": 11,
-      "hot dogColor": "hsl(292, 70%, 50%)",
-    },
-    {
-      country: "24-1-24",
-      "hot dog": 24,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "25-1-24",
-      "hot dog": 8,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "26-1-24",
-      "hot dog": 14,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "27-1-24",
-      "hot dog": 9,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "28-1-24",
-      "hot dog": 10,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "29-1-24",
-      "hot dog": 12,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "30-1-24",
-      "hot dog": 7,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "01-1-24",
-      "hot dog": 15,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "02-1-24",
-      "hot dog": 10,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "03-1-24",
-      "hot dog": 24,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-    {
-      country: "04-1-24",
-      "hot dog": 18,
-      "hot dogColor": "hsl(97, 70%, 50%)",
-    },
-  ];
+  const barDetails = Object.entries(dayWiseLeads).map(([date, items]) => ({
+    country: date?.split(" ")[0],
+    "hot dog": items.length,
+    "hot dogColor": "hsl(140, 70%, 20%)",
+  }));
+
+  // const barDetails = [
+  //   {
+  //     country: "20-1-24",
+  //     "hot dog": 12,
+  //     "hot dogColor": "hsl(140, 70%, 20%)",
+  //   },
+  //   {
+  //     country: "21-1-24",
+  //     "hot dog": 16,
+  //     "hot dogColor": "hsl(149, 70%, 50%)",
+  //   },
+  //   // {
+  //   //   country: "22-1-24",
+  //   //   "hot dog": 20,
+  //   //   "hot dogColor": "hsl(274, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "23-1-24",
+  //   //   "hot dog": 11,
+  //   //   "hot dogColor": "hsl(292, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "24-1-24",
+  //   //   "hot dog": 24,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "25-1-24",
+  //   //   "hot dog": 8,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "26-1-24",
+  //   //   "hot dog": 14,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "27-1-24",
+  //   //   "hot dog": 9,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "28-1-24",
+  //   //   "hot dog": 10,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "29-1-24",
+  //   //   "hot dog": 12,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "30-1-24",
+  //   //   "hot dog": 7,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "01-1-24",
+  //   //   "hot dog": 15,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "02-1-24",
+  //   //   "hot dog": 10,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "03-1-24",
+  //   //   "hot dog": 24,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  //   // {
+  //   //   country: "04-1-24",
+  //   //   "hot dog": 18,
+  //   //   "hot dogColor": "hsl(97, 70%, 50%)",
+  //   // },
+  // ];
 
   const rows = [
     {
@@ -296,7 +311,7 @@ export default function Home() {
     },
   ];
 
-  console.log(data?.result);
+  // console.log(data?.result);
 
   return (
     <Grid sx={{ width: "100%", minHeight: "100vh" }}>

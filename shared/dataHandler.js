@@ -29,7 +29,7 @@ export function removeRolesFromArray(array) {
 export function dashboardBoardData(leads) {
   const dashboard = {
     funnel: {
-      totalLeads: (leads?.length || 0) - 1,
+      totalLeads: (leads?.length || 0),
       registratedLeads: 0,
     },
     dayWise: {},
@@ -37,7 +37,7 @@ export function dashboardBoardData(leads) {
   };
   for (let i = 0; i < leads?.length; i += 1) {
     const leadStage = leads[i][lsqLeadFieldNames?.stage];
-    const date = leads[i][lsqLeadFieldNames?.createdOn];
+    const date = leads[i][lsqLeadFieldNames?.createdOn].split(' ')[0];
     if (dashboard.funnel[leadStage]) {
       dashboard.funnel[leadStage] += 1;
     } else {

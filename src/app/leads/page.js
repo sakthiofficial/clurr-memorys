@@ -260,7 +260,7 @@ export default function Page() {
     selectedStartDate,
     selectedEndDate,
   });
-  console.log(data?.result?.isCreatedInLsq);
+  // console.log(data?.result?.isCreatedInLsq);
   /// refetch the data
   // useEffect(() => {
   //   refetch();
@@ -823,7 +823,7 @@ export default function Page() {
                             {row?.mx_Sub_Source || "N/A"}
                           </TableCell>
                           <TableCell sx={{ fontSize: "11px" }}>
-                            {row?.isCreatedInLsq
+                            {row?.isVisible
                               ? row?.ProspectStage || "N/A"
                               : ""}
                           </TableCell>
@@ -839,10 +839,10 @@ export default function Page() {
                             >
                               <Link
                                 href={{
-                                  pathname: row?.isCreatedInLsq
+                                  pathname: row?.isVisible
                                     ? "/leads/view"
                                     : "",
-                                  search: row?.isCreatedInLsq
+                                  search: row?.isVisible
                                     ? `?id=${row?.id}&project=${row?.Project}`
                                     : "",
                                 }}
@@ -856,7 +856,7 @@ export default function Page() {
                                     height: "25px",
                                     border: "none",
                                     fontSize: "12px",
-                                    cursor: row?.isCreatedInLsq
+                                    cursor: row?.isVisible
                                       ? "pointer"
                                       : "not-allowed",
                                     backgroundColor: "rgba(249, 184, 0, 1)",
