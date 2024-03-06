@@ -1,6 +1,6 @@
 import { convertTimestampToDateTime } from "@/appConstants";
 import { activityDataFields } from "./entity";
-import { lsqLeadFieldNames } from "./lsqConstants";
+import { customLsqField, lsqLeadFieldNames } from "./lsqConstants";
 
 export function structureDataInDateWise(data) {
   if (!data) {
@@ -28,15 +28,18 @@ export function removeRolesFromArray(array) {
 }
 export function dashboardBoardData(leads) {
   const dashboard = {
-    funnel: {},
+    funnel: {
+      totalLeads: (leads?.length || 0) - 1,
+      registratedLeads: 0,
+    },
     dayWise: {},
     recentLeads: leads,
   };
-  for (let i = 0; i < leads.length; i += 1) {
+  for (let i = 0; i < leads?.length; i += 1) {
     const leadStage = leads[i][lsqLeadFieldNames?.stage];
     const date = leads[i][lsqLeadFieldNames?.createdOn];
     if (dashboard.funnel[leadStage]) {
-      dashboard.funnel[leadStage] +=1;
+      dashboard.funnel[leadStage] += 1;
     } else {
       dashboard.funnel[leadStage] = 1;
     }
@@ -45,6 +48,9 @@ export function dashboardBoardData(leads) {
     } else {
       dashboard.dayWise[date] = [leads[i]];
     }
+    dashboard.funnel.registratedLeads = leads[customLsqField?.isCreatedInLsq]
+      ? (dashboard.funnel.registratedLeads += 1)
+      : dashboard.funnel.registratedLeads;
   }
-  return dashboard
+  return dashboard;
 }

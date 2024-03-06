@@ -274,7 +274,9 @@ class LSQLeadSrv {
                 lead[leadDataObj?.email];
               matchingLeadData[customLsqField?.leadRegistration] =
                 lead[leadDataObj?.leadRegistration];
-              matchingLeadData.isCreatedInLsq = providedUser[
+              matchingLeadData.isCreatedInLsq =
+                lead[leadDataObj?.isCreatedInLsq];
+              matchingLeadData.isVisible = providedUser[
                 userDataObj?.role
               ].includes(roleNames?.superAdmin)
                 ? true
