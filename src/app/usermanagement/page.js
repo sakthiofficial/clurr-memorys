@@ -214,48 +214,48 @@ export default function Page() {
         return "rgba(0, 133, 255, 0.08)";
     }
   };
-  const resultTotalUser = useGetTotalUserQuery();
+  // const resultTotalUser = useGetTotalUserQuery();
 
-  const users = [
-    {
-      name: "Super Admin",
-      icon: TotalLeads,
-      total: resultTotalUser?.data?.result?.["Super Administrator"] || "0",
-    },
-    {
-      name: "Admin",
-      icon: RegisterLeads,
-      total: resultTotalUser?.data?.result?.Administrator || "0",
-    },
-    {
-      name: "Mis",
-      icon: RegisterLeads,
-      total: resultTotalUser?.data?.result?.MIS || "0",
-    },
-    {
-      name: "Cp Tl",
-      icon: SiteVisit,
-      total: resultTotalUser?.data?.result?.["CP Team Lead"] || "0",
-    },
-    // {
-    //   name: "Branch Head",
-    //   icon: SiteVisitDone,
-    //   total: resultTotalUser?.data?.result?.["CP Branch Head"] || "0",
-    // },
-    {
-      name: "CP RM",
-      icon: SiteVisitDone,
-      total: resultTotalUser?.data?.result?.["CP Relationship Manager"] || "0",
-    },
-    // {
-    //   name: "Execute",
-    //   icon: BookedLeads,
-    //   total: resultTotalUser?.data?.result?.["CP Executive"] || "0",
-    // },
-    // Add other user types here
-  ];
+  // const users = [
+  //   {
+  //     name: "Super Admin",
+  //     icon: TotalLeads,
+  //     total: resultTotalUser?.data?.result?.["Super Administrator"] || "0",
+  //   },
+  //   {
+  //     name: "Admin",
+  //     icon: RegisterLeads,
+  //     total: resultTotalUser?.data?.result?.Administrator || "0",
+  //   },
+  //   {
+  //     name: "Mis",
+  //     icon: RegisterLeads,
+  //     total: resultTotalUser?.data?.result?.MIS || "0",
+  //   },
+  //   {
+  //     name: "Cp Tl",
+  //     icon: SiteVisit,
+  //     total: resultTotalUser?.data?.result?.["CP Team Lead"] || "0",
+  //   },
+  //   // {
+  //   //   name: "Branch Head",
+  //   //   icon: SiteVisitDone,
+  //   //   total: resultTotalUser?.data?.result?.["CP Branch Head"] || "0",
+  //   // },
+  //   {
+  //     name: "CP RM",
+  //     icon: SiteVisitDone,
+  //     total: resultTotalUser?.data?.result?.["CP Relationship Manager"] || "0",
+  //   },
+  //   // {
+  //   //   name: "Execute",
+  //   //   icon: BookedLeads,
+  //   //   total: resultTotalUser?.data?.result?.["CP Executive"] || "0",
+  //   // },
+  //   // Add other user types here
+  // ];
 
-  console.log(resultTotalUser?.data?.result);
+  // console.log(resultTotalUser?.data?.result);
 
   const handleScroll = () => {
     const header = document.getElementById("header");
@@ -408,7 +408,7 @@ export default function Page() {
               // width:"100vw"
             }}
           >
-            {users?.map((item) => (
+            {/* {users?.map((item) => (
               <Grid
                 key={item?.name}
                 sx={{
@@ -473,7 +473,8 @@ export default function Page() {
                   </Typography>
                 </Grid>
               </Grid>
-            ))}
+            ))} */}
+            
           </Grid>
         </Grid>
         <Grid>

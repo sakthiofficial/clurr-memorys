@@ -311,7 +311,7 @@ export default function Home() {
     },
   ];
 
-  // console.log(data?.result);
+  console.log("leads", data?.result);
 
   return (
     <Grid sx={{ width: "100%", minHeight: "100vh" }}>
@@ -576,10 +576,10 @@ export default function Home() {
             <Table sx={{ minWidth: 450 }}>
               <TableHead>
                 <TableRow sx={{ height: "5vh" }}>
-                  <TableCell align="center">Name</TableCell>
-                  <TableCell align="center">Contact</TableCell>
-                  <TableCell align="center">Email</TableCell>
-                  <TableCell align="center">Registration&nbsp;Status</TableCell>
+                  <TableCell align="left">Name</TableCell>
+                  <TableCell align="left">Contact</TableCell>
+                  <TableCell align="left">Email</TableCell>
+                  <TableCell align="left">Registration&nbsp;Status</TableCell>
                 </TableRow>
               </TableHead>
               {/* {data?.result?.length === 0 ? (
@@ -604,14 +604,21 @@ export default function Home() {
                 </Box>
               ) : ( */}
               <TableBody sx={{ height: "49vh" }}>
-                {(rows || []).map((row) => (
-                  <TableRow key={row.name}>
-                    <TableCell align="center">{row.name}</TableCell>
-                    <TableCell align="center">{row.calories}</TableCell>
-                    <TableCell align="center">{row.fat}</TableCell>
-                    <TableCell align="center">{row.carbs}</TableCell>
-                  </TableRow>
-                ))}
+                {data &&
+                  data.result &&
+                  data.result
+                    .slice()
+                    .reverse()
+                    .map((row) => (
+                      <TableRow key={row.FirstName}>
+                        <TableCell align="left">{row?.FirstName}</TableCell>
+                        <TableCell align="left">{row?.Phone}</TableCell>
+                        <TableCell align="left">{row?.EmailAddress}</TableCell>
+                        <TableCell align="left">
+                          {row?.LeadRegistration}
+                        </TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
               {/* )} */}
             </Table>
