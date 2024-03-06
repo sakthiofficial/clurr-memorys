@@ -560,7 +560,7 @@ class CPUserSrv {
         .populate({
           path: "projects",
           model: "CpAppProject",
-        })
+        }).lean()
       users = users.map((user) => {
         const userPermissions = [
           ...new Set(
