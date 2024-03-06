@@ -381,7 +381,6 @@ class LSQLeadSrv {
 
           if (i === apiData.data.length - 1 && apiData.data.length > 0) {
             apiPageIndex += 1;
-
             apiData = await fetchLeadData(apiPageIndex);
             i = 0;
           }
