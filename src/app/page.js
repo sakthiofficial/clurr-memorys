@@ -607,7 +607,7 @@ export default function Home() {
                 {data &&
                   data.result &&
                   data.result
-                    .slice()
+                    .slice(0, 15)
                     .reverse()
                     .map((row) => (
                       <TableRow key={row.FirstName}>
