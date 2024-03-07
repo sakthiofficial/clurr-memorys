@@ -78,7 +78,7 @@ export default function NivoBar({ data: initialData }) {
                 indexBy="country"
                 margin={{ top: 20, right: 30, bottom: 35, left: 30 }}
                 padding={0.60}
-                maxValue={10}
+                maxValue={20}
                 layout="vertical"
                 valueScale={{ type: "linear" }}
                 indexScale={{ type: "band", round: true }}
