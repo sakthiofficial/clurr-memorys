@@ -270,6 +270,7 @@ class LSQLeadSrv {
           const leadIds = leads.map((lead) => lead?.leadId);
          
           try {
+           if(leadIds.length>0){
             const lsqLeadData = await axios.post(
               `${apiUrl}LeadManagement.svc/Leads/Retrieve/ByIds?accessKey=${accessKey}&secretKey=${secretKey}`,
               {
@@ -326,6 +327,7 @@ class LSQLeadSrv {
               return { ...matchingLeadData };
             });
             data = [...resultArray];
+          }
           } catch (error) {
             console.log("Error while Fetching lead", error);
           }
