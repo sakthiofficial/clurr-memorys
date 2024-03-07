@@ -206,14 +206,14 @@ export default function Page() {
       // console.log("branchhead", getCpBranchHead);
     }
 
-    if (selectedFilter.label === "Cp Rm") {
+    if (selectedFilter?.label === "Cp Rm") {
       const resultCpRm = (data?.result || []).map(
-        (item) => item.cpRm[selectedFilter.key]
+        (item) => item?.cpRm[selectedFilter?.key]
       );
       setGetCpRm(resultCpRm);
       // console.log("rm", getCpRm);
     }
-    if (selectedFilter.label === "Company") {
+    if (selectedFilter?.label === "Company") {
       const resultCompany = (data?.result || []).map(
         (item) => item.company[selectedFilter.key]
       );

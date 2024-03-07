@@ -176,7 +176,7 @@ function Login() {
   useEffect(() => {
     // console.log(user);
     if (user?.isFirstSignIn === false) {
-      window.location.href = "/";
+      window.location.href = "/leads";
     }
   }, [user, userData]);
 
@@ -197,7 +197,7 @@ function Login() {
     if (finalResult?.data?.status === 200) {
       localStorage.setItem("user", JSON.stringify(finalResult?.data?.result));
       toast.success("Login Success!");
-      router.push("/");
+      router.push("/leads");
       setTimeout(() => {
         window.location.reload();
       }, 1800);
@@ -858,9 +858,11 @@ export default function RootLayout({ children }) {
                               // display: { xs: "none", sm: "flex" },
                             }}
                           >
-                            <Typography variant="h6">Hello,&nbsp;</Typography>
                             <Typography variant="h6">
-                              {user?.name.split(" ")[0]}
+                              Welcome Back,&nbsp;
+                            </Typography>
+                            <Typography variant="h6">
+                              {user?.name.split(" ")[0]}!
                             </Typography>
                           </Grid>
                           {/* <Typography
