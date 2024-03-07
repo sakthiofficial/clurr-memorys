@@ -180,6 +180,15 @@ function Login() {
     }
   }, [user, userData]);
 
+  useEffect(() => {
+    if (
+      user?.isFirstSignIn === false &&
+      user?.role[0] === "Super Administrator"
+    ) {
+      window.location.href = "/";
+    }
+  }, [user, userData]);
+
   // console.log(user);
   const [resetPassword] = useResetPasswordMutation();
   const handleSubmitPassword = useCallback(async () => {
@@ -218,6 +227,9 @@ function Login() {
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSubmit();
+      if (userData.confirmPassword.length >= 1) {
+        handleSubmitPassword();
+      }
     }
   };
 
@@ -227,7 +239,15 @@ function Login() {
     return () => {
       window.removeEventListener("keypress", handleKeyPress);
     };
-  }, [formData]);
+  }, [handleKeyPress]);
+
+  // useEffect(() => {
+  //   window.addEventListener("keypress", handleKeyPress);
+
+  //   return () => {
+  //     window.removeEventListener("keypress", handleKeyPress);
+  //   };
+  // }, [userData.confirmPassword]);
 
   return (
     <>
@@ -393,12 +413,12 @@ function Login() {
               fontSize: "14px",
             }}
           >
-            <Button
+            {/* <Button
               onClick={handleBackLogin}
               sx={{ color: "black", fontSize: "12px" }}
             >
               Back to Login ?
-            </Button>
+            </Button> */}
           </Typography>
           <Button
             sx={{

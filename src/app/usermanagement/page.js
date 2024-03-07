@@ -136,7 +136,19 @@ export default function Page() {
   const [getUserFilter, setGetUserFilter] = useState(null);
   const [filterDatasByCategory, setFilterDatasByCategory] = useState([]);
   const [filterUser, setFilterUser] = useState();
-  // console.log(selectedFilter);
+  const [user, SetUser] = useState(null);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("user");
+    if (storedData) {
+      const jsonData = JSON.parse(storedData);
+      SetUser(jsonData);
+    } else {
+      SetUser(null);
+      console.error('No data found in local storage for key "user".');
+    }
+  }, []);
+  console.log(user?.subordinateRoles);
   const handleChangeFilter = (event, value) => {
     if (!value) {
       setSelectedFilter(preDefinedValues[0]);
@@ -237,23 +249,18 @@ export default function Page() {
       icon: SiteVisit,
       total: resultTotalUser?.data?.result?.["CP Team Lead"] || "0",
     },
-    // {
-    //   name: "Branch Head",
-    //   icon: SiteVisitDone,
-    //   total: resultTotalUser?.data?.result?.["CP Branch Head"] || "0",
-    // },
+
     {
       name: "CP RM",
       icon: SiteVisitDone,
       total: resultTotalUser?.data?.result?.["CP Relationship Manager"] || "0",
     },
-    // {
-    //   name: "Execute",
-    //   icon: BookedLeads,
-    //   total: resultTotalUser?.data?.result?.["CP Executive"] || "0",
-    // },
-    // Add other user types here
   ];
+
+  // const usersDataCard = {
+  //   "Super Admin": { name: "asfer" },
+  //   Admin: { name: "adminName" },
+  // };
 
   console.log(resultTotalUser?.data?.result);
 
@@ -474,6 +481,76 @@ export default function Page() {
                 </Grid>
               </Grid>
             ))}
+            {/* {users.map((item) => {
+              if (user?.subordinateRoles.includes(item.name)) {
+                return (
+                  <Grid
+                    key={item.name}
+                    sx={{
+                      width: "165px",
+                      height: "150px",
+                      boxShadow: "0px 0px 8px 0px rgba(0, 0, 0, 0.10)",
+                      marginBottom: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "white",
+                      border: "0.5px solid #BDBDBD",
+                      borderRadius: "13px",
+                    }}
+                  >
+                    <Grid
+                      sx={{
+                        height: "80%",
+                        width: "90%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Grid
+                        sx={{
+                          width: "51px",
+                          height: "51px",
+                          borderRadius: "9px",
+                          backgroundColor: getBackgroundColor(item.name),
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: "5px",
+                        }}
+                      >
+                        <Image
+                          alt={item.name}
+                          src={item.icon}
+                          width={26}
+                          height={26}
+                        />
+                      </Grid>
+                      <Typography
+                        sx={{
+                          color: "#454545",
+                          fontSize: "14px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {item.name}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "rgba(0, 0, 0, 1)",
+                          fontSize: "20px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {item.total}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                );
+              }
+              return null; // If the user's name doesn't match, return null
+            })} */}
           </Grid>
         </Grid>
         <Grid>
