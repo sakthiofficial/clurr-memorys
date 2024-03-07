@@ -197,6 +197,7 @@ class LSQLeadSrv {
               $lte: leadEndDate,
             },
           };
+
           const cpBranchHeadQuery = {
             ...query,
             subSource: new RegExp(cpCode),
@@ -205,6 +206,10 @@ class LSQLeadSrv {
             ...query,
             createdBy: providedUser[userDataObj?.id],
           };
+          const companyDataObj = {
+            branchHeadId: "branchHeadId",
+            executeIds: "executeIds",
+          };
           switch (providedUser[userDataObj?.role][0]) {
             case roleNames?.cpBranchHead:
               query = cpBranchHeadQuery;
@@ -212,6 +217,44 @@ class LSQLeadSrv {
             case roleNames?.cpExecute:
               query = cpExecuteQuery;
               break;
+            case roleNames?.cpRm: {
+              const companysUnderRm = await CpAppCompany.find({
+                parentId: providedUser?._id,
+              });
+              const cpUserIds = companysUnderRm.map((company) => [
+                company[companyDataObj?.branchHeadId],
+                ...company[companyDataObj?.executeIds],
+              ]);
+              const ids = cpUserIds.flat();
+              query = {
+                ...query,
+                createdBy: { $in: [...ids, providedUser?._id] },
+              };
+              break;
+            }
+            case roleNames?.cpTl: {
+              const rmUnderTl = await CpAppUser.find({
+                parentId: providedUser?._id,
+              });
+              const rmIds = rmUnderTl.map((rm) => rm?._id);
+              const companysUnderRm = await CpAppCompany.find({
+                parentId: {
+                  $in: rmIds,
+                },
+              });
+              const cpUserIds = companysUnderRm.map((company) => [
+                company[companyDataObj?.branchHeadId],
+                ...company[companyDataObj?.executeIds],
+              ]);
+
+              const ids = cpUserIds.flat();
+              query = {
+                ...query,
+                createdBy: { $in: [...ids, providedUser?._id] },
+              };
+              console.log('query',query);
+              break;
+            }
             default:
               break;
           }
@@ -225,6 +268,7 @@ class LSQLeadSrv {
             })
             .filter(Boolean);
           const leadIds = leads.map((lead) => lead?.leadId);
+         
           try {
             const lsqLeadData = await axios.post(
               `${apiUrl}LeadManagement.svc/Leads/Retrieve/ByIds?accessKey=${accessKey}&secretKey=${secretKey}`,
@@ -277,7 +321,8 @@ class LSQLeadSrv {
                 ? true
                 : lead[leadDataObj?.isCreatedInLsq];
               matchingLeadData.id = lead?._id;
-              matchingLeadData[customLsqField?.created] =convertTimestampToDateTime(lead[leadDataObj?.created]);
+              matchingLeadData[customLsqField?.created] =
+                convertTimestampToDateTime(lead[leadDataObj?.created]);
               return { ...matchingLeadData };
             });
             data = [...resultArray];
@@ -320,7 +365,6 @@ class LSQLeadSrv {
         let apiPageIndex = 1;
 
         async function fetchLeadData(pageIndex) {
-          console.log(`Fetching in${projectName} and in ${pageIndex}`);
           try {
             const apiData = await axios.post(
               `${apiUrl}LeadManagement.svc/Leads.Get?accessKey=${accessKey}&secretKey=${secretKey}`,
@@ -428,7 +472,6 @@ class LSQLeadSrv {
       const data = isPresentInLsq?.result[0];
       if (data) {
         const registration = await this.getRegistrationStatus(data, project);
-        console.log("registration", registration, data);
         const leadRegistration =
           registration === leadRegistrationStatus?.sucess
             ? leadRegistrationStatus?.duplicateMax
@@ -441,7 +484,7 @@ class LSQLeadSrv {
 
           project,
           leadId: data[lsqLeadFieldNames?.leadId],
-          createdBy: id,
+          createdBy: providedUser?.id,
           subSource,
           notes,
         });
@@ -513,7 +556,7 @@ class LSQLeadSrv {
         leadRegistration: leadRegistrationStatus?.sucess,
         project,
         leadId: promise.data?.Message?.RelatedId,
-        createdBy: id,
+        createdBy: providedUser?._id,
         subSource,
         isCreatedInLsq: promise?.data?.Message?.IsCreated || false,
         notes,

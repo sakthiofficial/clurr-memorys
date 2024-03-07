@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { Session } from "../../models/session";
 import {
   basicRolePermission,
@@ -50,7 +50,7 @@ class CPUserSrv {
       // permission validation
       if (
         !providedUser[userDataObj?.permissions].includes(
-          permissionKeyNames?.userManagement,
+          permissionKeyNames?.userManagement
         )
       ) {
         throw userValidationErrors?.IvalidPermission;
@@ -65,7 +65,7 @@ class CPUserSrv {
           "parent or provider does not have permission to the user",
           providedUser?.subordinateRoles,
           parentData?.subordinateRoles,
-          newUser?.role[0],
+          newUser?.role[0]
         );
         throw userValidationErrors?.HighLevelAccess;
       }
@@ -85,12 +85,12 @@ class CPUserSrv {
         for (let i = 0; i < newUser[userDataObj?.role].length; i += 1) {
           if (
             !parentData[userDataObj?.role].includes(
-              parentRole(newUser[userDataObj?.role]),
+              parentRole(newUser[userDataObj?.role])
             )
           ) {
             console.log(
               parentData[userDataObj?.role],
-              parentRole(newUser[userDataObj?.role]),
+              parentRole(newUser[userDataObj?.role])
             );
             throw userValidationErrors?.ParentRoleLimitation;
           }
@@ -102,7 +102,7 @@ class CPUserSrv {
           if (!parentData?.projects.includes(newUser?.projects[i])) {
             console.log(
               parentData?.projects,
-              "Given Parent user donesnot have Project permission",
+              "Given Parent user donesnot have Project permission"
             );
             throw userValidationErrors?.InvalidParentProject;
           }
@@ -148,13 +148,13 @@ class CPUserSrv {
         const checkUserRole =
           isPriorityUser(providedUser[userDataObj?.role]) &&
           providedUser[userDataObj?.permissions].includes(
-            permissionKeyNames?.userManagement,
+            permissionKeyNames?.userManagement
           );
         if (!checkUserRole) {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
             RESPONSE_MESSAGE?.INVALID,
-            null,
+            null
           );
         }
         let roleId = await CpAppRole.findOne({ name: role });
@@ -172,7 +172,7 @@ class CPUserSrv {
         roleUsers = roleUsers.map((user) => {
           user = user.toObject();
           user.projects = user[userDataObj?.projects].map(
-            (project) => project.name,
+            (project) => project.name
           );
 
           return user;
@@ -180,14 +180,14 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.OK,
           RESPONSE_MESSAGE?.OK,
-          roleUsers,
+          roleUsers
         );
       } catch (error) {
         console.log("While Performing Retriving user by role Error", error);
         return new ApiResponse(
           RESPONSE_STATUS?.ERROR,
           RESPONSE_MESSAGE?.ERROR,
-          error,
+          error
         );
       }
     };
@@ -226,33 +226,33 @@ class CPUserSrv {
           const userPermissions = [
             ...new Set(
               user.role.flatMap((role) =>
-                role.permissions.map((permission) => permission.name),
-              ),
+                role.permissions.map((permission) => permission.name)
+              )
             ),
           ];
           const userSubordinateRoles = [
             ...new Set(
               user.role.flatMap((role) =>
-                role.subordinateRoles.map((subordinate) => subordinate.name),
-              ),
+                role.subordinateRoles.map((subordinate) => subordinate.name)
+              )
             ),
           ];
           user[userDataObj?.role] = (user?.role || []).map(
-            (role) => role?.name,
+            (role) => role?.name
           );
           if (isPriorityUser(user[userDataObj?.role])) {
             const projectDbData = await CpAppProject.find({}).select(
-              "name permission",
+              "name permission"
             );
             user[userDataObj?.projects] = projectDbData;
           }
           user[userDataObj?.projects] = user[userDataObj?.projects].map(
-            (project) => project.name,
+            (project) => project.name
           );
           user[userDataObj?.permissions] = userPermissions;
           user[userDataObj?.subordinateRoles] = userSubordinateRoles;
           return user;
-        }),
+        })
       );
 
       if (Array.isArray(ids)) {
@@ -314,7 +314,7 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.UNAUTHORIZED,
-          null,
+          null
         );
       }
 
@@ -324,21 +324,21 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.UNAUTHORIZED,
-          null,
+          null
         );
       }
       const userPermissions = [
         ...new Set(
           user.role.flatMap((role) =>
-            role.permissions.map((permission) => permission.name),
-          ),
+            role.permissions.map((permission) => permission.name)
+          )
         ),
       ];
       const userSubordinateRoles = [
         ...new Set(
           user.role.flatMap((role) =>
-            role.subordinateRoles.map((subordinate) => subordinate.name),
-          ),
+            role.subordinateRoles.map((subordinate) => subordinate.name)
+          )
         ),
       ];
       user[userDataObj?.permissions] = userPermissions;
@@ -397,7 +397,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error,
+        error
       );
     }
   };
@@ -409,13 +409,13 @@ class CPUserSrv {
     try {
       if (
         !providedUser[userDataObj?.permissions].includes(
-          permissionKeyNames?.userManagement,
+          permissionKeyNames?.userManagement
         )
       ) {
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
           RESPONSE_MESSAGE?.INVALID,
-          null,
+          null
         );
       }
       const { name, email, phone } = newUser;
@@ -447,13 +447,13 @@ class CPUserSrv {
         }
       }
       const isNotUniqUser = Object.values(usedFields).some(
-        (value) => value === true,
+        (value) => value === true
       );
       if (isNotUniqUser) {
         return new ApiResponse(
           RESPONSE_STATUS?.ERROR,
           RESPONSE_MESSAGE?.INVALID,
-          usedFields,
+          usedFields
         );
       }
       // Role Acess Validation
@@ -482,7 +482,7 @@ class CPUserSrv {
 
         providedUser?._id,
         newUser[userDataObj?.name],
-        userResult?._id,
+        userResult?._id
       );
       // Trigering email to user and admin
       const userName = newUser[userDataObj?.name];
@@ -496,14 +496,14 @@ class CPUserSrv {
         parentName,
         userEmail,
         role,
-        projects,
+        projects
       );
       const adminMaliOption = superAdminMailOptions(
         providedUser[userDataObj?.name],
         userName,
         role,
         permission,
-        projects,
+        projects
       );
       const userEmailResult = await sendMail(mailOptions);
 
@@ -520,7 +520,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        err,
+        err
       );
     }
   };
@@ -528,13 +528,13 @@ class CPUserSrv {
   retriveUser = async (providedUser) => {
     if (
       !providedUser[userDataObj?.permissions].includes(
-        permissionKeyNames?.userManagement,
+        permissionKeyNames?.userManagement
       )
     ) {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
         RESPONSE_MESSAGE?.INVALID,
-        null,
+        null
       );
     }
     try {
@@ -543,11 +543,11 @@ class CPUserSrv {
         name: providedUser[userDataObj?.subordinateRoles],
       });
       const roleIds = roleData.map((val) =>
-        isCpUser(val.name) ? null : val._id,
+        isCpUser(val.name) ? null : val._id
       );
       let users = await CpAppUser.find(
         { role: { $in: roleIds } },
-        { password: 0 },
+        { password: 0 }
       )
         .populate({
           path: "role",
@@ -560,20 +560,21 @@ class CPUserSrv {
         .populate({
           path: "projects",
           model: "CpAppProject",
-        }).lean()
+        })
+        .lean();
       users = users.map((user) => {
         const userPermissions = [
           ...new Set(
             user.role.flatMap((role) =>
-              role.permissions.map((permission) => permission.name),
-            ),
+              role.permissions.map((permission) => permission.name)
+            )
           ),
         ];
         const userSubordinateRoles = [
           ...new Set(
             user.role.flatMap((role) =>
-              role.subordinateRoles.map((subordinate) => subordinate.name),
-            ),
+              role.subordinateRoles.map((subordinate) => subordinate.name)
+            )
           ),
         ];
         user[userDataObj?.permissions] = userPermissions;
@@ -586,7 +587,7 @@ class CPUserSrv {
           for (let i = 0; i < user[userDataObj?.projects].length; i += 1) {
             if (
               providedUser[userDataObj?.projects].includes(
-                user[userDataObj?.projects][i],
+                user[userDataObj?.projects][i]
               )
             ) {
               return user;
@@ -603,7 +604,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error,
+        error
       );
     }
   };
@@ -619,7 +620,7 @@ class CPUserSrv {
         return new ApiResponse(
           RESPONSE_STATUS?.UNAUTHORIZED,
           RESPONSE_MESSAGE?.INVALID,
-          null,
+          null
         );
       }
 
@@ -633,7 +634,7 @@ class CPUserSrv {
         isPriorityRole || role === roleNames?.cpTl;
 
       const userData = await CpAppUser.find(
-        isProjectValidationNeed ? { role: roleData?._id } : query,
+        isProjectValidationNeed ? { role: roleData?._id } : query
       );
       const users = await Promise.all(
         userData.map(async (user) => {
@@ -648,7 +649,7 @@ class CPUserSrv {
           delete result[userDataObj?.subordinateRoles];
 
           return result;
-        }),
+        })
       );
 
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, users);
@@ -657,7 +658,7 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error,
+        error
       );
     }
   };
@@ -668,23 +669,27 @@ class CPUserSrv {
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
         RESPONSE_MESSAGE?.NOTFOUND,
-        null,
+        null
       );
     }
-if(providedUser[userDataObj?.role][0]!==roleNames?.superAdmin){
-userById[userDataObj?.phone] = null
-userById[userDataObj?.email] = null
-
-}
+    if (
+      providedUser[userDataObj?.role][0] !== roleNames?.superAdmin &&
+      providedUser?._id.toString() !== userId
+    ) {
+      userById[userDataObj?.phone] = null;
+      userById[userDataObj?.email] = null;
+    }
     const result = (userById[userDataObj?.role] || []).filter((role) =>
-      providedUser[userDataObj?.subordinateRoles].includes(role),
+      providedUser[userDataObj?.subordinateRoles].includes(role)
     );
-
-    if (result.length !== userById[userDataObj?.role]?.length) {
+    if (
+      result.length !== userById[userDataObj?.role]?.length &&
+      providedUser?._id.toString() !== userId
+    ) {
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.INVALID,
-        null,
+        null
       );
     }
     return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, userById);
@@ -704,7 +709,7 @@ userById[userDataObj?.email] = null
       return new ApiResponse(
         RESPONSE_STATUS?.NOTFOUND,
         RESPONSE_MESSAGE?.NOTFOUND,
-        null,
+        null
       );
     }
     // chnage this to for loop
@@ -713,7 +718,7 @@ userById[userDataObj?.email] = null
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
           RESPONSE_MESSAGE?.NOTFOUND,
-          null,
+          null
         );
       }
       return null;
@@ -733,14 +738,14 @@ userById[userDataObj?.email] = null
 
         providedUser?._id,
         removeUserData[userDataObj?.name],
-        removeUserData?.id,
+        removeUserData?.id
       );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     }
     return new ApiResponse(
       RESPONSE_STATUS?.NOTFOUND,
       RESPONSE_MESSAGE?.INVALID,
-      null,
+      null
     );
   };
 
@@ -760,7 +765,7 @@ userById[userDataObj?.email] = null
         return new ApiResponse(
           RESPONSE_STATUS?.NOTFOUND,
           RESPONSE_MESSAGE?.NOTFOUND,
-          null,
+          null
         );
       }
       let parentUser = providedUser;
@@ -772,14 +777,14 @@ userById[userDataObj?.email] = null
       ) {
         const updateUserParentData = await this.getUserById(
           updateUser[userDataObj?.parentId] ||
-            updateUserDbData[userDataObj?.parentId],
+            updateUserDbData[userDataObj?.parentId]
         );
 
         if (!updateUserParentData) {
           return new ApiResponse(
             RESPONSE_STATUS?.NOTFOUND,
             RESPONSE_MESSAGE?.NOTFOUND,
-            null,
+            null
           );
         }
         parentUser = updateUserParentData;
@@ -792,7 +797,7 @@ userById[userDataObj?.email] = null
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(
           updateUser?.password,
-          saltRounds,
+          saltRounds
         );
         updateUser[userDataObj?.password] = hashedPassword;
       } else {
@@ -823,7 +828,7 @@ userById[userDataObj?.email] = null
       const activityService = new ActivitySrv();
       await activityService.createActivity(
         isCpUser(
-          updateUser[userDataObj?.role] || updateUserDbData[userDataObj?.role],
+          updateUser[userDataObj?.role] || updateUserDbData[userDataObj?.role]
         )
           ? activityActionTypes?.cpEdit
           : activityActionTypes?.userEdit,
@@ -831,7 +836,7 @@ userById[userDataObj?.email] = null
 
         providedUser?._id,
         updateUser[userDataObj?.name] || updateUserDbData[userDataObj?.name],
-        updateUser?.id,
+        updateUser?.id
       );
       return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, null);
     } catch (error) {
@@ -839,7 +844,7 @@ userById[userDataObj?.email] = null
       return new ApiResponse(
         RESPONSE_STATUS?.ERROR,
         RESPONSE_MESSAGE?.ERROR,
-        error,
+        error
       );
     }
   };
@@ -852,7 +857,7 @@ userById[userDataObj?.email] = null
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.UNAUTHORIZED,
-        null,
+        null
       );
     }
     const { id, password, newPassword } = resetUser;
@@ -860,7 +865,7 @@ userById[userDataObj?.email] = null
 
     const passwordCheck = await bcrypt.compare(
       userDbData[userDataObj?.password],
-      password || "null",
+      password || "null"
     );
 
     const passwordValidationNeeded = !(
@@ -872,7 +877,7 @@ userById[userDataObj?.email] = null
       return new ApiResponse(
         RESPONSE_STATUS?.UNAUTHORIZED,
         RESPONSE_MESSAGE?.UNAUTHORIZED,
-        null,
+        null
       );
     }
     let companyId = null;
@@ -897,7 +902,7 @@ userById[userDataObj?.email] = null
           password: userDbData[userDataObj?.password],
           isFirstSignIn: false,
         },
-      },
+      }
     );
 
     delete userDbData.password;
@@ -911,7 +916,7 @@ userById[userDataObj?.email] = null
     return new ApiResponse(
       RESPONSE_STATUS?.NOTFOUND,
       RESPONSE_MESSAGE?.INVALID,
-      updateResult,
+      updateResult
     );
   };
 }
