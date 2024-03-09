@@ -9,22 +9,11 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { TextField } from "@mui/material";
 import Link from "next/link";
-import { useSendEmailForForgetPasswordMutation } from "@/reduxSlice/apiSlice";
-
-const steps = [
-  {
-    label: "",
-    description: "Enter Your Email",
-  },
-  {
-    label: "Code sent to asfer6xxxx@gmail.com",
-    description: "Enter Your Code",
-  },
-  {
-    label: "",
-    description: "Enter Your Password",
-  },
-];
+import {
+  useResetPasswordMutation,
+  useSendEmailForForgetPasswordMutation,
+  useVerfiyEmailOtpMutation,
+} from "@/reduxSlice/apiSlice";
 
 export default function Stepper() {
   const theme = useTheme();
@@ -33,24 +22,153 @@ export default function Stepper() {
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [forgetUserDetails, setForgetUserDetails] = useState(null);
+  const [forgetUserOtpDetails, setForgetUserOtpDetails] = useState(null);
+  console.log(forgetUserOtpDetails?.data?.result?.id);
+  const [emailError, setEmailError] = useState(false);
+  const [codeError, setCodeError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
-  // console.log(email);
+  const steps = [
+    {
+      label: "",
+      description: "Enter Your Email",
+    },
+    {
+      label: `Code sent to ${forgetUserDetails?.data?.result?.email}`,
+      description: "Enter Your Code",
+    },
+    {
+      label: "",
+      description: "Enter Your Password",
+    },
+  ];
+
+  // console.log(forgetUserDetails?.data?.result?.email);
 
   const maxSteps = steps.length;
 
-  const [sendEmail] = useSendEmailForForgetPasswordMutation();
+  const [
+    sendEmail,
+    { data: sendEmailResult, loading: sendEmailLoading, error: sendEmailError },
+  ] = useSendEmailForForgetPasswordMutation();
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const [
+    sendOtp,
+    { data: sendOtpResult, loading: sendOtpLoading, error: sendOtpError },
+  ] = useVerfiyEmailOtpMutation();
 
-    if (email) {
-      sendEmail(email);
-      // console.log(email);
+  const [
+    resetPasswordSend,
+    {
+      data: sendPasswordResult,
+      loading: sendPasswordLoading,
+      error: sendPasswordError,
+    },
+  ] = useResetPasswordMutation();
+
+  // console.log(emailError);
+  // console.log(activeStep);
+  const handleEmailSend = async () => {
+    const updatedEmail = {
+      email: email,
+    };
+
+    // if (email) {
+    try {
+      const result = await sendEmail(updatedEmail);
+      setForgetUserDetails(result);
+      if (result?.error?.data?.message === "NOTFOUND") {
+        setEmailError(true);
+      } else {
+        setEmailError(false);
+      }
+      if (result?.data?.message === "OK") {
+        setActiveStep(1);
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setActiveStep(0);
     }
+    // }
+
+    // if (code) {
+    //   try {
+    //     const result = await sendOtp(updatedOtp);
+    //     console.log(result);
+    //     // if (result?.error?.data?.message === "NOTFOUND") {
+    //     //   setEmailError(true);
+    //     // } else {
+    //     //   setEmailError(false);
+    //     // }
+    //     // if (result?.data?.message === "OK") {
+    //     //   setActiveStep(1);
+    //     // }
+
+    //     const otpResult = await sendOtp(updatedOtp);
+    //     console.log(otpResult);
+    //   } catch (error) {
+    //     console.error("Error sending email:", error);
+    //     setActiveStep(0);
+    //   }
+    // }
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  const handleOtpSend = async () => {
+    const updatedOtp = {
+      otp: code,
+    };
+
+    try {
+      const result = await sendOtp(updatedOtp);
+      // console.log(result);
+      setForgetUserOtpDetails(result);
+      if (result?.error?.data?.message === "UNAUTHORIZED") {
+        setCodeError(true);
+      } else {
+        setCodeError(false);
+      }
+      if (result?.data?.message === "OK") {
+        setActiveStep(2);
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setActiveStep(1);
+    }
+  };
+console.log(passwordError)
+  const handleForgetPassword = async () => {
+    const updatedPassword = {
+      newPassword: confirmPassword,
+      id: forgetUserOtpDetails?.data?.result?.id,
+    };
+
+    if (password !== confirmPassword) {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+      try {
+        const result = await resetPasswordSend(updatedPassword);
+        // console.log(result);
+        if (result?.data?.message === "OK") {
+          window.location.href = "/login";
+        }
+      } catch (error) {
+        console.error("Error sending email:", error);
+        setActiveStep(1);
+      }
+    }
+
+    // try {
+    //   const result = await resetPasswordSend(updatedPassword);
+    //   // console.log(result);
+    //   if (result?.data?.message === "OK") {
+    //     window.location.href = "/login";
+    //   }
+    // } catch (error) {
+    //   console.error("Error sending email:", error);
+    //   setActiveStep(1);
+    // }
   };
 
   return (
@@ -96,6 +214,8 @@ export default function Stepper() {
         </Typography>
         {activeStep === 0 && (
           <TextField
+            error={emailError}
+            helperText={emailError && "email not found"}
             placeholder={`${steps[activeStep].description}`}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -109,6 +229,8 @@ export default function Stepper() {
         )}
         {activeStep === 1 && (
           <TextField
+            error={codeError}
+            helperText={codeError && "i`nvalid code"}
             placeholder={`${steps[activeStep].description}`}
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -139,6 +261,8 @@ export default function Stepper() {
             <TextField
               placeholder="Confirm New Password"
               type="password"
+              error={passwordError}
+              helperText={passwordError && "password not match"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               sx={{
@@ -168,7 +292,7 @@ export default function Stepper() {
               width: "98%",
               textAlign: "end",
               marginTop: "10px",
-              marginBottom: "30px",
+              marginBottom: "0px",
               fontSize: "12px",
             }}
           >
@@ -181,7 +305,7 @@ export default function Stepper() {
               width: "98%",
               textAlign: "end",
               marginTop: "10px",
-              marginBottom: "30px",
+              marginBottom: "0px",
               fontSize: "12px",
             }}
           >
@@ -189,37 +313,80 @@ export default function Stepper() {
           </Typography>
         )}
       </Box>
-      <MobileStepper
-        sx={{ width: "100%" }}
-        variant="text"
-        steps={maxSteps}
-        position="static"
-        activeStep={activeStep}
-        nextButton={
-          <Button
-            size="small"
-            onClick={handleNext}
-            disabled={activeStep === maxSteps - 1}
-          >
-            Next
-            {theme.direction === "rtl" ? (
-              <KeyboardArrowLeft />
-            ) : (
-              <KeyboardArrowRight />
-            )}
-          </Button>
-        }
-        backButton={
-          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-            {theme.direction === "rtl" ? (
-              <KeyboardArrowRight />
-            ) : (
-              <KeyboardArrowLeft />
-            )}
-            Back
-          </Button>
-        }
-      />
+      {activeStep === 0 && (
+        <MobileStepper
+          sx={{
+            width: "100%",
+            // border: "1px solid black",
+            display: "flex",
+            // flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+          variant="text"
+          steps={maxSteps}
+          position="static"
+          activeStep={activeStep}
+          nextButton={
+            <Button
+              size="small"
+              onClick={handleEmailSend}
+              disabled={activeStep === maxSteps - 1}
+            >
+              Next
+              {theme.direction === "rtl" ? (
+                <KeyboardArrowLeft />
+              ) : (
+                <KeyboardArrowRight />
+              )}
+            </Button>
+          }
+        />
+      )}
+      {activeStep === 1 && (
+        <MobileStepper
+          sx={{
+            width: "100%",
+            // border: "1px solid black",
+            display: "flex",
+            // flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+          variant="text"
+          steps={maxSteps}
+          position="static"
+          activeStep={activeStep}
+          nextButton={
+            <Button size="small" onClick={handleOtpSend}>
+              Next
+              {theme.direction === "rtl" ? (
+                <KeyboardArrowLeft />
+              ) : (
+                <KeyboardArrowRight />
+              )}
+            </Button>
+          }
+        />
+      )}
+      {activeStep === 2 && (
+        <MobileStepper
+          sx={{
+            width: "100%",
+            // border: "1px solid black",
+            display: "flex",
+            // flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+          variant="text"
+          steps={maxSteps}
+          position="static"
+          activeStep={activeStep}
+          nextButton={
+            <Button size="small" onClick={handleForgetPassword}>
+              Submit
+            </Button>
+          }
+        />
+      )}
     </Box>
   );
 }
