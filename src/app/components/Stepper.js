@@ -28,7 +28,7 @@ export default function Stepper() {
   const [emailError, setEmailError] = useState(false);
   const [codeError, setCodeError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-
+  const [checkRole, setCheckRole] = useState(null);
   const steps = [
     {
       label: "",
@@ -88,30 +88,7 @@ export default function Stepper() {
       }
     } catch (error) {
       console.error("Error sending email:", error);
-      setActiveStep(0);
     }
-    // }
-
-    // if (code) {
-    //   try {
-    //     const result = await sendOtp(updatedOtp);
-    //     console.log(result);
-    //     // if (result?.error?.data?.message === "NOTFOUND") {
-    //     //   setEmailError(true);
-    //     // } else {
-    //     //   setEmailError(false);
-    //     // }
-    //     // if (result?.data?.message === "OK") {
-    //     //   setActiveStep(1);
-    //     // }
-
-    //     const otpResult = await sendOtp(updatedOtp);
-    //     console.log(otpResult);
-    //   } catch (error) {
-    //     console.error("Error sending email:", error);
-    //     setActiveStep(0);
-    //   }
-    // }
   };
 
   const handleOtpSend = async () => {
@@ -132,11 +109,10 @@ export default function Stepper() {
         setActiveStep(2);
       }
     } catch (error) {
-      console.error("Error sending email:", error);
-      setActiveStep(1);
+      console.error(error);
     }
   };
-console.log(passwordError)
+  // console.log(passwordError);
   const handleForgetPassword = async () => {
     const updatedPassword = {
       newPassword: confirmPassword,
@@ -149,13 +125,24 @@ console.log(passwordError)
       setPasswordError(false);
       try {
         const result = await resetPasswordSend(updatedPassword);
-        // console.log(result);
+        // console.log(result?.data?.result);
         if (result?.data?.message === "OK") {
-          window.location.href = "/login";
+          localStorage.setItem("user", JSON.stringify(result?.data?.result));
+          const storedData = localStorage.getItem("user");
+          if (storedData) {
+            const jsonData = JSON.parse(storedData);
+            setCheckRole(jsonData?.role || []);
+            if (checkRole[0] === "Super Administrator") {
+              window.location.href = "/";
+            } else {
+              window.location.href = "/leads";
+            }
+          } else {
+            setCheckRole(null);
+          }
         }
       } catch (error) {
-        console.error("Error sending email:", error);
-        setActiveStep(1);
+        console.error(error);
       }
     }
 
@@ -230,7 +217,7 @@ console.log(passwordError)
         {activeStep === 1 && (
           <TextField
             error={codeError}
-            helperText={codeError && "i`nvalid code"}
+            helperText={codeError && "invalid code"}
             placeholder={`${steps[activeStep].description}`}
             value={code}
             onChange={(e) => setCode(e.target.value)}

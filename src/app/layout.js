@@ -56,6 +56,7 @@ import { ProfileInfo } from "./components/ProfileBtn";
 import LoginBanner from "../../public/loginBanner2.png";
 import { permissionKeyNames } from "../../shared/cpNamings";
 import Stepper from "./components/Stepper";
+import { id } from "date-fns/locale";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -257,6 +258,14 @@ function Login() {
 
   const pathname = usePathname();
   // console.log(pathname);
+
+  useEffect(() => {
+    console.log("working");
+
+    if (pathname !== "/login" && pathname !== "/forget_password") {
+      router.push("/login");
+    }
+  }, []);
 
   return (
     <>
@@ -779,6 +788,21 @@ export default function RootLayout({ children }) {
   //   }
   //   console.log("working router push");
   // }, []);`
+  console.log(user?.role);
+
+  useEffect(() => {
+    if (user && pathname === "/login") {
+      if (user?.role[0] === "Super Administrator") {
+        router.push("/");
+      }
+    }
+  }, [pathname]);
+
+  // useEffect(() => {
+  //   if (user?.role[0] !== "Super Administrator" && pathname === "/") {
+  //     router.push("/leads");
+  //   }
+  // }, [user]);
 
   return (
     <Provider store={store}>
