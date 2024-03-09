@@ -102,7 +102,6 @@ export async function GET(request) {
     }
     const leadSrv = new LSQLeadSrv();
     const serviceRes = await leadSrv.retriveLead(providedUser, value);
-console.log(dashboardBoardData(serviceRes.result));
     return NextResponse.json(serviceRes, { status: serviceRes?.status });
   } catch (error) {
     console.log("Error while retriving lead", error);

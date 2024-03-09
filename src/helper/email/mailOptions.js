@@ -176,3 +176,54 @@ export function cpMailOption(
     `,
   };
 }
+export function resetPasswordMailOption(userName, userEmail, otp) {
+  return {
+    from: "CP PORTAL HYDERABAD <sakthivel.g@alliancezone.in>",
+    to: userEmail,
+    subject: "Password Reset OTP - Urbanrise CP Portal",
+    html: `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              background-color: #f4f4f4;
+            }
+            .container {
+              max-width: 600px;
+              background-color: #ffffff;
+              padding: 30px;
+              border-radius: 10px;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              margin: 20px auto;
+            }
+            h1 {
+              color: #000;
+            }
+            p {
+              color: #555;
+              line-height: 1.5;
+              margin-bottom: 15px;
+            }
+            a {
+              color: #F9B800; /* Secondary color */
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Hello ${userName},</h1>
+            <p>We received a request to reset your password. Please use the following OTP to complete the process:</p>
+
+            <h2 style="text-align: center; color: #000; margin: 20px 0;">${otp}</h2>
+
+            <p>If you didn't request a password reset, please ignore this email. The OTP is valid for a limited time.</p>
+
+            <p>Best regards,<br>Urbanrise CP Portal Team</p>
+          </div>
+        </body>
+      </html>
+    `,
+  };
+}
+
