@@ -18,6 +18,7 @@ export default async function getUserByToken(request) {
   if (!providedUserSessionData) {
     return null;
   }
+  console.log('providedUserSessionData',providedUserSessionData);
   const user = await CpAppUser.findOne({
     _id: providedUserSessionData?.userId,
   })
@@ -33,6 +34,7 @@ export default async function getUserByToken(request) {
       model: "CpAppProject",
     })
     .lean();
+    console.log('user',user);
   const userPermissions = [
     ...new Set(
       user.role.flatMap((role) =>

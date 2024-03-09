@@ -12,7 +12,7 @@ import getUserByToken from "@/helper/getUserByToken";
 
 export async function POST(req) {
   const providedUser = await getUserByToken(req);
-
+console.log('providedUser',providedUser);
   const validateQuery = Joi.object({
     newPassword: Joi.string().required(),
     password: Joi.string(),
