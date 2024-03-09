@@ -14,6 +14,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+
 import {
   Avatar,
   Button,
@@ -54,6 +55,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import { ProfileInfo } from "./components/ProfileBtn";
 import LoginBanner from "../../public/loginBanner2.png";
 import { permissionKeyNames } from "../../shared/cpNamings";
+import Stepper from "./components/Stepper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -180,6 +182,15 @@ function Login() {
     }
   }, [user, userData]);
 
+  useEffect(() => {
+    if (
+      user?.isFirstSignIn === false &&
+      user?.role[0] === "Super Administrator"
+    ) {
+      window.location.href = "/";
+    }
+  }, [user, userData]);
+
   // console.log(user);
   const [resetPassword] = useResetPasswordMutation();
   const handleSubmitPassword = useCallback(async () => {
@@ -218,6 +229,9 @@ function Login() {
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSubmit();
+      if (userData.confirmPassword.length >= 1) {
+        handleSubmitPassword();
+      }
     }
   };
 
@@ -227,199 +241,264 @@ function Login() {
     return () => {
       window.removeEventListener("keypress", handleKeyPress);
     };
-  }, [formData]);
+  }, [handleKeyPress]);
+
+  // useEffect(() => {
+  //   window.addEventListener("keypress", handleKeyPress);
+
+  //   return () => {
+  //     window.removeEventListener("keypress", handleKeyPress);
+  //   };
+  // }, [userData.confirmPassword]);
+
+  const pathname = usePathname();
+  console.log(pathname);
 
   return (
     <>
       <ToastContainer />
-      {user?.isFirstSignIn === false || user === null ? (
-        <Box
+      {pathname === "/forget_password" ? (
+        <Grid
           sx={{
+            // border: "1px solid black",
             display: "flex",
-            justifyContent: "space-around",
             alignItems: "center",
-            width: "100%",
-            height: "100%",
             flexDirection: "column",
+            width: "100%",
+            justifyContent: "center",
+            height: "100%",
           }}
         >
-          <Typography>SIGN IN TO CONTINUE</Typography>
-          <Box
-            width={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <TextField
-              sx={{
-                width: "90%",
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: "19px",
-                },
-              }}
-              name="name"
-              label="Username / Email / Phone"
-              variant="outlined"
-              onChange={handleInputChange}
-            />
-          </Box>
-          <Box
-            width={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <TextField
-              sx={{
-                width: "90%",
-                // padding: "5px",
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: "19px",
-                },
-              }}
-              name="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              variant="outlined"
-              onChange={handleInputChange}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={toggleShowPassword} edge="end">
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-          <Button
+          <Grid
             sx={{
               // border: "1px solid black",
-              width: "90%",
-              backgroundColor: "black",
-              color: "white",
-              height: "45px",
-              borderRadius: "20px",
-              "&:hover": {
-                backgroundColor: "black",
-                boxShadow: "none",
-                border: "none",
-              },
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-            onClick={handleSubmit}
-            disabled={loginInProgress}
           >
-            {loginInProgress ? (
-              <Typography sx={{ color: "gray" }}>Logging in...</Typography>
-            ) : (
-              <Typography sx={{ color: "white" }}>Login</Typography>
-            )}
-          </Button>
-        </Box>
+            <Stepper />
+          </Grid>
+          {/* <Typography
+            sx={{
+              width: "90%",
+              textAlign: "center",
+              marginTop: "50px",
+              fontSize: "13px",
+              // border: "1px solid black",
+              color: "#0969DA",
+            }}
+          >
+            <Link href="/login">Do you remember your password and back to login ?</Link>
+          </Typography> */}
+        </Grid>
       ) : (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-            width: "100%",
-            height: "100%",
-            flexDirection: "column",
-          }}
-        >
-          <Typography>Reset password</Typography>
-          <Box
-            width={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <TextField
+        <>
+          {user?.isFirstSignIn === false || user === null ? (
+            <Box
               sx={{
-                width: "90%",
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: "19px",
-                },
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                width: "100%",
+                height: "100%",
+                flexDirection: "column",
               }}
-              name="newPassword"
-              type="password"
-              label="Password"
-              value={userData.newPassword}
-              variant="outlined"
-              onChange={handleInputChangeUser}
-            />
-          </Box>
-          <Box
-            width={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <TextField
+            >
+              <Typography>SIGN IN TO CONTINUE</Typography>
+              <Box
+                width={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextField
+                  sx={{
+                    width: "90%",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
+                  }}
+                  name="name"
+                  label="Username / Email / Phone"
+                  variant="outlined"
+                  onChange={handleInputChange}
+                />
+              </Box>
+              <Box
+                width={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextField
+                  sx={{
+                    width: "90%",
+                    // padding: "5px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
+                  }}
+                  name="password"
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  variant="outlined"
+                  onChange={handleInputChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={toggleShowPassword} edge="end">
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              {/* <Typography
+                sx={{
+                  // border: "1px solid black",
+                  width: "90%",
+                  fontSize: "14px",
+                  textAlign: "end",
+                  cursor: "pointer",
+                }}
+              >
+                <Link href="/forget_password">Forget Password ?</Link>
+              </Typography> */}
+              <Button
+                sx={{
+                  // border: "1px solid black",
+                  width: "90%",
+                  backgroundColor: "black",
+                  color: "white",
+                  height: "45px",
+                  borderRadius: "20px",
+                  "&:hover": {
+                    backgroundColor: "black",
+                    boxShadow: "none",
+                    border: "none",
+                  },
+                }}
+                onClick={handleSubmit}
+                disabled={loginInProgress}
+              >
+                {loginInProgress ? (
+                  <Typography sx={{ color: "gray" }}>Logging in...</Typography>
+                ) : (
+                  <Typography sx={{ color: "white" }}>Login</Typography>
+                )}
+              </Button>
+            </Box>
+          ) : (
+            <Box
               sx={{
-                width: "90%",
-                // padding: "5px",
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: "19px",
-                },
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                width: "100%",
+                height: "100%",
+                flexDirection: "column",
               }}
-              name="confirmPassword"
-              label="Confirm Password"
-              type={showPassword ? "text" : "password"}
-              variant="outlined"
-              value={userData.confirmPassword}
-              onChange={handleInputChangeUser}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={toggleShowPassword} edge="end">
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-          <Typography
-            sx={{
-              // border: "1px solid black",
-              width: "90%",
-              textAlign: "end",
-              fontSize: "14px",
-            }}
-          >
-            <Button
+            >
+              <Typography>Reset password</Typography>
+              <Box
+                width={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextField
+                  sx={{
+                    width: "90%",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
+                  }}
+                  name="newPassword"
+                  type="password"
+                  label="Password"
+                  value={userData.newPassword}
+                  variant="outlined"
+                  onChange={handleInputChangeUser}
+                />
+              </Box>
+              <Box
+                width={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextField
+                  sx={{
+                    width: "90%",
+                    // padding: "5px",
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        borderRadius: "19px",
+                      },
+                  }}
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type={showPassword ? "text" : "password"}
+                  variant="outlined"
+                  value={userData.confirmPassword}
+                  onChange={handleInputChangeUser}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={toggleShowPassword} edge="end">
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              <Typography
+                sx={{
+                  // border: "1px solid black",
+                  width: "90%",
+                  textAlign: "end",
+                  fontSize: "14px",
+                }}
+              >
+                {/* <Button
               onClick={handleBackLogin}
               sx={{ color: "black", fontSize: "12px" }}
             >
               Back to Login ?
-            </Button>
-          </Typography>
-          <Button
-            sx={{
-              // border: "1px solid black",
-              width: "90%",
-              backgroundColor: "black",
-              color: "white",
-              height: "45px",
-              borderRadius: "20px",
-              "&:hover": {
-                backgroundColor: "black",
-                boxShadow: "none",
-                border: "none",
-              },
-            }}
-            onClick={handleSubmitPassword}
-            disabled={loginInProgress}
-          >
-            <Typography sx={{ color: "white" }}>Confirm</Typography>
-          </Button>
-        </Box>
+            </Button> */}
+              </Typography>
+              <Button
+                sx={{
+                  // border: "1px solid black",
+                  width: "90%",
+                  backgroundColor: "black",
+                  color: "white",
+                  height: "45px",
+                  borderRadius: "20px",
+                  "&:hover": {
+                    backgroundColor: "black",
+                    boxShadow: "none",
+                    border: "none",
+                  },
+                }}
+                onClick={handleSubmitPassword}
+                disabled={loginInProgress}
+              >
+                <Typography sx={{ color: "white" }}>Confirm</Typography>
+              </Button>
+            </Box>
+          )}
+        </>
       )}
     </>
   );
