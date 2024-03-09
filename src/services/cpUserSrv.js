@@ -1023,9 +1023,9 @@ class CPUserSrv {
 
     if (!user) {
       return new ApiResponse(
-        RESPONSE_STATUS?.UNAUTHORIZED,
-        RESPONSE_MESSAGE?.UNAUTHORIZED,
-        null
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.NOTFOUND,
+        {email:false}
       );
     }
     const otp = await this.genrateRandomNumbers(5);
