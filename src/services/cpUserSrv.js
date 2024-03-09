@@ -25,12 +25,14 @@ import sendMail from "../helper/emailSender";
 import { CpAppRole } from "../../models/AppRole";
 import { CpAppPermission } from "../../models/Permission";
 import {
+  resetPasswordMailOption,
   superAdminMailOptions,
   userMailOption,
 } from "@/helper/email/mailOptions";
 import { CpAppCompany } from "../../models/AppCompany";
 import ActivitySrv from "./activitySrv";
 import { activityActionTypes } from "@/helper/serviceConstants";
+import { CpAppOtp } from "../../models/CpAppOtp";
 
 const { default: initDb } = require("../lib/db");
 const { CpAppUser } = require("../../models/AppUser");
@@ -281,6 +283,102 @@ class CPUserSrv {
       user[userDataObj?.permissions] = permmissionIds;
 
       return user;
+    };
+    this.getUserByEmail = async (email) => {
+      let query;
+
+      if (Array.isArray(email)) {
+        // If an array of IDs is provided, query for multiple users
+        query = CpAppUser.find({
+          email: { $in: email },
+        });
+      } else {
+        // If a single ID is provided, query for a single user
+        query = CpAppUser.find({
+          email,
+        });
+      }
+      const users = await query
+        .populate({
+          path: "role",
+          populate: [
+            { path: "permissions", model: "CpAppPermission" },
+            { path: "subordinateRoles", model: "CpAppRole" },
+          ],
+        })
+        .populate({
+          path: "projects",
+          model: "CpAppProject",
+        })
+        .lean();
+      const structuredUsers = Promise.all(
+        users.map(async (user) => {
+          if (!user) {
+            return null;
+          }
+          const userPermissions = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.permissions.map((permission) => permission.name)
+              )
+            ),
+          ];
+          const userSubordinateRoles = [
+            ...new Set(
+              user.role.flatMap((role) =>
+                role.subordinateRoles.map((subordinate) => subordinate.name)
+              )
+            ),
+          ];
+          user[userDataObj?.role] = (user?.role || []).map(
+            (role) => role?.name
+          );
+          if (isPriorityUser(user[userDataObj?.role])) {
+            const projectDbData = await CpAppProject.find({}).select(
+              "name permission"
+            );
+            user[userDataObj?.projects] = projectDbData;
+          }
+          user[userDataObj?.projects] = user[userDataObj?.projects].map(
+            (project) => project.name
+          );
+          user[userDataObj?.permissions] = userPermissions;
+          user[userDataObj?.subordinateRoles] = userSubordinateRoles;
+
+          return user;
+        })
+      );
+
+      if (Array.isArray(email)) {
+        // If an array of IDs is provided, return an array of users
+        return structuredUsers;
+      }
+      // If a single ID is provided, return a single user or null
+      const singleUserIdResult = await structuredUsers;
+      return singleUserIdResult[0] || null;
+    };
+    this.genrateRandomNumbers = async (count) => {
+      const otp = [];
+      for (let i = 0; i < count; i += 1) {
+        const randomNumber = Math.floor(Math.random() * 10) + 1;
+        otp.push(randomNumber);
+      }
+      return otp.join("");  w
+    };
+    this.verifyOtp = async (otp) => {
+      const userByOtp = await CpAppOtp.findOne({ otp });
+      if (!userByOtp) {
+        return null;
+      }
+      await CpAppOtp.updateOne({ otp }, { verified: true });
+      const sessionToken = this.genrateTokan();
+      const sessionData = new Session({
+        token: sessionToken,
+        userId: userByOtp?.userId,
+      });
+      await sessionData.save();
+
+      return {sessionToken,id:userByOtp?.userId};
     };
   }
 
@@ -918,6 +1016,34 @@ class CPUserSrv {
       RESPONSE_MESSAGE?.INVALID,
       updateResult
     );
+  };
+
+  sendOtpToEmail = async ({ email }) => {
+    await initDb()
+    const user = await this.getUserByEmail(email);
+
+    if (!user) {
+      return new ApiResponse(
+        RESPONSE_STATUS?.NOTFOUND,
+        RESPONSE_MESSAGE?.NOTFOUND,
+        {email:false}
+      );
+    }
+    const otp = await this.genrateRandomNumbers(5);
+    const emailOptions = resetPasswordMailOption(
+      user[userDataObj?.name],
+      user[userDataObj?.email],
+      otp
+    );
+
+    await sendMail(emailOptions);
+    const filter = { userId: user?._id };
+    const update = { otp };
+   await CpAppOtp.updateOne(filter, update, { upsert: true });
+    return new ApiResponse(RESPONSE_STATUS?.OK, RESPONSE_MESSAGE?.OK, {
+      name: user[userDataObj?.name],
+      email: user[userDataObj?.email],
+    });
   };
 }
 export default CPUserSrv;

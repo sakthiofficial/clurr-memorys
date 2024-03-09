@@ -53,6 +53,14 @@ export default function Page() {
   const resultProject = useGetProjectWithPermissionQuery();
   const resultCps = useGetCPSQuery();
 
+  const [cpLoading, setCpLoading] = useState(resultCps.isFetching);
+
+  useEffect(() => {
+    setCpLoading(resultCps.isFetching);
+  }, [resultCps.isFetching]);
+
+  // console.log(cpLoading);
+
   const [value, setValue] = useState("india");
 
   const handlePhoneInputChange = (newValue) => {
@@ -666,7 +674,7 @@ export default function Page() {
                     country="in"
                     value={formData?.phone}
                     onChange={(phone) => setFormData({ ...formData, phone })}
-                    inputStyle={{height:"56px"}}
+                    inputStyle={{ height: "56px" }}
                   />
                 </Grid>
               </Grid>
@@ -762,6 +770,7 @@ export default function Page() {
                   }}
                 >
                   <FormControl
+                    disabled={cpLoading ? true : false}
                     sx={{
                       width: "300px",
                       "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":

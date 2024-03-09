@@ -180,6 +180,20 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    sendEmailForForgetPassword: builder.mutation({
+      query: (email) => ({
+        url: `user/forgotPassword/email`,
+        method: "POST",
+        body: email,
+      }),
+    }),
+    verfiyEmailOtp: builder.mutation({
+      query: (otp) => ({
+        url: `/user/forgotPassword/verifyOtp`,
+        method: "POST",
+        body: otp,
+      }),
+    }),
   }),
 });
 
@@ -209,5 +223,7 @@ export const {
   useAddCpExecuteMutation,
   useActivityQuery,
   useGetActivityByIdQuery,
-  useGetTotalUserQuery
+  useGetTotalUserQuery,
+  useSendEmailForForgetPasswordMutation,
+  useVerfiyEmailOtpMutation,
 } = apiSlice;
