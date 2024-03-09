@@ -180,6 +180,12 @@ export const apiSlice = createApi({
         method: "GET",
       }),
     }),
+    sendEmailForForgetPassword: builder.mutation({
+      query: () => ({
+        url: `user/forgotPassword/email`,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -209,5 +215,6 @@ export const {
   useAddCpExecuteMutation,
   useActivityQuery,
   useGetActivityByIdQuery,
-  useGetTotalUserQuery
+  useGetTotalUserQuery,
+  useSendEmailForForgetPasswordMutation,
 } = apiSlice;

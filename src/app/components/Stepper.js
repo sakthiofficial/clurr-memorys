@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import MobileStepper from "@mui/material/MobileStepper";
@@ -9,6 +9,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { TextField } from "@mui/material";
 import Link from "next/link";
+import { useSendEmailForForgetPasswordMutation } from "@/reduxSlice/apiSlice";
 
 const steps = [
   {
@@ -27,16 +28,25 @@ const steps = [
 
 export default function Stepper() {
   const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [email, setEmail] = React.useState("");
-  const [code, setCode] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [activeStep, setActiveStep] = useState(0);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // console.log(email);
 
   const maxSteps = steps.length;
 
+  const [sendEmail] = useSendEmailForForgetPasswordMutation();
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+
+    if (email) {
+      sendEmail(email);
+      // console.log(email);
+    }
   };
 
   const handleBack = () => {
@@ -165,7 +175,7 @@ export default function Stepper() {
             <Link href="/login">Do you remember your password?</Link>
           </Typography>
         )}
-          {activeStep === 1 && (
+        {activeStep === 1 && (
           <Typography
             sx={{
               width: "98%",

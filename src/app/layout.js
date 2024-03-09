@@ -228,8 +228,12 @@ function Login() {
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      handleSubmit();
-      if (userData.confirmPassword.length >= 1) {
+      // handleSubmit();
+
+      if (formData?.name && formData?.password) {
+        handleSubmit();
+      }
+      if (userData?.confirmPassword?.length >= 1) {
         handleSubmitPassword();
       }
     }
@@ -252,7 +256,7 @@ function Login() {
   // }, [userData.confirmPassword]);
 
   const pathname = usePathname();
-  console.log(pathname);
+  // console.log(pathname);
 
   return (
     <>
