@@ -359,7 +359,7 @@ function Login() {
                   }}
                 />
               </Box>
-              {/* <Typography
+              <Typography
                 sx={{
                   // border: "1px solid black",
                   width: "90%",
@@ -369,7 +369,7 @@ function Login() {
                 }}
               >
                 <Link href="/forget_password">Forget Password ?</Link>
-              </Typography> */}
+              </Typography>
               <Button
                 sx={{
                   // border: "1px solid black",

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
@@ -18,7 +16,7 @@ const steps = [
     description: "Enter Your Email",
   },
   {
-    label: "code send to asfer6xxxx@gmail.com",
+    label: "Code sent to asfer6xxxx@gmail.com",
     description: "Enter Your Code",
   },
   {
@@ -30,6 +28,11 @@ const steps = [
 export default function Stepper() {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
+  const [email, setEmail] = React.useState("");
+  const [code, setCode] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+
   const maxSteps = steps.length;
 
   const handleNext = () => {
@@ -49,17 +52,13 @@ export default function Stepper() {
           display: "flex",
           alignItems: "center",
           height: 50,
-          //   pl: 2,
-          //   bgcolor: "background.default",
           textAlign: "start",
-          // border: "1px solid black",
           padding: "2px",
         }}
       >
         <Typography
           sx={{ width: "100%", fontSize: "18px", letterSpacing: ".5px" }}
         >
-          {/* {steps[activeStep].label} */}
           Forget Your Password Here
         </Typography>
       </Paper>
@@ -72,12 +71,10 @@ export default function Stepper() {
           alignItems: "center",
           marginBottom: "20px",
           flexDirection: "column",
-          //   border:"1px solid black"
         }}
       >
         <Typography
           sx={{
-            // border: "1px solid black",
             width: "98%",
             textAlign: "start",
             marginBottom: "5px",
@@ -85,31 +82,102 @@ export default function Stepper() {
             fontSize: "14px",
           }}
         >
-          {" "}
           {steps[activeStep].label}
         </Typography>
-        <TextField
-          //   size="small"
-          placeholder={`${steps[activeStep].description}`}
-          sx={{
-            width: "100%",
-            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-              borderRadius: "19px",
-            },
-          }}
-        />
-        <Typography
+        {activeStep === 0 && (
+          <TextField
+            placeholder={`${steps[activeStep].description}`}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            sx={{
+              width: "100%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "19px",
+              },
+            }}
+          />
+        )}
+        {activeStep === 1 && (
+          <TextField
+            placeholder={`${steps[activeStep].description}`}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            sx={{
+              width: "100%",
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "19px",
+              },
+            }}
+          />
+        )}
+        {activeStep === 2 && (
+          <>
+            <TextField
+              placeholder="Enter New Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{
+                width: "100%",
+                marginBottom: "20px",
+                marginTop: "50px",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "19px",
+                },
+              }}
+            />
+            <TextField
+              placeholder="Confirm New Password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              sx={{
+                width: "100%",
+                marginBottom: "30px",
+                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                  borderRadius: "19px",
+                },
+              }}
+            />
+          </>
+        )}
+        {/* <Typography
           sx={{
             width: "98%",
             textAlign: "end",
             marginTop: "10px",
             fontSize: "12px",
-            //   border: "1px solid black",
-            // color: "#0969DA",
           }}
         >
-          <Link href="/login">Do you remember your password ?</Link>
-        </Typography>
+          <Link href="/login">Do you remember your password?</Link>
+        </Typography> */}
+
+        {activeStep === 0 && (
+          <Typography
+            sx={{
+              width: "98%",
+              textAlign: "end",
+              marginTop: "10px",
+              marginBottom: "30px",
+              fontSize: "12px",
+            }}
+          >
+            <Link href="/login">Do you remember your password?</Link>
+          </Typography>
+        )}
+          {activeStep === 1 && (
+          <Typography
+            sx={{
+              width: "98%",
+              textAlign: "end",
+              marginTop: "10px",
+              marginBottom: "30px",
+              fontSize: "12px",
+            }}
+          >
+            <Link href="/login">Do you remember your password?</Link>
+          </Typography>
+        )}
       </Box>
       <MobileStepper
         sx={{ width: "100%" }}
