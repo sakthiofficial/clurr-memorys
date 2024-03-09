@@ -788,15 +788,20 @@ export default function RootLayout({ children }) {
   //   }
   //   console.log("working router push");
   // }, []);`
-  console.log(user?.role);
+  // console.log(user?.role);
 
   useEffect(() => {
     if (user && pathname === "/login") {
       if (user?.role[0] === "Super Administrator") {
         router.push("/");
+      } else {
+        router.push("/leads");
       }
     }
-  }, [pathname]);
+    if (user?.role[0] !== "Super Administrator" && pathname === "/") {
+      router.push("/leads");
+    }
+  }, [user]);
 
   // useEffect(() => {
   //   if (user?.role[0] !== "Super Administrator" && pathname === "/") {

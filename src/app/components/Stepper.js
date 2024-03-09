@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import MobileStepper from "@mui/material/MobileStepper";
@@ -126,37 +126,28 @@ export default function Stepper() {
       try {
         const result = await resetPasswordSend(updatedPassword);
         // console.log(result?.data?.result);
+
         if (result?.data?.message === "OK") {
           localStorage.setItem("user", JSON.stringify(result?.data?.result));
           const storedData = localStorage.getItem("user");
-          if (storedData) {
-            const jsonData = JSON.parse(storedData);
-            setCheckRole(jsonData?.role || []);
-            if (checkRole[0] === "Super Administrator") {
-              window.location.href = "/";
-            } else {
-              window.location.href = "/leads";
-            }
-          } else {
-            setCheckRole(null);
-          }
+          const jsonData = JSON.parse(storedData);
+          setCheckRole(jsonData?.role || []);
         }
       } catch (error) {
         console.error(error);
       }
     }
-
-    // try {
-    //   const result = await resetPasswordSend(updatedPassword);
-    //   // console.log(result);
-    //   if (result?.data?.message === "OK") {
-    //     window.location.href = "/login";
-    //   }
-    // } catch (error) {
-    //   console.error("Error sending email:", error);
-    //   setActiveStep(1);
-    // }
   };
+
+  useEffect(() => {
+    if (checkRole) {
+      if (checkRole[0] === "Super Administrator") {
+        window.location.href = "/";
+      } else {
+        window.location.href = "/leads";
+      }
+    }
+  }, [handleForgetPassword]);
 
   return (
     <Box sx={{ width: 450, flexGrow: 1 }}>
