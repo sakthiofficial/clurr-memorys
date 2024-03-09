@@ -1019,6 +1019,7 @@ class CPUserSrv {
   };
 
   sendOtpToEmail = async ({ email }) => {
+    await initDb()
     const user = await this.getUserByEmail(email);
 
     if (!user) {
