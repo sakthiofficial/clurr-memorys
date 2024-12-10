@@ -12,24 +12,37 @@ import {
 } from "@mui/material";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { useTheme } from "@mui/material/styles";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 function App() {
   const [timerEnd, setTimerEnd] = useState(false);
-  const [timerValue, setTimerValue] = useState(10);
+  const [timerValue, setTimerValue] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Function to calculate the remaining time until 7 PM tomorrow
+  const calculateTimeUntil7PM = () => {
+    const now = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(now.getDate() + 1); // set to tomorrow
+    tomorrow.setHours(19, 0, 0, 0); // set to 7:00 PM
+    return Math.floor((tomorrow - now) / 1000); // return seconds until 7 PM tomorrow
+  };
+
   // Timer logic
   useEffect(() => {
-    if (timerValue > 0) {
+    const timeUntil7PM = calculateTimeUntil7PM();
+    setTimerValue(timeUntil7PM);
+
+    if (timeUntil7PM > 0) {
       const interval = setInterval(() => {
         setTimerValue((prevTime) => prevTime - 1);
       }, 1000);
       return () => clearInterval(interval);
     }
-    setTimerEnd(true);
-  }, [timerValue]);
+
+    setTimerEnd(true); // Timer has ended, show surprise
+  }, []);
 
   const memories = [
     { image: "/images/fight.jpg", text: "First fight we had 😂" },
@@ -71,22 +84,22 @@ function App() {
               lineHeight: 1.6,
             }}
           >
-            This is not goodbye its just the next challenge in our relationship.
-            We will miss each other and many emotions will come our way. But no
-            matter what happens I will always be there for you for the rest of
-            my life.
+            This is not goodbye, it's just the next challenge in our
+            relationship. We will miss each other, and many emotions will come
+            our way. But no matter what happens, I will always be there for you,
+            for the rest of my life.
             <br /> Thank you for making me feel more valuable. The way you
             admire me makes me a more respectful person, and it shows me how
-            important I am to you .
+            important I am to you.
             <br />
-            anyways i wont going to stop my stupid things like saying kavithais
-            sending stupid photos and making you small small angry by sending
-            wierd mesages no way u need to see this things 😂 <br />
+            Anyways, I won't stop my stupid things like saying kavithais,
+            sending silly photos, and making you a little angry by sending weird
+            messages 😂 <br />
             <Typography
               variant={isMobile ? "h5" : "h4"}
               sx={{ fontWeight: "bold", marginBottom: 3, color: "#fff" }}
             >
-              Alagi going to miss u 🥺💗
+              Alagi, I'm going to miss you 🥺💗
             </Typography>
           </Typography>
           <Grid container spacing={3}>
@@ -155,7 +168,7 @@ function App() {
         color: "#fff",
       }}
     >
-      <Container maxWidth="sm">
+      <Container maxWidth="lg">
         <Typography
           variant={isMobile ? "h5" : "h4"}
           gutterBottom
@@ -164,10 +177,12 @@ function App() {
           A Countdown to My Heart ❤️
         </Typography>
 
-        <Box sx={{ marginBottom: 5 }}>
+        <Box
+          sx={{ marginBottom: 5, display: "flex", justifyContent: "center" }}
+        >
           <CountdownCircleTimer
             isPlaying={!timerEnd}
-            duration={7 * 24 * 60 * 60}
+            duration={timerValue}
             initialRemainingTime={timerValue}
             colors={[
               ["#FF6F91", 0.33],
