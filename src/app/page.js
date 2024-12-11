@@ -16,33 +16,39 @@ import { motion } from "framer-motion";
 
 function App() {
   const [timerEnd, setTimerEnd] = useState(false);
-  const [timerValue, setTimerValue] = useState(0);
+  const [remainingTime, setRemainingTime] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Function to calculate the remaining time until 7 PM tomorrow
-  const calculateTimeUntil7PM = () => {
-    const now = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(now.getDate()); // set to tomorrow
-    tomorrow.setHours(19, 0, 0, 0); // set to 7:00 PM
-    return Math.floor((tomorrow - now) / 1000); // return seconds until 7 PM tomorrow
-  };
+  // Calculate the target time (tomorrow 7 PM)
+  const targetTime = new Date();
+  targetTime.setDate(targetTime.getDate()); // Tomorrow
+  targetTime.setHours(19, 0, 0, 0); // Set to 7:00 PM
 
-  // Timer logic
   useEffect(() => {
-    const timeUntil7PM = calculateTimeUntil7PM();
-    setTimerValue(timeUntil7PM);
+    // Update the remaining time every second
+    const updateRemainingTime = () => {
+      const currentTime = new Date();
+      const difference = Math.max(
+        0,
+        Math.floor((targetTime - currentTime) / 1000)
+      ); // Time in seconds
+      setRemainingTime(difference);
+      if (difference === 0) setTimerEnd(true);
+    };
 
-    if (timeUntil7PM > 0) {
-      const interval = setInterval(() => {
-        setTimerValue((prevTime) => prevTime - 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
+    updateRemainingTime(); // Initialize
+    const timerInterval = setInterval(updateRemainingTime, 1000);
 
-    setTimerEnd(true); // Timer has ended, show surprise
-  }, []);
+    return () => clearInterval(timerInterval); // Cleanup
+  }, [targetTime]);
+
+  const formatTime = (seconds) => {
+    const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${hours}:${minutes}:${secs}`;
+  };
 
   const memories = [
     { image: "/images/fight.jpg", text: "First fight we had 😂" },
@@ -58,7 +64,6 @@ function App() {
       image: "/images/beach.jpg",
       text: "A beautiful night with a beautiful girl 🙈😍",
     },
-    // { image: "/path/to/image5.jpg", text: "The day we made a promise 🤝" },
   ];
 
   if (timerEnd) {
@@ -84,22 +89,22 @@ function App() {
               lineHeight: 1.6,
             }}
           >
-            This is not goodbye, it's just the next challenge in our
-            relationship. We will miss each other, and many emotions will come
-            our way. But no matter what happens, I will always be there for you,
-            for the rest of my life.
+            This is not goodbye its just the next challenge in our relationship.
+            We will miss each other and many emotions will come our way. But no
+            matter what happens I will always be there for you for the rest of
+            my life.
             <br /> Thank you for making me feel more valuable. The way you
             admire me makes me a more respectful person, and it shows me how
-            important I am to you.
+            important I am to you .
             <br />
-            Anyways, I won't stop my stupid things like saying kavithais,
-            sending silly photos, and making you a little angry by sending weird
-            messages 😂 <br />
+            anyways i wont going to stop my stupid things like saying kavithais
+            sending stupid photos and making you small small angry by sending
+            wierd mesages no way u need to see this things 😂 <br />
             <Typography
               variant={isMobile ? "h5" : "h4"}
               sx={{ fontWeight: "bold", marginBottom: 3, color: "#fff" }}
             >
-              Alagi, I'm going to miss you 🥺💗
+              Alagi going to miss u 🥺💗
             </Typography>
           </Typography>
           <Grid container spacing={3}>
@@ -168,7 +173,7 @@ function App() {
         color: "#fff",
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="sm">
         <Typography
           variant={isMobile ? "h5" : "h4"}
           gutterBottom
@@ -182,8 +187,8 @@ function App() {
         >
           <CountdownCircleTimer
             isPlaying={!timerEnd}
-            duration={timerValue}
-            initialRemainingTime={timerValue}
+            duration={remainingTime}
+            initialRemainingTime={remainingTime}
             colors={[
               ["#FF6F91", 0.33],
               ["#FFB6C1", 0.33],
@@ -194,7 +199,7 @@ function App() {
             trailColor="#ffffff"
             strokeLinecap="round"
           >
-            {({ remainingTime }) => (
+            {() => (
               <Typography
                 variant="h3"
                 sx={{
@@ -202,8 +207,7 @@ function App() {
                   fontSize: isMobile ? "28px" : "36px",
                 }}
               >
-                {Math.floor(remainingTime / 3600)}:
-                {Math.floor((remainingTime % 3600) / 60)}:{remainingTime % 60}
+                {formatTime(remainingTime)}
               </Typography>
             )}
           </CountdownCircleTimer>
