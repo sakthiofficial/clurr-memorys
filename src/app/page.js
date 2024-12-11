@@ -24,7 +24,7 @@ function App() {
   const calculateTimeUntil7PM = () => {
     const now = new Date();
     const tomorrow = new Date();
-    tomorrow.setDate(now.getDate() + 1); // set to tomorrow
+    tomorrow.setDate(now.getDate()); // set to tomorrow
     tomorrow.setHours(19, 0, 0, 0); // set to 7:00 PM
     return Math.floor((tomorrow - now) / 1000); // return seconds until 7 PM tomorrow
   };
@@ -208,14 +208,6 @@ function App() {
             )}
           </CountdownCircleTimer>
         </Box>
-
-        <Typography
-          variant={isMobile ? "h6" : "h5"}
-          sx={{ color: "white", marginBottom: 5 }}
-        >
-          Only {Math.floor(timerValue / (24 * 60 * 60))} days left until I miss
-          you...
-        </Typography>
       </Container>
     </div>
   );
