@@ -15,7 +15,7 @@ import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 
 function App() {
-  const [timerEnd, setTimerEnd] = useState(false);
+  const [timerEnd, setTimerEnd] = useState(true);
   const [remainingTime, setRemainingTime] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -23,25 +23,25 @@ function App() {
   // Calculate the target time (tomorrow 7 PM)
   const targetTime = new Date();
   targetTime.setDate(targetTime.getDate()); // Tomorrow
-  targetTime.setHours(19, 0, 0, 0); // Set to 7:00 PM
+  targetTime.setHours(18, 25, 0, 0); // Set to 7:00 PM
 
-  useEffect(() => {
-    // Update the remaining time every second
-    const updateRemainingTime = () => {
-      const currentTime = new Date();
-      const difference = Math.max(
-        0,
-        Math.floor((targetTime - currentTime) / 1000)
-      ); // Time in seconds
-      setRemainingTime(difference);
-      if (difference === 0) setTimerEnd(true);
-    };
+  // useEffect(() => {
+  //   // Update the remaining time every second
+  //   const updateRemainingTime = () => {
+  //     const currentTime = new Date();
+  //     const difference = Math.max(
+  //       0,
+  //       Math.floor((targetTime - currentTime) / 1000)
+  //     ); // Time in seconds
+  //     setRemainingTime(difference);
+  //     if (difference === 0) setTimerEnd(true);
+  //   };
 
-    updateRemainingTime(); // Initialize
-    const timerInterval = setInterval(updateRemainingTime, 1000);
+  //   updateRemainingTime(); // Initialize
+  //   const timerInterval = setInterval(updateRemainingTime, 1000);
 
-    return () => clearInterval(timerInterval); // Cleanup
-  }, [targetTime]);
+  //   return () => clearInterval(timerInterval); // Cleanup
+  // }, [targetTime]);
 
   const formatTime = (seconds) => {
     const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
