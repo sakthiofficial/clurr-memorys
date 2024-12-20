@@ -13,13 +13,40 @@ import {
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
+import { useLogVisitMutation } from "@/reduxSlice/apiSlice";
 
 function App() {
   const [timerEnd, setTimerEnd] = useState(true);
   const [remainingTime, setRemainingTime] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [logVisit, { isLoading, isSuccess, isError, error }] =
+    useLogVisitMutation();
+  console.log("deploy check");
 
+  useEffect(() => {
+    const logPageVisit = async () => {
+      try {
+        const ipAddress = await (
+          await fetch("https://api.ipify.org?format=json")
+        ).json();
+        const { userAgent } = navigator;
+        const referrer = document.referrer || "Direct";
+        const page = window.location.pathname;
+
+        await logVisit({
+          ipAddress: ipAddress.ip,
+          userAgent,
+          referrer,
+          page,
+        });
+      } catch (err) {
+        console.error("Error logging visit:", err);
+      }
+    };
+
+    logPageVisit();
+  }, [logVisit]);
   // Calculate the target time (tomorrow 7 PM)
   const targetTime = new Date();
   targetTime.setDate(targetTime.getDate()); // Tomorrow
@@ -100,12 +127,12 @@ function App() {
             anyways i wont going to stop my stupid things like saying kavithais
             sending stupid photos and making you small small angry by sending
             wierd mesages no way u need to see this things 😂 <br />
-            <Typography
-              variant={isMobile ? "h5" : "h4"}
-              sx={{ fontWeight: "bold", marginBottom: 3, color: "#fff" }}
-            >
-              Alagi going to miss u 🥺💗
-            </Typography>
+          </Typography>
+          <Typography
+            variant={isMobile ? "h5" : "h4"}
+            sx={{ fontWeight: "bold", marginBottom: 3, color: "#fff" }}
+          >
+            Alagi going to miss u 🥺💗
           </Typography>
           <Grid container spacing={3}>
             {memories.map((memory, index) => (

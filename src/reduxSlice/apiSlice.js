@@ -6,7 +6,15 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${config.apiUrl}/api`,
   }),
-  endpoints: () => ({}),
+  endpoints: (builder) => ({
+    logVisit: builder.mutation({
+      query: (visitData) => ({
+        url: "/visit", // Corresponds to the `/api/visit` endpoint
+        method: "POST",
+        body: visitData,
+      }),
+    }),
+  }),
 });
 
-// export const {} = apiSlice;
+export const { useLogVisitMutation } = apiSlice;
